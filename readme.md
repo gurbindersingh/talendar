@@ -1,0 +1,1 @@
+# Kursverwaltungssoftware für Talentegarten.at
