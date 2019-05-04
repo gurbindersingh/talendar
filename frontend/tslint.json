@@ -10,20 +10,15 @@
         "import-blacklist": [true, "rxjs/Rx"],
         "interface-name": [true, "always-prefix"],
         "max-classes-per-file": [true, 2],
-        "max-line-length": [true, 120],
+        "max-line-length": [true, 100],
         "member-access": false,
         "member-ordering": [
             true,
             {
-                "order": [
-                    "static-field",
-                    "instance-field",
-                    "static-method",
-                    "instance-method"
-                ]
+        "order": ["static-field", "instance-field", "static-method", "instance-method"]
             }
         ],
-        "no-consecutive-blank-lines": [true, 3],
+        "no-consecutive-blank-lines": [true, 2],
         "no-console": [true, "debug", "info", "time", "timeEnd", "trace"],
         "no-empty": true,
         "no-inferrable-types": [true, "ignore-params"],
