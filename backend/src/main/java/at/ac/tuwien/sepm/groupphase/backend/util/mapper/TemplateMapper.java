@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.util.mapper;
 
+import at.ac.tuwien.sepm.groupphase.backend.pojo.Template;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.TemplateDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -15,6 +16,6 @@ public interface TemplateMapper {
      * see http://mapstruct.org/
      */
 
-    TemplateDto entityToDto();
+    TemplateDto entityToDto(Template template);
 
 }
