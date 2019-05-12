@@ -34,9 +34,6 @@ public class Trainer {
     private String email;
 
     @NotNull
-    private Boolean active;             // whether this trainer is currently employed
-
-    @NotNull
     @Past
     private LocalDateTime created;
     @NotNull
@@ -52,7 +49,6 @@ public class Trainer {
         this.email = email;
         this.created = created;
         this.updated = updated;
-        this.active = true;
     }
 
 
@@ -116,16 +112,6 @@ public class Trainer {
     }
 
 
-    public Boolean getActive () {
-        return active;
-    }
-
-
-    public void setActive (Boolean active) {
-        this.active = active;
-    }
-
-
     public LocalDateTime getCreated () {
         return created;
     }
@@ -157,7 +143,6 @@ public class Trainer {
             Objects.equals(age, trainer.age) &&
             Objects.equals(phone, trainer.phone) &&
             Objects.equals(email, trainer.email) &&
-            Objects.equals(active, trainer.active) &&
             Objects.equals(created, trainer.created) &&
             Objects.equals(updated, trainer.updated);
     }
@@ -165,7 +150,7 @@ public class Trainer {
 
     @Override
     public int hashCode () {
-        return Objects.hash(id, firstName, lastName, age, phone, email, active, created, updated);
+        return Objects.hash(id, firstName, lastName, age, phone, email, created, updated);
     }
 
 
@@ -178,7 +163,6 @@ public class Trainer {
             ", age=" + age +
             ", phone='" + phone + '\'' +
             ", email='" + email + '\'' +
-            ", active=" + active +
             ", created=" + created +
             ", updated=" + updated +
             '}';
