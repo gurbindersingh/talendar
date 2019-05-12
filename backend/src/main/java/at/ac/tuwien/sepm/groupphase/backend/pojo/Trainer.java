@@ -23,31 +23,36 @@ public class Trainer {
     private String firstName;
     @NotBlank
     private String lastName;
-    @Min(0)
+    @NotNull
+    @Min(16)
     @Max(120)
     private Integer age;
+    @NotNull
     private String phone;
+    @NotNull
     @Email
     private String email;
 
-    private String description;         // a short description for the given trainer
+    @NotNull
     private Boolean active;             // whether this trainer is currently employed
 
+    @NotNull
     @Past
     private LocalDateTime created;
+    @NotNull
     @Past
     private LocalDateTime updated;
 
 
-    public Trainer (@NotBlank String firstName, @NotBlank String lastName, @Min(0) @Max(120) Integer age, String phone, @Email String email, String description, @Past LocalDateTime created, @Past LocalDateTime updated) {
+    public Trainer (@NotBlank String firstName, @NotBlank String lastName, @Min(0) @Max(120) Integer age, String phone, @Email String email, @Past LocalDateTime created, @Past LocalDateTime updated) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
         this.phone = phone;
         this.email = email;
-        this.description = description;
         this.created = created;
         this.updated = updated;
+        this.active = true;
     }
 
 
@@ -111,16 +116,6 @@ public class Trainer {
     }
 
 
-    public String getDescription () {
-        return description;
-    }
-
-
-    public void setDescription (String description) {
-        this.description = description;
-    }
-
-
     public Boolean getActive () {
         return active;
     }
@@ -170,7 +165,7 @@ public class Trainer {
 
     @Override
     public int hashCode () {
-        return Objects.hash(id, firstName, lastName, age, phone, email, description, active, created, updated);
+        return Objects.hash(id, firstName, lastName, age, phone, email, active, created, updated);
     }
 
 
