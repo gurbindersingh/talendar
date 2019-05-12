@@ -40,6 +40,9 @@ public class Trainer {
     @Past
     private LocalDateTime updated;
 
+    public Trainer() {
+        
+    }
 
     public Trainer (@NotBlank String firstName, @NotBlank String lastName, @Min(0) @Max(120) Integer age, String phone, @Email String email, @Past LocalDateTime created, @Past LocalDateTime updated) {
         this.firstName = firstName;
