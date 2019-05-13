@@ -1,43 +1,57 @@
 <br />
-<div class="btn-group">
-    <div
-        class="btn btn-primary"
-        (click)="setView(calendarView.Month)"
-        [class.active]="view === calendarView.Month"
-    >
-        Month
-    </div>
-    <div
-        class="btn btn-primary"
-        (click)="setView(calendarView.Week)"
-        [class.active]="view === calendarView.Week"
-    >
-        Week
-    </div>
+
+<div
+    class="btn-group btn-group-toggle"
+    ngbRadioGroup
+    name="radioBasic"
+    [(ngModel)]="view"
+>
+    <label ngbButtonLabel class="btn-primary">
+        <input
+            ngbButton
+            type="radio"
+            [value]="calendarView.Week"
+            (click)="daysInWeek = 7"
+        />
+        Woche
+    </label>
+
+    <label ngbButtonLabel class="btn-primary">
+        <input ngbButton type="radio" [value]="calendarView.Month" />
+        Monat
+    </label>
+
+    <label ngbButtonLabel class="btn-primary">
+        <input
+            ngbButton
+            type="radio"
+            [value]="calendarView.Day"
+            (click)="daysInWeek = 1"
+        />
+        Tag
+    </label>
 </div>
 
 <hr />
 
-<div [ngSwitch]="view">
-    <mwl-calendar-week-view
-        *ngSwitchCase="'week'"
-        [dayEndHour]="dayEndHour"
-        [dayEndMinute]="dayEndMinute"
-        [daysInWeek]="daysInWeek"
-        [dayStartHour]="dayStartHour"
-        [dayStartMinute]="dayStartMinute"
-        [events]="events"
-        [hourSegments]="hourSegments"
-        [locale]="locale"
-        [viewDate]="viewDate"
-        [weekStartsOn]="weekStartsOn"
-    ></mwl-calendar-week-view>
+<mwl-calendar-week-view
+    *ngIf="view === calendarView.Week || view === calendarView.Day"
+    [dayEndHour]="dayEndHour"
+    [dayEndMinute]="dayEndMinute"
+    [daysInWeek]="daysInWeek"
+    [dayStartHour]="dayStartHour"
+    [dayStartMinute]="dayStartMinute"
+    [events]="events"
+    [hourSegments]="hourSegments"
+    [locale]="locale"
+    [viewDate]="viewDate"
+    [weekStartsOn]="weekStartsOn"
+></mwl-calendar-week-view>
 
-    <mwl-calendar-month-view
-        *ngSwitchCase="'month'"
-        [events]="events"
-        [locale]="locale"
-        [viewDate]="viewDate"
-        [weekStartsOn]="weekStartsOn"
-    ></mwl-calendar-month-view>
-</div>
+<mwl-calendar-month-view
+    *ngIf="view === calendarView.Month"
+    [events]="events"
+    [locale]="locale"
+    [viewDate]="viewDate"
+    [weekStartsOn]="weekStartsOn"
+></mwl-calendar-month-view>
