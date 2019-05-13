@@ -1,14 +1,31 @@
 import { Component, OnInit } from '@angular/core';
 import { CalendarEvent } from 'calendar-utils';
-import { registerLocaleData } from '@angular/common';
+import { registerLocaleData, formatDate, DatePipe } from '@angular/common';
+import { CalendarDateFormatter, DateFormatterParams } from 'angular-calendar';
 import localeDe from '@angular/common/locales/de-AT';
 
 registerLocaleData(localeDe);
+
+class CustomDateFormatter extends CalendarDateFormatter {
+    public dayViewHour({ date, locale }: DateFormatterParams): string {
+        return new DatePipe(locale).transform(date, 'HH:mm', locale);
+    }
+
+    public weekViewHour({ date, locale }: DateFormatterParams): string {
+        return this.dayViewHour({ date, locale });
+    }
+}
+/* in your component that uses the calendar
+    providers: [{  provide: CalendarDateFormatter, useClass: CustomDateFormatter }]
+ */
 
 @Component({
     selector: 'app-calendar',
     templateUrl: './calendar.component.html',
     styleUrls: ['./calendar.component.scss'],
+    providers: [
+        { provide: CalendarDateFormatter, useClass: CustomDateFormatter },
+    ],
 })
 export class CalendarComponent implements OnInit {
     private events: CalendarEvent[];
