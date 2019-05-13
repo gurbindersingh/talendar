@@ -1,8 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { CalendarEvent } from 'calendar-utils';
-import { registerLocaleData, formatDate, DatePipe } from '@angular/common';
-import { CalendarDateFormatter, DateFormatterParams } from 'angular-calendar';
+import { registerLocaleData, DatePipe } from '@angular/common';
 import localeDe from '@angular/common/locales/de-AT';
+
+import {
+    CalendarDateFormatter,
+    DateFormatterParams,
+    CalendarView,
+} from 'angular-calendar';
+import { CalendarEvent } from 'calendar-utils';
 
 registerLocaleData(localeDe);
 
@@ -15,9 +20,6 @@ class CustomDateFormatter extends CalendarDateFormatter {
         return this.dayViewHour({ date, locale });
     }
 }
-/* in your component that uses the calendar
-    providers: [{  provide: CalendarDateFormatter, useClass: CustomDateFormatter }]
- */
 
 @Component({
     selector: 'app-calendar',
@@ -28,29 +30,25 @@ class CustomDateFormatter extends CalendarDateFormatter {
     ],
 })
 export class CalendarComponent implements OnInit {
-    private events: CalendarEvent[];
-    private today: Date;
-    private weekStartsOn: number;
-    private dayStartHour: number;
-    private dayStartMinute: number;
-    private dayEndHour: number;
-    private dayEndMinute: number;
-    private hourSegments: number;
-    private locale: string;
-    private precision: string;
+    calendarView = CalendarView;
+    dayEndHour = 20;
+    dayEndMinute = 0;
+    daysInWeek = 7;
+    dayStartHour = 8;
+    dayStartMinute = 0;
+    events: CalendarEvent[] = [];
+    hourSegments = 4;
+    locale = 'de-AT';
+    precision = 'minutes';
+    viewDate = new Date();
+    view = CalendarView.Week;
+    weekStartsOn = 1;
 
-    constructor() {
-        this.events = [];
-        this.today = new Date();
-        this.locale = 'de-AT';
-        this.precision = 'minutes';
-        this.hourSegments = 4;
-        this.weekStartsOn = 1;
-        this.dayStartHour = 8;
-        this.dayStartMinute = 0;
-        this.dayEndHour = 20;
-        this.dayEndMinute = 0;
-    }
+    constructor() {}
 
     ngOnInit() {}
+
+    setView(view: CalendarView) {
+        this.view = view;
+    }
 }
