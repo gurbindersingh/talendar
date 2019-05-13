@@ -12,7 +12,9 @@ public interface TemplateRepository extends JpaRepository<Template, Long> {
 
     // additional operations can be defined here
     // e.g.
-    List<Template> findByTest(String toBeFound);
+    List<Template> findByTest(String toFind);
+
+
 
     // define search criteria within methodName
 
