@@ -1,0 +1,20 @@
+:host {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+
+    #side-bar {
+        flex-grow: 1;
+        flex-basis: 10rem;
+        padding: 10px;
+        max-width: 15vw;
+        background: lightgreen;
+    }
+
+    #app {
+        flex-grow: 1;
+        flex-basis: 30rem;
+        padding: 10px;
+        overflow: auto;
+    }
+}
