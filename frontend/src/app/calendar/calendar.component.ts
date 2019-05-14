@@ -3,7 +3,6 @@ import { registerLocaleData, DatePipe } from '@angular/common';
 import localeDe from '@angular/common/locales/de-AT';
 
 import { CalendarDateFormatter, CalendarView } from 'angular-calendar';
-import { CalendarEvent } from 'calendar-utils';
 import { CustomDateFormatter } from './CustomDateFormatter';
 import { Event } from './Event';
 

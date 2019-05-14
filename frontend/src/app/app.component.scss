@@ -1,20 +1,26 @@
+/*
 :host {
     height: 100vh;
     width: 100vw;
     display: flex;
+    flex-wrap: wrap;
 
     #side-bar {
         flex-grow: 1;
-        flex-basis: 10rem;
+        flex-basis: 75px;
+        min-width: 15vw;
         padding: 10px;
-        max-width: 15vw;
         background: lightgreen;
     }
 
     #app {
-        flex-grow: 1;
-        flex-basis: 30rem;
+        flex-grow: 2;        
+        flex-basis: 500px;
         padding: 10px;
         overflow: auto;
     }
+}
+*/
+#side-bar {
+    background: lightgreen;
 }
