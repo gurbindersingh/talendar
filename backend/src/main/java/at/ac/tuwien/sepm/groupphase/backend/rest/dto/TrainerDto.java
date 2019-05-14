@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -8,7 +9,7 @@ public class TrainerDto {
     private Long id;
     private String firstName;
     private String lastName;
-    private Integer age;
+    private LocalDate birthday;
     private String phone;
     private String email;
     private LocalDateTime created;
@@ -19,10 +20,10 @@ public class TrainerDto {
     }
 
 
-    public TrainerDto (String firstName, String lastName, Integer age, String phone, String email) {
+    public TrainerDto (String firstName, String lastName, LocalDate birthday, String phone, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.age = age;
+        this.birthday = birthday;
         this.phone = phone;
         this.email = email;
     }
@@ -58,13 +59,13 @@ public class TrainerDto {
     }
 
 
-    public Integer getAge () {
-        return age;
+    public LocalDate getBirthday () {
+        return birthday;
     }
 
 
-    public void setAge (Integer age) {
-        this.age = age;
+    public void setBirthday (LocalDate birthday) {
+        this.birthday = birthday;
     }
 
 
@@ -116,7 +117,7 @@ public class TrainerDto {
         return Objects.equals(id, that.id) &&
             Objects.equals(firstName, that.firstName) &&
             Objects.equals(lastName, that.lastName) &&
-            Objects.equals(age, that.age) &&
+            Objects.equals(birthday, that.birthday) &&
             Objects.equals(phone, that.phone) &&
             Objects.equals(email, that.email) &&
             Objects.equals(created, that.created) &&
@@ -126,7 +127,7 @@ public class TrainerDto {
 
     @Override
     public int hashCode () {
-        return Objects.hash(id, firstName, lastName, age, phone, email, created, updated);
+        return Objects.hash(id, firstName, lastName, birthday, phone, email, created, updated);
     }
 
 
@@ -136,7 +137,7 @@ public class TrainerDto {
             "id=" + id +
             ", firstName='" + firstName + '\'' +
             ", lastName='" + lastName + '\'' +
-            ", age=" + age +
+            ", birthday=" + birthday +
             ", phone='" + phone + '\'' +
             ", email='" + email + '\'' +
             ", created=" + created +

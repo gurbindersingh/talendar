@@ -5,11 +5,12 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 // TODO Validation for phone
-// TODO review current min/max constraint on age
+// TODO review current min/max constraint on birthday
 // TODO property for image? (type: String? path to location on server)
 
 @Entity
@@ -24,12 +25,12 @@ public class Trainer {
     @NotBlank
     private String lastName;
     @NotNull
-    @Min(16)
-    @Max(120)
-    private Integer age;
-    @NotNull
+    @Past
+    private LocalDate birthday;
+    @NotBlank
+    @Pattern(regexp = "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$")
     private String phone;
-    @NotNull
+    @NotBlank
     @Email
     private String email;
 
@@ -44,10 +45,10 @@ public class Trainer {
         
     }
 
-    public Trainer (@NotBlank String firstName, @NotBlank String lastName, @Min(0) @Max(120) Integer age, String phone, @Email String email, @Past LocalDateTime created, @Past LocalDateTime updated) {
+    public Trainer (@NotBlank String firstName, @NotBlank String lastName, @Past LocalDate birthday, String phone, @Email String email, @Past LocalDateTime created, @Past LocalDateTime updated) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.age = age;
+        this.birthday = birthday;
         this.phone = phone;
         this.email = email;
         this.created = created;
@@ -85,13 +86,13 @@ public class Trainer {
     }
 
 
-    public Integer getAge () {
-        return age;
+    public LocalDate getBirthday () {
+        return birthday;
     }
 
 
-    public void setAge (Integer age) {
-        this.age = age;
+    public void setBirthday (LocalDate birthday) {
+        this.birthday = birthday;
     }
 
 
@@ -143,7 +144,7 @@ public class Trainer {
         return Objects.equals(id, trainer.id) &&
             Objects.equals(firstName, trainer.firstName) &&
             Objects.equals(lastName, trainer.lastName) &&
-            Objects.equals(age, trainer.age) &&
+            Objects.equals(birthday, trainer.birthday) &&
             Objects.equals(phone, trainer.phone) &&
             Objects.equals(email, trainer.email) &&
             Objects.equals(created, trainer.created) &&
@@ -153,7 +154,7 @@ public class Trainer {
 
     @Override
     public int hashCode () {
-        return Objects.hash(id, firstName, lastName, age, phone, email, created, updated);
+        return Objects.hash(id, firstName, lastName, birthday, phone, email, created, updated);
     }
 
 
@@ -163,7 +164,7 @@ public class Trainer {
             "id=" + id +
             ", firstName='" + firstName + '\'' +
             ", lastName='" + lastName + '\'' +
-            ", age=" + age +
+            ", birthday=" + birthday +
             ", phone='" + phone + '\'' +
             ", email='" + email + '\'' +
             ", created=" + created +

@@ -4,7 +4,7 @@ import at.ac.tuwien.sepm.groupphase.backend.pojo.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidEntityException;
 import org.springframework.stereotype.Component;
 
-import javax.validation.Valid;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.regex.Pattern;
 
@@ -31,8 +31,12 @@ public class TrainerValidator implements IValidator<Trainer> {
             throw new InvalidEntityException("last name must be set");
         }
 
-        if (entity.getAge() ==  null || (entity.getAge() < 16 || entity.getAge() > 120)) {
-            throw new InvalidEntityException("age must be specified and must be a reasonable value");
+        if (entity.getBirthday() ==  null || (entity.getBirthday().isAfter(LocalDate.now()))) {
+            throw new InvalidEntityException("birthday mist be set and must be a past date");
+        } else if ((LocalDate.now().getYear() - entity.getBirthday().getYear()) > 100) {
+            throw new InvalidEntityException("birthday must be a reasonable date");
+        } else if ((LocalDate.now().getYear() - entity.getBirthday().getYear()) < 14) {
+            throw new InvalidEntityException("Trainer must be old enough");
         }
 
         if (entity.getPhone() == null || !phonePattern.matcher(entity.getPhone()).find()) {
