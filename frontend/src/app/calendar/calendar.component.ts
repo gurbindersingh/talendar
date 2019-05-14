@@ -2,24 +2,17 @@ import { Component, OnInit } from '@angular/core';
 import { registerLocaleData, DatePipe } from '@angular/common';
 import localeDe from '@angular/common/locales/de-AT';
 
-import {
-    CalendarDateFormatter,
-    DateFormatterParams,
-    CalendarView,
-} from 'angular-calendar';
+import { CalendarDateFormatter, CalendarView } from 'angular-calendar';
 import { CalendarEvent } from 'calendar-utils';
+import { CustomDateFormatter } from './CustomDateFormatter';
+import { Event } from './Event';
 
+/**
+ * In order to display week days in German the locale data
+ * needs to be imported and registered, because the calender
+ * uses Angular's i18n API.
+ */
 registerLocaleData(localeDe);
-
-class CustomDateFormatter extends CalendarDateFormatter {
-    public dayViewHour({ date, locale }: DateFormatterParams): string {
-        return new DatePipe(locale).transform(date, 'HH:mm', locale);
-    }
-
-    public weekViewHour({ date, locale }: DateFormatterParams): string {
-        return this.dayViewHour({ date, locale });
-    }
-}
 
 @Component({
     selector: 'app-calendar',
@@ -36,7 +29,7 @@ export class CalendarComponent implements OnInit {
     daysInWeek = 7;
     dayStartHour = 8;
     dayStartMinute = 0;
-    events: CalendarEvent[] = [];
+    events: Event[] = [];
     hourSegments = 4;
     locale = 'de-AT';
     precision = 'minutes';
@@ -47,8 +40,4 @@ export class CalendarComponent implements OnInit {
     constructor() {}
 
     ngOnInit() {}
-
-    setView(view: CalendarView) {
-        this.view = view;
-    }
 }
