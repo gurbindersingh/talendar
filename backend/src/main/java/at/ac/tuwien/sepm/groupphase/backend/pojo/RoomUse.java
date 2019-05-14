@@ -1,19 +1,20 @@
 package at.ac.tuwien.sepm.groupphase.backend.pojo;
 
 import at.ac.tuwien.sepm.groupphase.backend.pojo.enums.Room;
-import org.apache.tomcat.jni.Local;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@Entity
+@Table(name = "room_use")
 public class RoomUse {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime begin;
     @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime end;
     @Column
     @Enumerated(EnumType.STRING)
@@ -24,11 +25,22 @@ public class RoomUse {
     private Event event;
 
 
-    public RoomUse (@NotNull LocalDateTime begin, @NotNull LocalDateTime end, @NotNull Room room, Event event) {
+    public RoomUse (Long id, @NotNull LocalDateTime begin, @NotNull LocalDateTime end, @NotNull Room room, Event event) {
+        this.id = id;
         this.begin = begin;
         this.end = end;
         this.room = room;
         this.event = event;
+    }
+
+
+    public Long getId () {
+        return id;
+    }
+
+
+    public void setId (Long id) {
+        this.id = id;
     }
 
 
@@ -77,7 +89,8 @@ public class RoomUse {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
         RoomUse roomUse = (RoomUse) o;
-        return Objects.equals(begin, roomUse.begin) &&
+        return Objects.equals(id, roomUse.id) &&
+            Objects.equals(begin, roomUse.begin) &&
             Objects.equals(end, roomUse.end) &&
             room == roomUse.room &&
             Objects.equals(event, roomUse.event);
@@ -86,14 +99,15 @@ public class RoomUse {
 
     @Override
     public int hashCode () {
-        return Objects.hash(begin, end, room, event);
+        return Objects.hash(id, begin, end, room, event);
     }
 
 
     @Override
     public String toString () {
         return "RoomUse{" +
-            "begin=" + begin +
+            "id=" + id +
+            ", begin=" + begin +
             ", end=" + end +
             ", room=" + room +
             ", event=" + event +

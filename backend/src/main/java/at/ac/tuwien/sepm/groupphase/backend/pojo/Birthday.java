@@ -11,11 +11,14 @@ import java.util.LinkedList;
 import java.util.Objects;
 
 @Entity
+@DiscriminatorValue("Birthday")
 public class Birthday extends Event {
 
     @Column(name = "head_count")
     private Integer headCount;
     @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id")
     private Customer guardian;
     @Column(name = "average_age")
     private Integer avgAge;
@@ -30,6 +33,8 @@ public class Birthday extends Event {
     public Birthday(){
 
     }
+
+
     public Birthday (Long id, @NotBlank String name, @NotNull LinkedList<RoomUse> roomUses, @NotNull @Past LocalDateTime created, @NotNull @Past LocalDateTime updated, Integer headCount, @NotNull Customer guardian, Integer avgAge, @NotNull Trainer trainer, @NotNull BirthdayType type) {
         super(id, name, roomUses, created, updated);
         this.headCount = headCount;

@@ -12,12 +12,12 @@ import javax.persistence.Persistence;
 
 @Repository
 public class EventDao implements IEventDao {
-    static EntityManagerFactory emf = Persistence.createEntityManagerFactory("JPAService");
-    private EntityManager entityManager = emf.createEntityManager();
+
+    private EntityManager entityManager;
 
     @Autowired
-    public EventDao(){
-
+    public EventDao(EntityManager entityManager){
+        this.entityManager = entityManager;
     }
     @Override
     public Event insertBirthday(Birthday event){

@@ -6,10 +6,11 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
+
 @Entity
-@MappedSuperclass
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "event_type")
 public abstract class Event {
@@ -21,16 +22,13 @@ public abstract class Event {
     @Column(name = "name", nullable = false)
     @NotBlank
     private String name;
-    @NotNull
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "occupies_rooms")
-    private LinkedList<RoomUse> roomUses;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "event", orphanRemoval = true)
+    private List<RoomUse> roomUses = new LinkedList<>();
     @Column(name = "created", nullable = false, updatable = false)
     @Past
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime created;
     @Column(name = "updated", nullable = false)
     @Past
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime updated;
 
     public Event(){
@@ -84,7 +82,7 @@ public abstract class Event {
     }
 
 
-    public LinkedList<RoomUse> getRoomUses () {
+    public List<RoomUse> getRoomUses () {
         return roomUses;
     }
 
