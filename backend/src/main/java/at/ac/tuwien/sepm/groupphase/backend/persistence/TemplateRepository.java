@@ -14,6 +14,8 @@ public interface TemplateRepository extends JpaRepository<Template, Long> {
     // e.g.
     List<Template> findByTest(String toFind);
 
+
+
     // define search criteria within methodName
 
     // or use @Query annotation to define more complex queries on interface methods
