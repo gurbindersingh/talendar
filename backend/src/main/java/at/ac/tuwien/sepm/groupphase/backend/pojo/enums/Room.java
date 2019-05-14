@@ -1,4 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.pojo.enums;
 
-public interface Room {
+public enum Room {
+    Green,
+    Orange,
+    GroundFloor
 }

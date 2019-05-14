@@ -1,4 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.pojo.enums;
 
-public class BirthdayType {
+public enum BirthdayType {
+    DryIce,
+    Photo,
+    SuperHero,
+    Rocket
 }

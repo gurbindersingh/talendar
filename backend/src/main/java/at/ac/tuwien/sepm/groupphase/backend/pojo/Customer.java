@@ -9,7 +9,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
-public class Participant {
+public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,19 +21,17 @@ public class Participant {
     private String phone;
     @NotBlank
     private String name;
-    @Min(1)
-    @Max(12)
-    private Integer grade;
 
-    public Participant (){
+    public Customer (){
 
     }
-    public Participant (Long id, @NotBlank @Email String email, @NotBlank String phone, @NotBlank String name, @Min(1) @Max(12) Integer grade) {
+
+
+    public Customer (Long id, @NotBlank @Email String email, @NotBlank String phone, @NotBlank String name) {
         this.id = id;
         this.email = email;
         this.phone = phone;
         this.name = name;
-        this.grade = grade;
     }
 
 
@@ -77,43 +75,31 @@ public class Participant {
     }
 
 
-    public Integer getGrade () {
-        return grade;
-    }
-
-
-    public void setGrade (Integer grade) {
-        this.grade = grade;
-    }
-
-
     @Override
     public boolean equals (Object o) {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
-        Participant that = (Participant) o;
-        return Objects.equals(id, that.id) &&
-            Objects.equals(email, that.email) &&
-            Objects.equals(phone, that.phone) &&
-            Objects.equals(name, that.name) &&
-            Objects.equals(grade, that.grade);
+        Customer customer = (Customer) o;
+        return Objects.equals(id, customer.id) &&
+            Objects.equals(email, customer.email) &&
+            Objects.equals(phone, customer.phone) &&
+            Objects.equals(name, customer.name);
     }
 
 
     @Override
     public int hashCode () {
-        return Objects.hash(id, email, phone, name, grade);
+        return Objects.hash(id, email, phone, name);
     }
 
 
     @Override
     public String toString () {
-        return "Participant{" +
+        return "Customer{" +
             "id=" + id +
             ", email='" + email + '\'' +
             ", phone='" + phone + '\'' +
             ", name='" + name + '\'' +
-            ", grade=" + grade +
             '}';
     }
 }
