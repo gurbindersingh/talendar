@@ -5,6 +5,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -24,17 +25,19 @@ public abstract class Event {
     private String name;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "event", orphanRemoval = true)
     private List<RoomUse> roomUses = new LinkedList<>();
-    @Column(name = "created", nullable = false, updatable = false)
+    @Column(name = "created", insertable = false, nullable = false, updatable = false)
     @Past
-    private LocalDateTime created;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
     @Column(name = "updated", nullable = false)
     @Past
-    private LocalDateTime updated;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updated;
 
     public Event(){
 
     }
-    public Event (Long id, @NotBlank String name, @NotNull LinkedList<RoomUse> roomUses, @NotNull @Past LocalDateTime created, @NotNull @Past LocalDateTime updated) {
+    public Event (Long id, @NotBlank String name, @NotNull LinkedList<RoomUse> roomUses, @NotNull @Past Date created, @NotNull @Past Date updated) {
         this.id = id;
         this.name = name;
         this.roomUses = roomUses;
@@ -92,22 +95,22 @@ public abstract class Event {
     }
 
 
-    public LocalDateTime getCreated () {
+    public Date getCreated () {
         return created;
     }
 
 
-    public void setCreated (LocalDateTime created) {
+    public void setCreated (Date created) {
         this.created = created;
     }
 
 
-    public LocalDateTime getUpdated () {
+    public Date getUpdated () {
         return updated;
     }
 
 
-    public void setUpdated (LocalDateTime updated) {
+    public void setUpdated (Date updated) {
         this.updated = updated;
     }
 
