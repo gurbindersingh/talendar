@@ -1,6 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.util.mapper;
 
-import at.ac.tuwien.sepm.groupphase.backend.pojo.Trainer;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.TrainerDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;

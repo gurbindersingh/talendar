@@ -1,10 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend.util.validator;
 
-import at.ac.tuwien.sepm.groupphase.backend.pojo.Trainer;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidEntityException;
 import org.springframework.stereotype.Component;
 
-import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.regex.Pattern;
 
