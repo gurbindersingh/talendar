@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.Objects;
 
 @Entity
+@MappedSuperclass
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "event_type")
 public abstract class Event {
