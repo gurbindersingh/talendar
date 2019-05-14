@@ -21,7 +21,7 @@ public abstract class Event {
     @NotBlank
     private String name;
     @NotNull
-    @OneToMany(mappedBy = "occupies_rooms")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "occupies_rooms")
     private LinkedList<RoomUse> roomUses;
     @Column(name = "created", nullable = false, updatable = false)
     @Past

@@ -2,9 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.pojo;
 
 import at.ac.tuwien.sepm.groupphase.backend.pojo.enums.BirthdayType;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
@@ -22,16 +20,16 @@ public class Birthday extends Event {
     @Column(name = "average_age")
     private Integer avgAge;
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trainer_id")
     private Trainer trainer;
     @NotNull
+    @Enumerated(EnumType.STRING)
     private BirthdayType type;
 
     public Birthday(){
 
     }
-
-
     public Birthday (Long id, @NotBlank String name, @NotNull LinkedList<RoomUse> roomUses, @NotNull @Past LocalDateTime created, @NotNull @Past LocalDateTime updated, Integer headCount, @NotNull Customer guardian, Integer avgAge, @NotNull Trainer trainer, @NotNull BirthdayType type) {
         super(id, name, roomUses, created, updated);
         this.headCount = headCount;
