@@ -1,7 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.Entity;
 
 
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -9,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
+import java.util.List;
 
 @Entity
 @DiscriminatorValue("Course")
@@ -29,11 +29,13 @@ public class Course extends Event {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trainer_id")
     private Trainer trainer;
 
     @NotNull
     @OneToMany(fetch = FetchType.LAZY)
-    private LinkedList<Customer> customer;
+    @JoinColumn(name = "customer_id")
+    private List<Customer> customer;
 
 
     public Course(){
@@ -102,12 +104,12 @@ public class Course extends Event {
     }
 
 
-    public LinkedList<Customer> getCustomer () {
+    public List<Customer> getCustomer () {
         return customer;
     }
 
 
-    public void setCustomer (LinkedList<Customer> customer) {
+    public void setCustomer (List<Customer> customer) {
         this.customer = customer;
     }
 }
