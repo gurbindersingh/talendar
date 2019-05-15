@@ -11,8 +11,10 @@ public interface EventMapper {
 
     EventMapper INSTANCE = Mappers.getMapper(EventMapper.class);
 
+    @Mapping(target = "trainer", source = "trainerDto")
     Birthday dtoToEventEntity(BirthdayDto birthdayDto);
 
     @Mapping(target = "eventType", constant = "Birthday")
+    @Mapping(target = "trainerDto", source = "trainer")
     BirthdayDto entityToEventDto(Birthday birthday);
 }

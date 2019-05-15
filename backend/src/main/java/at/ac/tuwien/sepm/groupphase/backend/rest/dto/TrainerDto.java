@@ -3,7 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.rest.dto;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class TrainerDto {
+public class TrainerDto{
 
     private Long id;
     private String firstName;
