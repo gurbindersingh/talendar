@@ -1,11 +1,13 @@
 package at.ac.tuwien.sepm.groupphase.backend.pojo;
 
+import at.ac.tuwien.sepm.groupphase.backend.util.converter.LocalDateTimeConverter;
+import org.apache.tomcat.jni.Local;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -26,18 +28,18 @@ public abstract class Event {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "event", orphanRemoval = true)
     private List<RoomUse> roomUses = new LinkedList<>();
     @Column(name = "created", insertable = false, nullable = false, updatable = false)
+    @Convert(converter = LocalDateTimeConverter.class)
     @Past
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date created;
+    private LocalDateTime created;
     @Column(name = "updated", nullable = false)
+    @Convert(converter = LocalDateTimeConverter.class)
     @Past
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updated;
+    private LocalDateTime updated;
 
     public Event(){
 
     }
-    public Event (Long id, @NotBlank String name, @NotNull LinkedList<RoomUse> roomUses, @NotNull @Past Date created, @NotNull @Past Date updated) {
+    public Event (Long id, @NotBlank String name, @NotNull LinkedList<RoomUse> roomUses, @NotNull @Past LocalDateTime created, @NotNull @Past LocalDateTime updated) {
         this.id = id;
         this.name = name;
         this.roomUses = roomUses;
@@ -95,22 +97,22 @@ public abstract class Event {
     }
 
 
-    public Date getCreated () {
+    public LocalDateTime getCreated () {
         return created;
     }
 
 
-    public void setCreated (Date created) {
+    public void setCreated (LocalDateTime created) {
         this.created = created;
     }
 
 
-    public Date getUpdated () {
+    public LocalDateTime getUpdated () {
         return updated;
     }
 
 
-    public void setUpdated (Date updated) {
+    public void setUpdated (LocalDateTime updated) {
         this.updated = updated;
     }
 

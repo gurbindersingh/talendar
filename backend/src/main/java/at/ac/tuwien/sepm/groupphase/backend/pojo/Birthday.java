@@ -7,7 +7,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.Objects;
 
@@ -36,7 +35,7 @@ public class Birthday extends Event {
     }
 
 
-    public Birthday (Long id, @NotBlank String name, @NotNull LinkedList<RoomUse> roomUses, @NotNull @Past Date created, @NotNull @Past Date updated, Integer headCount, @NotNull Customer guardian, Integer avgAge, @NotNull Trainer trainer, @NotNull BirthdayType type) {
+    public Birthday (Long id, @NotBlank String name, @NotNull LinkedList<RoomUse> roomUses, @NotNull @Past LocalDateTime created, @NotNull @Past LocalDateTime updated, Integer headCount, @NotNull Customer guardian, Integer avgAge, @NotNull Trainer trainer, @NotNull BirthdayType type) {
         super(id, name, roomUses, created, updated);
         this.headCount = headCount;
         this.guardian = guardian;
