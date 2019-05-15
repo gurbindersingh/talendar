@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.Entity;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.util.LinkedList;
 import java.util.Objects;
 
 @Entity
@@ -20,6 +21,7 @@ public class Customer {
     private String phone;
     @NotBlank
     private String name;
+
 
     public Customer (){
 
