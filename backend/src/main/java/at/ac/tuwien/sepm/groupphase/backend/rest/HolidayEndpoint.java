@@ -1,8 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest;
 
-import at.ac.tuwien.sepm.groupphase.backend.rest.dto.TrainerDto;
-import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;
-import at.ac.tuwien.sepm.groupphase.backend.util.mapper.TrainerMapper;
+import at.ac.tuwien.sepm.groupphase.backend.rest.dto.HolidayDto;
+import at.ac.tuwien.sepm.groupphase.backend.service.IHolidayService;
+import at.ac.tuwien.sepm.groupphase.backend.util.mapper.HolidayMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,26 +21,26 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/api/talendar/trainers")
-public class TrainerEndpoint {
+@RequestMapping("/api/talendar/holiday")
+public class HolidayEndpoint {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TrainerEndpoint.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HolidayEndpoint.class);
 
-    private final ITrainerService trainerService;
-    private final TrainerMapper mapper;
+    private final IHolidayService holidayService;
+    private final HolidayMapper mapper;
 
     @Autowired
-    public TrainerEndpoint(ITrainerService trainerService, TrainerMapper mapper) {
-        this.trainerService = trainerService;
+    public HolidayEndpoint(IHolidayService holidayService, HolidayMapper mapper) {
+        this.holidayService = holidayService;
         this.mapper = mapper;
     }
 
     @PostMapping
-    public TrainerDto createNewTrainer(@RequestBody TrainerDto trainerDto) throws Exception {
-        LOGGER.info("Incoming POST Trainer Request");
+    public HolidayDto createNewHoliday(@RequestBody HolidayDto holidayDto) throws Exception {
+        LOGGER.info("Incoming POST holiday Request");
 
         try {
-            return mapper.entityToTrainerDto(trainerService.save(mapper.dtoToTrainerEntity(trainerDto)));
+            return mapper.entityToHolidayDto(holidayService.save(mapper.dtoToHolidayEntity(holidayDto)));
         }
         catch(Exception e) {
             LOGGER.error("POST Request Could Not Be Served Successfully - : {}", e.getMessage(), e);

@@ -1,40 +1,67 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest.dto;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
-public class TemplateDto {
-
-    private Long ID;
-    private String test;
-
-   public TemplateDto() {
-
-   }
+public class HolidayDto {
 
 
-    public TemplateDto (Long ID, String test) {
-        this.ID = ID;
-        this.test = test;
+
+    private Long id;
+    private Integer trainerid;
+    private LocalDateTime holidayStart;
+    private LocalDateTime holidayEnd;
+
+    public HolidayDto () {
+
     }
 
 
-    public Long getID () {
-        return ID;
+    public HolidayDto (Long id, Integer trainerid, LocalDateTime holidayStart, LocalDateTime holidayEnd) {
+        this.id = id;
+        this.trainerid = trainerid;
+        this.holidayStart = holidayStart;
+        this.holidayEnd = holidayEnd;
     }
 
 
-    public void setID (Long ID) {
-        this.ID = ID;
+    public Long getId () {
+        return id;
     }
 
 
-    public String getTest () {
-        return test;
+    public void setId (Long id) {
+        this.id = id;
     }
 
 
-    public void setTest (String test) {
-        this.test = test;
+    public Integer getTrainerid () {
+        return trainerid;
+    }
+
+
+    public void setTrainerid (Integer trainerid) {
+        this.trainerid = trainerid;
+    }
+
+
+    public LocalDateTime getHolidayStart () {
+        return holidayStart;
+    }
+
+
+    public void setHolidayStart (LocalDateTime holidayStart) {
+        this.holidayStart = holidayStart;
+    }
+
+
+    public LocalDateTime getHolidayEnd () {
+        return holidayEnd;
+    }
+
+
+    public void setHolidayEnd (LocalDateTime holidayEnd) {
+        this.holidayEnd = holidayEnd;
     }
 
 
@@ -42,23 +69,27 @@ public class TemplateDto {
     public boolean equals (Object o) {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
-        TemplateDto that = (TemplateDto) o;
-        return Objects.equals(ID, that.ID) &&
-            Objects.equals(test, that.test);
+        HolidayDto that = (HolidayDto) o;
+        return Objects.equals(id, that.id) &&
+            Objects.equals(trainerid, that.trainerid) &&
+            Objects.equals(holidayStart, that.holidayStart) &&
+            Objects.equals(holidayEnd, that.holidayEnd);
     }
 
 
     @Override
     public int hashCode () {
-        return Objects.hash(ID, test);
+        return Objects.hash(id, trainerid, holidayStart, holidayEnd);
     }
 
 
     @Override
     public String toString () {
-        return "TemplateDto{" +
-            "ID=" + ID +
-            ", test='" + test + '\'' +
+        return "HolidayDto{" +
+            "id=" + id +
+            ", trainerid=" + trainerid +
+            ", holidayStart=" + holidayStart +
+            ", holidayEnd=" + holidayEnd +
             '}';
     }
 }

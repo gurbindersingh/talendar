@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.configuration;
 
+import at.ac.tuwien.sepm.groupphase.backend.util.mapper.HolidayMapper;
 import at.ac.tuwien.sepm.groupphase.backend.util.mapper.TrainerMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +21,12 @@ public class BeansConfiguration {
     public TrainerMapper createTarinerMapper() {
         TrainerMapper trainerMapper = TrainerMapper.INSTANCE;
         return trainerMapper;
+    }
+
+    @Bean
+    public HolidayMapper createHolidayMapper() {
+        HolidayMapper holidayMapper = HolidayMapper.INSTANCE;
+        return holidayMapper;
     }
 
 }

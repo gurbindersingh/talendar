@@ -1,51 +1,46 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
-import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
-import at.ac.tuwien.sepm.groupphase.backend.pojo.Trainer;
-import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;
+import at.ac.tuwien.sepm.groupphase.backend.persistence.HolidayRepository;
+import at.ac.tuwien.sepm.groupphase.backend.pojo.Holiday;
+import at.ac.tuwien.sepm.groupphase.backend.service.IHolidayService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
-import at.ac.tuwien.sepm.groupphase.backend.util.validator.IValidator;
+import at.ac.tuwien.sepm.groupphase.backend.util.validator.Validator;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidEntityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 
 @Service
-public class TrainerService implements ITrainerService {
+public class HolidayService implements IHolidayService {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(TrainerService.class);
+    private final static Logger LOGGER = LoggerFactory.getLogger(HolidayService.class);
 
-    private final TrainerRepository trainerRepository;
-    private final IValidator<Trainer> validator;
+    private final HolidayRepository holidayRepository;
+    private final Validator validate;
 
     @Autowired
-    public TrainerService(TrainerRepository trainerRepository, IValidator<Trainer> validator) {
-        this.trainerRepository = trainerRepository;
-        this.validator = validator;
+    public HolidayService (HolidayRepository holidayRepository, Validator validate) {
+        this.holidayRepository = holidayRepository;
+        this.validate = validate;
     }
 
     @Override
-    public Trainer save (Trainer trainer) throws ServiceException, ValidationException {
-        LOGGER.info("Prepare save of new trainer: {}", trainer);
-        LocalDateTime timeOfCreation = LocalDateTime.now();
-
-        trainer.setCreated(timeOfCreation);
-        trainer.setUpdated(timeOfCreation);
+    public Holiday save (Holiday holiday) throws ServiceException, ValidationException {
+        LOGGER.info("Prepare save of new holiday: {}", holiday);
 
         try {
-            validator.validate(trainer);
+            validate.validateHoliday(holiday);
         }
         catch(InvalidEntityException e) {
-            LOGGER.debug("validity violation: {}", e.getMessage(), e);
-            throw new ValidationException("Given trainer instance is not valid: " + e.getMessage(), e);
+            LOGGER.error("validity violation: {}", e.getMessage(), e);
+            throw new ValidationException("Given holiday instance is not valid: " + e.getMessage(), e);
         }
 
         try {
-            return trainerRepository.save(trainer);
+            return holidayRepository.save(holiday);
         } catch(Exception e) {
             throw new ServiceException(e);
         }
