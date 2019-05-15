@@ -1,14 +1,13 @@
-package at.ac.tuwien.sepm.groupphase.backend.pojo;
+package at.ac.tuwien.sepm.groupphase.backend.Entity;
 
-import at.ac.tuwien.sepm.groupphase.backend.pojo.enums.BirthdayType;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.enums.BirthdayType;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -36,7 +35,7 @@ public class Birthday extends Event {
     }
 
 
-    public Birthday (Long id, @NotBlank String name, @NotNull LinkedList<RoomUse> roomUses, @NotNull @Past Date created, @NotNull @Past Date updated, Integer headCount, @NotNull Customer guardian, Integer avgAge, @NotNull Trainer trainer, @NotNull BirthdayType type) {
+    public Birthday (Integer id, @NotBlank String name, @NotNull List<RoomUse> roomUses, @NotNull @Past LocalDateTime created, @NotNull @Past LocalDateTime updated, Integer headCount, @NotNull Customer guardian, Integer avgAge, @NotNull Trainer trainer, @NotNull BirthdayType type) {
         super(id, name, roomUses, created, updated);
         this.headCount = headCount;
         this.guardian = guardian;
