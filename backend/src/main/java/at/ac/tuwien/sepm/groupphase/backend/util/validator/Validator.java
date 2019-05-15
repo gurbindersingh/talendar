@@ -46,12 +46,8 @@ public class Validator{
             }
         }
 
-        for(int i = 0; i < course.getCustomer().size(); i++){
-            try {
-                validateCustomer(course.getCustomer().get(i));
-            } catch(InvalidEntityException e){
-                throw e;
-            }
+        if(course.getCustomer() != null){
+            throw new InvalidEntityException("There should be no customers in creating a course");
         }
 
         try{
