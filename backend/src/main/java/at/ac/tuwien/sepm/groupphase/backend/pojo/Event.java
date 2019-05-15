@@ -1,6 +1,5 @@
 package at.ac.tuwien.sepm.groupphase.backend.pojo;
 
-import at.ac.tuwien.sepm.groupphase.backend.util.converter.LocalDateTimeConverter;
 import org.apache.tomcat.jni.Local;
 
 import javax.persistence.*;
@@ -28,11 +27,9 @@ public abstract class Event {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "event", orphanRemoval = true)
     private List<RoomUse> roomUses = new LinkedList<>();
     @Column(name = "created", insertable = false, nullable = false, updatable = false)
-    @Convert(converter = LocalDateTimeConverter.class)
     @Past
     private LocalDateTime created;
     @Column(name = "updated", nullable = false)
-    @Convert(converter = LocalDateTimeConverter.class)
     @Past
     private LocalDateTime updated;
 
