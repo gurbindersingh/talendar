@@ -1,6 +1,4 @@
-package at.ac.tuwien.sepm.groupphase.backend.pojo;
-
-import org.apache.tomcat.jni.Local;
+package at.ac.tuwien.sepm.groupphase.backend.Entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -20,30 +18,29 @@ public abstract class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
-    private Long id;
+    private Integer id;
     @Column(name = "name", nullable = false)
     @NotBlank
     private String name;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "event", orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "event", orphanRemoval = true) //check how cascade works in all methods
     private List<RoomUse> roomUses = new LinkedList<>();
     @Column(name = "created", insertable = false, nullable = false, updatable = false)
     @Past
     private LocalDateTime created;
     @Column(name = "updated", nullable = false)
     @Past
-    private LocalDateTime updated;
+    private LocalDateTime updated; //LocalDateTime > Date
 
     public Event(){
 
     }
-    public Event (Long id, @NotBlank String name, @NotNull LinkedList<RoomUse> roomUses, @NotNull @Past LocalDateTime created, @NotNull @Past LocalDateTime updated) {
+    public Event (Integer id, @NotBlank String name, @NotNull List<RoomUse> roomUses, @NotNull @Past LocalDateTime created, @NotNull @Past LocalDateTime updated) {
         this.id = id;
         this.name = name;
         this.roomUses = roomUses;
         this.created = created;
         this.updated = updated;
     }
-
 
     @Override
     public boolean equals (Object o) {
@@ -64,12 +61,12 @@ public abstract class Event {
     }
 
 
-    public Long getId () {
+    public Integer getId () {
         return id;
     }
 
 
-    public void setId (Long id) {
+    public void setId (Integer id) {
         this.id = id;
     }
 
@@ -89,7 +86,7 @@ public abstract class Event {
     }
 
 
-    public void setRoomUses (LinkedList<RoomUse> roomUses) {
+    public void setRoomUses (List<RoomUse> roomUses) {
         this.roomUses = roomUses;
     }
 

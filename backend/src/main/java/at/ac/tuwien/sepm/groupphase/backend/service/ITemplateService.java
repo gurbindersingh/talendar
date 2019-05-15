@@ -1,6 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
-import at.ac.tuwien.sepm.groupphase.backend.pojo.Template;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Template;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;

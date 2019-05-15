@@ -1,7 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
-import at.ac.tuwien.sepm.groupphase.backend.pojo.Trainer;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
@@ -40,13 +40,13 @@ public class TrainerService implements ITrainerService {
             validator.validate(trainer);
         }
         catch(InvalidEntityException e) {
-            LOGGER.debug("validity violation: {}", e.getMessage(), e);
+            LOGGER.error("validity violation: {}", e.getMessage(), e);
             throw new ValidationException("Given trainer instance is not valid: " + e.getMessage(), e);
         }
 
         try {
             return trainerRepository.save(trainer);
-        } catch(Exception e) {
+        } catch(Exception e) { //catch specific exceptions
             throw new ServiceException(e);
         }
     }
