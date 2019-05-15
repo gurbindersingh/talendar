@@ -40,6 +40,7 @@ public class EventService implements IEventService {
         LocalDateTime now = LocalDateTime.now();
         birthday.setCreated(now);
         birthday.setUpdated(now);
+
         try{
             validator.validateBirthday(birthday);
         }catch(InvalidEntityException e){

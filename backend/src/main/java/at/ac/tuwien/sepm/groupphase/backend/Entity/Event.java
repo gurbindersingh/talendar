@@ -1,7 +1,5 @@
 package at.ac.tuwien.sepm.groupphase.backend.Entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -24,7 +22,7 @@ public abstract class Event {
     @Column(name = "name", nullable = false)
     @NotBlank
     private String name;
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "event", orphanRemoval = true) //check how cascade works in all methods
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "event", orphanRemoval = true) //check how cascade works in all methods
     private List<RoomUse> roomUses = new LinkedList<>();
     @Column(name = "created", insertable = false, nullable = false, updatable = false)
     @Past
@@ -43,7 +41,6 @@ public abstract class Event {
         this.created = created;
         this.updated = updated;
     }
-
 
     @Override
     public boolean equals (Object o) {
