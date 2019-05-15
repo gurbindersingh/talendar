@@ -6,10 +6,8 @@ import at.ac.tuwien.sepm.groupphase.backend.util.mapper.TrainerMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Exception that occur within the underlying services will be reported and rethrown.
@@ -35,7 +33,8 @@ public class TrainerEndpoint {
         this.mapper = mapper;
     }
 
-    @PostMapping
+    @RequestMapping(method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
     public TrainerDto createNewTrainer(@RequestBody TrainerDto trainerDto) throws Exception {
         LOGGER.info("Incoming POST Trainer Request");
 

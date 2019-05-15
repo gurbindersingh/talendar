@@ -6,6 +6,7 @@ import at.ac.tuwien.sepm.groupphase.backend.TestObjects.TrainerDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class BackendApplicationTests {
 
     String phoneRegex = "^[+]*[(]{0,1}[0-9]{1,5}[)]{0,1}[-\\s\\./0-9]*$";
@@ -31,6 +32,7 @@ public class BackendApplicationTests {
     private static final String BASE_URL = "http://localhost:";
     private static final String TRAINER_URL = "/api/talendar/trainers";
 
+    @LocalServerPort
     private int port = 8080;
 
 	@Test
@@ -68,6 +70,7 @@ public class BackendApplicationTests {
         ResponseEntity<TrainerDto> response = REST_TEMPLATE.exchange(BASE_URL + port + TRAINER_URL, HttpMethod.POST, request, TrainerDto.class);
         TrainerDto trainerResponse = response.getBody();
         assertNotNull(trainerResponse);
+        System.out.println(trainerResponse);
         assertNotNull(trainerResponse.getId());
     }
 
