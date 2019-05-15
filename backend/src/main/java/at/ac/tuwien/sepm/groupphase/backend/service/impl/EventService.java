@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Birthday;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Course;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.enums.BirthdayType;
@@ -53,4 +54,19 @@ public class EventService implements IEventService {
     }
 
 
+    @Override
+    public Course save (Course course) throws ValidationException {
+          LOGGER.info("Prepare to save new Course");
+          LocalDateTime now = LocalDateTime.now();
+          course.setCreated(now);
+          course.setUpdated(now);
+
+          try {
+              validator.validateCourse(course);
+          } catch(InvalidEntityException e){
+              throw new ValidationException("Given Course is invalid: " + e.getMessage(), e);
+          }
+
+          return courseRepository.save(course);
+    }
 }

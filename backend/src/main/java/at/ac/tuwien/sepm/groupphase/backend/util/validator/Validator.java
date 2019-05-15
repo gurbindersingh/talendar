@@ -30,23 +30,39 @@ public class Validator{
             throw new InvalidEntityException("Name not set");
         }
 
+        if(course.getDescription() == null || course.getDescription().isBlank()){
+            throw new InvalidEntityException("Description not set");
+        }
 
         if(course.getMaxParticipants() == null){
-            throw new InvalidEntityException("Maximal Participants not set");
+            throw new InvalidEntityException("Maximal participants not set");
         } else if(course.getMaxParticipants() < 5){
-            throw new InvalidEntityException("Maximal Participants has to be above 5");
+            throw new InvalidEntityException("Maximal participants has to be above 5");
         }
 
         for(int i = 0; i < course.getRoomUses().size(); i++) {
-            if(course.getRoomUses().get(i).getBegin().isAfter(course.getEndOfApplication()));
+            if(course.getRoomUses().get(i).getBegin().isAfter(course.getEndOfApplication())){
+                throw new InvalidEntityException("Date of end of application is after begin of course");
+            }
+        }
+
+        for(int i = 0; i < course.getCustomer().size(); i++){
+            try {
+                validateCustomer(course.getCustomer().get(i));
+            } catch(InvalidEntityException e){
+                throw e;
+            }
+        }
+
+        try{
+            validateTrainer(course.getTrainer());
+        } catch(InvalidEntityException e){
+            throw e;
         }
 
         if(course.getPrice() == null){
             throw new InvalidEntityException("Price not set");
         }
-
-
-
 
     }
 
