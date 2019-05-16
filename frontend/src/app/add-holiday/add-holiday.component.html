@@ -1,0 +1,24 @@
+<h1>{{title}}</h1>
+<form name="holidayinputdata">
+    
+    TrainerID: <input><br>
+
+    <input type="text" class="form-control" id='datetimepicker4'/>
+    <script type="text/javascript">
+      $(function() {
+        $('datetimepicker4').datetimepicker();
+      });
+    </script>
+
+    Start Datum: <input type="text" ngbDatepicker #dstart="ngbDatepicker">
+      <button (click)="dstart.toggle()">Von</button><br>
+
+
+    End Datum: <input type="text" ngbDatepicker #dend="ngbDatepicker">
+    <button (click)="dend.toggle()">Bis</button><br>
+    <ngb-timepicker></ngb-timepicker><br>
+</form>
+
+<button [disabled]="clicked" (click)="handleClick()">
+  Urlaub eintragen
+</button>

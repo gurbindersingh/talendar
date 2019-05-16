@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.RestTemplate;
@@ -20,8 +21,7 @@ import java.util.regex.Pattern;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -88,25 +88,25 @@ public class BackendApplicationTests {
         System.out.println(holidayResponse);
         assertNotNull(holidayResponse.getId());
     }
+
+    //TODO: Get this thing to actually work as intented....disgusting
     @Test
-    public void postHolidayResponseTwo(){
-        HolidayDto holiday = new HolidayDto(null, 4, LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(3));
+    public void postHolidayWronglyThenStatus500(){
+        HolidayDto holiday = new HolidayDto(null, 2, LocalDateTime.now().plusDays(-1), LocalDateTime.now().plusDays(3));
         HttpEntity<HolidayDto> request = new HttpEntity<>(holiday);
         ResponseEntity<HolidayDto> response = REST_TEMPLATE.exchange(BASE_URL + port + HOLIDAY_URL, HttpMethod.POST, request, HolidayDto.class);
-        HolidayDto holidayResponse = response.getBody();
-        assertNotNull(holidayResponse);
-        System.out.println(holidayResponse);
-        assertNotNull(holidayResponse.getId());
+        assertEquals(response.getStatusCode(), 500);
+        //System.out.println(response);
     }
+
+    //TODO: Get this thing to actually work as intented....disgusting
     @Test
-    public void postHolidayResponseThree(){
-        HolidayDto holiday = new HolidayDto(null, 2, LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(27));
+    public void postHolidayEndBeforeStartThenStatus400(){
+        HolidayDto holiday = new HolidayDto(null, 2, LocalDateTime.now().plusDays(5), LocalDateTime.now().plusDays(3));
         HttpEntity<HolidayDto> request = new HttpEntity<>(holiday);
         ResponseEntity<HolidayDto> response = REST_TEMPLATE.exchange(BASE_URL + port + HOLIDAY_URL, HttpMethod.POST, request, HolidayDto.class);
-        HolidayDto holidayResponse = response.getBody();
-        assertNotNull(holidayResponse);
-        System.out.println(holidayResponse);
-        assertNotNull(holidayResponse.getId());
+        assertEquals(response.getStatusCode(), 400);
+        //System.out.println(response);
     }
 
 
