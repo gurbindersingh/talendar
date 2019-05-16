@@ -2,60 +2,36 @@
 <div class="container">
     <div class="row">
         <div class="btn-group btn-group-toggle col">
-            <label
+            <button
                 class="btn btn-primary"
-                for="month"
                 [class.active]="view === calendarView.Month"
+                (click)="toggleView(calendarView.Month)"
             >
-                <input
-                    id="month"
-                    type="radio"
-                    (click)="toggleView(calendarView.Month)"
-                />
-                Monat
-            </label>
-
-            <label
+                Month
+            </button>
+            <button
                 class="btn btn-primary"
-                for="week"
+                (click)="toggleView(calendarView.Week)"
                 [class.active]="
                     view === calendarView.Week && daysInWeek === null
                 "
             >
-                <input
-                    id="week"
-                    type="radio"
-                    (click)="toggleView(calendarView.Week)"
-                    checked
-                />
                 Woche
-            </label>
-
-            <label
+            </button>
+            <button
                 class="btn btn-primary"
-                for="3-days"
                 [class.active]="view === calendarView.Week && daysInWeek === 3"
+                (click)="toggleView(calendarView.Week, 3)"
             >
-                <input
-                    id="3-days"
-                    type="radio"
-                    (click)="toggleView(calendarView.Week, 3)"
-                />
                 3 Tage
-            </label>
-
-            <label
+            </button>
+            <button
                 class="btn btn-primary"
-                for="day"
                 [class.active]="view === calendarView.Week && daysInWeek === 1"
+                (click)="toggleView(calendarView.Week, 1)"
             >
-                <input
-                    id="day"
-                    type="radio"
-                    (click)="toggleView(calendarView.Week, 1)"
-                />
                 Tag
-            </label>
+            </button>
         </div>
 
         <div id="calendar-navigation" class="col btn-group">
@@ -91,6 +67,10 @@
     </div>
 </div>
 <hr />
+
+<h3 *ngIf="view === calendarView.Month">
+    {{ viewDate | calendarDate: view + 'ViewTitle':'de-AT' }}
+</h3>
 
 <ng-container *ngIf="view === calendarView.Month; else weekView">
     <mwl-calendar-month-view
