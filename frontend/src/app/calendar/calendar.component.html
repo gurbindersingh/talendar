@@ -7,18 +7,28 @@
     [(ngModel)]="view"
 >
     <label ngbButtonLabel class="btn-primary">
+        <input ngbButton type="radio" [value]="calendarView.Month" />
+        Monat
+    </label>
+
+    <label ngbButtonLabel class="btn-primary">
         <input
             ngbButton
             type="radio"
             [value]="calendarView.Week"
-            (click)="daysInWeek = 7"
+            (click)="daysInWeek = null"
         />
         Woche
     </label>
 
     <label ngbButtonLabel class="btn-primary">
-        <input ngbButton type="radio" [value]="calendarView.Month" />
-        Monat
+        <input
+            ngbButton
+            type="radio"
+            [value]="calendarView.ThreeDay"
+            (click)="daysInWeek = 3"
+        />
+        3 Tage
     </label>
 
     <label ngbButtonLabel class="btn-primary">
@@ -34,24 +44,32 @@
 
 <hr />
 
-<mwl-calendar-week-view
-    *ngIf="view === calendarView.Week || view === calendarView.Day"
-    [dayEndHour]="dayEndHour"
-    [dayEndMinute]="dayEndMinute"
-    [daysInWeek]="daysInWeek"
-    [dayStartHour]="dayStartHour"
-    [dayStartMinute]="dayStartMinute"
-    [events]="events"
-    [hourSegments]="hourSegments"
-    [locale]="locale"
-    [viewDate]="viewDate"
-    [weekStartsOn]="weekStartsOn"
-></mwl-calendar-week-view>
+<ng-container *ngIf="view === calendarView.Month; else weekView">
+    <mwl-calendar-month-view
+        [events]="events"
+        [locale]="locale"
+        [viewDate]="viewDate"
+        [weekStartsOn]="weekStartsOn"
+    ></mwl-calendar-month-view>
+</ng-container>
 
-<mwl-calendar-month-view
-    *ngIf="view === calendarView.Month"
-    [events]="events"
-    [locale]="locale"
-    [viewDate]="viewDate"
-    [weekStartsOn]="weekStartsOn"
-></mwl-calendar-month-view>
+<ng-template #weekView>
+    <!-- 
+        If the daysInWeek property is set to a number, 
+        viewDate will be the first day of the week, to 
+        prevent this from happening in the week view set
+        daysInWeek to NULL.
+    -->
+    <mwl-calendar-week-view
+        [dayEndHour]="dayEndHour"
+        [dayEndMinute]="dayEndMinute"
+        [daysInWeek]="daysInWeek"
+        [dayStartHour]="dayStartHour"
+        [dayStartMinute]="dayStartMinute"
+        [events]="events"
+        [hourSegments]="hourSegments"
+        [locale]="locale"
+        [viewDate]="viewDate"
+        [weekStartsOn]="weekStartsOn"
+    ></mwl-calendar-week-view>
+</ng-template>
