@@ -9,6 +9,7 @@ import javax.validation.constraints.Past;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @DiscriminatorValue("Course")
@@ -111,5 +112,39 @@ public class Course extends Event {
 
     public void setCustomer (List<Customer> customer) {
         this.customer = customer;
+    }
+
+
+    @Override
+    public boolean equals (Object o) {
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        if(!super.equals(o)) return false;
+        Course course = (Course) o;
+        return Objects.equals(endOfApplication, course.endOfApplication) &&
+            Objects.equals(price, course.price) &&
+            Objects.equals(maxParticipants, course.maxParticipants) &&
+            Objects.equals(description, course.description) &&
+            Objects.equals(trainer, course.trainer) &&
+            Objects.equals(customer, course.customer);
+    }
+
+
+    @Override
+    public int hashCode () {
+        return Objects.hash(super.hashCode(), endOfApplication, price, maxParticipants, description, trainer, customer);
+    }
+
+
+    @Override
+    public String toString () {
+        return "Course{" +
+            "endOfApplication=" + endOfApplication +
+            ", price=" + price +
+            ", maxParticipants=" + maxParticipants +
+            ", description='" + description + '\'' +
+            ", trainer=" + trainer +
+            ", customer=" + customer +
+            '}';
     }
 }

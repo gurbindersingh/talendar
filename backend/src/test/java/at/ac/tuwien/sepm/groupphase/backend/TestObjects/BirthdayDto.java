@@ -1,9 +1,11 @@
-package at.ac.tuwien.sepm.groupphase.backend.rest.dto;
+package at.ac.tuwien.sepm.groupphase.backend.TestObjects;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.enums.BirthdayType;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.enums.EventType;
+import at.ac.tuwien.sepm.groupphase.backend.rest.dto.EventDto;
+import at.ac.tuwien.sepm.groupphase.backend.rest.dto.RoomUseDto;
+import at.ac.tuwien.sepm.groupphase.backend.rest.dto.TrainerDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,7 +21,7 @@ public class BirthdayDto extends EventDto {
     private BirthdayType type;
 
 
-    public BirthdayDto(){
+    public BirthdayDto (){
 
     }
     public BirthdayDto (Integer id, String name, List<RoomUseDto> roomUses, LocalDateTime created, LocalDateTime updated, Integer headCount, Customer guardian, Integer avgAge, TrainerDto trainerDto, BirthdayType type) {

@@ -1,5 +1,4 @@
-package at.ac.tuwien.sepm.groupphase.backend.rest.dto;
-
+package at.ac.tuwien.sepm.groupphase.backend.TestObjects;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.enums.EventType;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -31,7 +30,7 @@ public abstract class EventDto {
     private LocalDateTime created;
     private LocalDateTime updated; //LocalDateTime > Date
 
-    public EventDto(){
+    public EventDto (){
 
     }
 
