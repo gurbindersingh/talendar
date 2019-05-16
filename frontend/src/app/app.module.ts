@@ -8,6 +8,8 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
+import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
+
 import { AppComponent } from './app.component';
 import { CalendarComponent } from './calendar/calendar.component';
 import { AddHolidayComponent } from './add-holiday/add-holiday.component';
@@ -24,6 +26,8 @@ import { AddHolidayComponent } from './add-holiday/add-holiday.component';
         }),
         NgbModule,
         FormsModule,
+        OwlDateTimeModule,
+        OwlNativeDateTimeModule,
     ],
     providers: [],
     bootstrap: [AppComponent],

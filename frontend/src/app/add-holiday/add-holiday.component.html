@@ -1,24 +1,23 @@
 <h1>{{title}}</h1>
 <form name="holidayinputdata">
-    
-    TrainerID: <input><br>
+  <div class="form-group">
+    <label for="TrainerId">Trainer Id</label>
+    <input class="form-control" id="TrainerId">
+  </div>
+  <div>
+      <label for="holidaystart">Start des Urlaubs</label>
+      <input class="form-control" id="holidaystart" [owlDateTime]="dt1" [owlDateTimeTrigger]="dt1" placeholder="Ende: Datum Uhrzeit" pickerType="both">
+      <owl-date-time #dt1></owl-date-time><br>
+  </div>
 
-    <input type="text" class="form-control" id='datetimepicker4'/>
-    <script type="text/javascript">
-      $(function() {
-        $('datetimepicker4').datetimepicker();
-      });
-    </script>
-
-    Start Datum: <input type="text" ngbDatepicker #dstart="ngbDatepicker">
-      <button (click)="dstart.toggle()">Von</button><br>
-
-
-    End Datum: <input type="text" ngbDatepicker #dend="ngbDatepicker">
-    <button (click)="dend.toggle()">Bis</button><br>
-    <ngb-timepicker></ngb-timepicker><br>
+  <div>
+      <label for="holidayend">Ende des Urlaubs</label>
+      <input class="form-control" id="holidayend" [owlDateTime]="dt2" [owlDateTimeTrigger]="dt2" placeholder="Ende: Datum Uhrzeit" pickerType="both">
+      <owl-date-time #dt2></owl-date-time><br>
+  </div>
+  <div>
+      <button class="form-control" id="submit" [disabled]="clicked" (click)="handleClick()">
+          Urlaub eintragen
+        </button>
+  </div>
 </form>
-
-<button [disabled]="clicked" (click)="handleClick()">
-  Urlaub eintragen
-</button>
