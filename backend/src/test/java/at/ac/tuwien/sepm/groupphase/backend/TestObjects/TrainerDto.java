@@ -1,57 +1,30 @@
-package at.ac.tuwien.sepm.groupphase.backend.pojo;
+package at.ac.tuwien.sepm.groupphase.backend.TestObjects;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-// TODO Validation for phone
-// TODO review current min/max constraint on age
-// TODO property for image? (type: String? path to location on server)
+public class TrainerDto {
 
-@Entity
-public class Trainer {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @NotBlank
     private String firstName;
-    @NotBlank
     private String lastName;
-    @NotNull
-    @Min(16)
-    @Max(120)
     private Integer age;
-    @NotNull
     private String phone;
-    @NotNull
-    @Email
     private String email;
-
-    @NotNull
-    @Past
     private LocalDateTime created;
-    @NotNull
-    @Past
     private LocalDateTime updated;
 
-    public Trainer() {
-        
+    public TrainerDto () {
+
     }
 
-    public Trainer (@NotBlank String firstName, @NotBlank String lastName, @Min(0) @Max(120) Integer age, String phone, @Email String email, @Past LocalDateTime created, @Past LocalDateTime updated) {
+
+    public TrainerDto (String firstName, String lastName, Integer age, String phone, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
         this.phone = phone;
         this.email = email;
-        this.created = created;
-        this.updated = updated;
     }
 
 
@@ -139,15 +112,15 @@ public class Trainer {
     public boolean equals (Object o) {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
-        Trainer trainer = (Trainer) o;
-        return Objects.equals(id, trainer.id) &&
-            Objects.equals(firstName, trainer.firstName) &&
-            Objects.equals(lastName, trainer.lastName) &&
-            Objects.equals(age, trainer.age) &&
-            Objects.equals(phone, trainer.phone) &&
-            Objects.equals(email, trainer.email) &&
-            Objects.equals(created, trainer.created) &&
-            Objects.equals(updated, trainer.updated);
+        TrainerDto that = (TrainerDto) o;
+        return Objects.equals(id, that.id) &&
+            Objects.equals(firstName, that.firstName) &&
+            Objects.equals(lastName, that.lastName) &&
+            Objects.equals(age, that.age) &&
+            Objects.equals(phone, that.phone) &&
+            Objects.equals(email, that.email) &&
+            Objects.equals(created, that.created) &&
+            Objects.equals(updated, that.updated);
     }
 
 
@@ -159,7 +132,7 @@ public class Trainer {
 
     @Override
     public String toString () {
-        return "Trainer{" +
+        return "TrainerDto{" +
             "id=" + id +
             ", firstName='" + firstName + '\'' +
             ", lastName='" + lastName + '\'' +

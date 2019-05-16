@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.configuration;
 
+import at.ac.tuwien.sepm.groupphase.backend.util.mapper.EventMapper;
 import at.ac.tuwien.sepm.groupphase.backend.util.mapper.TrainerMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,9 +18,15 @@ import org.springframework.context.annotation.Configuration;
 public class BeansConfiguration {
 
     @Bean
-    public TrainerMapper createTarinerMapper() {
+    public TrainerMapper createTrainerMapper() {
         TrainerMapper trainerMapper = TrainerMapper.INSTANCE;
         return trainerMapper;
+    }
+
+    @Bean
+    public EventMapper createEventMapper(){
+        EventMapper eventMapper = EventMapper.INSTANCE;
+        return eventMapper;
     }
 
 }

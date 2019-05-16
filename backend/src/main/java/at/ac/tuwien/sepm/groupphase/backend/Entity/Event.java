@@ -1,11 +1,10 @@
-package at.ac.tuwien.sepm.groupphase.backend.pojo;
+package at.ac.tuwien.sepm.groupphase.backend.Entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -19,32 +18,29 @@ public abstract class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
-    private Long id;
+    private Integer id;
     @Column(name = "name", nullable = false)
     @NotBlank
     private String name;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "event", orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "event", orphanRemoval = true) //check how cascade works in all methods
     private List<RoomUse> roomUses = new LinkedList<>();
     @Column(name = "created", insertable = false, nullable = false, updatable = false)
     @Past
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date created;
+    private LocalDateTime created;
     @Column(name = "updated", nullable = false)
     @Past
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updated;
+    private LocalDateTime updated; //LocalDateTime > Date
 
     public Event(){
 
     }
-    public Event (Long id, @NotBlank String name, @NotNull LinkedList<RoomUse> roomUses, @NotNull @Past Date created, @NotNull @Past Date updated) {
+    public Event (Integer id, @NotBlank String name, @NotNull List<RoomUse> roomUses, @NotNull @Past LocalDateTime created, @NotNull @Past LocalDateTime updated) {
         this.id = id;
         this.name = name;
         this.roomUses = roomUses;
         this.created = created;
         this.updated = updated;
     }
-
 
     @Override
     public boolean equals (Object o) {
@@ -65,12 +61,12 @@ public abstract class Event {
     }
 
 
-    public Long getId () {
+    public Integer getId () {
         return id;
     }
 
 
-    public void setId (Long id) {
+    public void setId (Integer id) {
         this.id = id;
     }
 
@@ -90,27 +86,27 @@ public abstract class Event {
     }
 
 
-    public void setRoomUses (LinkedList<RoomUse> roomUses) {
+    public void setRoomUses (List<RoomUse> roomUses) {
         this.roomUses = roomUses;
     }
 
 
-    public Date getCreated () {
+    public LocalDateTime getCreated () {
         return created;
     }
 
 
-    public void setCreated (Date created) {
+    public void setCreated (LocalDateTime created) {
         this.created = created;
     }
 
 
-    public Date getUpdated () {
+    public LocalDateTime getUpdated () {
         return updated;
     }
 
 
-    public void setUpdated (Date updated) {
+    public void setUpdated (LocalDateTime updated) {
         this.updated = updated;
     }
 

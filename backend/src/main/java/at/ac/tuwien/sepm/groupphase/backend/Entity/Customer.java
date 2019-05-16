@@ -1,21 +1,18 @@
-package at.ac.tuwien.sepm.groupphase.backend.pojo;
+package at.ac.tuwien.sepm.groupphase.backend.Entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "customer_type")
 public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
     @NotBlank
     @Email
     private String email;
@@ -27,9 +24,7 @@ public class Customer {
     public Customer (){
 
     }
-
-
-    public Customer (Long id, @NotBlank @Email String email, @NotBlank String phone, @NotBlank String name) {
+    public Customer (Integer id, @NotBlank @Email String email, @NotBlank String phone, @NotBlank String name) {
         this.id = id;
         this.email = email;
         this.phone = phone;
@@ -37,12 +32,12 @@ public class Customer {
     }
 
 
-    public Long getId () {
+    public Integer getId () {
         return id;
     }
 
 
-    public void setId (Long id) {
+    public void setId (Integer id) {
         this.id = id;
     }
 

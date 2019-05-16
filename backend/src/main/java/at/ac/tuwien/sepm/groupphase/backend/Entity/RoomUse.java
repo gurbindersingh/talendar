@@ -1,6 +1,8 @@
-package at.ac.tuwien.sepm.groupphase.backend.pojo;
+package at.ac.tuwien.sepm.groupphase.backend.Entity;
 
-import at.ac.tuwien.sepm.groupphase.backend.pojo.enums.Room;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.enums.Room;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -11,7 +13,7 @@ import java.util.Objects;
 public class RoomUse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
     @NotNull
     private LocalDateTime begin;
     @NotNull
@@ -25,7 +27,7 @@ public class RoomUse {
     private Event event;
 
 
-    public RoomUse (Long id, @NotNull LocalDateTime begin, @NotNull LocalDateTime end, @NotNull Room room, Event event) {
+    public RoomUse (Integer id, @NotNull LocalDateTime begin, @NotNull LocalDateTime end, @NotNull Room room, Event event) {
         this.id = id;
         this.begin = begin;
         this.end = end;
@@ -34,12 +36,12 @@ public class RoomUse {
     }
 
 
-    public Long getId () {
+    public Integer getId () {
         return id;
     }
 
 
-    public void setId (Long id) {
+    public void setId (Integer id) {
         this.id = id;
     }
 
