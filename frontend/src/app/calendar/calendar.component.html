@@ -1,47 +1,95 @@
 <br />
+<div class="container">
+    <div class="row">
+        <div class="btn-group btn-group-toggle col">
+            <label
+                class="btn btn-primary"
+                for="month"
+                [class.active]="view === calendarView.Month"
+            >
+                <input
+                    id="month"
+                    type="radio"
+                    (click)="toggleView(calendarView.Month)"
+                />
+                Monat
+            </label>
 
-<div
-    class="btn-group btn-group-toggle"
-    ngbRadioGroup
-    name="radioBasic"
-    [(ngModel)]="view"
->
-    <label ngbButtonLabel class="btn-primary">
-        <input ngbButton type="radio" [value]="calendarView.Month" />
-        Monat
-    </label>
+            <label
+                class="btn btn-primary"
+                for="week"
+                [class.active]="
+                    view === calendarView.Week && daysInWeek === null
+                "
+            >
+                <input
+                    id="week"
+                    type="radio"
+                    (click)="toggleView(calendarView.Week)"
+                    checked
+                />
+                Woche
+            </label>
 
-    <label ngbButtonLabel class="btn-primary">
-        <input
-            ngbButton
-            type="radio"
-            [value]="calendarView.Week"
-            (click)="daysInWeek = null"
-        />
-        Woche
-    </label>
+            <label
+                class="btn btn-primary"
+                for="3-days"
+                [class.active]="view === calendarView.Week && daysInWeek === 3"
+            >
+                <input
+                    id="3-days"
+                    type="radio"
+                    (click)="toggleView(calendarView.Week, 3)"
+                />
+                3 Tage
+            </label>
 
-    <label ngbButtonLabel class="btn-primary">
-        <input
-            ngbButton
-            type="radio"
-            [value]="calendarView.ThreeDay"
-            (click)="daysInWeek = 3"
-        />
-        3 Tage
-    </label>
+            <label
+                class="btn btn-primary"
+                for="day"
+                [class.active]="view === calendarView.Week && daysInWeek === 1"
+            >
+                <input
+                    id="day"
+                    type="radio"
+                    (click)="toggleView(calendarView.Week, 1)"
+                />
+                Tag
+            </label>
+        </div>
 
-    <label ngbButtonLabel class="btn-primary">
-        <input
-            ngbButton
-            type="radio"
-            [value]="calendarView.Day"
-            (click)="daysInWeek = 1"
-        />
-        Tag
-    </label>
+        <div id="calendar-navigation" class="col btn-group">
+            <button
+                class="btn btn-primary"
+                mwlCalendarPreviousView
+                [(viewDate)]="viewDate"
+                [view]="view"
+                [daysInWeek]="daysInWeek"
+            >
+                <i class="fas fa-chevron-circle-left"></i>
+                {{ navButtonLabel.prev }}
+            </button>
+
+            <button
+                class="btn btn-primary"
+                mwlCalendarToday
+                [(viewDate)]="viewDate"
+            >
+                <i class="fas fa-calendar-day"></i> Heute
+            </button>
+            <button
+                class="btn btn-primary"
+                mwlCalendarNextView
+                [(viewDate)]="viewDate"
+                [view]="view"
+                [daysInWeek]="daysInWeek"
+            >
+                <i class="fas fa-chevron-circle-right"></i>
+                {{ navButtonLabel.next }}
+            </button>
+        </div>
+    </div>
 </div>
-
 <hr />
 
 <ng-container *ngIf="view === calendarView.Month; else weekView">
