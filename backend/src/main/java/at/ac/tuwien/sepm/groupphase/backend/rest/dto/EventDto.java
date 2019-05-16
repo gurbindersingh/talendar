@@ -16,6 +16,7 @@ import java.util.Objects;
     include = JsonTypeInfo.As.PROPERTY,
     property = "eventType",
     visible = true)
+
 @JsonSubTypes({
     @JsonSubTypes.Type(value = BirthdayDto.class, name = "Birthday"),
     @JsonSubTypes.Type(value = CourseDto.class, name = "Course")
