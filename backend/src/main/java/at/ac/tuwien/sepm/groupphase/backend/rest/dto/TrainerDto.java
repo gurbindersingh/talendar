@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.rest.dto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 public class TrainerDto{
@@ -12,6 +13,7 @@ public class TrainerDto{
     private LocalDate birthday;
     private String phone;
     private String email;
+    private List<EventDto> events;
     private LocalDateTime created;
     private LocalDateTime updated;
 
@@ -20,12 +22,16 @@ public class TrainerDto{
     }
 
 
-    public TrainerDto (String firstName, String lastName, LocalDate birthday, String phone, String email) {
+    public TrainerDto (Long id, String firstName, String lastName, LocalDate birthday, String phone, String email, List<EventDto> events, LocalDateTime created, LocalDateTime updated) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthday = birthday;
         this.phone = phone;
         this.email = email;
+        this.events = events;
+        this.created = created;
+        this.updated = updated;
     }
 
 
@@ -89,6 +95,16 @@ public class TrainerDto{
     }
 
 
+    public List<EventDto> getEvents () {
+        return events;
+    }
+
+
+    public void setEvents (List<EventDto> events) {
+        this.events = events;
+    }
+
+
     public LocalDateTime getCreated () {
         return created;
     }
@@ -120,6 +136,7 @@ public class TrainerDto{
             Objects.equals(birthday, that.birthday) &&
             Objects.equals(phone, that.phone) &&
             Objects.equals(email, that.email) &&
+            Objects.equals(events, that.events) &&
             Objects.equals(created, that.created) &&
             Objects.equals(updated, that.updated);
     }
@@ -127,7 +144,7 @@ public class TrainerDto{
 
     @Override
     public int hashCode () {
-        return Objects.hash(id, firstName, lastName, birthday, phone, email, created, updated);
+        return Objects.hash(id, firstName, lastName, birthday, phone, email, events, created, updated);
     }
 
 
@@ -140,6 +157,7 @@ public class TrainerDto{
             ", birthday=" + birthday +
             ", phone='" + phone + '\'' +
             ", email='" + email + '\'' +
+            ", events=" + events +
             ", created=" + created +
             ", updated=" + updated +
             '}';

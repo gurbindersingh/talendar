@@ -1,56 +1,65 @@
 package at.ac.tuwien.sepm.groupphase.backend.Entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
-// TODO Validation for phone
-// TODO review current min/max constraint on birthday
-// TODO property for image? (type: String? path to location on server)
 
 @Entity
 public class Trainer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false,updatable = false)
     private Long id;
 
     @NotBlank
+    @Column(nullable = false)
     private String firstName;
     @NotBlank
+    @Column(nullable = false)
     private String lastName;
     @NotNull
     @Past
+    @Column(nullable = false)
     private LocalDate birthday;
     @NotBlank
     @Pattern(regexp = "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$")
+    @Column(nullable = false)
     private String phone;
     @NotBlank
     @Email
+    @Column(nullable = false)
     private String email;
+
+    @OneToMany(mappedBy = "trainer", fetch = FetchType.LAZY)
+    private List<Event> events;
 
     @NotNull
     @Past
+    @Column(nullable = false, updatable = false)
     private LocalDateTime created;
     @NotNull
     @Past
+    @Column(nullable = false)
     private LocalDateTime updated;
 
     public Trainer() {
         
     }
 
-    public Trainer (@NotBlank String firstName, @NotBlank String lastName, @Past LocalDate birthday, String phone, @Email String email, @Past LocalDateTime created, @Past LocalDateTime updated) {
+
+    public Trainer (Long id, @NotBlank String firstName, @NotBlank String lastName, @NotNull @Past LocalDate birthday, @NotBlank @Pattern(regexp = "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$") String phone, @NotBlank @Email String email, List<Event> events, @NotNull @Past LocalDateTime created, @NotNull @Past LocalDateTime updated) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthday = birthday;
         this.phone = phone;
         this.email = email;
+        this.events = events;
         this.created = created;
         this.updated = updated;
     }
@@ -116,6 +125,16 @@ public class Trainer {
     }
 
 
+    public List<Event> getEvents () {
+        return events;
+    }
+
+
+    public void setEvents (List<Event> events) {
+        this.events = events;
+    }
+
+
     public LocalDateTime getCreated () {
         return created;
     }
@@ -147,6 +166,7 @@ public class Trainer {
             Objects.equals(birthday, trainer.birthday) &&
             Objects.equals(phone, trainer.phone) &&
             Objects.equals(email, trainer.email) &&
+            Objects.equals(events, trainer.events) &&
             Objects.equals(created, trainer.created) &&
             Objects.equals(updated, trainer.updated);
     }
@@ -154,7 +174,7 @@ public class Trainer {
 
     @Override
     public int hashCode () {
-        return Objects.hash(id, firstName, lastName, birthday, phone, email, created, updated);
+        return Objects.hash(id, firstName, lastName, birthday, phone, email, events, created, updated);
     }
 
 
@@ -167,6 +187,7 @@ public class Trainer {
             ", birthday=" + birthday +
             ", phone='" + phone + '\'' +
             ", email='" + email + '\'' +
+            ", events=" + events +
             ", created=" + created +
             ", updated=" + updated +
             '}';
