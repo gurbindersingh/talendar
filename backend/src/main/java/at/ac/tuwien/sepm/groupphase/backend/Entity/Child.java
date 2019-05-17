@@ -1,11 +1,15 @@
-package at.ac.tuwien.sepm.groupphase.backend.pojo;
+package at.ac.tuwien.sepm.groupphase.backend.Entity;
 
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
+@Entity
+@DiscriminatorValue("child")
 public class Child extends Customer {
 
     @Min(1)
@@ -15,7 +19,7 @@ public class Child extends Customer {
     public Child(){
 
     }
-    public Child (Long id, @NotBlank @Email String email, @NotBlank String phone, @NotBlank String name, @Min(1) @Max(12) Integer grade) {
+    public Child (Integer id, @NotBlank @Email String email, @NotBlank String phone, @NotBlank String name, @Min(1) @Max(12) Integer grade) {
         super(id, email, phone, name);
         this.grade = grade;
     }

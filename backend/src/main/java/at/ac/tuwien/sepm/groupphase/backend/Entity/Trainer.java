@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm.groupphase.backend.pojo;
+package at.ac.tuwien.sepm.groupphase.backend.Entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
