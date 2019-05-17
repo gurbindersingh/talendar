@@ -1,28 +1,27 @@
 package at.ac.tuwien.sepm.groupphase.backend.unit.service;
 
 
+import at.ac.tuwien.sepm.groupphase.backend.TestDataCreation.FakeData;
+import at.ac.tuwien.sepm.groupphase.backend.TestObjects.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
-import at.ac.tuwien.sepm.groupphase.backend.pojo.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;
-import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
+import at.ac.tuwien.sepm.groupphase.backend.util.validator.Validator;
+import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidEntityException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Profile;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.persistence.PersistenceException;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 
@@ -32,60 +31,90 @@ public class TrainerServiceTest {
 
     @Autowired
     private ITrainerService trainerService;
+    @Autowired
+    private Validator validator;
 
     @MockBean
     private TrainerRepository trainerRepository;
 
-    private Trainer VALID_TRAINER = new Trainer("Test FN", "Test LN", LocalDate.now().minusYears(20), "01 234 56 7", "testFn.testLn@test.com", LocalDateTime.now(), LocalDateTime.now());
-    private static Trainer PERSISTED_TRAINER =  new Trainer("Test FN", "Test LN", LocalDate.now().minusDays(1), "01 234 56 7", "testFn.testLn@test.com", LocalDateTime.now(), LocalDateTime.now());
-    private Trainer INVALID_TRAINER_MISSING_FN = new Trainer("", "Test LN", LocalDate.now().minusDays(1) , "01 234 56 7", "testFn.testLn@test.com", LocalDateTime.now(), LocalDateTime.now());
-    private Trainer INVALID_TRAINER_MISSING_LN = new Trainer("Test FN", "", LocalDate.now().minusDays(1), "01 234 56 7", "testFn.testLn@test.com", LocalDateTime.now(), LocalDateTime.now());
-    private Trainer INVALID_TRAINER_MISSING_BIRTHDAY = new Trainer("Test FN", "LN", null, "01 234 56 7", "testFn.testLn@test.com", LocalDateTime.now(), LocalDateTime.now());
-    private Trainer INVALID_TRAINER_MISSING_PHONE = new Trainer("Test FN", "Test LN", LocalDate.now().minusDays(1), "", "testFn.testLn@test.com", LocalDateTime.now(), LocalDateTime.now());
-    private Trainer INVALID_TRAINER_MISSING_MAIL = new Trainer("Test FN", "Test LN", LocalDate.now().minusDays(1), "01 234 56 7", "", LocalDateTime.now(), LocalDateTime.now());
-    private Trainer INVALID_TRAINER_MISSING_CREATED = new Trainer("Test FN", "Test LN", LocalDate.now().minusDays(1), "01 234 56 7", "testFn.testLn@test.com", null, LocalDateTime.now());
-    private Trainer INVALID_TRAINER_MISSING_UPDATE = new Trainer("Test FN", "Test LN", LocalDate.now().minusDays(1), "01 234 56 7", "testFn.testLn@test.com", LocalDateTime.now(), null);
+    @Autowired
+    private static FakeData trainerFaker = new FakeData();
 
-    private Trainer INVALID_TRAINER_TOOLOW_AGE = new Trainer("Test FN", "Test LN", LocalDate.now(), "01 234 56 7", "testFn.testLn@test.com", LocalDateTime.now(), LocalDateTime.now());
-    private Trainer INVALID_TRAINER_NO_REAL_PHONE = new Trainer("Test FN", "Test LN", LocalDate.now().minusDays(1), "01 ABC 34", "testFn.testLn@test.com", LocalDateTime.now(), LocalDateTime.now());
-    private Trainer INVALID_TRAINER_NO_REAL_EMAIL = new Trainer("Test FN", "Test LN", LocalDate.now().minusDays(1), "01 234 56 7", "testFn.testLn", LocalDateTime.now(), LocalDateTime.now());
-    private Trainer INVALID_TRAINER_FUTURE_CREATION_TIME = new Trainer("Test FN", "Test LN", LocalDate.now().minusDays(1), "01 234 56 7", "testFn.testLn@test.com", LocalDateTime.now().plusDays(1), LocalDateTime.now());
-    private Trainer INVALID_TRAINER_FUTURE_UPDATE_TIME = new Trainer("Test FN", "Test LN", LocalDate.now().minusDays(1), "01 234 56 7", "testFn.testLn@test.com", LocalDateTime.now(), LocalDateTime.now().plusDays(1));
+    /**
+     * PREPARE Trainer Instances Used For Testing Of Service Layer (INCLUDING VALIDATION TEST)
+     *
+     * Create Initial All Valid Trainers
+     */
 
+    private static Trainer VALID_INCOMING_TRAINER = trainerFaker.fakeTrainerEntity();
+    private static Trainer PERSISTED_TRAINER = trainerFaker.fakeTrainerEntity();
+    private static Trainer INVALID_TRAINER_MISSING_FN = trainerFaker.fakeTrainerEntity();
+    private static Trainer INVALID_TRAINER_MISSING_LN = trainerFaker.fakeTrainerEntity();
+    private static Trainer INVALID_TRAINER_MISSING_BIRTHDAY = trainerFaker.fakeTrainerEntity();
+    private static Trainer INVALID_TRAINER_MISSING_PHONE = trainerFaker.fakeTrainerEntity();
+    private static Trainer INVALID_TRAINER_MISSING_MAIL = trainerFaker.fakeTrainerEntity();
+    private static Trainer INVALID_TRAINER_MISSING_CREATED = trainerFaker.fakeTrainerEntity();
+    private static Trainer INVALID_TRAINER_MISSING_UPDATE = trainerFaker.fakeTrainerEntity();
+
+    private static Trainer INVALID_TRAINER_TOO_LOW_AGE = trainerFaker.fakeTrainerEntity();
+    private static Trainer INVALID_TRAINER_NO_REAL_PHONE = trainerFaker.fakeTrainerEntity();
+    private static Trainer INVALID_TRAINER_NO_REAL_EMAIL = trainerFaker.fakeTrainerEntity();
+    private static Trainer INVALID_TRAINER_FUTURE_CREATION_TIME = trainerFaker.fakeTrainerEntity();
+    private static Trainer INVALID_TRAINER_FUTURE_UPDATE_TIME = trainerFaker.fakeTrainerEntity();
+
+
+    /**
+     * Prepare Each Instance Individually
+     */
 
     @BeforeAll
     public static void init() {
-        PERSISTED_TRAINER.setId(1l);
+        // a incoming trainer has no assigned ID, no creation or updated stamp
+        VALID_INCOMING_TRAINER.setId(null);
+        VALID_INCOMING_TRAINER.setCreated(null);
+        VALID_INCOMING_TRAINER.setUpdated(null);
+
+        // remove one property each of each type of invalid trainers
+        INVALID_TRAINER_MISSING_FN.setFirstName("");
+        INVALID_TRAINER_MISSING_LN.setLastName("");
+        INVALID_TRAINER_MISSING_BIRTHDAY.setBirthday(null);
+        INVALID_TRAINER_MISSING_PHONE.setPhone("");
+        INVALID_TRAINER_MISSING_MAIL.setEmail("");
+        INVALID_TRAINER_MISSING_CREATED.setCreated(null);
+        INVALID_TRAINER_MISSING_UPDATE.setUpdated(null);
+        INVALID_TRAINER_TOO_LOW_AGE.setBirthday(LocalDate.now().minusYears(15));
+        INVALID_TRAINER_NO_REAL_PHONE.setPhone("123abc456");
+        INVALID_TRAINER_NO_REAL_EMAIL.setEmail("testFn.testLn");
+        INVALID_TRAINER_FUTURE_CREATION_TIME.setCreated(LocalDateTime.now().plusDays(1));
+        INVALID_TRAINER_FUTURE_UPDATE_TIME.setUpdated(LocalDateTime.now().plusDays(1));
     }
 
-    @Test
-    public void test_saveTrainer_valid_shouldSucceed() throws Exception{
-        when(trainerRepository.save(VALID_TRAINER)).thenReturn(PERSISTED_TRAINER);
-
-        Trainer persistedTrainerAsReturnedByMock = trainerService.save(VALID_TRAINER);
-
-        assertNotNull(persistedTrainerAsReturnedByMock.getId());
-    }
-
-
-    /***
-     * When The Persistence Level Throws An Exception This Exception Is Accurately Passed On
-     */
-
-    public void test_backednThrowsEception_serviceShouldHandleIt() {
-        when(trainerRepository.saveAll(Mockito.any())).thenThrow(PersistenceException.class);
-
-        assertThrows(ServiceException.class, () -> trainerService.save(Mockito.any()));
-    }
 
     /**
-     * Now Do Not Consider Persistence
+     * Test If Given Valid Trainer Instance (Incoming) Is Accepted By The Service Layer
+     * After The Service Handles This Request, The Trainer's Created And Updated Stamps Have
+     * To Be Set
+     */
+
+    @Test
+    public void test_saveValidTrainer_TrainerShouldBeAccepted() throws Exception {
+        // just mock it out because we only test service logic
+        when(trainerRepository.save(any(Trainer.class))).thenReturn(PERSISTED_TRAINER);
+        trainerService.save(VALID_INCOMING_TRAINER);
+
+        assertNotNull(VALID_INCOMING_TRAINER.getCreated());
+        assertNotNull(VALID_INCOMING_TRAINER.getUpdated());
+        assertFalse(VALID_INCOMING_TRAINER.getCreated().isAfter(VALID_INCOMING_TRAINER.getUpdated()));
+    }
+
+
+    /**
      * Service Level Has To Detect Invalid Entities
      */
 
     @Test
     public void test_saveInvalidTrainer_wrongAge_shouldThrowException() {
-        assertThrows(ValidationException.class, () -> trainerService.save(INVALID_TRAINER_TOOLOW_AGE));
+        assertThrows(ValidationException.class, () -> trainerService.save(INVALID_TRAINER_TOO_LOW_AGE));
     }
 
 
@@ -99,15 +128,6 @@ public class TrainerServiceTest {
         assertThrows(ValidationException.class, () -> trainerService.save(INVALID_TRAINER_NO_REAL_EMAIL));
     }
 
-    @Test
-    public void test_saveInvalidTrainer_wrongCreation_shouldThrowException() {
-        assertThrows(ValidationException.class, () -> trainerService.save(INVALID_TRAINER_FUTURE_CREATION_TIME));
-    }
-
-    @Test
-    public void test_saveInvalidTrainer_wrongUpdate_shouldThrowException() {
-        assertThrows(ValidationException.class, () -> trainerService.save(INVALID_TRAINER_FUTURE_UPDATE_TIME));
-    }
 
     /**
      * ASSURE ALL FIELDS ARE SET (Not blank if Strings, or Non Null For Non Text Types)
@@ -138,16 +158,33 @@ public class TrainerServiceTest {
         assertThrows(ValidationException.class, () -> trainerService.save(INVALID_TRAINER_MISSING_MAIL));
     }
 
+
+
+
+    /**
+     * Test Validator Exclusively: Because Date Stamps Are Set Within Service Correctly Which Makes
+     * It Impossible To Test Validator Correctness
+     * Thus Simple Test Validator Directly
+     */
+
     @Test
     public void test_saveInvalidTrainer_missingCreated_shouldThrowException() {
-        assertThrows(ValidationException.class, () -> trainerService.save(INVALID_TRAINER_MISSING_CREATED));
+        assertThrows(InvalidEntityException.class, () -> validator.validateTrainer(INVALID_TRAINER_MISSING_CREATED));
     }
 
     @Test
     public void test_saveInvalidTrainer_missingUpdated_shouldThrowException() {
-        assertThrows(ValidationException.class, () -> trainerService.save(INVALID_TRAINER_MISSING_UPDATE));
+        assertThrows(InvalidEntityException.class, () ->validator.validateTrainer(INVALID_TRAINER_MISSING_UPDATE));
     }
 
+    @Test
+    public void test_saveInvalidTrainer_wrongCreation_shouldThrowException() {
+        assertThrows(InvalidEntityException.class, () -> validator.validateTrainer(INVALID_TRAINER_FUTURE_CREATION_TIME));
+    }
 
+    @Test
+    public void test_saveInvalidTrainer_wrongUpdate_shouldThrowException() {
+        assertThrows(InvalidEntityException.class, () -> validator.validateTrainer(INVALID_TRAINER_FUTURE_UPDATE_TIME));
+    }
 
 }

@@ -62,7 +62,7 @@ public class BackendApplicationTests {
     @Test
     public void postTrainerResponse(){
         FakeData fakeData = new FakeData();
-        TrainerDto trainer = fakeData.fakeTrainer();
+        TrainerDto trainer = fakeData.fakeTrainerDto();
         trainer.setId(null);
         trainer.setUpdated(null);
         trainer.setCreated(null);
