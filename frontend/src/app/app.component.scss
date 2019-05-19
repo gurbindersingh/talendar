@@ -13,9 +13,6 @@
 }
 
 @include media-breakpoint-up(xl) {
-    #nav {
-    }
-
     #content {
         max-height: 100vh;
     }
