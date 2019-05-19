@@ -1,0 +1,17 @@
+@import 'node_modules/bootstrap/scss/functions';
+@import 'node_modules/bootstrap/scss/variables';
+@import 'node_modules/bootstrap/scss/mixins/_breakpoints';
+
+#nav-items {
+    display: none;
+}
+
+@include media-breakpoint-up(xl) {
+    .navbar-toggler {
+        display: none;
+    }
+
+    #nav-items {
+        display: block;
+    }
+}

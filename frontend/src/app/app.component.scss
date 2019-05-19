@@ -2,15 +2,21 @@
 @import 'node_modules/bootstrap/scss/variables';
 @import 'node_modules/bootstrap/scss/mixins/_breakpoints';
 
+#app-container {
+    height: 100vh;
+}
 
+#content {
+    max-height: calc(100vh - 47px);
+    overflow-x: hidden;
+    overflow-y: auto;
+}
 
 @include media-breakpoint-up(xl) {
-    #app-container {
-        height: 100vh;
+    #nav {
     }
 
     #content {
         max-height: 100vh;
-        overflow: auto;
     }
 }
