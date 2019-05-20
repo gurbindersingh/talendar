@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { CalendarComponent } from './calendar/calendar.component';
 import { AddCourseComponent } from './add-course/add-course.component';
+import { AddPrivateMeetingComponent } from './add-private-meeting/add-private-meeting.component';
 
 const routes: Routes = [
     {
@@ -13,6 +14,10 @@ const routes: Routes = [
         path: 'addCourse',
         component: AddCourseComponent,
     },
+    {
+        path: 'addPrivateMeeting',
+        component: AddPrivateMeetingComponent,
+    }
 ];
 
 @NgModule({

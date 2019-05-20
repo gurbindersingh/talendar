@@ -13,9 +13,10 @@ import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import { AppComponent } from './app.component';
 import { CalendarComponent } from './calendar/calendar.component';
 import { AddCourseComponent } from './add-course/add-course.component';
+import { AddPrivateMeetingComponent } from './add-private-meeting/add-private-meeting.component';
 
 @NgModule({
-    declarations: [AppComponent, CalendarComponent, AddCourseComponent],
+    declarations: [AppComponent, CalendarComponent, AddCourseComponent, AddPrivateMeetingComponent],
     imports: [
         AppRoutingModule,
         BrowserAnimationsModule,

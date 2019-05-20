@@ -1,0 +1,35 @@
+<form>
+  <div class="jumbotron">
+    <h2>Raum mieten</h2>
+  </div>
+  <div class="form-group">
+     <label for="name">Name</label>
+     <input type="text" class="form-control" id="name" placeholder="">
+  </div>
+  <div class="form-group">
+      <label for="description">Email</label>
+      <input type="email" class="form-control" id="email" placeholder="">
+  </div>
+  <div class="form-group">
+      <label for="dt2">Von</label>
+      <input class="form-control" [owlDateTime]="dt2" [owlDateTimeTrigger]="dt2" placeholder="" id ="dateTimeBegin">
+      <owl-date-time #dt2></owl-date-time>
+   </div>
+   <div class="form-group">
+      <label for="dt3">Bis</label>
+      <input class="form-control" [owlDateTime]="dt3" [owlDateTimeTrigger]="dt3" placeholder="" id="dateTimeEnd">
+      <owl-date-time #dt3></owl-date-time>
+   </div>
+      <div class="col">
+        <div ngbDropdown class="d-inline-block">
+          <button class="btn btn-outline-primary" id="room" ngbDropdownToggle>{{roomString}}</button>
+          <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+            <button class="dropdown-item" *ngFor="let room of rooms" (click)="ChangeSortOrder(room)" >{{room}}</button>
+          </div>
+      </div>
+    </div>
+    <div>
+      <label>Price</label>
+    </div>
+   <button type="submit" class="btn btn-primary">Submit</button>
+</form> 
