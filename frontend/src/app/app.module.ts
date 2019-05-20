@@ -10,9 +10,10 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { AppComponent } from './app.component';
 import { CalendarComponent } from './calendar/calendar.component';
+import { NewBirthdayComponent } from './new-birthday/new-birthday.component';
 
 @NgModule({
-    declarations: [AppComponent, CalendarComponent],
+    declarations: [AppComponent, CalendarComponent, NewBirthdayComponent],
     imports: [
         AppRoutingModule,
         BrowserAnimationsModule,
