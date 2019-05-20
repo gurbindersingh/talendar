@@ -1,6 +1,6 @@
 <form>
   <div class = "row">
-    <b class = "col-2">Art vom Geburtstag:</b>
+    <label class = "form-control">Art vom Geburtstag:</label>
 
     <select class = "col-3" name = "birthdays">
       <option value = "DryIce"> Trockeneis Geburtstag</option>
@@ -9,7 +9,7 @@
       <option value = "Photo">  Photo Geburtstag</option>
       <option value = "Painting"> Malen Geburtstag</option>
     </select>
-    <b class = "col-2">Anzahl an kommende Kinder (ca.):</b>
+    <label class = "form-control">Anzahl an kommende Kinder (ca.):</label>
 
     <select class = "col-3" name = "headcount">
       <option value="5">5</option>
@@ -31,7 +31,7 @@
     </select>
   </div>
   <div class = "row">
-      <b class = "col-2">Wie alt wird es denn?</b>
+      <label class = "form-control">Wie alt wird es denn?</label>
 
       <select class = "col-3" name = "ageToBe">
         <option value="5">5</option>
@@ -46,8 +46,9 @@
         <option value="14">14</option>
         <option value="15">15</option>
       </select>
-      <b class = "col-2">Wann wollen sie den Geburtstag gestalten?</b>
-     
+      <label class = "form-control">Wann wollen sie den Geburtstag gestalten?</label>
+      <input class="form-control" id="geburtstagstart" [owlDateTime]="dt1" [owlDateTimeTrigger]="dt1" placeholder="Start: Datum Uhrzeit" pickerType="both">
+          <owl-date-time #dt1></owl-date-time><br>
   </div>
 
  

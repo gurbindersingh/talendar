@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
+
 @Component({
   selector: 'app-new-birthday',
   templateUrl: './new-birthday.component.html',
