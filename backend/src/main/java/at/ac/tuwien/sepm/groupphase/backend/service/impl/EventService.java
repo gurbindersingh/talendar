@@ -28,16 +28,38 @@ public class EventService implements IEventService {
 
     @Override
     public Event save (Event event) throws ValidationException {
-        System.out.println("We are now here: Birthday save service\n");
-        LOGGER.info("Prepare to save new Birthday");
+        System.out.println("We are now here: Event save service\n");
+        LOGGER.info("Prepare to save new Event");
         LocalDateTime now = LocalDateTime.now();
         event.setCreated(now);
         event.setUpdated(now);
 
-        try{
-            validator.validateBirthday(event);
-        }catch(InvalidEntityException e){
-            throw new ValidationException("Given Birthday is invalid: " + e.getMessage(), e );
+        switch(event.getEventType()) {
+            case Birthday:
+                  try {
+                      validator.validateBirthday(event);
+                  }
+                  catch(InvalidEntityException e) {
+                      throw new ValidationException("Given Birthday is invalid: " + e.getMessage(), e);
+                  }
+                  break;
+
+            case Course:
+                try {
+                    validator.validateCourse(event);
+                }
+                catch(InvalidEntityException e) {
+                    throw new ValidationException("Given Course is invalid: " + e.getMessage(), e);
+                }
+                break;
+
+            case Rent:
+                //TODO
+                break;
+
+            case Consultation:
+                //TODO
+                break;
         }
         return eventRepository.save(event);
     }

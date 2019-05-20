@@ -18,6 +18,74 @@ public class Validator{
     Pattern phonePattern = Pattern.compile(phoneRegex);
     Pattern emailPattern = Pattern.compile(emailRegex);
 
+
+
+    public void validateCourse(Event course) throws InvalidEntityException{
+        LocalDateTime now = LocalDateTime.now();
+
+        if(course.getName() == null || course.getName().isBlank()){
+            throw new InvalidEntityException("Name cannot be empty");
+        }
+        if (course.getCreated() == null || course.getCreated().isAfter(now)) {
+            throw new InvalidEntityException("creation time must be set (past date)");
+        }
+        if (course.getUpdated() == null || course.getUpdated().isAfter(now)) {
+            throw new InvalidEntityException("lates update time must be set (past date)");
+        }
+        if (course.getCreated().isAfter(course.getUpdated())) {
+            throw new InvalidEntityException("create time may not be changed afterwards and has to be before latest update time");
+        }
+
+        if(course.getEndOfApplication() == null){
+            throw new InvalidEntityException("End of application is not set");
+        } else if(course.getEndOfApplication().isBefore(now)){
+            throw new InvalidEntityException("End of application should be in future");
+        }
+
+        if(course.getPrice() == null){
+            throw new InvalidEntityException("Price not set");
+        } else if(course.getPrice() < 0){
+            throw new InvalidEntityException("Price cant be negative");
+        }
+
+        if(course.getMaxParticipant() == null){
+            throw new InvalidEntityException("Maximum participant is not set");
+        } else if(course.getMaxParticipant() < 5){
+            throw new InvalidEntityException("Maximum participant should be bigger than 5");
+        }
+
+        if(course.getMinAge() != null && course.getMaxAge() != null) {
+            if(course.getMinAge() < 0 || course.getMaxAge() > 100 || course.getMinAge() > course.getMaxAge()) {
+                throw new InvalidEntityException("Min or max age is invalid");
+            }
+        } else if(course.getMinAge() != null && course.getMinAge() < 0){
+            throw new InvalidEntityException("Min cant be smaller than 0");
+        } else if(course.getMaxAge() != null && course.getMaxAge() > 100){
+            throw new InvalidEntityException("Min cant be greater than 100");
+        }
+
+        if(course.getDescription() == null || course.getDescription().isBlank()){
+            throw new InvalidEntityException("Description is not set");
+        }
+
+        if(course.getTrainer() == null){
+            throw new InvalidEntityException("Trainer is not set");
+        } else{
+            try{
+                this.validateTrainer(course.getTrainer());
+            } catch(InvalidEntityException e){
+                throw e;
+            }
+        }
+
+        if(course.getCustomers() != null){
+            throw new InvalidEntityException("Customer list should be null");
+        }
+
+    }
+
+
+
     public void validateBirthday(Event birthday) throws InvalidEntityException{
         if(birthday.getEventType() != EventType.Birthday){
             throw new InvalidEntityException("This is was supposed to be a birthday");

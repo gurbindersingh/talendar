@@ -4,6 +4,7 @@ import at.ac.tuwien.sepm.groupphase.backend.enums.BirthdayType;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 
 import javax.persistence.*;
+import javax.validation.constraints.Future;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
@@ -40,7 +41,7 @@ public class Event {
     private LocalDateTime updated; //LocalDateTime > Date
     @Column(name = "event_type", nullable = false)
     private EventType eventType;
-    @NotNull
+
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(
         name = "event_customer",
@@ -77,6 +78,26 @@ public class Event {
         These Variables are Course Specific
      */
 
+    @Column
+    private LocalDateTime endOfApplication;
+
+    @Column
+    private Double price;
+
+    @Column
+    private Integer maxParticipant;
+
+    @Column
+    private String description;
+
+    @Column
+    private Integer minAge;
+
+
+    @Column
+    private Integer maxAge;
+
+
     /*
         These Variables are Rent Specific
      */
@@ -84,8 +105,8 @@ public class Event {
 
     }
 
-    public Event (Long id, @NotBlank String name, @NotNull List<RoomUse> roomUses, @Past LocalDateTime created, @Past LocalDateTime updated, EventType eventType, @NotNull Set<Customer> customers, Trainer trainer, int headcount, int ageToBe, BirthdayType birthdayType) {
-        this.id = id;
+
+    public Event (@NotBlank String name, @NotNull List<RoomUse> roomUses, @Past @NotNull LocalDateTime created, @Past @NotNull LocalDateTime updated, EventType eventType, @NotNull Set<Customer> customers, Trainer trainer, int headcount, int ageToBe, BirthdayType birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipant, String description, Integer minAge, Integer maxAge) {
         this.name = name;
         this.roomUses = roomUses;
         this.created = created;
@@ -96,6 +117,12 @@ public class Event {
         this.headcount = headcount;
         this.ageToBe = ageToBe;
         this.birthdayType = birthdayType;
+        this.endOfApplication = endOfApplication;
+        this.price = price;
+        this.maxParticipant = maxParticipant;
+        this.description = description;
+        this.minAge = minAge;
+        this.maxAge = maxAge;
     }
 
 
@@ -209,6 +236,66 @@ public class Event {
     }
 
 
+    public LocalDateTime getEndOfApplication () {
+        return endOfApplication;
+    }
+
+
+    public void setEndOfApplication (LocalDateTime endOfApplication) {
+        this.endOfApplication = endOfApplication;
+    }
+
+
+    public Double getPrice () {
+        return price;
+    }
+
+
+    public void setPrice (Double price) {
+        this.price = price;
+    }
+
+
+    public Integer getMaxParticipant () {
+        return maxParticipant;
+    }
+
+
+    public void setMaxParticipant (Integer maxParticipant) {
+        this.maxParticipant = maxParticipant;
+    }
+
+
+    public String getDescription () {
+        return description;
+    }
+
+
+    public void setDescription (String description) {
+        this.description = description;
+    }
+
+
+    public Integer getMinAge () {
+        return minAge;
+    }
+
+
+    public void setMinAge (Integer minAge) {
+        this.minAge = minAge;
+    }
+
+
+    public Integer getMaxAge () {
+        return maxAge;
+    }
+
+
+    public void setMaxAge (Integer maxAge) {
+        this.maxAge = maxAge;
+    }
+
+
     @Override
     public boolean equals (Object o) {
         if(this == o) return true;
@@ -224,13 +311,19 @@ public class Event {
             eventType == event.eventType &&
             Objects.equals(customers, event.customers) &&
             Objects.equals(trainer, event.trainer) &&
-            birthdayType == event.birthdayType;
+            birthdayType == event.birthdayType &&
+            Objects.equals(endOfApplication, event.endOfApplication) &&
+            Objects.equals(price, event.price) &&
+            Objects.equals(maxParticipant, event.maxParticipant) &&
+            Objects.equals(description, event.description) &&
+            Objects.equals(minAge, event.minAge) &&
+            Objects.equals(maxAge, event.maxAge);
     }
 
 
     @Override
     public int hashCode () {
-        return Objects.hash(id, name, roomUses, created, updated, eventType, customers, trainer, headcount, ageToBe, birthdayType);
+        return Objects.hash(id, name, roomUses, created, updated, eventType, customers, trainer, headcount, ageToBe, birthdayType, endOfApplication, price, maxParticipant, description, minAge, maxAge);
     }
 
 
@@ -248,6 +341,12 @@ public class Event {
             ", headcount=" + headcount +
             ", ageToBe=" + ageToBe +
             ", birthdayType=" + birthdayType +
+            ", endOfApplication=" + endOfApplication +
+            ", price=" + price +
+            ", maxParticipant=" + maxParticipant +
+            ", description='" + description + '\'' +
+            ", minAge=" + minAge +
+            ", maxAge=" + maxAge +
             '}';
     }
 }

@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend;
 
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.TestDataCreation.FakeData;
 import at.ac.tuwien.sepm.groupphase.backend.TestMappers.TrainerMapper;
 import at.ac.tuwien.sepm.groupphase.backend.TestObjects.CustomerDto;
@@ -37,7 +38,7 @@ public class BackendApplicationTests {
     private static final RestTemplate REST_TEMPLATE = new RestTemplate();
     private static final String BASE_URL = "http://localhost:";
     private static final String TRAINER_URL = "/api/talendar/trainers";
-    private static final String BIRTHDAY_URL = "/api/talendar/events";
+    private static final String EVENT_URL = "/api/talendar/events";
 
     private TrainerMapper trainerMapper;
     @LocalServerPort
@@ -99,20 +100,50 @@ public class BackendApplicationTests {
         birthday.setId(null);
         birthday.setUpdated(null);
         birthday.setCreated(null);
-        birthday.setTrainer(trainerResponse );
+        birthday.setTrainer(trainerResponse);
         for(CustomerDto x : birthday.getCustomerDtos()
             ) {
             x.setId(null);
         }
         HttpEntity<EventDto> request = new HttpEntity<>(birthday);
         System.out.println(request.toString());
-        ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(BASE_URL + port + BIRTHDAY_URL, HttpMethod.POST, request, EventDto.class);
+        ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(BASE_URL + port + EVENT_URL, HttpMethod.POST, request, EventDto.class);
         EventDto birthdayResponse = response.getBody();
 
 
         assertNotNull(birthdayResponse);
         System.out.println(birthdayResponse);
         assertNotNull(birthdayResponse.getId());
+    }
+
+    @Test
+    public void postCourseResponse(){
+        FakeData fakeData = new FakeData();
+        EventDto course = fakeData.fakeCourse();
+
+        TrainerDto trainer = fakeData.fakeTrainer();
+        trainer.setId(null);
+        trainer.setUpdated(null);
+        trainer.setCreated(null);
+        HttpEntity<TrainerDto> trequest = new HttpEntity<>(trainer);
+        ResponseEntity<TrainerDto> tresponse = REST_TEMPLATE.exchange(BASE_URL + port + TRAINER_URL, HttpMethod.POST, trequest, TrainerDto.class);
+        TrainerDto trainerResponse = tresponse.getBody();
+        System.out.println(trainerResponse);
+
+        course.setId(null);
+        course.setUpdated(null);
+        course.setCreated(null);
+        course.setTrainer(trainerResponse );
+        course.setCustomerDtos(null);
+        HttpEntity<EventDto> request = new HttpEntity<>(course);
+        System.out.println(request.toString());
+        ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(BASE_URL + port + EVENT_URL, HttpMethod.POST, request, EventDto.class);
+        EventDto courseResponse = response.getBody();
+
+
+        assertNotNull(courseResponse);
+        System.out.println(courseResponse);
+        assertNotNull(courseResponse.getId());
     }
 
 

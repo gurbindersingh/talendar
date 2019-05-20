@@ -47,6 +47,16 @@ public class EventDto {
         These Variables are Course Specific
      */
 
+    private LocalDateTime endOfApplication;
+    private Double price;
+    private Integer maxParticipant;
+    private String description;
+    private Integer minAge;
+    private Integer maxAge;
+
+
+
+
     /*
         These Variables are Rent Specific
      */
@@ -56,7 +66,7 @@ public class EventDto {
     }
 
 
-    public EventDto (Long id, EventType eventType, String name, List<RoomUse> roomUses, LocalDateTime created, LocalDateTime updated, Set<CustomerDto> customerDtos, Trainer trainer, int headcount, int ageToBe, BirthdayType birthdayType) {
+    public EventDto (Long id, EventType eventType, String name, List<RoomUse> roomUses, LocalDateTime created, LocalDateTime updated, Set<CustomerDto> customerDtos, Trainer trainer, int headcount, int ageToBe, BirthdayType birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipant, String description, Integer minAge, Integer maxAge) {
         this.id = id;
         this.eventType = eventType;
         this.name = name;
@@ -68,6 +78,12 @@ public class EventDto {
         this.headcount = headcount;
         this.ageToBe = ageToBe;
         this.birthdayType = birthdayType;
+        this.endOfApplication = endOfApplication;
+        this.price = price;
+        this.maxParticipant = maxParticipant;
+        this.description = description;
+        this.minAge = minAge;
+        this.maxAge = maxAge;
     }
 
 
@@ -181,6 +197,66 @@ public class EventDto {
     }
 
 
+    public LocalDateTime getEndOfApplication () {
+        return endOfApplication;
+    }
+
+
+    public void setEndOfApplication (LocalDateTime endOfApplication) {
+        this.endOfApplication = endOfApplication;
+    }
+
+
+    public Double getPrice () {
+        return price;
+    }
+
+
+    public void setPrice (Double price) {
+        this.price = price;
+    }
+
+
+    public Integer getMaxParticipant () {
+        return maxParticipant;
+    }
+
+
+    public void setMaxParticipant (Integer maxParticipant) {
+        this.maxParticipant = maxParticipant;
+    }
+
+
+    public String getDescription () {
+        return description;
+    }
+
+
+    public void setDescription (String description) {
+        this.description = description;
+    }
+
+
+    public Integer getMinAge () {
+        return minAge;
+    }
+
+
+    public void setMinAge (Integer minAge) {
+        this.minAge = minAge;
+    }
+
+
+    public Integer getMaxAge () {
+        return maxAge;
+    }
+
+
+    public void setMaxAge (Integer maxAge) {
+        this.maxAge = maxAge;
+    }
+
+
     @Override
     public boolean equals (Object o) {
         if(this == o) return true;
@@ -196,13 +272,19 @@ public class EventDto {
             Objects.equals(updated, eventDto.updated) &&
             Objects.equals(customerDtos, eventDto.customerDtos) &&
             Objects.equals(trainer, eventDto.trainer) &&
-            birthdayType == eventDto.birthdayType;
+            birthdayType == eventDto.birthdayType &&
+            Objects.equals(endOfApplication, eventDto.endOfApplication) &&
+            Objects.equals(price, eventDto.price) &&
+            Objects.equals(maxParticipant, eventDto.maxParticipant) &&
+            Objects.equals(description, eventDto.description) &&
+            Objects.equals(minAge, eventDto.minAge) &&
+            Objects.equals(maxAge, eventDto.maxAge);
     }
 
 
     @Override
     public int hashCode () {
-        return Objects.hash(id, eventType, name, roomUses, created, updated, customerDtos, trainer, headcount, ageToBe, birthdayType);
+        return Objects.hash(id, eventType, name, roomUses, created, updated, customerDtos, trainer, headcount, ageToBe, birthdayType, endOfApplication, price, maxParticipant, description, minAge, maxAge);
     }
 
 
@@ -220,6 +302,12 @@ public class EventDto {
             ", headcount=" + headcount +
             ", ageToBe=" + ageToBe +
             ", birthdayType=" + birthdayType +
+            ", endOfApplication=" + endOfApplication +
+            ", price=" + price +
+            ", maxParticipant=" + maxParticipant +
+            ", description='" + description + '\'' +
+            ", minAge=" + minAge +
+            ", maxAge=" + maxAge +
             '}';
     }
 }
