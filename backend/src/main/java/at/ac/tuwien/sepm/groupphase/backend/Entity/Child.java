@@ -19,8 +19,8 @@ public class Child extends Customer {
     public Child(){
 
     }
-    public Child (Integer id, @NotBlank @Email String email, @NotBlank String phone, @NotBlank String name, @Min(1) @Max(12) Integer grade) {
-        super(id, email, phone, name);
+    public Child (Long id, @NotBlank @Email String email, @NotBlank String phone, @NotBlank String firstName, @NotBlank String lastName, @Min(1) @Max(12) Integer grade) {
+        super(id, email, phone, firstName, lastName);
         this.grade = grade;
     }
 

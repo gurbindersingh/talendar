@@ -1,9 +1,9 @@
-package at.ac.tuwien.sepm.groupphase.backend.rest.dto;
+package at.ac.tuwien.sepm.groupphase.backend.TestObjects;
 
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
 import at.ac.tuwien.sepm.groupphase.backend.enums.BirthdayType;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
+
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -13,7 +13,7 @@ public class BirthdayDto extends EventDto {
 
 
     private Integer headCount;
-    private Customer guardian;
+    private CustomerDto guardian;
     private Integer avgAge;
     private TrainerDto trainerDto;
     private BirthdayType type;
@@ -22,7 +22,7 @@ public class BirthdayDto extends EventDto {
     public BirthdayDto(){
 
     }
-    public BirthdayDto (Long id, String name, List<RoomUse> roomUses, LocalDateTime created, LocalDateTime updated, Integer headCount, Customer guardian, Integer avgAge, TrainerDto trainerDto, BirthdayType type) {
+    public BirthdayDto (Long id, String name, List<RoomUse> roomUses, LocalDateTime created, LocalDateTime updated, Integer headCount, CustomerDto guardian, Integer avgAge, TrainerDto trainerDto, BirthdayType type) {
         super(id, EventType.Birthday, name, roomUses, created, updated);
         this.headCount = headCount;
         this.guardian = guardian;
@@ -62,12 +62,12 @@ public class BirthdayDto extends EventDto {
     }
 
 
-    public Customer getGuardian () {
+    public CustomerDto getGuardian () {
         return guardian;
     }
 
 
-    public void setGuardian (Customer guardian) {
+    public void setGuardian (CustomerDto guardian) {
         this.guardian = guardian;
     }
 

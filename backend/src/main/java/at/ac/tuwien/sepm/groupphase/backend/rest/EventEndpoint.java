@@ -1,7 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest;
 
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Birthday;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.enums.EventType;
+import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.BackendException;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.BirthdayDto;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.EventDto;
@@ -17,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/talendar/event")
+@RequestMapping("/api/talendar/events")
 public class EventEndpoint {
     private  static Logger LOGGER = LoggerFactory.getLogger(TrainerEndpoint.class);
 
@@ -33,12 +32,13 @@ public class EventEndpoint {
     @PostMapping
     public EventDto createNewEvent(@RequestBody EventDto eventDto) throws BackendException {
         LOGGER.info("Incoming POST Request for an Event with type: " + eventDto.getEventType());
+        System.out.println();
         try {
             if(eventDto.getEventType() == EventType.Birthday) {
                 return eventMapper.entityToEventDto(eventService.save(eventMapper.dtoToEventEntity((BirthdayDto) eventDto)));
             }
             else if(eventDto.getEventType() == EventType.Consultation) {
-
+                //TODO: fill in the rest of the Event subtypes
             }
             else if(eventDto.getEventType() == EventType.Course) {
 

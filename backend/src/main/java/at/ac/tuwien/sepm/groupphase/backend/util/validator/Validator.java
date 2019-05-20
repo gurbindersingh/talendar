@@ -2,8 +2,10 @@ package at.ac.tuwien.sepm.groupphase.backend.util.validator;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Birthday;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidEntityException;
+import org.apache.tomcat.jni.Local;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -13,7 +15,7 @@ import java.util.regex.Pattern;
 public class Validator{
     // matches any kind of regular phone number format
     // e.g. 0660 123 45 67, +(43) 01 234-56-78
-    String phoneRegex = "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$";
+    String phoneRegex = "^[+]*[(]{0,1}[0-9]{1,5}[)]{0,1}[-\\s\\./0-9]*$";
     String emailRegex = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])";
     Pattern phonePattern = Pattern.compile(phoneRegex);
     Pattern emailPattern = Pattern.compile(emailRegex);
@@ -49,6 +51,15 @@ public class Validator{
         }
 
         try{
+            for(RoomUse r:birthday.getRoomUses()
+                ) {
+                validateRoomUse(r);
+            }
+        }catch(InvalidEntityException e){
+            throw e;
+        }
+
+        try{
             validateTrainer(birthday.getTrainer());
         }catch(InvalidEntityException e){
             throw e;
@@ -56,6 +67,11 @@ public class Validator{
 
 
 
+    }
+    public void validateRoomUse(RoomUse entity) throws InvalidEntityException{
+        if(entity.getBegin().isAfter(entity.getEnd())){
+            throw new InvalidEntityException("The End of the use cannot be later than the begining");
+        }
     }
 
     public void validateCustomer(Customer entity) throws InvalidEntityException{
@@ -66,8 +82,11 @@ public class Validator{
         if (entity.getEmail() == null || !emailPattern.matcher(entity.getEmail()).find()) {
             throw new InvalidEntityException("a valid email address must be set");
         }
-        if (entity.getName() == null || entity.getName().isBlank()) {
+        if (entity.getFirstName() == null || entity.getFirstName().isBlank()) {
             throw new InvalidEntityException("first name must be set");
+        }
+        if (entity.getLastName() == null || entity.getLastName().isBlank()) {
+            throw new InvalidEntityException("last name must be set");
         }
     }
 

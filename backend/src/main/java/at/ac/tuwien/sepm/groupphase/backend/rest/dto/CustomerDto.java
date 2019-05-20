@@ -1,32 +1,19 @@
-package at.ac.tuwien.sepm.groupphase.backend.Entity;
+package at.ac.tuwien.sepm.groupphase.backend.rest.dto;
 
-import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
-@Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "customer_type")
-public class Customer {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class CustomerDto {
     private Long id;
-    @NotBlank
-    @Email
     private String email;
-    @NotBlank
     private String phone;
-    @NotBlank
     private String firstName;
-    @NotBlank
     private String lastName;
 
-    public Customer (){
+
+    public CustomerDto(){
 
     }
-    public Customer (Long id, @NotBlank @Email String email, @NotBlank String phone, @NotBlank String firstName, @NotBlank String lastName) {
+    public CustomerDto (Long id, String email, String phone, String firstName, String lastName) {
         this.id = id;
         this.email = email;
         this.phone = phone;
@@ -69,7 +56,6 @@ public class Customer {
         return firstName;
     }
 
-
     public void setFirstName (String firstName) {
         this.firstName = firstName;
     }
@@ -89,12 +75,12 @@ public class Customer {
     public boolean equals (Object o) {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
-        Customer customer = (Customer) o;
-        return Objects.equals(id, customer.id) &&
-            Objects.equals(email, customer.email) &&
-            Objects.equals(phone, customer.phone) &&
-            Objects.equals(firstName, customer.firstName) &&
-            Objects.equals(lastName, customer.lastName);
+        CustomerDto that = (CustomerDto) o;
+        return Objects.equals(id, that.id) &&
+            Objects.equals(email, that.email) &&
+            Objects.equals(phone, that.phone) &&
+            Objects.equals(firstName, that.firstName) &&
+            Objects.equals(lastName, that.lastName);
     }
 
 
@@ -106,7 +92,7 @@ public class Customer {
 
     @Override
     public String toString () {
-        return "Customer{" +
+        return "CustomerDto{" +
             "id=" + id +
             ", email='" + email + '\'' +
             ", phone='" + phone + '\'' +

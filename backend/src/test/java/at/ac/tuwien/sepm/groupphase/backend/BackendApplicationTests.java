@@ -1,7 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend;
 
 
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Birthday;
 import at.ac.tuwien.sepm.groupphase.backend.TestDataCreation.FakeData;
+import at.ac.tuwien.sepm.groupphase.backend.TestObjects.BirthdayDto;
 import at.ac.tuwien.sepm.groupphase.backend.TestObjects.TrainerDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,6 +33,7 @@ public class BackendApplicationTests {
     private static final RestTemplate REST_TEMPLATE = new RestTemplate();
     private static final String BASE_URL = "http://localhost:";
     private static final String TRAINER_URL = "/api/talendar/trainers";
+    private static final String BIRTHDAY_URL = "/api/talendar/events";
 
     @LocalServerPort
     private int port = 8080;
@@ -72,6 +75,22 @@ public class BackendApplicationTests {
         assertNotNull(trainerResponse);
         System.out.println(trainerResponse);
         assertNotNull(trainerResponse.getId());
+    }
+
+    @Test
+    public void postBirthdayResponse(){
+	    FakeData fakeData = new FakeData();
+        BirthdayDto birthday = fakeData.fakeBirthday();
+        birthday.setId(null);
+        birthday.setUpdated(null);
+        birthday.setCreated(null);
+        HttpEntity<BirthdayDto> request = new HttpEntity<>(birthday);
+        System.out.println(request.toString());
+        ResponseEntity<BirthdayDto> response = REST_TEMPLATE.exchange(BASE_URL + port + BIRTHDAY_URL, HttpMethod.POST, request, BirthdayDto.class);
+        BirthdayDto birthdayResponse = response.getBody();
+        assertNotNull(birthdayResponse);
+        System.out.println(birthdayResponse);
+        assertNotNull(birthdayResponse.getId());
     }
 
 

@@ -1,6 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.Entity;
 
-import at.ac.tuwien.sepm.groupphase.backend.Entity.enums.BirthdayType;
+import at.ac.tuwien.sepm.groupphase.backend.enums.BirthdayType;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -35,7 +35,7 @@ public class Birthday extends Event {
     }
 
 
-    public Birthday (Integer id, @NotBlank String name, @NotNull List<RoomUse> roomUses, @NotNull @Past LocalDateTime created, @NotNull @Past LocalDateTime updated, Integer headCount, @NotNull Customer guardian, Integer avgAge, @NotNull Trainer trainer, @NotNull BirthdayType type) {
+    public Birthday (Long id, @NotBlank String name, @NotNull List<RoomUse> roomUses, @NotNull @Past LocalDateTime created, @NotNull @Past LocalDateTime updated, Integer headCount, @NotNull Customer guardian, Integer avgAge, @NotNull Trainer trainer, @NotNull BirthdayType type) {
         super(id, name, roomUses, created, updated);
         this.headCount = headCount;
         this.guardian = guardian;

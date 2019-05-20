@@ -18,7 +18,7 @@ public abstract class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
-    private Integer id;
+    private Long id;
     @Column(name = "name", nullable = false)
     @NotBlank
     private String name;
@@ -34,7 +34,7 @@ public abstract class Event {
     public Event(){
 
     }
-    public Event (Integer id, @NotBlank String name, @NotNull List<RoomUse> roomUses, @NotNull @Past LocalDateTime created, @NotNull @Past LocalDateTime updated) {
+    public Event (Long id, @NotBlank String name, @NotNull List<RoomUse> roomUses, @NotNull @Past LocalDateTime created, @NotNull @Past LocalDateTime updated) {
         this.id = id;
         this.name = name;
         this.roomUses = roomUses;
@@ -61,12 +61,12 @@ public abstract class Event {
     }
 
 
-    public Integer getId () {
+    public Long getId () {
         return id;
     }
 
 
-    public void setId (Integer id) {
+    public void setId (Long id) {
         this.id = id;
     }
 

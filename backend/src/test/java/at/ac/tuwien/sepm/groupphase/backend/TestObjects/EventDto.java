@@ -1,36 +1,24 @@
-package at.ac.tuwien.sepm.groupphase.backend.rest.dto;
+package at.ac.tuwien.sepm.groupphase.backend.TestObjects;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-@JsonTypeInfo(
-    use = JsonTypeInfo.Id.CLASS,
-    include = JsonTypeInfo.As.PROPERTY,
-    property = "eventType",
-    visible = true)
-@JsonSubTypes({
-    @JsonSubTypes.Type(value = BirthdayDto.class, name = "Birthday")
-})
 public abstract class EventDto {
 
 
     private Long id;
-    @NotNull
     private EventType eventType;
     private String name;
     @JsonManagedReference
     private List<RoomUse> roomUses = new LinkedList<>();
     private LocalDateTime created;
-    private LocalDateTime updated;
+    private LocalDateTime updated; //LocalDateTime > Date
 
     public EventDto(){
 
