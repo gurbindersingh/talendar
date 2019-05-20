@@ -19,11 +19,9 @@ public class Holiday {
     private Integer trainerid;
 
     @NotNull
-    @Future
     private LocalDateTime holidayStart;
 
     @NotNull
-    @Future
     private LocalDateTime holidayEnd;
 
     public Holiday(){}

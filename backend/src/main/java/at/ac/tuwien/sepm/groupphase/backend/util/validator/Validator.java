@@ -122,5 +122,8 @@ public class Validator{
         if (holiday.getHolidayStart().isAfter(holiday.getHolidayEnd())) {
             throw new InvalidEntityException("Start of holiday must be before the end");
         }
+        if (holiday.getHolidayStart().isBefore(LocalDateTime.now())) {
+            throw new InvalidEntityException("Holidays can only take place in the future");
+        }
     }
 }
