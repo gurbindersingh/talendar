@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.TestDataCreation;
 
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.TestObjects.CustomerDto;
@@ -162,6 +163,34 @@ public class FakeData {
         bday.setEventType(EventType.Birthday);
         bday.setName("Sickes Geburtstag oida");
         return bday;
+    }
+
+
+    public EventDto fakeCourse(){
+        EventDto course = new EventDto();
+        course.setEventType(EventType.Course);
+        course.setName("Kurs für Hs plays iq 200");
+        course.setPrice(25.0);
+        Set<CustomerDto> customers = new HashSet<>();
+
+        customers.add(fakeCustomer());
+        course.setCustomerDtos(customers);
+        course.setTrainer(fakeTrainer());
+
+        course.setDescription("Leeroy mecanics");
+        List<RoomUse> rooms = new LinkedList<>();
+        rooms.add(fakeRoomUseDto());
+        course.setRoomUses(rooms);
+
+        LocalDateTime now = LocalDateTime.now();
+        course.setCreated(now);
+        course.setUpdated(now);
+
+
+        course.setEndOfApplication(now.plusDays(3));
+        course.setMaxParticipant(20);
+        course.setMinAge(3);
+        return course;
     }
 
 }

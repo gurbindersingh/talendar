@@ -39,12 +39,13 @@ public class EventEndpoint {
                 //TODO: fill in the rest of the Event subtypes
             }
             else if(eventDto.getEventType() == EventType.Course) {
-
+                return eventMapper.entityToEventDto(eventService.save(eventMapper.dtoToEventEntity(eventDto)));
             }
             else if(eventDto.getEventType() == EventType.Rent) {
 
             }
         }catch(ValidationException e){
+            LOGGER.error("Error in the backend: " + e.getMessage(), e);
             throw new BackendException("Error in the Backend: " + e.getMessage(), e);
         }
         return eventDto;
