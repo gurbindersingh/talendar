@@ -33,7 +33,6 @@ public class EventEndpoint {
         LOGGER.info("Incoming POST Request for an Event with type: " + eventDto.getEventType());
         try {
             if(eventDto.getEventType() == EventType.Birthday) {
-                System.out.println("We are now here: Birthday endpoint\n");
                 return eventMapper.entityToEventDto(eventService.save(eventMapper.dtoToEventEntity((eventDto))));
             }
             else if(eventDto.getEventType() == EventType.Consultation) {
