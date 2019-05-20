@@ -1,6 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest.dto;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
+import at.ac.tuwien.sepm.groupphase.backend.enums.BirthdayType;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -12,25 +14,46 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-@JsonTypeInfo(
-    use = JsonTypeInfo.Id.CLASS,
-    include = JsonTypeInfo.As.PROPERTY,
-    property = "eventType",
-    visible = true)
-@JsonSubTypes({
-    @JsonSubTypes.Type(value = BirthdayDto.class, name = "Birthday")
-})
-public abstract class EventDto {
+public class EventDto {
 
 
+    /*
+       These Variables are used by all event Types
+    */
     private Long id;
-    @NotNull
     private EventType eventType;
     private String name;
-    @JsonManagedReference
     private List<RoomUse> roomUses = new LinkedList<>();
     private LocalDateTime created;
     private LocalDateTime updated;
+    private List<CustomerDto>  customerDtos;
+
+    /*
+        These Variables are used by non Rent Types
+     */
+
+    private Trainer trainer;
+
+    /*
+        These Variables are birthday specific
+     */
+
+    private int headcount;
+    private int ageToBe;
+    private BirthdayType birthdayType;
+
+     /*
+        These Variables are Consulatation Specicfic
+     */
+
+
+    /*
+        These Variables are Course Specific
+     */
+
+    /*
+        These Variables are Rent Specific
+     */
 
     public EventDto(){
 

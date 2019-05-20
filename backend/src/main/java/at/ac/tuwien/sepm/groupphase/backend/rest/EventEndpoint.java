@@ -32,9 +32,10 @@ public class EventEndpoint {
     @PostMapping
     public EventDto createNewEvent(@RequestBody EventDto eventDto) throws BackendException {
         LOGGER.info("Incoming POST Request for an Event with type: " + eventDto.getEventType());
-        System.out.println();
+        System.out.println("We are now here: Begin endpoint\n");
         try {
             if(eventDto.getEventType() == EventType.Birthday) {
+                System.out.println("We are now here: Birthday endpoint\n");
                 return eventMapper.entityToEventDto(eventService.save(eventMapper.dtoToEventEntity((BirthdayDto) eventDto)));
             }
             else if(eventDto.getEventType() == EventType.Consultation) {

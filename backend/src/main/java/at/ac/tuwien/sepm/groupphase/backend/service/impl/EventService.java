@@ -31,6 +31,7 @@ public class EventService implements IEventService {
 
     @Override
     public Birthday save (Birthday birthday) throws ValidationException {
+        System.out.println("We are now here: Birthday save service\n");
         LOGGER.info("Prepare to save new Birthday");
         LocalDateTime now = LocalDateTime.now();
         birthday.setCreated(now);
