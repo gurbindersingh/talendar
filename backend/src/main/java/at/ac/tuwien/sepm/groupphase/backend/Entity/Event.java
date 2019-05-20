@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 
 @Entity
@@ -27,25 +28,31 @@ public class Event {
     @NotBlank
     private String name;
     @NotNull
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "event", orphanRemoval = true) //check how cascade works in all methods
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "event", orphanRemoval = true, cascade = CascadeType.PERSIST) //check how cascade works in all methods
     private List<RoomUse> roomUses = new LinkedList<>();
-    @Column(name = "created", insertable = false, nullable = false, updatable = false)
+    @Column(name = "created", updatable = false)
     @Past
+    @NotNull
     private LocalDateTime created;
-    @Column(name = "updated", nullable = false)
+    @Column(name = "updated")
     @Past
+    @NotNull
     private LocalDateTime updated; //LocalDateTime > Date
     @Column(name = "event_type", nullable = false)
     private EventType eventType;
     @NotNull
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "event")
-    private List<Customer> customers;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinTable(
+        name = "event_customer",
+        joinColumns = { @JoinColumn(name = "fk_event")},
+        inverseJoinColumns = {@JoinColumn(name = "fk_customer")}
+    )
+    private Set<Customer> customers;
 
     /*
         These Variables are used by non Rent Types
      */
 
-    @Column(name = "trainer")
     @ManyToOne(fetch = FetchType.LAZY)
     private Trainer trainer;
 
@@ -73,9 +80,11 @@ public class Event {
     /*
         These Variables are Rent Specific
      */
+    public Event(){
 
+    }
 
-    public Event (Long id, @NotBlank String name, @NotNull List<RoomUse> roomUses, @Past LocalDateTime created, @Past LocalDateTime updated, EventType eventType, @NotNull List<Customer> customers, Trainer trainer, int headcount, int ageToBe, BirthdayType birthdayType) {
+    public Event (Long id, @NotBlank String name, @NotNull List<RoomUse> roomUses, @Past LocalDateTime created, @Past LocalDateTime updated, EventType eventType, @NotNull Set<Customer> customers, Trainer trainer, int headcount, int ageToBe, BirthdayType birthdayType) {
         this.id = id;
         this.name = name;
         this.roomUses = roomUses;
@@ -150,12 +159,12 @@ public class Event {
     }
 
 
-    public List<Customer> getCustomers () {
+    public Set<Customer> getCustomers () {
         return customers;
     }
 
 
-    public void setCustomers (List<Customer> customers) {
+    public void setCustomers (Set<Customer> customers) {
         this.customers = customers;
     }
 

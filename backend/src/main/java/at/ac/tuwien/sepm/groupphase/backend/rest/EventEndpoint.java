@@ -2,7 +2,6 @@ package at.ac.tuwien.sepm.groupphase.backend.rest;
 
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.BackendException;
-import at.ac.tuwien.sepm.groupphase.backend.rest.dto.BirthdayDto;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.EventDto;
 import at.ac.tuwien.sepm.groupphase.backend.service.IEventService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
@@ -32,11 +31,10 @@ public class EventEndpoint {
     @PostMapping
     public EventDto createNewEvent(@RequestBody EventDto eventDto) throws BackendException {
         LOGGER.info("Incoming POST Request for an Event with type: " + eventDto.getEventType());
-        System.out.println("We are now here: Begin endpoint\n");
         try {
             if(eventDto.getEventType() == EventType.Birthday) {
                 System.out.println("We are now here: Birthday endpoint\n");
-                return eventMapper.entityToEventDto(eventService.save(eventMapper.dtoToEventEntity((BirthdayDto) eventDto)));
+                return eventMapper.entityToEventDto(eventService.save(eventMapper.dtoToEventEntity((eventDto))));
             }
             else if(eventDto.getEventType() == EventType.Consultation) {
                 //TODO: fill in the rest of the Event subtypes

@@ -1,24 +1,18 @@
 package at.ac.tuwien.sepm.groupphase.backend.TestDataCreation;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
-import at.ac.tuwien.sepm.groupphase.backend.TestObjects.BirthdayDto;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.TestObjects.CustomerDto;
-import at.ac.tuwien.sepm.groupphase.backend.TestObjects.RoomUseDto;
+import at.ac.tuwien.sepm.groupphase.backend.TestObjects.EventDto;
 import at.ac.tuwien.sepm.groupphase.backend.TestObjects.TrainerDto;
 import at.ac.tuwien.sepm.groupphase.backend.enums.BirthdayType;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.enums.Room;
 import com.github.javafaker.Faker;
-import com.github.javafaker.service.FakeValuesService;
-import com.github.javafaker.service.RandomService;
-import org.apache.tomcat.jni.Local;
-
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 
 public class FakeData {
@@ -122,13 +116,36 @@ public class FakeData {
         return roomUse;
     }
 
-    public BirthdayDto fakeBirthday(){
-        BirthdayDto bday = new BirthdayDto();
-        bday.setAvgAge(fakeAge(5,19));
-        bday.setGuardian(fakeCustomer());
-        bday.setHeadCount(fakeAge(2,10));
-        bday.setTrainerDto(fakeTrainer());
-        bday.setType(BirthdayType.Rocket);
+    public Trainer fakeTrainerE(){
+        Trainer trainer = new Trainer();
+        trainer.setAge(fakeAge(16, 100));
+        trainer.setEmail(fakeEmail());
+        trainer.setPhone(fakePhoneNumber());
+        trainer.setFirstName(fakeFirstName());
+        trainer.setLastName(fakeLastName());
+        trainer.setId(fakeID());
+        trainer.setCreated(fakePastTimeAfter2000());
+        boolean found = false;
+        LocalDateTime updated = null;
+        while(!found){
+            updated = fakePastTimeAfter2000();
+            if(trainer.getCreated().isBefore(updated)){
+                found = true;
+            }
+        }
+        trainer.setUpdated(updated);
+        return trainer;
+    }
+
+    public EventDto fakeBirthday(){
+        EventDto bday = new EventDto();
+        bday.setAgeToBe(fakeAge(5,19));
+        Set<CustomerDto> customers = new HashSet<>();
+        customers.add(fakeCustomer());
+        bday.setCustomerDtos(customers);
+        bday.setHeadcount(fakeAge(2,10));
+        bday.setTrainer(fakeTrainer());
+        bday.setBirthdayType(BirthdayType.Rocket);
         List<RoomUse> rooms = new LinkedList<>();
         rooms.add(fakeRoomUseDto());
         bday.setRoomUses(rooms);

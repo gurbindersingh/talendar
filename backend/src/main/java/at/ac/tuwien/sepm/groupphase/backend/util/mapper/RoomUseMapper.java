@@ -1,11 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.util.mapper;
 
 
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Birthday;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
-import at.ac.tuwien.sepm.groupphase.backend.rest.dto.BirthdayDto;
-import at.ac.tuwien.sepm.groupphase.backend.rest.dto.EventDto;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.RoomUseDto;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;

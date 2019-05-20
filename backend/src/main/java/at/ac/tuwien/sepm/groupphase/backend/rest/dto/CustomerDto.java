@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest.dto;
 
 import java.util.Objects;
+import java.util.Set;
 
 public class CustomerDto {
     private Long id;
@@ -8,17 +9,19 @@ public class CustomerDto {
     private String phone;
     private String firstName;
     private String lastName;
+    private Set<EventDto> eventDtos;
 
 
     public CustomerDto(){
 
     }
-    public CustomerDto (Long id, String email, String phone, String firstName, String lastName) {
+    public CustomerDto (Long id, String email, String phone, String firstName, String lastName, Set<EventDto> eventDtos) {
         this.id = id;
         this.email = email;
         this.phone = phone;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.eventDtos = eventDtos;
     }
 
 
@@ -68,6 +71,16 @@ public class CustomerDto {
 
     public void setLastName (String lastName) {
         this.lastName = lastName;
+    }
+
+
+    public Set<EventDto> getEventDtos () {
+        return eventDtos;
+    }
+
+
+    public void setEventDtos (Set<EventDto> eventDtos) {
+        this.eventDtos = eventDtos;
     }
 
 

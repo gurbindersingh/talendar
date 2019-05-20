@@ -1,9 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.util.validator;
 
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Birthday;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.*;
+import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidEntityException;
 import org.apache.tomcat.jni.Local;
 import org.springframework.stereotype.Component;
@@ -20,7 +18,10 @@ public class Validator{
     Pattern phonePattern = Pattern.compile(phoneRegex);
     Pattern emailPattern = Pattern.compile(emailRegex);
 
-    public void validateBirthday(Birthday birthday) throws InvalidEntityException{
+    public void validateBirthday(Event birthday) throws InvalidEntityException{
+        if(birthday.getEventType() != EventType.Birthday){
+            throw new InvalidEntityException("This is was supposed to be a birthday");
+        }
         LocalDateTime now = LocalDateTime.now();
         if(birthday.getName() == null || birthday.getName().isBlank()){
             throw new InvalidEntityException("Name cannot be empty");
@@ -37,15 +38,21 @@ public class Validator{
         if (birthday.getCreated().isAfter(birthday.getUpdated())) {
             throw new InvalidEntityException("create time may not be changed afterwards and has to be before latest update time");
         }
-        if(birthday.getHeadCount() < 0){
+        if(birthday.getHeadcount() < 0){
             throw new InvalidEntityException("Head Count cannot be less than 0");
         }
-        if(birthday.getAvgAge() < 0 || birthday.getAvgAge() > 20){
+        if(birthday.getAgeToBe() < 0 || birthday.getAgeToBe() > 20){
             throw new InvalidEntityException("Average age invalid");
+        }
+        if(birthday.getCustomers().size() != 1){
+            throw new InvalidEntityException("Too many or too little customers for a birthday");
         }
 
         try{
-            validateCustomer(birthday.getGuardian());
+            for(Customer x: birthday.getCustomers()
+                ) {
+                validateCustomer(x);
+            }
         }catch(InvalidEntityException e){
             throw e;
         }

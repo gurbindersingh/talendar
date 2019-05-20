@@ -4,6 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -22,16 +23,24 @@ public class Customer {
     private String firstName;
     @NotBlank
     private String lastName;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinTable(
+        name = "event_customer",
+        joinColumns = { @JoinColumn(name = "fk_customer")},
+        inverseJoinColumns = {@JoinColumn(name = "fk_event")}
+    )
+    private Set<Event> events;
 
     public Customer (){
 
     }
-    public Customer (Long id, @NotBlank @Email String email, @NotBlank String phone, @NotBlank String firstName, @NotBlank String lastName) {
+    public Customer (Long id, @NotBlank @Email String email, @NotBlank String phone, @NotBlank String firstName, @NotBlank String lastName, Set<Event> events) {
         this.id = id;
         this.email = email;
         this.phone = phone;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.events = events;
     }
 
 
@@ -82,6 +91,16 @@ public class Customer {
 
     public void setLastName (String lastName) {
         this.lastName = lastName;
+    }
+
+
+    public Set getEvents () {
+        return events;
+    }
+
+
+    public void setEvents (Set events) {
+        this.events = events;
     }
 
 

@@ -1,7 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Birthday;
-import at.ac.tuwien.sepm.groupphase.backend.persistence.BirthdayRepository;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.EventRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.IEventService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
@@ -19,30 +18,28 @@ import java.time.LocalDateTime;
 public class EventService implements IEventService {
     private final static Logger LOGGER = LoggerFactory.getLogger(EventService.class);
     private final EventRepository eventRepository;
-    private final BirthdayRepository birthdayRepository;
     private final Validator validator;
 
     @Autowired
-    public EventService(EventRepository eventRepository, BirthdayRepository birthdayRepository, Validator validator){
+    public EventService(EventRepository eventRepository, Validator validator){
         this.eventRepository = eventRepository;
         this.validator = validator;
-        this.birthdayRepository = birthdayRepository;
     }
 
     @Override
-    public Birthday save (Birthday birthday) throws ValidationException {
+    public Event save (Event event) throws ValidationException {
         System.out.println("We are now here: Birthday save service\n");
         LOGGER.info("Prepare to save new Birthday");
         LocalDateTime now = LocalDateTime.now();
-        birthday.setCreated(now);
-        birthday.setUpdated(now);
+        event.setCreated(now);
+        event.setUpdated(now);
 
         try{
-            validator.validateBirthday(birthday);
+            validator.validateBirthday(event);
         }catch(InvalidEntityException e){
             throw new ValidationException("Given Birthday is invalid: " + e.getMessage(), e );
         }
-        return birthdayRepository.save(birthday);
+        return eventRepository.save(event);
     }
 
 

@@ -1,37 +1,74 @@
 package at.ac.tuwien.sepm.groupphase.backend.TestObjects;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
+import at.ac.tuwien.sepm.groupphase.backend.enums.BirthdayType;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
-public abstract class EventDto {
+public class EventDto {
 
 
+    /*
+       These Variables are used by all event Types
+    */
     private Long id;
     private EventType eventType;
     private String name;
-    @JsonManagedReference
     private List<RoomUse> roomUses = new LinkedList<>();
     private LocalDateTime created;
-    private LocalDateTime updated; //LocalDateTime > Date
+    private LocalDateTime updated;
+    private Set<CustomerDto> customerDtos;
 
-    public EventDto(){
+    /*
+        These Variables are used by non Rent Types
+     */
+
+    private TrainerDto trainer;
+
+    /*
+        These Variables are birthday specific
+     */
+
+    private int headcount;
+    private int ageToBe;
+    private BirthdayType birthdayType;
+
+     /*
+        These Variables are Consulatation Specicfic
+     */
+
+
+    /*
+        These Variables are Course Specific
+     */
+
+    /*
+        These Variables are Rent Specific
+     */
+
+    public EventDto (){
 
     }
 
 
-    public EventDto (Long id, EventType eventType, String name, List<RoomUse> roomUses, LocalDateTime created, LocalDateTime updated) {
+    public EventDto (Long id, EventType eventType, String name, List<RoomUse> roomUses, LocalDateTime created, LocalDateTime updated, Set<CustomerDto> customerDtos, TrainerDto trainer, int headcount, int ageToBe, BirthdayType birthdayType) {
         this.id = id;
         this.eventType = eventType;
         this.name = name;
         this.roomUses = roomUses;
         this.created = created;
         this.updated = updated;
+        this.customerDtos = customerDtos;
+        this.trainer = trainer;
+        this.headcount = headcount;
+        this.ageToBe = ageToBe;
+        this.birthdayType = birthdayType;
     }
 
 
@@ -95,23 +132,78 @@ public abstract class EventDto {
     }
 
 
+    public Set<CustomerDto> getCustomerDtos () {
+        return customerDtos;
+    }
+
+
+    public void setCustomerDtos (Set<CustomerDto> customerDtos) {
+        this.customerDtos = customerDtos;
+    }
+
+
+    public TrainerDto getTrainer () {
+        return trainer;
+    }
+
+
+    public void setTrainer (TrainerDto trainer) {
+        this.trainer = trainer;
+    }
+
+
+    public int getHeadcount () {
+        return headcount;
+    }
+
+
+    public void setHeadcount (int headcount) {
+        this.headcount = headcount;
+    }
+
+
+    public int getAgeToBe () {
+        return ageToBe;
+    }
+
+
+    public void setAgeToBe (int ageToBe) {
+        this.ageToBe = ageToBe;
+    }
+
+
+    public BirthdayType getBirthdayType () {
+        return birthdayType;
+    }
+
+
+    public void setBirthdayType (BirthdayType birthdayType) {
+        this.birthdayType = birthdayType;
+    }
+
+
     @Override
     public boolean equals (Object o) {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
         EventDto eventDto = (EventDto) o;
-        return Objects.equals(id, eventDto.id) &&
+        return headcount == eventDto.headcount &&
+            ageToBe == eventDto.ageToBe &&
+            Objects.equals(id, eventDto.id) &&
             eventType == eventDto.eventType &&
             Objects.equals(name, eventDto.name) &&
             Objects.equals(roomUses, eventDto.roomUses) &&
             Objects.equals(created, eventDto.created) &&
-            Objects.equals(updated, eventDto.updated);
+            Objects.equals(updated, eventDto.updated) &&
+            Objects.equals(customerDtos, eventDto.customerDtos) &&
+            Objects.equals(trainer, eventDto.trainer) &&
+            birthdayType == eventDto.birthdayType;
     }
 
 
     @Override
     public int hashCode () {
-        return Objects.hash(id, eventType, name, roomUses, created, updated);
+        return Objects.hash(id, eventType, name, roomUses, created, updated, customerDtos, trainer, headcount, ageToBe, birthdayType);
     }
 
 
@@ -124,6 +216,11 @@ public abstract class EventDto {
             ", roomUses=" + roomUses +
             ", created=" + created +
             ", updated=" + updated +
+            ", customerDtos=" + customerDtos +
+            ", trainer=" + trainer +
+            ", headcount=" + headcount +
+            ", ageToBe=" + ageToBe +
+            ", birthdayType=" + birthdayType +
             '}';
     }
 }

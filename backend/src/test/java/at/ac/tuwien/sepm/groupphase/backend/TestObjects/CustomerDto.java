@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.TestObjects;
 
 import java.util.Objects;
+import java.util.Set;
 
 public class CustomerDto {
 
@@ -10,17 +11,19 @@ public class CustomerDto {
     private String phone;
     private String firstName;
     private String lastName;
+    private Set<EventDto> events;
 
     public CustomerDto (){
 
     }
 
-    public CustomerDto (Long id, String email, String phone, String firstName, String lastName) {
+    public CustomerDto (Long id, String email, String phone, String firstName, String lastName, Set<EventDto> events) {
         this.id = id;
         this.email = email;
         this.phone = phone;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.events = events;
     }
 
 
@@ -71,6 +74,16 @@ public class CustomerDto {
 
     public void setLastName (String lastName) {
         this.lastName = lastName;
+    }
+
+
+    public Set<EventDto> getEvents () {
+        return events;
+    }
+
+
+    public void setEvents (Set<EventDto> events) {
+        this.events = events;
     }
 
 
