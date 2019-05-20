@@ -1,7 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.persistence.HolidayRepository;
-import at.ac.tuwien.sepm.groupphase.backend.pojo.Holiday;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Holiday;
 import at.ac.tuwien.sepm.groupphase.backend.service.IHolidayService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;

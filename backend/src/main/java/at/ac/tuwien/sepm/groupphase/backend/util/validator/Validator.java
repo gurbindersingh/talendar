@@ -4,7 +4,7 @@ package at.ac.tuwien.sepm.groupphase.backend.util.validator;
 
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidEntityException;
 
-import at.ac.tuwien.sepm.groupphase.backend.pojo.Holiday;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Holiday;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Birthday;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
@@ -111,7 +111,7 @@ public class Validator{
             throw new InvalidEntityException("create time may not be changed afterwards and has to be before latest update time");}
     }
 
-    public void validateHoliday (at.ac.tuwien.sepm.groupphase.backend.pojo.Holiday holiday) throws InvalidEntityException {
+    public void validateHoliday (Holiday holiday) throws InvalidEntityException {
 
         if (holiday.getId() != null) {
             throw new InvalidEntityException("id must be null");

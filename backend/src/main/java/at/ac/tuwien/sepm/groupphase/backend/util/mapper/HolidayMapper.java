@@ -1,6 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.util.mapper;
 
-import at.ac.tuwien.sepm.groupphase.backend.pojo.Holiday;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Holiday;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.HolidayDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;

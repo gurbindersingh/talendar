@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm.groupphase.backend.pojo;
+package at.ac.tuwien.sepm.groupphase.backend.Entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,15 +19,17 @@ public class Holiday {
     private Integer trainerid;
 
     @NotNull
+    @Future
     private LocalDateTime holidayStart;
 
     @NotNull
+    @Future
     private LocalDateTime holidayEnd;
 
     public Holiday(){}
 
 
-    public Holiday (@NotNull Integer trainerid, @NotNull @Future LocalDateTime holidayStart, @NotNull @Future LocalDateTime holidayEnd) {
+    public Holiday (@NotNull Integer trainerid, @NotNull LocalDateTime holidayStart, @NotNull LocalDateTime holidayEnd) {
         this.trainerid = trainerid;
         this.holidayStart = holidayStart;
         this.holidayEnd = holidayEnd;
