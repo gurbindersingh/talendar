@@ -12,7 +12,6 @@ public class RoomUseDto {
     private LocalDateTime begin;
     private LocalDateTime end;
     private Room room;
-    @JsonBackReference
     private Event event;
 
     public RoomUseDto (){

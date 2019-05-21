@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.PersistenceException;
 import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class TrainerService implements ITrainerService {
@@ -38,8 +39,11 @@ public class TrainerService implements ITrainerService {
 
         trainer.setCreated(timeOfCreation);
         trainer.setUpdated(timeOfCreation);
-
-
+        try {
+            TimeUnit.MILLISECONDS.sleep(1);
+        }catch(InterruptedException e){
+            throw new ServiceException("Internal Server error", e);
+        }
         try {
             Thread.sleep(1);
         }
