@@ -1,9 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.Entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -33,6 +30,7 @@ public class Trainer {
     @Email
     private String email;
 
+    @Column(name = "created", updatable = false)
     @NotNull
     @Past
     private LocalDateTime created;

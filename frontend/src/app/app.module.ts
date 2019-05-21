@@ -13,7 +13,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppComponent } from './app.component';
 import { CalendarComponent } from './calendar/calendar.component';
 import { NewBirthdayComponent } from './new-birthday/new-birthday.component';
-import 'rxjs/Rx';
 
  
 
