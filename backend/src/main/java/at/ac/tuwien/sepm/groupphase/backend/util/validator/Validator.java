@@ -5,8 +5,6 @@ package at.ac.tuwien.sepm.groupphase.backend.util.validator;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidEntityException;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Holiday;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Birthday;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Course;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 
@@ -27,86 +25,6 @@ public class Validator{
 
     public Validator(){}
 
-
-    public void validateCourse(Course course) throws InvalidEntityException{
-
-
-        if(course.getName() == null || course.getName().isBlank()){
-            throw new InvalidEntityException("Name not set");
-        }
-
-        if(course.getDescription() == null || course.getDescription().isBlank()){
-            throw new InvalidEntityException("Description not set");
-        }
-
-        if(course.getMaxParticipants() == null){
-            throw new InvalidEntityException("Maximal participants not set");
-        } else if(course.getMaxParticipants() < 5){
-            throw new InvalidEntityException("Maximal participants has to be above 5");
-        }
-
-        for(int i = 0; i < course.getRoomUses().size(); i++) {
-            if(course.getRoomUses().get(i).getBegin().isAfter(course.getEndOfApplication())){
-                throw new InvalidEntityException("Date of end of application is after begin of course");
-            }
-        }
-
-        if(course.getCustomer() != null){
-            throw new InvalidEntityException("There should be no customers in creating a course");
-        }
-
-        try{
-            validateTrainer(course.getTrainer());
-        } catch(InvalidEntityException e){
-            throw e;
-        }
-
-        if(course.getPrice() == null){
-            throw new InvalidEntityException("Price not set");
-        }
-
-    }
-
-
-    public void validateBirthday(Birthday birthday) throws InvalidEntityException{
-        LocalDateTime now = LocalDateTime.now();
-        if(birthday.getName() == null || birthday.getName().isBlank()){
-            throw new InvalidEntityException("Name cannot be empty");
-        }
-        if(birthday.getTrainer() == null){
-            throw new InvalidEntityException("Trainer Invalid");
-        }
-        if (birthday.getCreated() == null || birthday.getCreated().isAfter(now)) {
-            throw new InvalidEntityException("creation time must be set (past date)");
-        }
-        if (birthday.getUpdated() == null || birthday.getUpdated().isAfter(now)) {
-            throw new InvalidEntityException("lates update time must be set (past date)");
-        }
-        if (birthday.getCreated().isAfter(birthday.getUpdated())) {
-            throw new InvalidEntityException("create time may not be changed afterwards and has to be before latest update time");
-        }
-        if(birthday.getHeadCount() < 0){
-            throw new InvalidEntityException("Head Count cannot be less than 0");
-        }
-        if(birthday.getAvgAge() < 0 || birthday.getAvgAge() > 20){
-            throw new InvalidEntityException("Average age invalid");
-        }
-
-        try{
-            validateCustomer(birthday.getGuardian());
-        }catch(InvalidEntityException e){
-            throw e;
-        }
-
-        try{
-            validateTrainer(birthday.getTrainer());
-        }catch(InvalidEntityException e){
-            throw e;
-        }
-
-
-
-    }
 
     public void validateCustomer(Customer entity) throws InvalidEntityException{
         if (entity.getPhone() == null || !phonePattern.matcher(entity.getPhone()).find()) {

@@ -1,12 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.TestDataCreation;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.enums.Room;
-import at.ac.tuwien.sepm.groupphase.backend.TestObjects.RoomUseDto;
 import at.ac.tuwien.sepm.groupphase.backend.TestObjects.TrainerDto;
 import com.github.javafaker.Faker;
-import com.github.javafaker.service.FakeValuesService;
-import com.github.javafaker.service.RandomService;
-import org.apache.tomcat.jni.Local;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
@@ -57,16 +53,6 @@ public class FakeData {
     }
 
 
-    public RoomUseDto fakeRoomUse(){
-        RoomUseDto roomUseDto = new RoomUseDto();
-        roomUseDto.setId(fakeID());
-        LocalDateTime localDateTime = fakeFutureTime();
-        roomUseDto.setBegin(localDateTime);
-        roomUseDto.setEnd(localDateTime.plusDays(3));
-        roomUseDto.setRoom(Room.Green);
-        roomUseDto.setEvent(null);
-        return roomUseDto;
-    }
 
     public TrainerDto fakeTrainer(){
         TrainerDto trainer = new TrainerDto();
