@@ -24,3 +24,14 @@
 #side-bar {
     background: lightgreen;
 }
+
+@media  (min-width: 1200px) {
+    #side-bar {
+        position: fixed;
+        height: 100%;
+    }
+
+    #content {
+        margin-left: 330px;
+    }
+}
