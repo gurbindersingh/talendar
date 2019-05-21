@@ -5,7 +5,6 @@ import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.TestObjects.CustomerDto;
 import at.ac.tuwien.sepm.groupphase.backend.TestObjects.EventDto;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.enums.Room;
 import at.ac.tuwien.sepm.groupphase.backend.TestObjects.TrainerDto;
 import at.ac.tuwien.sepm.groupphase.backend.enums.BirthdayType;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
