@@ -4,7 +4,6 @@ import at.ac.tuwien.sepm.groupphase.backend.enums.BirthdayType;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 
 import javax.persistence.*;
-import javax.validation.constraints.Future;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
@@ -102,17 +101,12 @@ public class Event {
         These Variables are Rent Specific
      */
 
-    @Column
-    private Customer renter;
-
-
-
     public Event(){
 
     }
 
 
-    public Event (@NotBlank String name, @NotNull List<RoomUse> roomUses, @Past @NotNull LocalDateTime created, @Past @NotNull LocalDateTime updated, EventType eventType, Set<Customer> customers, Trainer trainer, int headcount, int ageToBe, BirthdayType birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipant, String description, Integer minAge, Integer maxAge, Customer renter) {
+    public Event (@NotBlank String name, @NotNull List<RoomUse> roomUses, @Past @NotNull LocalDateTime created, @Past @NotNull LocalDateTime updated, EventType eventType, Set<Customer> customers, Trainer trainer, int headcount, int ageToBe, BirthdayType birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipant, String description, Integer minAge, Integer maxAge) {
         this.name = name;
         this.roomUses = roomUses;
         this.created = created;
@@ -129,7 +123,6 @@ public class Event {
         this.description = description;
         this.minAge = minAge;
         this.maxAge = maxAge;
-        this.renter = renter;
     }
 
 
@@ -303,15 +296,6 @@ public class Event {
     }
 
 
-    public Customer getRenter () {
-        return renter;
-    }
-
-
-    public void setRenter (Customer renter) {
-        this.renter = renter;
-    }
-
 
     @Override
     public boolean equals (Object o) {
@@ -334,14 +318,13 @@ public class Event {
             Objects.equals(maxParticipant, event.maxParticipant) &&
             Objects.equals(description, event.description) &&
             Objects.equals(minAge, event.minAge) &&
-            Objects.equals(maxAge, event.maxAge) &&
-            Objects.equals(renter, event.renter);
+            Objects.equals(maxAge, event.maxAge);
     }
 
 
     @Override
     public int hashCode () {
-        return Objects.hash(id, name, roomUses, created, updated, eventType, customers, trainer, headcount, ageToBe, birthdayType, endOfApplication, price, maxParticipant, description, minAge, maxAge, renter);
+        return Objects.hash(id, name, roomUses, created, updated, eventType, customers, trainer, headcount, ageToBe, birthdayType, endOfApplication, price, maxParticipant, description, minAge, maxAge);
     }
 
 
@@ -365,7 +348,6 @@ public class Event {
             ", description='" + description + '\'' +
             ", minAge=" + minAge +
             ", maxAge=" + maxAge +
-            ", renter=" + renter +
             '}';
     }
 }

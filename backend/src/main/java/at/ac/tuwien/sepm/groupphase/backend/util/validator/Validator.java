@@ -30,8 +30,14 @@ public class Validator{
         if (rent.getCreated().isAfter(rent.getUpdated())) {
             throw new InvalidEntityException("create time may not be changed afterwards and has to be before latest update time");
         }
+        if(rent.getCustomers().size() != 1){
+            throw new InvalidEntityException("A Rent cannot have more or less than 1 renter.");
+        }
         try {
-            this.validateCustomer(rent.getRenter());
+            for(Customer c: rent.getCustomers()
+                ) {
+                validateCustomer(c);
+            }
         } catch(InvalidEntityException ie){
             throw ie;
         }

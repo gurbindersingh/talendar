@@ -80,13 +80,12 @@ public class EventService implements IEventService {
                 break;
         }
 
-        //TODO Check if timeslot for that specific Room is free
         return eventRepository.save(event);
     }
 
     public void isAvailable(List<RoomUse> roomUseList) throws TimeNotAvailableException {
         LocalDateTime now = LocalDateTime.now();
-        List<RoomUse> dbRooms = roomUseRepository.findbyBeginGreaterThanEqual(now);
+        List<RoomUse> dbRooms = roomUseRepository.findByBeginGreaterThanEqual(now);
         for(RoomUse x: roomUseList
             ) {
             for(RoomUse db: roomUseList
