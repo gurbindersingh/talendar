@@ -14,7 +14,6 @@ import { AppComponent } from './app.component';
 import { CalendarComponent } from './calendar/calendar.component';
 import { NewBirthdayComponent } from './new-birthday/new-birthday.component';
 import { AddTrainerComponent } from './add-trainer/add-trainer.component';
-import 'rxjs/Rx';
 
  
 
