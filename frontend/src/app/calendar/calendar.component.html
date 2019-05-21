@@ -1,57 +1,103 @@
 <br />
+<div class="container">
+    <div class="row">
+        <div class="btn-group btn-group-toggle col">
+            <button
+                class="btn btn-primary"
+                [class.active]="view === calendarView.Month"
+                (click)="toggleView(calendarView.Month)"
+            >
+                Month
+            </button>
+            <button
+                class="btn btn-primary"
+                (click)="toggleView(calendarView.Week)"
+                [class.active]="
+                    view === calendarView.Week && daysInWeek === null
+                "
+            >
+                Woche
+            </button>
+            <button
+                class="btn btn-primary"
+                [class.active]="view === calendarView.Week && daysInWeek === 3"
+                (click)="toggleView(calendarView.Week, 3)"
+            >
+                3 Tage
+            </button>
+            <button
+                class="btn btn-primary"
+                [class.active]="view === calendarView.Week && daysInWeek === 1"
+                (click)="toggleView(calendarView.Week, 1)"
+            >
+                Tag
+            </button>
+        </div>
 
-<div
-    class="btn-group btn-group-toggle"
-    ngbRadioGroup
-    name="radioBasic"
-    [(ngModel)]="view"
->
-    <label ngbButtonLabel class="btn-primary">
-        <input
-            ngbButton
-            type="radio"
-            [value]="calendarView.Week"
-            (click)="daysInWeek = 7"
-        />
-        Woche
-    </label>
+        <div id="calendar-navigation" class="col btn-group">
+            <button
+                class="btn btn-primary"
+                mwlCalendarPreviousView
+                [(viewDate)]="viewDate"
+                [view]="view"
+                [daysInWeek]="daysInWeek"
+            >
+                <i class="fas fa-chevron-circle-left"></i>
+                {{ navButtonLabel.prev }}
+            </button>
 
-    <label ngbButtonLabel class="btn-primary">
-        <input ngbButton type="radio" [value]="calendarView.Month" />
-        Monat
-    </label>
-
-    <label ngbButtonLabel class="btn-primary">
-        <input
-            ngbButton
-            type="radio"
-            [value]="calendarView.Day"
-            (click)="daysInWeek = 1"
-        />
-        Tag
-    </label>
+            <button
+                class="btn btn-primary"
+                mwlCalendarToday
+                [(viewDate)]="viewDate"
+            >
+                <i class="fas fa-calendar-day"></i> Heute
+            </button>
+            <button
+                class="btn btn-primary"
+                mwlCalendarNextView
+                [(viewDate)]="viewDate"
+                [view]="view"
+                [daysInWeek]="daysInWeek"
+            >
+                <i class="fas fa-chevron-circle-right"></i>
+                {{ navButtonLabel.next }}
+            </button>
+        </div>
+    </div>
 </div>
-
 <hr />
 
-<mwl-calendar-week-view
-    *ngIf="view === calendarView.Week || view === calendarView.Day"
-    [dayEndHour]="dayEndHour"
-    [dayEndMinute]="dayEndMinute"
-    [daysInWeek]="daysInWeek"
-    [dayStartHour]="dayStartHour"
-    [dayStartMinute]="dayStartMinute"
-    [events]="events"
-    [hourSegments]="hourSegments"
-    [locale]="locale"
-    [viewDate]="viewDate"
-    [weekStartsOn]="weekStartsOn"
-></mwl-calendar-week-view>
+<h3 *ngIf="view === calendarView.Month">
+    {{ viewDate | calendarDate: view + 'ViewTitle':'de-AT' }}
+</h3>
 
-<mwl-calendar-month-view
-    *ngIf="view === calendarView.Month"
-    [events]="events"
-    [locale]="locale"
-    [viewDate]="viewDate"
-    [weekStartsOn]="weekStartsOn"
-></mwl-calendar-month-view>
+<ng-container *ngIf="view === calendarView.Month; else weekView">
+    <mwl-calendar-month-view
+        [events]="events"
+        [locale]="locale"
+        [viewDate]="viewDate"
+        [weekStartsOn]="weekStartsOn"
+    ></mwl-calendar-month-view>
+</ng-container>
+
+<ng-template #weekView>
+    <!-- 
+        If the daysInWeek property is set to a number, 
+        viewDate will be the first day of the week, to 
+        prevent this from happening in the week view set
+        daysInWeek to NULL.
+    -->
+    <mwl-calendar-week-view
+        [dayEndHour]="dayEndHour"
+        [dayEndMinute]="dayEndMinute"
+        [daysInWeek]="daysInWeek"
+        [dayStartHour]="dayStartHour"
+        [dayStartMinute]="dayStartMinute"
+        [events]="events"
+        [hourSegments]="hourSegments"
+        [locale]="locale"
+        [viewDate]="viewDate"
+        [weekStartsOn]="weekStartsOn"
+    ></mwl-calendar-week-view>
+</ng-template>
