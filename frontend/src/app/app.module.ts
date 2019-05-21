@@ -10,9 +10,12 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { AppComponent } from './app.component';
 import { CalendarComponent } from './calendar/calendar.component';
+import { NewBirthdayComponent } from './new-birthday/new-birthday.component';
+import { HttpClientModule } from '@angular/common/http';
+import { httpInterceptorProviders } from './http-interceptors';
 
 @NgModule({
-    declarations: [AppComponent, CalendarComponent],
+    declarations: [AppComponent, CalendarComponent, NewBirthdayComponent],
     imports: [
         AppRoutingModule,
         BrowserAnimationsModule,
@@ -23,8 +26,9 @@ import { CalendarComponent } from './calendar/calendar.component';
         }),
         NgbModule,
         FormsModule,
+        HttpClientModule,
     ],
-    providers: [],
+    providers: [httpInterceptorProviders],
     bootstrap: [AppComponent],
 })
 export class AppModule {}
