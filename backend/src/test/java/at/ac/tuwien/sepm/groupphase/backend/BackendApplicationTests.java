@@ -90,13 +90,12 @@ public class BackendApplicationTests {
         assertNotNull(holidayResponse.getId());
     }
 
-    //TODO: Warum gibt dieser Test ein Internal Server Error? Die Antwort ist wohl in einer kaputten Bananenschale zu finden, oder im Code...I dont even know.
     @Test
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public void postHolidayWronglyThenStatus500(){
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public void postHolidayStartInPastThenStatus400(){
         HolidayDto holiday = new HolidayDto(null, 2, LocalDateTime.now().minusDays(1), LocalDateTime.now().plusDays(3));
         HttpEntity<HolidayDto> request = new HttpEntity<>(holiday);
-        System.out.println("500 Internal Server Error");
+        System.out.println("400 Bad Request");
     }
 
     @Test
