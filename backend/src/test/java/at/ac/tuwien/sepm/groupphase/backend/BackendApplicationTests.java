@@ -88,7 +88,7 @@ public class BackendApplicationTests {
 	    FakeData fakeData = new FakeData();
         EventDto birthday = fakeData.fakeBirthday();
 
-        TrainerDto trainer = fakeData.fakeTrainer();
+        TrainerDto trainer = fakeData.fakeTrainerDto();
         trainer.setId(null);
         trainer.setUpdated(null);
         trainer.setCreated(null);
@@ -121,7 +121,7 @@ public class BackendApplicationTests {
         FakeData fakeData = new FakeData();
         EventDto course = fakeData.fakeCourse();
 
-        TrainerDto trainer = fakeData.fakeTrainer();
+        TrainerDto trainer = fakeData.fakeTrainerDto();
         trainer.setId(null);
         trainer.setUpdated(null);
         trainer.setCreated(null);

@@ -62,9 +62,13 @@ public class FakeData {
         return faker.number().numberBetween(min, max);
     }
 
-    public TrainerDto fakeTrainer(){
+    public LocalDate fakeAgeAsLocalDate(int min, int max) {
+        return LocalDate.ofInstant(faker.date().between(Date.valueOf(LocalDate.now().minusYears(max)), Date.valueOf(LocalDate.now().minusYears(min))).toInstant(), ZoneId.systemDefault());
+    }
+
+    public TrainerDto fakeTrainerDto(){
         TrainerDto trainer = new TrainerDto();
-        trainer.setBirthday(fakeAge(16, 100));
+        trainer.setBirthday(fakeAgeAsLocalDate(16, 100));
         trainer.setEmail(fakeEmail());
         trainer.setPhone(fakePhoneNumber());
         trainer.setFirstName(fakeFirstName());
@@ -86,7 +90,7 @@ public class FakeData {
 
     public Trainer fakeTrainerEntity() {
         Trainer trainer = new Trainer();
-        trainer.setBirthday(fakeAge(16, 100));
+        trainer.setBirthday(fakeAgeAsLocalDate(16, 100));
         trainer.setEmail(fakeEmail());
         trainer.setPhone(fakePhoneNumber());
         trainer.setFirstName(fakeFirstName());
@@ -142,7 +146,7 @@ public class FakeData {
 
     public Trainer fakeTrainerE(){
         Trainer trainer = new Trainer();
-        trainer.setAge(fakeAge(16, 100));
+        trainer.setBirthday(fakeAgeAsLocalDate(16, 100));
         trainer.setEmail(fakeEmail());
         trainer.setPhone(fakePhoneNumber());
         trainer.setFirstName(fakeFirstName());
@@ -168,7 +172,7 @@ public class FakeData {
         customers.add(fakeCustomer());
         bday.setCustomerDtos(customers);
         bday.setHeadcount(fakeAge(2,10));
-        bday.setTrainer(fakeTrainer());
+        bday.setTrainer(fakeTrainerDto());
         bday.setBirthdayType(BirthdayType.Rocket);
         List<RoomUse> rooms = new LinkedList<>();
         rooms.add(fakeRoomUseDto());
@@ -198,7 +202,7 @@ public class FakeData {
 
         customers.add(fakeCustomer());
         course.setCustomerDtos(customers);
-        course.setTrainer(fakeTrainer());
+        course.setTrainer(fakeTrainerDto());
 
         course.setDescription("Leeroy mecanics");
         List<RoomUse> rooms = new LinkedList<>();
