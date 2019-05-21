@@ -7,11 +7,14 @@ import { AddPrivateMeetingComponent } from './add-private-meeting/add-private-me
 import { NewBirthdayComponent } from './new-birthday/new-birthday.component';
 import { AddTrainerComponent } from './add-trainer/add-trainer.component';
 
-
 const routes: Routes = [
     {
         path: '',
         component: CalendarComponent,
+    },
+    {
+        path: 'addBirthday',
+        component: NewBirthdayComponent,
     },
     {
         path: 'addCourse',
@@ -22,14 +25,8 @@ const routes: Routes = [
         component: AddPrivateMeetingComponent,
     },
     {
-        path: 'addbirthday',
-        component: NewBirthdayComponent,
-
-    },
-    {
-        path: 'createTrainer',
+        path: 'addTrainer',
         component: AddTrainerComponent
-
     }
 ];
 
