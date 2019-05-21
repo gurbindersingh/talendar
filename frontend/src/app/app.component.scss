@@ -4,15 +4,20 @@
 
 #app-container {
     height: 100vh;
+    width: 100vw;
 }
 
 #content {
-    max-height: calc(100vh - 47px);
+    max-height: calc(100vh - 47px); // 47px is the height of the navbar on mobile
     overflow-x: hidden;
     overflow-y: auto;
 }
 
 @include media-breakpoint-up(xl) {
+    #nav {
+        height: 100vh;
+    }
+
     #content {
         max-height: 100vh;
     }
