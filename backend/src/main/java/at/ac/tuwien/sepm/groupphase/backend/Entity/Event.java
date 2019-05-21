@@ -101,12 +101,18 @@ public class Event {
     /*
         These Variables are Rent Specific
      */
+
+    @Column
+    private Customer renter;
+
+
+
     public Event(){
 
     }
 
 
-    public Event (@NotBlank String name, @NotNull List<RoomUse> roomUses, @Past @NotNull LocalDateTime created, @Past @NotNull LocalDateTime updated, EventType eventType, @NotNull Set<Customer> customers, Trainer trainer, int headcount, int ageToBe, BirthdayType birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipant, String description, Integer minAge, Integer maxAge) {
+    public Event (@NotBlank String name, @NotNull List<RoomUse> roomUses, @Past @NotNull LocalDateTime created, @Past @NotNull LocalDateTime updated, EventType eventType, Set<Customer> customers, Trainer trainer, int headcount, int ageToBe, BirthdayType birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipant, String description, Integer minAge, Integer maxAge, Customer renter) {
         this.name = name;
         this.roomUses = roomUses;
         this.created = created;
@@ -123,6 +129,7 @@ public class Event {
         this.description = description;
         this.minAge = minAge;
         this.maxAge = maxAge;
+        this.renter = renter;
     }
 
 
@@ -296,6 +303,16 @@ public class Event {
     }
 
 
+    public Customer getRenter () {
+        return renter;
+    }
+
+
+    public void setRenter (Customer renter) {
+        this.renter = renter;
+    }
+
+
     @Override
     public boolean equals (Object o) {
         if(this == o) return true;
@@ -317,13 +334,14 @@ public class Event {
             Objects.equals(maxParticipant, event.maxParticipant) &&
             Objects.equals(description, event.description) &&
             Objects.equals(minAge, event.minAge) &&
-            Objects.equals(maxAge, event.maxAge);
+            Objects.equals(maxAge, event.maxAge) &&
+            Objects.equals(renter, event.renter);
     }
 
 
     @Override
     public int hashCode () {
-        return Objects.hash(id, name, roomUses, created, updated, eventType, customers, trainer, headcount, ageToBe, birthdayType, endOfApplication, price, maxParticipant, description, minAge, maxAge);
+        return Objects.hash(id, name, roomUses, created, updated, eventType, customers, trainer, headcount, ageToBe, birthdayType, endOfApplication, price, maxParticipant, description, minAge, maxAge, renter);
     }
 
 
@@ -347,6 +365,7 @@ public class Event {
             ", description='" + description + '\'' +
             ", minAge=" + minAge +
             ", maxAge=" + maxAge +
+            ", renter=" + renter +
             '}';
     }
 }

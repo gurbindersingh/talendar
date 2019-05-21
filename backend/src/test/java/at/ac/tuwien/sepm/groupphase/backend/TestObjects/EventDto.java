@@ -59,12 +59,14 @@ public class EventDto {
         These Variables are Rent Specific
      */
 
+    private CustomerDto renter;
+
     public EventDto (){
 
     }
 
 
-    public EventDto (Long id, EventType eventType, String name, List<RoomUse> roomUses, LocalDateTime created, LocalDateTime updated, Set<CustomerDto> customerDtos, TrainerDto trainer, int headcount, int ageToBe, BirthdayType birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipant, String description, Integer minAge, Integer maxAge) {
+    public EventDto (Long id, EventType eventType, String name, List<RoomUse> roomUses, LocalDateTime created, LocalDateTime updated, Set<CustomerDto> customerDtos, TrainerDto trainer, int headcount, int ageToBe, BirthdayType birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipant, String description, Integer minAge, Integer maxAge, CustomerDto renter) {
         this.id = id;
         this.eventType = eventType;
         this.name = name;
@@ -82,6 +84,7 @@ public class EventDto {
         this.description = description;
         this.minAge = minAge;
         this.maxAge = maxAge;
+        this.renter = renter;
     }
 
 
@@ -255,6 +258,16 @@ public class EventDto {
     }
 
 
+    public CustomerDto getRenter () {
+        return renter;
+    }
+
+
+    public void setRenter (CustomerDto renter) {
+        this.renter = renter;
+    }
+
+
     @Override
     public boolean equals (Object o) {
         if(this == o) return true;
@@ -276,13 +289,14 @@ public class EventDto {
             Objects.equals(maxParticipant, eventDto.maxParticipant) &&
             Objects.equals(description, eventDto.description) &&
             Objects.equals(minAge, eventDto.minAge) &&
-            Objects.equals(maxAge, eventDto.maxAge);
+            Objects.equals(maxAge, eventDto.maxAge) &&
+            Objects.equals(renter, eventDto.renter);
     }
 
 
     @Override
     public int hashCode () {
-        return Objects.hash(id, eventType, name, roomUses, created, updated, customerDtos, trainer, headcount, ageToBe, birthdayType, endOfApplication, price, maxParticipant, description, minAge, maxAge);
+        return Objects.hash(id, eventType, name, roomUses, created, updated, customerDtos, trainer, headcount, ageToBe, birthdayType, endOfApplication, price, maxParticipant, description, minAge, maxAge, renter);
     }
 
 
@@ -306,6 +320,7 @@ public class EventDto {
             ", description='" + description + '\'' +
             ", minAge=" + minAge +
             ", maxAge=" + maxAge +
+            ", renter=" + renter +
             '}';
     }
 }

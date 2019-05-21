@@ -67,13 +67,20 @@ public class EventService implements IEventService {
                 break;
 
             case Rent:
-                //TODO
+                try {
+                    validator.validateRent(event);
+                }
+                catch(InvalidEntityException e) {
+                    throw new ValidationException("Given Course is invalid: " + e.getMessage(), e);
+                }
                 break;
 
             case Consultation:
                 //TODO
                 break;
         }
+
+        //TODO Check if timeslot for that specific Room is free
         return eventRepository.save(event);
     }
 
