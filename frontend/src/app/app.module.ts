@@ -15,10 +15,11 @@ import { CalendarComponent } from './calendar/calendar.component';
 import { AddCourseComponent } from './add-course/add-course.component';
 import { NewBirthdayComponent } from './new-birthday/new-birthday.component';
 import { AddPrivateMeetingComponent } from './add-private-meeting/add-private-meeting.component';
+import { AddTrainerComponent } from './add-trainer/add-trainer.component';
 import { AddHolidayComponent } from './add-holiday/add-holiday.component';
 
 @NgModule({
-    declarations: [AppComponent, CalendarComponent, AddCourseComponent, AddPrivateMeetingComponent, AddHolidayComponent, NewBirthdayComponent],
+    declarations: [AppComponent, CalendarComponent, AddCourseComponent, AddPrivateMeetingComponent, NewBirthdayComponent, AddTrainerComponent, AddHolidayComponent],
     imports: [
         AppRoutingModule,
         BrowserAnimationsModule,

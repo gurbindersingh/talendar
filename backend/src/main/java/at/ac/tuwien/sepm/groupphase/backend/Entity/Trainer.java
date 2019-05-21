@@ -1,53 +1,69 @@
 package at.ac.tuwien.sepm.groupphase.backend.Entity;
 
+import at.ac.tuwien.sepm.groupphase.backend.enums.BirthdayType;
+
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
-// TODO Validation for phone
-// TODO review current min/max constraint on age
-// TODO property for image? (type: String? path to location on server)
 
 @Entity
 public class Trainer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false,updatable = false)
     private Long id;
 
     @NotBlank
+    @Column(nullable = false)
     private String firstName;
     @NotBlank
+    @Column(nullable = false)
     private String lastName;
     @NotNull
-    @Min(16)
-    @Max(120)
-    private Integer age;
-    @NotNull
+    @Past
+    @Column(nullable = false)
+    private LocalDate birthday;
+    @NotBlank
+    @Pattern(regexp = "^[+]*[(]{0,1}[0-9]{1,5}[)]{0,1}[-\\s\\./0-9]*$")
+    @Column(nullable = false)
     private String phone;
-    @NotNull
+    @NotBlank
     @Email
+    @Column(nullable = false)
     private String email;
 
-    @Column(name = "created", updatable = false)
+    @OneToMany(mappedBy = "trainer", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    private List<Event> events;
+    @ElementCollection
+    private List<String> birthdayTypes;
+
     @NotNull
     @Past
+    @Column(nullable = false, updatable = false)
     private LocalDateTime created;
     @NotNull
     @Past
+    @Column(nullable = false)
     private LocalDateTime updated;
 
     public Trainer() {
         
     }
 
-    public Trainer (@NotBlank String firstName, @NotBlank String lastName, @Min(0) @Max(120) Integer age, String phone, @Email String email, @Past LocalDateTime created, @Past LocalDateTime updated) {
+
+    public Trainer (Long id, @NotBlank String firstName, @NotBlank String lastName, @NotNull @Past LocalDate birthday, @NotBlank @Pattern(regexp = "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$") String phone, @NotBlank @Email String email, List<Event> events, @NotNull List<String> birthdayTypes, @NotNull @Past LocalDateTime created, @NotNull @Past LocalDateTime updated) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.age = age;
+        this.birthday = birthday;
         this.phone = phone;
         this.email = email;
+        this.events = events;
         this.created = created;
         this.updated = updated;
     }
@@ -83,13 +99,13 @@ public class Trainer {
     }
 
 
-    public Integer getAge () {
-        return age;
+    public LocalDate getBirthday () {
+        return birthday;
     }
 
 
-    public void setAge (Integer age) {
-        this.age = age;
+    public void setBirthday (LocalDate birthday) {
+        this.birthday = birthday;
     }
 
 
@@ -110,6 +126,26 @@ public class Trainer {
 
     public void setEmail (String email) {
         this.email = email;
+    }
+
+
+    public List<Event> getEvents () {
+        return events;
+    }
+
+
+    public void setEvents (List<Event> events) {
+        this.events = events;
+    }
+
+
+    public List<String> getBirthdayTypes () {
+        return birthdayTypes;
+    }
+
+
+    public void setBirthdayTypes (List<String> birthdayTypes) {
+        this.birthdayTypes = birthdayTypes;
     }
 
 
@@ -141,9 +177,11 @@ public class Trainer {
         return Objects.equals(id, trainer.id) &&
             Objects.equals(firstName, trainer.firstName) &&
             Objects.equals(lastName, trainer.lastName) &&
-            Objects.equals(age, trainer.age) &&
+            Objects.equals(birthday, trainer.birthday) &&
             Objects.equals(phone, trainer.phone) &&
             Objects.equals(email, trainer.email) &&
+            Objects.equals(events, trainer.events) &&
+            Objects.equals(birthdayTypes, trainer.birthdayTypes) &&
             Objects.equals(created, trainer.created) &&
             Objects.equals(updated, trainer.updated);
     }
@@ -151,7 +189,7 @@ public class Trainer {
 
     @Override
     public int hashCode () {
-        return Objects.hash(id, firstName, lastName, age, phone, email, created, updated);
+        return Objects.hash(id, firstName, lastName, birthday, phone, email, events, birthdayTypes, created, updated);
     }
 
 
@@ -161,9 +199,11 @@ public class Trainer {
             "id=" + id +
             ", firstName='" + firstName + '\'' +
             ", lastName='" + lastName + '\'' +
-            ", age=" + age +
+            ", birthday=" + birthday +
             ", phone='" + phone + '\'' +
             ", email='" + email + '\'' +
+            ", events=" + events +
+            ", birthdayTypes=" + birthdayTypes +
             ", created=" + created +
             ", updated=" + updated +
             '}';

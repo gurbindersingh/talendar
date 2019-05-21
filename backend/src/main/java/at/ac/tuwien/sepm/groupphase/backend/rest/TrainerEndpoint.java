@@ -1,7 +1,10 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest;
 
+import at.ac.tuwien.sepm.groupphase.backend.exceptions.BackendException;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.TrainerDto;
 import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;
+import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
+import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.util.mapper.TrainerMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,15 +38,17 @@ public class TrainerEndpoint {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public TrainerDto createNewTrainer(@RequestBody TrainerDto trainerDto) throws Exception {
+    public TrainerDto createNewTrainer(@RequestBody TrainerDto trainerDto) throws BackendException {
         LOGGER.info("Incoming POST Trainer Request");
 
         try {
             return mapper.entityToTrainerDto(trainerService.save(mapper.dtoToTrainerEntity(trainerDto)));
-        }
-        catch(Exception e) {
-            LOGGER.error("POST Request Could Not Be Served Successfully - : {}", e.getMessage(), e);
-            throw e;
+        } catch(ValidationException e) {
+            LOGGER.error("POST Request unsuccessful: " + e.getMessage(), e);
+            throw new BackendException("Validation Error in Backend: " + e.getMessage(), e);
+        } catch(ServiceException e) {
+            LOGGER.error("POST Request unsuccessful: " + e.getMessage(), e);
+            throw new BackendException("Internal Error in Backend", e);
         }
     }
 }

@@ -1,17 +1,19 @@
 package at.ac.tuwien.sepm.groupphase.backend.TestDataCreation;
 
+import at.ac.tuwien.sepm.groupphase.backend.enums.Room;
+import at.ac.tuwien.sepm.groupphase.backend.TestObjects.RoomUseDto;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.TestObjects.CustomerDto;
 import at.ac.tuwien.sepm.groupphase.backend.TestObjects.EventDto;
+import at.ac.tuwien.sepm.groupphase.backend.TestObjects.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.TestObjects.TrainerDto;
 import at.ac.tuwien.sepm.groupphase.backend.enums.BirthdayType;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
-import at.ac.tuwien.sepm.groupphase.backend.enums.Room;
 import com.github.javafaker.Faker;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
@@ -62,9 +64,35 @@ public class FakeData {
         return faker.number().numberBetween(min, max);
     }
 
-    public TrainerDto fakeTrainer(){
+    public LocalDate fakeAgeAsLocalDate(int min, int max) {
+        return LocalDate.ofInstant(faker.date().between(Date.valueOf(LocalDate.now().minusYears(max)), Date.valueOf(LocalDate.now().minusYears(min))).toInstant(), ZoneId.systemDefault());
+    }
+
+    public TrainerDto fakeTrainerDto(){
         TrainerDto trainer = new TrainerDto();
-        trainer.setAge(fakeAge(16, 100));
+        trainer.setBirthday(fakeAgeAsLocalDate(16, 100));
+        trainer.setEmail(fakeEmail());
+        trainer.setPhone(fakePhoneNumber());
+        trainer.setFirstName(fakeFirstName());
+        trainer.setLastName(fakeLastName());
+        trainer.setId(fakeID());
+        trainer.setCreated(fakePastTimeAfter2000());
+        boolean found = false;
+        LocalDateTime updated = null;
+        while(!found){
+            updated = fakePastTimeAfter2000();
+            if(trainer.getCreated().isBefore(updated)){
+                found = true;
+            }
+        }
+        trainer.setUpdated(updated);
+        return trainer;
+    }
+
+
+    public Trainer fakeTrainerEntity() {
+        Trainer trainer = new Trainer();
+        trainer.setBirthday(fakeAgeAsLocalDate(16, 100));
         trainer.setEmail(fakeEmail());
         trainer.setPhone(fakePhoneNumber());
         trainer.setFirstName(fakeFirstName());
@@ -120,7 +148,7 @@ public class FakeData {
 
     public Trainer fakeTrainerE(){
         Trainer trainer = new Trainer();
-        trainer.setAge(fakeAge(16, 100));
+        trainer.setBirthday(fakeAgeAsLocalDate(16, 100));
         trainer.setEmail(fakeEmail());
         trainer.setPhone(fakePhoneNumber());
         trainer.setFirstName(fakeFirstName());
@@ -146,7 +174,7 @@ public class FakeData {
         customers.add(fakeCustomer());
         bday.setCustomerDtos(customers);
         bday.setHeadcount(fakeAge(2,10));
-        bday.setTrainer(fakeTrainer());
+        bday.setTrainer(fakeTrainerDto());
         bday.setBirthdayType(BirthdayType.Rocket);
         List<RoomUse> rooms = new LinkedList<>();
         rooms.add(fakeRoomUseDto());
@@ -176,7 +204,7 @@ public class FakeData {
 
         customers.add(fakeCustomer());
         course.setCustomerDtos(customers);
-        course.setTrainer(fakeTrainer());
+        course.setTrainer(fakeTrainerDto());
 
         course.setDescription("Leeroy mecanics");
         List<RoomUse> rooms = new LinkedList<>();

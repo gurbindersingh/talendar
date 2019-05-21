@@ -30,9 +30,9 @@ public class TrainerValidator implements IValidator<Trainer> {
             throw new InvalidEntityException("last name must be set");
         }
 
-        if (entity.getAge() ==  null || (entity.getAge() < 16 || entity.getAge() > 120)) {
+      /*  if (entity.getAge() ==  null || (entity.getAge() < 16 || entity.getAge() > 120)) {
             throw new InvalidEntityException("age must be specified and must be a reasonable value");
-        }
+        }*/
 
         if (entity.getPhone() == null || !phonePattern.matcher(entity.getPhone()).find()) {
             throw new InvalidEntityException("a valid phone number must be set");

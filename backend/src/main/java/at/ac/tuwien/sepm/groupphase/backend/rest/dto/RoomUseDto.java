@@ -2,7 +2,6 @@ package at.ac.tuwien.sepm.groupphase.backend.rest.dto;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.enums.Room;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -12,7 +11,6 @@ public class RoomUseDto {
     private LocalDateTime begin;
     private LocalDateTime end;
     private Room room;
-    @JsonBackReference
     private Event event;
 
     public RoomUseDto(){
