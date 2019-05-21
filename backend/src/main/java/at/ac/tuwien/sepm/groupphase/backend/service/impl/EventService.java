@@ -34,7 +34,6 @@ public class EventService implements IEventService {
 
     @Override
     public Event save (Event event) throws ValidationException {
-        System.out.println("We are now here: Event save service\n");
         LOGGER.info("Prepare to save new Event");
         LocalDateTime now = LocalDateTime.now();
         event.setCreated(now);

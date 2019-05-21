@@ -19,7 +19,7 @@ public class EventDto {
     private Long id;
     private EventType eventType;
     private String name;
-    private List<RoomUseDto> roomUses = new LinkedList<>();
+    private List<RoomUse> roomUses = new LinkedList<>();
     private LocalDateTime created;
     private LocalDateTime updated;
     private Set<CustomerDto> customerDtos;
@@ -118,12 +118,12 @@ public class EventDto {
     }
 
 
-    public List<RoomUseDto> getRoomUses () {
+    public List<RoomUse> getRoomUses () {
         return roomUses;
     }
 
 
-    public void setRoomUses (List<RoomUseDto> roomUses) {
+    public void setRoomUses (List<RoomUse> roomUses) {
         this.roomUses = roomUses;
     }
 
