@@ -1,6 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.TestDataCreation;
 
-import at.ac.tuwien.sepm.groupphase.backend.Entity.enums.Room;
+import at.ac.tuwien.sepm.groupphase.backend.enums.Room;
 import at.ac.tuwien.sepm.groupphase.backend.TestObjects.RoomUseDto;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
@@ -10,7 +10,6 @@ import at.ac.tuwien.sepm.groupphase.backend.TestObjects.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.TestObjects.TrainerDto;
 import at.ac.tuwien.sepm.groupphase.backend.enums.BirthdayType;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
-import at.ac.tuwien.sepm.groupphase.backend.enums.Room;
 import com.github.javafaker.Faker;
 import java.sql.Date;
 import java.time.LocalDate;

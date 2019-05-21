@@ -39,6 +39,14 @@ public class TrainerService implements ITrainerService {
         trainer.setCreated(timeOfCreation);
         trainer.setUpdated(timeOfCreation);
 
+
+        try {
+            Thread.sleep(1);
+        }
+        catch(InterruptedException e) {
+            e.printStackTrace();
+        }
+
         try {
             validator.validateTrainer(trainer);
         } catch(InvalidEntityException e) {

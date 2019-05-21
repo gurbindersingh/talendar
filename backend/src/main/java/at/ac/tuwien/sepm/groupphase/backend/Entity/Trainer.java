@@ -29,7 +29,7 @@ public class Trainer {
     @Column(nullable = false)
     private LocalDate birthday;
     @NotBlank
-    @Pattern(regexp = "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$")
+    @Pattern(regexp = "^[+]*[(]{0,1}[0-9]{1,5}[)]{0,1}[-\\s\\./0-9]*$")
     @Column(nullable = false)
     private String phone;
     @NotBlank

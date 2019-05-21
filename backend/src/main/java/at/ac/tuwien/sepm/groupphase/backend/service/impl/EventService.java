@@ -40,6 +40,13 @@ public class EventService implements IEventService {
         event.setCreated(now);
         event.setUpdated(now);
 
+        try {
+            Thread.sleep(1);
+        }
+        catch(InterruptedException e) {
+            e.printStackTrace();
+        }
+
         switch(event.getEventType()) {
             case Birthday:
                   try {

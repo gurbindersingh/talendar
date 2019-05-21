@@ -8,7 +8,6 @@ import at.ac.tuwien.sepm.groupphase.backend.TestMappers.TrainerMapper;
 import at.ac.tuwien.sepm.groupphase.backend.TestObjects.CustomerDto;
 import at.ac.tuwien.sepm.groupphase.backend.TestObjects.EventDto;
 import at.ac.tuwien.sepm.groupphase.backend.TestObjects.TrainerDto;
-import at.ac.tuwien.sepm.groupphase.backend.TestObjects.CourseDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -149,53 +148,6 @@ public class BackendApplicationTests {
         assertNotNull(courseResponse.getId());
     }
 
-
-    @Test
-    public void postCourseResponse(){
-        FakeData fakeData = new FakeData();
-        TrainerDto trainerDto = fakeData.fakeTrainer();
-        trainerDto.setId(null);
-        trainerDto.setUpdated(null);
-        trainerDto.setCreated(null);
-        HttpEntity<TrainerDto> request = new HttpEntity<>(trainerDto);
-        ResponseEntity<TrainerDto> response = REST_TEMPLATE.exchange(BASE_URL + port + TRAINER_URL, HttpMethod.POST, request, TrainerDto.class);
-        TrainerDto trainerResponse = response.getBody();
-        assertNotNull(trainerResponse);
-        System.out.println(trainerResponse);
-        assertNotNull(trainerResponse.getId());
-
-
-        CourseDto courseDto = new CourseDto();
-        courseDto.setId(1);
-        courseDto.setCreated(null);
-        courseDto.setUpdated(null);
-
-        LinkedList<RoomUseDto> roomUseDtoLinkedList = new LinkedList<>();
-        roomUseDtoLinkedList.add(fakeData.fakeRoomUse());
-
-        courseDto.setRoomUses(roomUseDtoLinkedList);
-
-
-
-        courseDto.setEndOfApplication(LocalDateTime.now().plusDays(2));
-        courseDto.setPrice(30.0);
-        courseDto.setMaxParticipants(10);
-        courseDto.setDescription("Hi, My name is");
-        courseDto.setTrainerDto(trainerResponse);
-        courseDto.setCustomerDto(null);
-
-        courseDto.setEventType(EventType.Course);
-
-        HttpEntity<CourseDto> requestCourse = new HttpEntity<>(courseDto);
-        ResponseEntity<CourseDto> responseCourse = REST_TEMPLATE.exchange(BASE_URL + port + EVENT_URL, HttpMethod.POST, requestCourse, CourseDto.class);
-        CourseDto courseResponse = responseCourse.getBody();
-        assertNotNull(courseResponse);
-        System.out.println(courseResponse);
-        assertNotNull(courseResponse.getId());
-
-
-
-    }
 
 
 
