@@ -1,25 +1,38 @@
 package at.ac.tuwien.sepm.groupphase.backend.TestObjects;
 
 import java.util.Objects;
+import java.util.Set;
 
 public class CustomerDto {
 
-    private Integer id;
+
+    private Long id;
     private String email;
     private String phone;
-    private String name;
+    private String firstName;
+    private String lastName;
+    private Set<EventDto> events;
 
+    public CustomerDto (){
 
-    public CustomerDto () {
+    }
+
+    public CustomerDto (Long id, String email, String phone, String firstName, String lastName, Set<EventDto> events) {
+        this.id = id;
+        this.email = email;
+        this.phone = phone;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.events = events;
     }
 
 
-    public Integer getId () {
+    public Long getId () {
         return id;
     }
 
 
-    public void setId (Integer id) {
+    public void setId (Long id) {
         this.id = id;
     }
 
@@ -44,13 +57,33 @@ public class CustomerDto {
     }
 
 
-    public String getName () {
-        return name;
+    public String getFirstName () {
+        return firstName;
     }
 
 
-    public void setName (String name) {
-        this.name = name;
+    public void setFirstName (String firstName) {
+        this.firstName = firstName;
+    }
+
+
+    public String getLastName () {
+        return lastName;
+    }
+
+
+    public void setLastName (String lastName) {
+        this.lastName = lastName;
+    }
+
+
+    public Set<EventDto> getEvents () {
+        return events;
+    }
+
+
+    public void setEvents (Set<EventDto> events) {
+        this.events = events;
     }
 
 
@@ -62,13 +95,14 @@ public class CustomerDto {
         return Objects.equals(id, that.id) &&
             Objects.equals(email, that.email) &&
             Objects.equals(phone, that.phone) &&
-            Objects.equals(name, that.name);
+            Objects.equals(firstName, that.firstName) &&
+            Objects.equals(lastName, that.lastName);
     }
 
 
     @Override
     public int hashCode () {
-        return Objects.hash(id, email, phone, name);
+        return Objects.hash(id, email, phone, firstName, lastName);
     }
 
 
@@ -78,7 +112,8 @@ public class CustomerDto {
             "id=" + id +
             ", email='" + email + '\'' +
             ", phone='" + phone + '\'' +
-            ", name='" + name + '\'' +
+            ", firstName='" + firstName + '\'' +
+            ", lastName='" + lastName + '\'' +
             '}';
     }
 }

@@ -7,7 +7,6 @@
         "deprecation": {
             "severity": "warn"
         },
-        "import-blacklist": [true, "rxjs/Rx"],
         "interface-name": [true, "always-prefix"],
         "max-classes-per-file": [true, 2],
         "max-line-length": [true, 100],

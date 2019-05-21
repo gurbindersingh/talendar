@@ -1,5 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend.configuration;
 
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
+import at.ac.tuwien.sepm.groupphase.backend.util.mapper.CustomerMapper;
+import at.ac.tuwien.sepm.groupphase.backend.util.mapper.EventMapper;
+import at.ac.tuwien.sepm.groupphase.backend.util.mapper.RoomUseMapper;
 import at.ac.tuwien.sepm.groupphase.backend.util.mapper.HolidayMapper;
 import at.ac.tuwien.sepm.groupphase.backend.util.mapper.TrainerMapper;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
 public class BeansConfiguration {
 
     @Bean
-    public TrainerMapper createTarinerMapper() {
+    public TrainerMapper createTrainerMapper() {
         TrainerMapper trainerMapper = TrainerMapper.INSTANCE;
         return trainerMapper;
     }
@@ -28,5 +32,18 @@ public class BeansConfiguration {
         HolidayMapper holidayMapper = HolidayMapper.INSTANCE;
         return holidayMapper;
     }
+
+    @Bean
+    public CustomerMapper createCustomerMapper(){
+        CustomerMapper customerMapper = CustomerMapper.INSTANCE;
+        return customerMapper;
+    }
+
+    @Bean
+    public EventMapper createEventMapper(){
+    	EventMapper eventMapper = EventMapper.INSTANCE;
+    	return eventMapper;
+    }
+
 
 }

@@ -7,6 +7,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @DiscriminatorValue("child")
@@ -19,8 +20,8 @@ public class Child extends Customer {
     public Child(){
 
     }
-    public Child (Integer id, @NotBlank @Email String email, @NotBlank String phone, @NotBlank String name, @Min(1) @Max(12) Integer grade) {
-        super(id, email, phone, name);
+    public Child (Long id, @NotBlank @Email String email, @NotBlank String phone, @NotBlank String firstName, @NotBlank String lastName, @Min(1) @Max(12) Integer grade, Set events) {
+        super(id, email, phone, firstName, lastName, events );
         this.grade = grade;
     }
 

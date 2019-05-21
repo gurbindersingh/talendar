@@ -5,6 +5,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.util.LinkedList;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -13,33 +14,44 @@ public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
     @NotBlank
     @Email
     private String email;
     @NotBlank
     private String phone;
     @NotBlank
-    private String name;
+    private String firstName;
+    @NotBlank
+    private String lastName;
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinTable(
+        name = "event_customer",
+        joinColumns = { @JoinColumn(name = "fk_customer")},
+        inverseJoinColumns = {@JoinColumn(name = "fk_event")}
+    )
+    private Set<Event> events;
 
 
     public Customer (){
 
     }
-    public Customer (Integer id, @NotBlank @Email String email, @NotBlank String phone, @NotBlank String name) {
+    public Customer (Long id, @NotBlank @Email String email, @NotBlank String phone, @NotBlank String firstName, @NotBlank String lastName, Set<Event> events) {
         this.id = id;
         this.email = email;
         this.phone = phone;
-        this.name = name;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.events = events;
     }
 
 
-    public Integer getId () {
+    public Long getId () {
         return id;
     }
 
 
-    public void setId (Integer id) {
+    public void setId (Long id) {
         this.id = id;
     }
 
@@ -64,13 +76,33 @@ public class Customer {
     }
 
 
-    public String getName () {
-        return name;
+    public String getFirstName () {
+        return firstName;
     }
 
 
-    public void setName (String name) {
-        this.name = name;
+    public void setFirstName (String firstName) {
+        this.firstName = firstName;
+    }
+
+
+    public String getLastName () {
+        return lastName;
+    }
+
+
+    public void setLastName (String lastName) {
+        this.lastName = lastName;
+    }
+
+
+    public Set getEvents () {
+        return events;
+    }
+
+
+    public void setEvents (Set events) {
+        this.events = events;
     }
 
 
@@ -82,13 +114,14 @@ public class Customer {
         return Objects.equals(id, customer.id) &&
             Objects.equals(email, customer.email) &&
             Objects.equals(phone, customer.phone) &&
-            Objects.equals(name, customer.name);
+            Objects.equals(firstName, customer.firstName) &&
+            Objects.equals(lastName, customer.lastName);
     }
 
 
     @Override
     public int hashCode () {
-        return Objects.hash(id, email, phone, name);
+        return Objects.hash(id, email, phone, firstName, lastName);
     }
 
 
@@ -98,7 +131,8 @@ public class Customer {
             "id=" + id +
             ", email='" + email + '\'' +
             ", phone='" + phone + '\'' +
-            ", name='" + name + '\'' +
+            ", firstName='" + firstName + '\'' +
+            ", lastName='" + lastName + '\'' +
             '}';
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class TrainerService implements ITrainerService {
@@ -35,7 +36,11 @@ public class TrainerService implements ITrainerService {
 
         trainer.setCreated(timeOfCreation);
         trainer.setUpdated(timeOfCreation);
-
+        try {
+            TimeUnit.MILLISECONDS.sleep(1);
+        }catch(InterruptedException e){
+            throw new ServiceException("Internal Server error", e);
+        }
         try {
             validator.validate(trainer);
         }
