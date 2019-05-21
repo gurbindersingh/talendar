@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.TestDataCreation;
 
+import at.ac.tuwien.sepm.groupphase.backend.Entity.enums.Room;
+import at.ac.tuwien.sepm.groupphase.backend.TestObjects.RoomUseDto;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
 import at.ac.tuwien.sepm.groupphase.backend.TestObjects.CustomerDto;
