@@ -1,36 +1,16 @@
-package at.ac.tuwien.sepm.groupphase.backend.Entity;
+package at.ac.tuwien.sepm.groupphase.backend.rest.dto;
 
-import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import java.util.LinkedList;
 import java.util.Objects;
 
-@Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "customer_type")
-public class Customer {
+public class CustomerDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @NotBlank
-    @Email
     private String email;
-    @NotBlank
     private String phone;
-    @NotBlank
     private String name;
 
 
-    public Customer (){
-
-    }
-    public Customer (Integer id, @NotBlank @Email String email, @NotBlank String phone, @NotBlank String name) {
-        this.id = id;
-        this.email = email;
-        this.phone = phone;
-        this.name = name;
+    public CustomerDto () {
     }
 
 
@@ -78,11 +58,11 @@ public class Customer {
     public boolean equals (Object o) {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
-        Customer customer = (Customer) o;
-        return Objects.equals(id, customer.id) &&
-            Objects.equals(email, customer.email) &&
-            Objects.equals(phone, customer.phone) &&
-            Objects.equals(name, customer.name);
+        CustomerDto that = (CustomerDto) o;
+        return Objects.equals(id, that.id) &&
+            Objects.equals(email, that.email) &&
+            Objects.equals(phone, that.phone) &&
+            Objects.equals(name, that.name);
     }
 
 
@@ -94,7 +74,7 @@ public class Customer {
 
     @Override
     public String toString () {
-        return "Customer{" +
+        return "CustomerDto{" +
             "id=" + id +
             ", email='" + email + '\'' +
             ", phone='" + phone + '\'' +

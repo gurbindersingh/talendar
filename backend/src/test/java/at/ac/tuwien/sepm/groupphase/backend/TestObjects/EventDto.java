@@ -1,5 +1,4 @@
-package at.ac.tuwien.sepm.groupphase.backend.rest.dto;
-
+package at.ac.tuwien.sepm.groupphase.backend.TestObjects;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.enums.EventType;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -16,7 +15,6 @@ import java.util.Objects;
     include = JsonTypeInfo.As.PROPERTY,
     property = "eventType",
     visible = true)
-
 @JsonSubTypes({
     @JsonSubTypes.Type(value = BirthdayDto.class, name = "Birthday"),
     @JsonSubTypes.Type(value = CourseDto.class, name = "Course")
@@ -32,7 +30,7 @@ public abstract class EventDto {
     private LocalDateTime created;
     private LocalDateTime updated; //LocalDateTime > Date
 
-    public EventDto(){
+    public EventDto (){
 
     }
 

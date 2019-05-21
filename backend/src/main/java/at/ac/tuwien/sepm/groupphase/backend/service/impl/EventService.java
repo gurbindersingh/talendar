@@ -1,10 +1,12 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Birthday;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Course;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.enums.BirthdayType;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.BirthdayRepository;
+import at.ac.tuwien.sepm.groupphase.backend.persistence.CourseRepository;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.EventRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.IEventService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
@@ -23,14 +25,16 @@ import java.time.LocalDateTime;
 @Service
 public class EventService implements IEventService {
     private final static Logger LOGGER = LoggerFactory.getLogger(EventService.class);
-    private final EventRepository eventRepository;
+
+
     private final BirthdayRepository birthdayRepository;
+    private final CourseRepository courseRepository;
     private final Validator validator;
 
     @Autowired
-    public EventService(EventRepository eventRepository, BirthdayRepository birthdayRepository, Validator validator){
-        this.eventRepository = eventRepository;
+    public EventService(BirthdayRepository birthdayRepository, CourseRepository courseRepository, Validator validator){
         this.validator = validator;
+        this.courseRepository = courseRepository;
         this.birthdayRepository = birthdayRepository;
     }
 
@@ -50,4 +54,19 @@ public class EventService implements IEventService {
     }
 
 
+    @Override
+    public Course save (Course course) throws ValidationException {
+          LOGGER.info("Prepare to save new Course");
+          LocalDateTime now = LocalDateTime.now();
+          course.setCreated(now);
+          course.setUpdated(now);
+
+          try {
+              validator.validateCourse(course);
+          } catch(InvalidEntityException e){
+              throw new ValidationException("Given Course is invalid: " + e.getMessage(), e);
+          }
+
+          return courseRepository.save(course);
+    }
 }

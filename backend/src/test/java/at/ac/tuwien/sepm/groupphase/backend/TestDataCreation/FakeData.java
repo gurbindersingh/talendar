@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.TestDataCreation;
 
+import at.ac.tuwien.sepm.groupphase.backend.Entity.enums.Room;
+import at.ac.tuwien.sepm.groupphase.backend.TestObjects.RoomUseDto;
 import at.ac.tuwien.sepm.groupphase.backend.TestObjects.TrainerDto;
 import com.github.javafaker.Faker;
 import com.github.javafaker.service.FakeValuesService;
@@ -46,9 +48,26 @@ public class FakeData {
         return LocalDateTime.ofInstant(faker.date().between(Date.valueOf("2000-01-01"), Date.valueOf("2019-05-14")).toInstant(), ZoneId.systemDefault());
     }
 
+    public LocalDateTime fakeFutureTime(){
+        return LocalDateTime.ofInstant(faker.date().between(Date.valueOf("2019-10-15"), Date.valueOf("2029-05-14")).toInstant(), ZoneId.systemDefault());
+    }
+
     public int fakeAge(int min, int max){
         return faker.number().numberBetween(min, max);
     }
+
+
+    public RoomUseDto fakeRoomUse(){
+        RoomUseDto roomUseDto = new RoomUseDto();
+        roomUseDto.setId(fakeID());
+        LocalDateTime localDateTime = fakeFutureTime();
+        roomUseDto.setBegin(localDateTime);
+        roomUseDto.setEnd(localDateTime.plusDays(3));
+        roomUseDto.setRoom(Room.Green);
+        roomUseDto.setEvent(null);
+        return roomUseDto;
+    }
+
     public TrainerDto fakeTrainer(){
         TrainerDto trainer = new TrainerDto();
         trainer.setAge(fakeAge(16, 100));

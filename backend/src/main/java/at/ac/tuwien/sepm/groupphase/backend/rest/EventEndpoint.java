@@ -4,6 +4,7 @@ import at.ac.tuwien.sepm.groupphase.backend.Entity.Birthday;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.enums.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.BackendException;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.BirthdayDto;
+import at.ac.tuwien.sepm.groupphase.backend.rest.dto.CourseDto;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.EventDto;
 import at.ac.tuwien.sepm.groupphase.backend.service.IEventService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
@@ -11,10 +12,8 @@ import at.ac.tuwien.sepm.groupphase.backend.util.mapper.EventMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/talendar/event")
@@ -30,7 +29,8 @@ public class EventEndpoint {
         this.eventMapper = eventMapper;
     }
 
-    @PostMapping
+    @RequestMapping(method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
     public EventDto createNewEvent(@RequestBody EventDto eventDto) throws BackendException {
         LOGGER.info("Incoming POST Request for an Event with type: " + eventDto.getEventType());
         try {
@@ -41,7 +41,7 @@ public class EventEndpoint {
 
             }
             else if(eventDto.getEventType() == EventType.Course) {
-
+                return eventMapper.entityToEventDto(eventService.save(eventMapper.dtoToEventEntity((CourseDto) eventDto)));
             }
             else if(eventDto.getEventType() == EventType.Rent) {
 

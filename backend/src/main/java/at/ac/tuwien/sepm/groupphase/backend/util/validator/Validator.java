@@ -6,6 +6,7 @@ import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidEnt
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Holiday;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Birthday;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Course;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 
@@ -22,6 +23,50 @@ public class Validator{
     String emailRegex = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])";
     Pattern phonePattern = Pattern.compile(phoneRegex);
     Pattern emailPattern = Pattern.compile(emailRegex);
+
+
+    public Validator(){}
+
+
+    public void validateCourse(Course course) throws InvalidEntityException{
+
+
+        if(course.getName() == null || course.getName().isBlank()){
+            throw new InvalidEntityException("Name not set");
+        }
+
+        if(course.getDescription() == null || course.getDescription().isBlank()){
+            throw new InvalidEntityException("Description not set");
+        }
+
+        if(course.getMaxParticipants() == null){
+            throw new InvalidEntityException("Maximal participants not set");
+        } else if(course.getMaxParticipants() < 5){
+            throw new InvalidEntityException("Maximal participants has to be above 5");
+        }
+
+        for(int i = 0; i < course.getRoomUses().size(); i++) {
+            if(course.getRoomUses().get(i).getBegin().isAfter(course.getEndOfApplication())){
+                throw new InvalidEntityException("Date of end of application is after begin of course");
+            }
+        }
+
+        if(course.getCustomer() != null){
+            throw new InvalidEntityException("There should be no customers in creating a course");
+        }
+
+        try{
+            validateTrainer(course.getTrainer());
+        } catch(InvalidEntityException e){
+            throw e;
+        }
+
+        if(course.getPrice() == null){
+            throw new InvalidEntityException("Price not set");
+        }
+
+    }
+
 
     public void validateBirthday(Birthday birthday) throws InvalidEntityException{
         LocalDateTime now = LocalDateTime.now();
