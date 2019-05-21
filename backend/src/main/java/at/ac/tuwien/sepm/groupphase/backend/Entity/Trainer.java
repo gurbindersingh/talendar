@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.Entity;
 
+import at.ac.tuwien.sepm.groupphase.backend.enums.BirthdayType;
+
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
@@ -35,8 +37,10 @@ public class Trainer {
     @Column(nullable = false)
     private String email;
 
-    @OneToMany(mappedBy = "trainer", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "trainer", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<Event> events;
+    @ElementCollection
+    private List<String> birthdayTypes;
 
     @NotNull
     @Past
@@ -52,7 +56,7 @@ public class Trainer {
     }
 
 
-    public Trainer (Long id, @NotBlank String firstName, @NotBlank String lastName, @NotNull @Past LocalDate birthday, @NotBlank @Pattern(regexp = "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$") String phone, @NotBlank @Email String email, List<Event> events, @NotNull @Past LocalDateTime created, @NotNull @Past LocalDateTime updated) {
+    public Trainer (Long id, @NotBlank String firstName, @NotBlank String lastName, @NotNull @Past LocalDate birthday, @NotBlank @Pattern(regexp = "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$") String phone, @NotBlank @Email String email, List<Event> events, @NotNull List<String> birthdayTypes, @NotNull @Past LocalDateTime created, @NotNull @Past LocalDateTime updated) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -135,6 +139,16 @@ public class Trainer {
     }
 
 
+    public List<String> getBirthdayTypes () {
+        return birthdayTypes;
+    }
+
+
+    public void setBirthdayTypes (List<String> birthdayTypes) {
+        this.birthdayTypes = birthdayTypes;
+    }
+
+
     public LocalDateTime getCreated () {
         return created;
     }
@@ -167,6 +181,7 @@ public class Trainer {
             Objects.equals(phone, trainer.phone) &&
             Objects.equals(email, trainer.email) &&
             Objects.equals(events, trainer.events) &&
+            Objects.equals(birthdayTypes, trainer.birthdayTypes) &&
             Objects.equals(created, trainer.created) &&
             Objects.equals(updated, trainer.updated);
     }
@@ -174,7 +189,7 @@ public class Trainer {
 
     @Override
     public int hashCode () {
-        return Objects.hash(id, firstName, lastName, birthday, phone, email, events, created, updated);
+        return Objects.hash(id, firstName, lastName, birthday, phone, email, events, birthdayTypes, created, updated);
     }
 
 
@@ -188,6 +203,7 @@ public class Trainer {
             ", phone='" + phone + '\'' +
             ", email='" + email + '\'' +
             ", events=" + events +
+            ", birthdayTypes=" + birthdayTypes +
             ", created=" + created +
             ", updated=" + updated +
             '}';

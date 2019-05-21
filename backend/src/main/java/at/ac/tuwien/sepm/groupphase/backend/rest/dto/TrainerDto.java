@@ -14,6 +14,7 @@ public class TrainerDto{
     private String phone;
     private String email;
     private List<EventDto> events;
+    private List<String> birthdayTypes;
     private LocalDateTime created;
     private LocalDateTime updated;
 
@@ -22,7 +23,7 @@ public class TrainerDto{
     }
 
 
-    public TrainerDto (Long id, String firstName, String lastName, LocalDate birthday, String phone, String email, List<EventDto> events, LocalDateTime created, LocalDateTime updated) {
+    public TrainerDto (Long id, String firstName, String lastName, LocalDate birthday, String phone, String email, List<EventDto> events, List<String> birthdayTypes, LocalDateTime created, LocalDateTime updated) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -105,6 +106,16 @@ public class TrainerDto{
     }
 
 
+    public List<String> getBirthdayTypes () {
+        return birthdayTypes;
+    }
+
+
+    public void setBirthdayTypes (List<String> birthdayTypes) {
+        this.birthdayTypes = birthdayTypes;
+    }
+
+
     public LocalDateTime getCreated () {
         return created;
     }
@@ -137,6 +148,7 @@ public class TrainerDto{
             Objects.equals(phone, that.phone) &&
             Objects.equals(email, that.email) &&
             Objects.equals(events, that.events) &&
+            Objects.equals(birthdayTypes, that.birthdayTypes) &&
             Objects.equals(created, that.created) &&
             Objects.equals(updated, that.updated);
     }
@@ -144,7 +156,7 @@ public class TrainerDto{
 
     @Override
     public int hashCode () {
-        return Objects.hash(id, firstName, lastName, birthday, phone, email, events, created, updated);
+        return Objects.hash(id, firstName, lastName, birthday, phone, email, events, birthdayTypes, created, updated);
     }
 
 
@@ -158,6 +170,7 @@ public class TrainerDto{
             ", phone='" + phone + '\'' +
             ", email='" + email + '\'' +
             ", events=" + events +
+            ", birthdayTypes=" + birthdayTypes +
             ", created=" + created +
             ", updated=" + updated +
             '}';
