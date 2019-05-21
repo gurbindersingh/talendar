@@ -3,6 +3,8 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { CalendarComponent } from './calendar/calendar.component';
 import { NewBirthdayComponent } from './new-birthday/new-birthday.component';
+import { AddCourseComponent } from './add-course/add-course.component';
+import { AddPrivateMeetingComponent } from './add-private-meeting/add-private-meeting.component';
 
 const routes: Routes = [
     {
@@ -12,7 +14,14 @@ const routes: Routes = [
     {
         path: 'addbirthday',
         component: NewBirthdayComponent,
-
+	},
+	{
+        path: 'addCourse',
+        component: AddCourseComponent,
+    },
+    {
+        path: 'addPrivateMeeting',
+        component: AddPrivateMeetingComponent,
     }
 ];
 

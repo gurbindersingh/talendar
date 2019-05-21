@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.Entity;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Set;
 
@@ -30,6 +31,7 @@ public class Customer {
         inverseJoinColumns = {@JoinColumn(name = "fk_event")}
     )
     private Set<Event> events;
+
 
     public Customer (){
 

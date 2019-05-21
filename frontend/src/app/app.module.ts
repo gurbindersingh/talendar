@@ -9,15 +9,15 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
+import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 
 import { AppComponent } from './app.component';
 import { CalendarComponent } from './calendar/calendar.component';
-import { NewBirthdayComponent } from './new-birthday/new-birthday.component';
-
- 
+import { AddCourseComponent } from './add-course/add-course.component';
+import { AddPrivateMeetingComponent } from './add-private-meeting/add-private-meeting.component';
 
 @NgModule({
-    declarations: [AppComponent, CalendarComponent, NewBirthdayComponent],
+    declarations: [AppComponent, CalendarComponent, AddCourseComponent, AddPrivateMeetingComponent],
     imports: [
         AppRoutingModule,
         BrowserAnimationsModule,
@@ -28,7 +28,8 @@ import { NewBirthdayComponent } from './new-birthday/new-birthday.component';
         }),
         NgbModule,
         FormsModule,
-
+        OwlDateTimeModule,
+        OwlNativeDateTimeModule,
     ],
     providers: [],
     bootstrap: [AppComponent],
