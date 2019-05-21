@@ -19,6 +19,24 @@ public class Validator{
     Pattern emailPattern = Pattern.compile(emailRegex);
 
 
+    public void validateRent(Event rent) throws InvalidEntityException{
+        LocalDateTime now = LocalDateTime.now();
+        if (rent.getCreated() == null || rent.getCreated().isAfter(now)) {
+            throw new InvalidEntityException("creation time must be set (past date)");
+        }
+        if (rent.getUpdated() == null || rent.getUpdated().isAfter(now)) {
+            throw new InvalidEntityException("lates update time must be set (past date)");
+        }
+        if (rent.getCreated().isAfter(rent.getUpdated())) {
+            throw new InvalidEntityException("create time may not be changed afterwards and has to be before latest update time");
+        }
+        try {
+            this.validateCustomer(rent.getRenter());
+        } catch(InvalidEntityException ie){
+            throw ie;
+        }
+    }
+
 
     public void validateCourse(Event course) throws InvalidEntityException{
         LocalDateTime now = LocalDateTime.now();
