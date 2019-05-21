@@ -1,46 +1,27 @@
-package at.ac.tuwien.sepm.groupphase.backend.Entity;
+package at.ac.tuwien.sepm.groupphase.backend.rest.dto;
 
-import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 import java.util.Set;
 
-@Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "customer_type")
-public class Customer {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class CustomerDto {
     private Long id;
-    @NotBlank
-    @Email
     private String email;
-    @NotBlank
     private String phone;
-    @NotBlank
     private String firstName;
-    @NotBlank
     private String lastName;
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinTable(
-        name = "event_customer",
-        joinColumns = { @JoinColumn(name = "fk_customer")},
-        inverseJoinColumns = {@JoinColumn(name = "fk_event")}
-    )
-    private Set<Event> events;
+    private Set<EventDto> eventDtos;
 
-    public Customer (){
+
+    public CustomerDto(){
 
     }
-    public Customer (Long id, @NotBlank @Email String email, @NotBlank String phone, @NotBlank String firstName, @NotBlank String lastName, Set<Event> events) {
+    public CustomerDto (Long id, String email, String phone, String firstName, String lastName, Set<EventDto> eventDtos) {
         this.id = id;
         this.email = email;
         this.phone = phone;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.events = events;
+        this.eventDtos = eventDtos;
     }
 
 
@@ -78,7 +59,6 @@ public class Customer {
         return firstName;
     }
 
-
     public void setFirstName (String firstName) {
         this.firstName = firstName;
     }
@@ -94,13 +74,13 @@ public class Customer {
     }
 
 
-    public Set getEvents () {
-        return events;
+    public Set<EventDto> getEventDtos () {
+        return eventDtos;
     }
 
 
-    public void setEvents (Set events) {
-        this.events = events;
+    public void setEventDtos (Set<EventDto> eventDtos) {
+        this.eventDtos = eventDtos;
     }
 
 
@@ -108,12 +88,12 @@ public class Customer {
     public boolean equals (Object o) {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
-        Customer customer = (Customer) o;
-        return Objects.equals(id, customer.id) &&
-            Objects.equals(email, customer.email) &&
-            Objects.equals(phone, customer.phone) &&
-            Objects.equals(firstName, customer.firstName) &&
-            Objects.equals(lastName, customer.lastName);
+        CustomerDto that = (CustomerDto) o;
+        return Objects.equals(id, that.id) &&
+            Objects.equals(email, that.email) &&
+            Objects.equals(phone, that.phone) &&
+            Objects.equals(firstName, that.firstName) &&
+            Objects.equals(lastName, that.lastName);
     }
 
 
@@ -125,7 +105,7 @@ public class Customer {
 
     @Override
     public String toString () {
-        return "Customer{" +
+        return "CustomerDto{" +
             "id=" + id +
             ", email='" + email + '\'' +
             ", phone='" + phone + '\'' +

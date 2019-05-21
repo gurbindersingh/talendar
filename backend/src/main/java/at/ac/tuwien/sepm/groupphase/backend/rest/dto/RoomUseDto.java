@@ -1,34 +1,24 @@
-package at.ac.tuwien.sepm.groupphase.backend.Entity;
+package at.ac.tuwien.sepm.groupphase.backend.rest.dto;
 
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.enums.Room;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Entity
-@Table(name = "room_use")
-public class RoomUse {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class RoomUseDto {
     private Long id;
-    @NotNull
     private LocalDateTime begin;
-    @NotNull
     private LocalDateTime end;
-    @Column
-    @Enumerated(EnumType.STRING)
-    @NotNull
     private Room room;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "event_id")
+    @JsonBackReference
     private Event event;
 
-    public RoomUse(){
+    public RoomUseDto(){
 
     }
-    public RoomUse (Long id, @NotNull LocalDateTime begin, @NotNull LocalDateTime end, @NotNull Room room, Event event) {
+    public RoomUseDto (Long id, LocalDateTime begin, LocalDateTime end, Room room, Event event) {
         this.id = id;
         this.begin = begin;
         this.end = end;
@@ -91,12 +81,12 @@ public class RoomUse {
     public boolean equals (Object o) {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
-        RoomUse roomUse = (RoomUse) o;
-        return Objects.equals(id, roomUse.id) &&
-            Objects.equals(begin, roomUse.begin) &&
-            Objects.equals(end, roomUse.end) &&
-            room == roomUse.room &&
-            Objects.equals(event, roomUse.event);
+        RoomUseDto that = (RoomUseDto) o;
+        return Objects.equals(id, that.id) &&
+            Objects.equals(begin, that.begin) &&
+            Objects.equals(end, that.end) &&
+            room == that.room &&
+            Objects.equals(event, that.event);
     }
 
 
@@ -108,12 +98,12 @@ public class RoomUse {
 
     @Override
     public String toString () {
-        return "RoomUse{" +
+        return "RoomUseDto{" +
             "id=" + id +
             ", begin=" + begin +
             ", end=" + end +
             ", room=" + room +
-            ", event=" + event +
+            ", eventDto=" + event +
             '}';
     }
 }

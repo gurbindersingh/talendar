@@ -1,74 +1,45 @@
-package at.ac.tuwien.sepm.groupphase.backend.Entity;
+package at.ac.tuwien.sepm.groupphase.backend.TestObjects;
 
+import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.enums.BirthdayType;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+public class EventDto {
 
-@Entity
-public class Event {
 
     /*
-        These Variables are used by all event Types
-     */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", updatable = false, nullable = false)
+       These Variables are used by all event Types
+    */
     private Long id;
-    @Column(name = "name", nullable = false)
-    @NotBlank
-    private String name;
-    @NotNull
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "event", orphanRemoval = true, cascade = CascadeType.PERSIST) //check how cascade works in all methods
-    private List<RoomUse> roomUses = new LinkedList<>();
-    @Column(name = "created", updatable = false)
-    @Past
-    @NotNull
-    private LocalDateTime created;
-    @Column(name = "updated")
-    @Past
-    @NotNull
-    private LocalDateTime updated; //LocalDateTime > Date
-    @Column(name = "event_type", nullable = false)
     private EventType eventType;
-
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinTable(
-        name = "event_customer",
-        joinColumns = { @JoinColumn(name = "fk_event")},
-        inverseJoinColumns = {@JoinColumn(name = "fk_customer")}
-    )
-    private Set<Customer> customers;
+    private String name;
+    private List<RoomUse> roomUses = new LinkedList<>();
+    private LocalDateTime created;
+    private LocalDateTime updated;
+    private Set<CustomerDto> customerDtos;
 
     /*
         These Variables are used by non Rent Types
      */
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Trainer trainer;
-
+    private TrainerDto trainer;
 
     /*
         These Variables are birthday specific
      */
 
-    @Column
     private int headcount;
-    @Column
     private int ageToBe;
-    @Column
     private BirthdayType birthdayType;
 
-    /*
+     /*
         These Variables are Consulatation Specicfic
      */
 
@@ -77,42 +48,30 @@ public class Event {
         These Variables are Course Specific
      */
 
-    @Column
     private LocalDateTime endOfApplication;
-
-    @Column
     private Double price;
-
-    @Column
     private Integer maxParticipant;
-
-    @Column
     private String description;
-
-    @Column
     private Integer minAge;
-
-
-    @Column
     private Integer maxAge;
-
 
     /*
         These Variables are Rent Specific
      */
 
-    public Event(){
+    public EventDto (){
 
     }
 
 
-    public Event (@NotBlank String name, @NotNull List<RoomUse> roomUses, @Past @NotNull LocalDateTime created, @Past @NotNull LocalDateTime updated, EventType eventType, Set<Customer> customers, Trainer trainer, int headcount, int ageToBe, BirthdayType birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipant, String description, Integer minAge, Integer maxAge) {
+    public EventDto (Long id, EventType eventType, String name, List<RoomUse> roomUses, LocalDateTime created, LocalDateTime updated, Set<CustomerDto> customerDtos, TrainerDto trainer, int headcount, int ageToBe, BirthdayType birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipant, String description, Integer minAge, Integer maxAge) {
+        this.id = id;
+        this.eventType = eventType;
         this.name = name;
         this.roomUses = roomUses;
         this.created = created;
         this.updated = updated;
-        this.eventType = eventType;
-        this.customers = customers;
+        this.customerDtos = customerDtos;
         this.trainer = trainer;
         this.headcount = headcount;
         this.ageToBe = ageToBe;
@@ -133,6 +92,16 @@ public class Event {
 
     public void setId (Long id) {
         this.id = id;
+    }
+
+
+    public EventType getEventType () {
+        return eventType;
+    }
+
+
+    public void setEventType (EventType eventType) {
+        this.eventType = eventType;
     }
 
 
@@ -176,32 +145,22 @@ public class Event {
     }
 
 
-    public EventType getEventType () {
-        return eventType;
+    public Set<CustomerDto> getCustomerDtos () {
+        return customerDtos;
     }
 
 
-    public void setEventType (EventType eventType) {
-        this.eventType = eventType;
+    public void setCustomerDtos (Set<CustomerDto> customerDtos) {
+        this.customerDtos = customerDtos;
     }
 
 
-    public Set<Customer> getCustomers () {
-        return customers;
-    }
-
-
-    public void setCustomers (Set<Customer> customers) {
-        this.customers = customers;
-    }
-
-
-    public Trainer getTrainer () {
+    public TrainerDto getTrainer () {
         return trainer;
     }
 
 
-    public void setTrainer (Trainer trainer) {
+    public void setTrainer (TrainerDto trainer) {
         this.trainer = trainer;
     }
 
@@ -297,47 +256,48 @@ public class Event {
 
 
 
+
     @Override
     public boolean equals (Object o) {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
-        Event event = (Event) o;
-        return headcount == event.headcount &&
-            ageToBe == event.ageToBe &&
-            Objects.equals(id, event.id) &&
-            Objects.equals(name, event.name) &&
-            Objects.equals(roomUses, event.roomUses) &&
-            Objects.equals(created, event.created) &&
-            Objects.equals(updated, event.updated) &&
-            eventType == event.eventType &&
-            Objects.equals(customers, event.customers) &&
-            Objects.equals(trainer, event.trainer) &&
-            birthdayType == event.birthdayType &&
-            Objects.equals(endOfApplication, event.endOfApplication) &&
-            Objects.equals(price, event.price) &&
-            Objects.equals(maxParticipant, event.maxParticipant) &&
-            Objects.equals(description, event.description) &&
-            Objects.equals(minAge, event.minAge) &&
-            Objects.equals(maxAge, event.maxAge);
+        EventDto eventDto = (EventDto) o;
+        return headcount == eventDto.headcount &&
+            ageToBe == eventDto.ageToBe &&
+            Objects.equals(id, eventDto.id) &&
+            eventType == eventDto.eventType &&
+            Objects.equals(name, eventDto.name) &&
+            Objects.equals(roomUses, eventDto.roomUses) &&
+            Objects.equals(created, eventDto.created) &&
+            Objects.equals(updated, eventDto.updated) &&
+            Objects.equals(customerDtos, eventDto.customerDtos) &&
+            Objects.equals(trainer, eventDto.trainer) &&
+            birthdayType == eventDto.birthdayType &&
+            Objects.equals(endOfApplication, eventDto.endOfApplication) &&
+            Objects.equals(price, eventDto.price) &&
+            Objects.equals(maxParticipant, eventDto.maxParticipant) &&
+            Objects.equals(description, eventDto.description) &&
+            Objects.equals(minAge, eventDto.minAge) &&
+            Objects.equals(maxAge, eventDto.maxAge);
     }
 
 
     @Override
     public int hashCode () {
-        return Objects.hash(id, name, roomUses, created, updated, eventType, customers, trainer, headcount, ageToBe, birthdayType, endOfApplication, price, maxParticipant, description, minAge, maxAge);
+        return Objects.hash(id, eventType, name, roomUses, created, updated, customerDtos, trainer, headcount, ageToBe, birthdayType, endOfApplication, price, maxParticipant, description, minAge, maxAge);
     }
 
 
     @Override
     public String toString () {
-        return "Event{" +
+        return "EventDto{" +
             "id=" + id +
+            ", eventType=" + eventType +
             ", name='" + name + '\'' +
             ", roomUses=" + roomUses +
             ", created=" + created +
             ", updated=" + updated +
-            ", eventType=" + eventType +
-            ", customers=" + customers +
+            ", customerDtos=" + customerDtos +
             ", trainer=" + trainer +
             ", headcount=" + headcount +
             ", ageToBe=" + ageToBe +
