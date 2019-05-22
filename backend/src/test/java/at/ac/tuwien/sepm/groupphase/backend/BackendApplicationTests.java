@@ -1,15 +1,12 @@
 package at.ac.tuwien.sepm.groupphase.backend;
 
 
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.TestDataCreation.FakeData;
 import at.ac.tuwien.sepm.groupphase.backend.TestMappers.TrainerMapper;
 import at.ac.tuwien.sepm.groupphase.backend.TestObjects.CustomerDto;
 import at.ac.tuwien.sepm.groupphase.backend.TestObjects.EventDto;
+import at.ac.tuwien.sepm.groupphase.backend.TestObjects.HolidayDto;
 import at.ac.tuwien.sepm.groupphase.backend.TestObjects.TrainerDto;
-import at.ac.tuwien.sepm.groupphase.backend.TestObjects.TrainerDto;
-import at.ac.tuwien.sepm.groupphase.backend.rest.dto.HolidayDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -156,7 +153,16 @@ public class BackendApplicationTests {
 
     @Test
     public void postHolidayResponse ( ) {
-        HolidayDto holiday = new HolidayDto(null, 1, LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(3));
+        FakeData fakeData = new FakeData();
+        TrainerDto trainer = fakeData.fakeTrainerDto();
+        trainer.setId(null);
+        trainer.setUpdated(null);
+        trainer.setCreated(null);
+        HttpEntity<TrainerDto> trequest = new HttpEntity<>(trainer);
+        ResponseEntity<TrainerDto> tresponse = REST_TEMPLATE.exchange(BASE_URL + port + TRAINER_URL, HttpMethod.POST, trequest, TrainerDto.class);
+        TrainerDto trainerResponse = tresponse.getBody();
+
+        HolidayDto holiday = new HolidayDto(null, trainerResponse, LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(3));
         HttpEntity<HolidayDto> request = new HttpEntity<>(holiday);
         ResponseEntity<HolidayDto> response = REST_TEMPLATE.exchange(BASE_URL + port + HOLIDAY_URL, HttpMethod.POST, request, HolidayDto.class);
         HolidayDto holidayResponse = response.getBody();
@@ -168,7 +174,17 @@ public class BackendApplicationTests {
     @Test
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public void postHolidayStartInPastThenStatus400(){
-        HolidayDto holiday = new HolidayDto(null, 2, LocalDateTime.now().minusDays(1), LocalDateTime.now().plusDays(3));
+
+        FakeData fakeData = new FakeData();
+        TrainerDto trainer = fakeData.fakeTrainerDto();
+        trainer.setId(null);
+        trainer.setUpdated(null);
+        trainer.setCreated(null);
+        HttpEntity<TrainerDto> trequest = new HttpEntity<>(trainer);
+        ResponseEntity<TrainerDto> tresponse = REST_TEMPLATE.exchange(BASE_URL + port + TRAINER_URL, HttpMethod.POST, trequest, TrainerDto.class);
+        TrainerDto trainerResponse = tresponse.getBody();
+
+        HolidayDto holiday = new HolidayDto(null, trainerResponse, LocalDateTime.now().minusDays(1), LocalDateTime.now().plusDays(3));
         HttpEntity<HolidayDto> request = new HttpEntity<>(holiday);
         System.out.println("400 Bad Request");
     }
@@ -176,7 +192,16 @@ public class BackendApplicationTests {
     @Test
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public void postHolidayEndBeforeStartThenStatus400(){
-        HolidayDto holiday = new HolidayDto(null, 2, LocalDateTime.now().plusDays(5), LocalDateTime.now().plusDays(3));
+        FakeData fakeData = new FakeData();
+        TrainerDto trainer = fakeData.fakeTrainerDto();
+        trainer.setId(null);
+        trainer.setUpdated(null);
+        trainer.setCreated(null);
+        HttpEntity<TrainerDto> trequest = new HttpEntity<>(trainer);
+        ResponseEntity<TrainerDto> tresponse = REST_TEMPLATE.exchange(BASE_URL + port + TRAINER_URL, HttpMethod.POST, trequest, TrainerDto.class);
+        TrainerDto trainerResponse = tresponse.getBody();
+
+        HolidayDto holiday = new HolidayDto(null, trainerResponse, LocalDateTime.now().plusDays(5), LocalDateTime.now().plusDays(3));
         HttpEntity<HolidayDto> request = new HttpEntity<>(holiday);
         System.out.println("400 Bad Request");
     }

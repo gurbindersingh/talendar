@@ -1,33 +1,26 @@
-package at.ac.tuwien.sepm.groupphase.backend.Entity;
+package at.ac.tuwien.sepm.groupphase.backend.TestObjects;
 
-import javax.persistence.*;
-import javax.validation.constraints.Future;
-import javax.validation.constraints.NotNull;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Entity
-public class Holiday {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class HolidayDto {
+
+
+
     private Long id;
-
-    @NotNull
-    @ManyToOne
-    private Trainer trainer;
-
-    @NotNull
-    @Future
+    private TrainerDto trainer;
     private LocalDateTime holidayStart;
-
-    @NotNull
-    @Future
     private LocalDateTime holidayEnd;
 
-    public Holiday(){}
+    public HolidayDto () {
+
+    }
 
 
-    public Holiday (@NotNull Trainer trainer, @NotNull LocalDateTime holidayStart, @NotNull LocalDateTime holidayEnd) {
+    public HolidayDto (Long id, TrainerDto trainer, LocalDateTime holidayStart, LocalDateTime holidayEnd) {
+        this.id = id;
         this.trainer = trainer;
         this.holidayStart = holidayStart;
         this.holidayEnd = holidayEnd;
@@ -44,12 +37,12 @@ public class Holiday {
     }
 
 
-    public Trainer getTrainer () {
+    public TrainerDto getTrainer () {
         return trainer;
     }
 
 
-    public void setTrainer (Trainer trainer) {
+    public void setTrainer (TrainerDto trainer) {
         this.trainer = trainer;
     }
 
@@ -78,11 +71,11 @@ public class Holiday {
     public boolean equals (Object o) {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
-        Holiday holiday = (Holiday) o;
-        return Objects.equals(id, holiday.id) &&
-            Objects.equals(trainer, holiday.trainer) &&
-            Objects.equals(holidayStart, holiday.holidayStart) &&
-            Objects.equals(holidayEnd, holiday.holidayEnd);
+        HolidayDto that = (HolidayDto) o;
+        return Objects.equals(id, that.id) &&
+            Objects.equals(trainer, that.trainer) &&
+            Objects.equals(holidayStart, that.holidayStart) &&
+            Objects.equals(holidayEnd, that.holidayEnd);
     }
 
 
@@ -94,12 +87,11 @@ public class Holiday {
 
     @Override
     public String toString () {
-        return "Holiday{" +
+        return "HolidayDto{" +
             "id=" + id +
-            ", trainerid=" + trainer+
+            ", trainerid=" + trainer +
             ", holidayStart=" + holidayStart +
             ", holidayEnd=" + holidayEnd +
             '}';
     }
 }
-

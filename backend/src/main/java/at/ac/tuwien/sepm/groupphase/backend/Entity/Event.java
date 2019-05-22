@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.Entity;
 
 import at.ac.tuwien.sepm.groupphase.backend.enums.BirthdayType;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -28,7 +29,8 @@ public class Event {
     @NotBlank
     private String name;
     @NotNull
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "event", orphanRemoval = true, cascade = CascadeType.PERSIST) //check how cascade works in all methods
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "event", orphanRemoval = true, cascade = {CascadeType.PERSIST, CascadeType.MERGE}) //check how cascade works in all methods
+    @JsonIgnoreProperties("event")
     private List<RoomUse> roomUses = new LinkedList<>();
     @Column(name = "created", updatable = false)
     @Past
@@ -47,6 +49,7 @@ public class Event {
         joinColumns = { @JoinColumn(name = "fk_event")},
         inverseJoinColumns = {@JoinColumn(name = "fk_customer")}
     )
+    @JsonIgnoreProperties("events")
     private Set<Customer> customers;
 
     /*
@@ -54,6 +57,7 @@ public class Event {
      */
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("event")
     private Trainer trainer;
 
 
@@ -66,7 +70,7 @@ public class Event {
     @Column
     private int ageToBe;
     @Column
-    private BirthdayType birthdayType;
+    private String birthdayType;
 
     /*
         These Variables are Consulatation Specicfic
@@ -106,7 +110,7 @@ public class Event {
     }
 
 
-    public Event (@NotBlank String name, @NotNull List<RoomUse> roomUses, @Past @NotNull LocalDateTime created, @Past @NotNull LocalDateTime updated, EventType eventType, Set<Customer> customers, Trainer trainer, int headcount, int ageToBe, BirthdayType birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipant, String description, Integer minAge, Integer maxAge) {
+    public Event (@NotBlank String name, @NotNull List<RoomUse> roomUses, @Past @NotNull LocalDateTime created, @Past @NotNull LocalDateTime updated, EventType eventType, Set<Customer> customers, Trainer trainer, int headcount, int ageToBe, String birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipant, String description, Integer minAge, Integer maxAge) {
         this.name = name;
         this.roomUses = roomUses;
         this.created = created;
@@ -226,12 +230,12 @@ public class Event {
     }
 
 
-    public BirthdayType getBirthdayType () {
+    public String getBirthdayType () {
         return birthdayType;
     }
 
 
-    public void setBirthdayType (BirthdayType birthdayType) {
+    public void setBirthdayType (String birthdayType) {
         this.birthdayType = birthdayType;
     }
 
@@ -338,7 +342,7 @@ public class Event {
             ", updated=" + updated +
             ", eventType=" + eventType +
             ", customers=" + customers +
-            ", trainer=" + trainer +
+            ", trainer=" + trainer.getFirstName() + trainer.getLastName() +
             ", headcount=" + headcount +
             ", ageToBe=" + ageToBe +
             ", birthdayType=" + birthdayType +
