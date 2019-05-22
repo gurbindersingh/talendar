@@ -11,14 +11,15 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 
 import { AppComponent } from './app.component';
-import { BirthdayComponent } from './birthday/birthday.component';
-import { CalendarComponent } from './calendar/calendar.component';
-
-import { CourseComponent } from './course/course.component';
-import { HolidayComponent } from './holiday/holiday.component';
-import { MeetingComponent } from './meeting/meeting.component';
-import { NavigationComponent } from './navigation/navigation.component';
-import { TrainerComponent } from './trainer/trainer.component';
+import {
+    CalendarComponent,
+    BirthdayComponent,
+    CourseComponent,
+    HolidayComponent,
+    MeetingComponent,
+    NavigationComponent,
+    TrainerComponent,
+} from 'src/app/components';
 
 import { httpInterceptorProviders } from './http-interceptors';
 
