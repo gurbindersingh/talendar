@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest.dto;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;

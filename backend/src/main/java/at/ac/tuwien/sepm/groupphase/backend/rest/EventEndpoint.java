@@ -4,6 +4,7 @@ import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.BackendException;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.EventDto;
 import at.ac.tuwien.sepm.groupphase.backend.service.IEventService;
+import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.util.mapper.EventMapper;
 import org.slf4j.Logger;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.sql.rowset.serial.SerialException;
 
 @RestController
 @RequestMapping("/api/talendar/events")
@@ -46,7 +49,10 @@ public class EventEndpoint {
             }
         }catch(ValidationException e){
             LOGGER.error("Error in the backend: " + e.getMessage(), e);
-            throw new BackendException("Error in the Backend: " + e.getMessage(), e);
+            throw new BackendException("Validation Error in the Backend: " + e.getMessage(), e);
+        }catch(ServiceException e){
+            LOGGER.error("Error in the backend: " + e.getMessage(), e);
+            throw new BackendException("Service Error in the Backend: " + e.getMessage(), e);
         }
         return eventDto;
     }
