@@ -1,12 +1,14 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { CalendarComponent } from './calendar/calendar.component';
-import { BirthdayComponent } from './birthday/birthday.component';
-import { CourseComponent } from './course/course.component';
-import { HolidayComponent } from './holiday/holiday.component';
-import { MeetingComponent } from './meeting/meeting.component';
-import { TrainerComponent } from './trainer/trainer.component';
+import {
+    CalendarComponent,
+    BirthdayComponent,
+    CourseComponent,
+    HolidayComponent,
+    MeetingComponent,
+    TrainerComponent,
+} from 'src/app/components';
 
 const routes: Routes = [
     {
