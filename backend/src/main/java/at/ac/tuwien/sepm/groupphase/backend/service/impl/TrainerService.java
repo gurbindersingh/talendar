@@ -6,13 +6,17 @@ import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.IValidator;
+import at.ac.tuwien.sepm.groupphase.backend.util.validator.Validator;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidEntityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.PersistenceException;
 import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class TrainerService implements ITrainerService {
@@ -20,10 +24,10 @@ public class TrainerService implements ITrainerService {
     private final static Logger LOGGER = LoggerFactory.getLogger(TrainerService.class);
 
     private final TrainerRepository trainerRepository;
-    private final IValidator<Trainer> validator;
+    private final Validator validator;
 
     @Autowired
-    public TrainerService(TrainerRepository trainerRepository, IValidator<Trainer> validator) {
+    public TrainerService(TrainerRepository trainerRepository, Validator validator) {
         this.trainerRepository = trainerRepository;
         this.validator = validator;
     }
@@ -35,19 +39,28 @@ public class TrainerService implements ITrainerService {
 
         trainer.setCreated(timeOfCreation);
         trainer.setUpdated(timeOfCreation);
+        try {
+            TimeUnit.MILLISECONDS.sleep(1);
+        }catch(InterruptedException e){
+            throw new ServiceException("Internal Server error", e);
+        }
+        try {
+            Thread.sleep(1);
+        }
+        catch(InterruptedException e) {
+            e.printStackTrace();
+        }
 
         try {
-            validator.validate(trainer);
-        }
-        catch(InvalidEntityException e) {
-            LOGGER.error("validity violation: {}", e.getMessage(), e);
-            throw new ValidationException("Given trainer instance is not valid: " + e.getMessage(), e);
+            validator.validateTrainer(trainer);
+        } catch(InvalidEntityException e) {
+            throw new ValidationException("Given trainer is invalid: " + e.getMessage(), e);
         }
 
         try {
             return trainerRepository.save(trainer);
-        } catch(Exception e) { //catch specific exceptions
-            throw new ServiceException(e);
+        } catch(DataAccessException e) { //catch specific exceptions
+            throw new ServiceException("Error while performing a data access operation", e);
         }
     }
 }

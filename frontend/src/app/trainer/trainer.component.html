@@ -1,0 +1,105 @@
+<h2>Betreuer erstellen</h2>
+
+<form id="trainerForm" #form (submit)="postTrainer(form)">
+    <div class="form-group">
+        <label for="trainerFirstName">Vorname</label>
+        <input
+            type="text"
+            class="form-control"
+            name="firstName"
+            id="trainerFirstName"
+            placeholder="Ned"
+            required
+        />
+    </div>
+    <div class="form-group">
+        <label for="trainerLastName">Nachname</label>
+        <input
+            type="text"
+            class="form-control"
+            name="lastName"
+            id="trainerLastName"
+            placeholder="Stark"
+            required
+        />
+    </div>
+    <div class="form-group">
+        <label for="trainerAge">Geburtstag</label>
+        <input
+            type="date"
+            class="form-control"
+            name="birthday"
+            id="trainerAge"
+            required
+        />
+    </div>
+    <div class="form-group">
+        <label for="trainerEmail"></label>
+        <input
+            type="email"
+            class="form-control"
+            name="email"
+            id="trainerEmail"
+            placeholder="ned.stark@raben.winterfell"
+            required
+        />
+    </div>
+    <div class="form-group">
+        <label for="trainerPhone"></label>
+        <input
+            type="tel"
+            class="form-control"
+            name="phone"
+            id="trainerPhone"
+            placeholder="0660 123 456 78"
+            required
+        />
+    </div>
+
+    <!-- this inputs for setting ad confirming a new password are only accessible by the admin -->
+    <div class="form-row">
+        <div class="form-group col-lg-6">
+            <label for="trainerPw"></label>
+            <input
+                type="password"
+                class="form-control"
+                name="password"
+                id="trainerPw"
+                placeholder="Neues Passwort"
+                required
+            />
+        </div>
+
+        <div class="form-group col-lg-6">
+            <label for="trainerPwRepeat"></label>
+            <input
+                type="password"
+                class="form-control"
+                name="passwordRepeat"
+                id="trainerPwRepeat"
+                placeholder="Passwort wiederholen"
+                required
+            />
+        </div>
+    </div>
+
+    <div class="form-row justify-content-center">
+        <div class="col-4">
+            Here goes a container for a profile picture if uploaded, else an
+            icon
+        </div>
+
+        <div class="col-4">
+            Here should be a clickable icon to upload a picture
+        </div>
+    </div>
+
+    <div class="form-row justify-content-center">
+        <button type="submit" class="btn btn-primary col-4 center ml-auto">
+            Neuen Betreuer Anlegen
+        </button>
+        <button type="reset" class="btn btn-danger col-4 center mr-auto">
+            Anlegen abbrechen
+        </button>
+    </div>
+</form>

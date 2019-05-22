@@ -14,6 +14,7 @@ public interface TrainerMapper {
      * Mapping methods are definded here. Automatic mapping between dto <-> entity
      */
 
+
     TrainerDto entityToTrainerDto(Trainer trainer);
 
     Trainer dtoToTrainerEntity(TrainerDto trainerDto);
