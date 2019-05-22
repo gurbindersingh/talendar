@@ -2,39 +2,37 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { CalendarComponent } from './calendar/calendar.component';
-import { AddCourseComponent } from './add-course/add-course.component';
-import { AddPrivateMeetingComponent } from './add-private-meeting/add-private-meeting.component';
-import { NewBirthdayComponent } from './new-birthday/new-birthday.component';
-import { AddTrainerComponent } from './add-trainer/add-trainer.component';
-import { AddHolidayComponent } from './add-holiday/add-holiday.component';
+import { BirthdayComponent } from './birthday/birthday.component';
+import { CourseComponent } from './course/course.component';
+import { HolidayComponent } from './holiday/holiday.component';
+import { MeetingComponent } from './meeting/meeting.component';
+import { TrainerComponent } from './trainer/trainer.component';
 
 const routes: Routes = [
     {
         path: '',
         component: CalendarComponent,
-
     },
     {
-        path: 'addholiday',
-        component: AddHolidayComponent,
-
+        path: 'holiday',
+        component: HolidayComponent,
     },
     {
-        path: 'addBirthday',
-        component: NewBirthdayComponent,
+        path: 'birthday',
+        component: BirthdayComponent,
     },
     {
-        path: 'addCourse',
-        component: AddCourseComponent,
+        path: 'course',
+        component: CourseComponent,
     },
     {
-        path: 'addPrivateMeeting',
-        component: AddPrivateMeetingComponent,
+        path: 'meeting',
+        component: MeetingComponent,
     },
     {
-        path: 'addTrainer',
-        component: AddTrainerComponent
-    }
+        path: 'trainer',
+        component: TrainerComponent,
+    },
 ];
 
 @NgModule({
