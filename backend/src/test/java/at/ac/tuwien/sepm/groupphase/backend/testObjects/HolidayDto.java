@@ -1,6 +1,4 @@
-package at.ac.tuwien.sepm.groupphase.backend.TestObjects;
-
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
+package at.ac.tuwien.sepm.groupphase.backend.testObjects;
 
 import java.time.LocalDateTime;
 import java.util.Objects;

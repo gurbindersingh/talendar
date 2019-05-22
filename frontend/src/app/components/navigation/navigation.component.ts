@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { BREAKPOINTS } from 'src/utils/Breakpoints';
+import { BREAKPOINTS } from 'src/app/utils/Breakpoints';
 
 @Component({
     selector: 'app-navigation',
