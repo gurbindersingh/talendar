@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm.groupphase.backend.TestObjects;
+package at.ac.tuwien.sepm.groupphase.backend.testObjects;
 
 import java.util.Objects;
 import java.util.Set;
