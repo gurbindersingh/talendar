@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.Objects;
 import java.util.Set;
 
@@ -9,6 +11,7 @@ public class CustomerDto {
     private String phone;
     private String firstName;
     private String lastName;
+    @JsonIgnoreProperties("customerDtos")
     private Set<EventDto> eventDtos;
 
 

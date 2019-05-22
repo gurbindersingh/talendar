@@ -1,8 +1,6 @@
-package at.ac.tuwien.sepm.groupphase.backend.TestObjects;
+package at.ac.tuwien.sepm.groupphase.backend.testObjects;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
-import at.ac.tuwien.sepm.groupphase.backend.enums.BirthdayType;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 
 import java.time.LocalDateTime;
@@ -37,7 +35,7 @@ public class EventDto {
 
     private int headcount;
     private int ageToBe;
-    private BirthdayType birthdayType;
+    private String birthdayType;
 
      /*
         These Variables are Consulatation Specicfic
@@ -64,7 +62,7 @@ public class EventDto {
     }
 
 
-    public EventDto (Long id, EventType eventType, String name, List<RoomUse> roomUses, LocalDateTime created, LocalDateTime updated, Set<CustomerDto> customerDtos, TrainerDto trainer, int headcount, int ageToBe, BirthdayType birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipant, String description, Integer minAge, Integer maxAge) {
+    public EventDto (Long id, EventType eventType, String name, List<RoomUse> roomUses, LocalDateTime created, LocalDateTime updated, Set<CustomerDto> customerDtos, TrainerDto trainer, int headcount, int ageToBe, String birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipant, String description, Integer minAge, Integer maxAge) {
         this.id = id;
         this.eventType = eventType;
         this.name = name;
@@ -185,12 +183,12 @@ public class EventDto {
     }
 
 
-    public BirthdayType getBirthdayType () {
+    public String getBirthdayType () {
         return birthdayType;
     }
 
 
-    public void setBirthdayType (BirthdayType birthdayType) {
+    public void setBirthdayType (String birthdayType) {
         this.birthdayType = birthdayType;
     }
 

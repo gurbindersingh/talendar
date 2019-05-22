@@ -127,9 +127,6 @@ public class Validator{
         if(birthday.getName() == null || birthday.getName().isBlank()){
             throw new InvalidEntityException("Name cannot be empty");
         }
-        if(birthday.getTrainer() == null){
-            throw new InvalidEntityException("Trainer Invalid");
-        }
         if (birthday.getCreated() == null || birthday.getCreated().isAfter(now)) {
             throw new InvalidEntityException("creation time must be set (past date)");
         }
@@ -139,8 +136,8 @@ public class Validator{
         if (birthday.getCreated().isAfter(birthday.getUpdated())) {
             throw new InvalidEntityException("create time may not be changed afterwards and has to be before latest update time");
         }
-        if(birthday.getHeadcount() < 0){
-            throw new InvalidEntityException("Head Count cannot be less than 0");
+        if(birthday.getHeadcount() < 0 || birthday.getHeadcount() > 20){
+            throw new InvalidEntityException("Head Count cannot be less than 0 or more than 20");
         }
         if(birthday.getAgeToBe() < 0 || birthday.getAgeToBe() > 20){
             throw new InvalidEntityException("Average age invalid");
@@ -176,9 +173,16 @@ public class Validator{
 
 
     }
+
     public void validateRoomUse(RoomUse entity) throws InvalidEntityException{
         if(entity.getBegin().isAfter(entity.getEnd())){
             throw new InvalidEntityException("The End of the use cannot be later than the begining");
+        }
+        if(entity.getBegin().getHour() < 8 || entity.getBegin().getHour() > 22){
+            throw new InvalidEntityException("The beginning of this event is not during work hours");
+        }
+        if(entity.getEnd().getHour() < 8 || entity.getEnd().getHour() > 22){
+            throw new InvalidEntityException("The end of this event is not during work hours");
         }
     }
 
@@ -236,11 +240,13 @@ public class Validator{
     }
 
     public void validateHoliday (Holiday holiday) throws InvalidEntityException {
-
+        if(holiday.getTrainer() == null){
+            throw new InvalidEntityException("Trainer must not be null");
+        }
         if (holiday.getId() != null) {
             throw new InvalidEntityException("id must be null");
         }
-        if (holiday.getTrainerid() == null) {
+        if (holiday.getTrainer().getId() == null) {
             throw new InvalidEntityException("Trainerid must not be null");
         }
         if (holiday.getHolidayStart().isAfter(holiday.getHolidayEnd())) {

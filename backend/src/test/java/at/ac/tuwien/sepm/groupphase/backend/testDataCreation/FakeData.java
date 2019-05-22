@@ -1,14 +1,11 @@
-package at.ac.tuwien.sepm.groupphase.backend.TestDataCreation;
+package at.ac.tuwien.sepm.groupphase.backend.testDataCreation;
 
 import at.ac.tuwien.sepm.groupphase.backend.enums.Room;
-import at.ac.tuwien.sepm.groupphase.backend.TestObjects.RoomUseDto;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
-import at.ac.tuwien.sepm.groupphase.backend.TestObjects.CustomerDto;
-import at.ac.tuwien.sepm.groupphase.backend.TestObjects.EventDto;
-import at.ac.tuwien.sepm.groupphase.backend.TestObjects.Trainer;
-import at.ac.tuwien.sepm.groupphase.backend.TestObjects.TrainerDto;
-import at.ac.tuwien.sepm.groupphase.backend.enums.BirthdayType;
+import at.ac.tuwien.sepm.groupphase.backend.testObjects.CustomerDto;
+import at.ac.tuwien.sepm.groupphase.backend.testObjects.EventDto;
+import at.ac.tuwien.sepm.groupphase.backend.testObjects.Trainer;
+import at.ac.tuwien.sepm.groupphase.backend.testObjects.TrainerDto;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import com.github.javafaker.Faker;
 
@@ -75,6 +72,9 @@ public class FakeData {
         trainer.setPhone(fakePhoneNumber());
         trainer.setFirstName(fakeFirstName());
         trainer.setLastName(fakeLastName());
+        List<String> birthdayTypes = new LinkedList<>();
+        birthdayTypes.add("Rocket");
+        trainer.setBirthdayTypes(birthdayTypes);
         trainer.setId(fakeID());
         trainer.setCreated(fakePastTimeAfter2000());
         boolean found = false;
@@ -143,7 +143,11 @@ public class FakeData {
         roomUse.setBegin(fakeFutureTime());
         roomUse.setEnd(fakeTimeAfter(roomUse.getBegin()));
         roomUse.setRoom(randomRoom());
-        return roomUse;
+        if(roomUse.getBegin().getHour() < 8 || roomUse.getBegin().getHour() > 22 || roomUse.getEnd().getHour() < 8 || roomUse.getEnd().getHour() > 22){
+            return fakeRoomUseDto();
+        }else {
+            return roomUse;
+        }
     }
 
     public Trainer fakeTrainerE(){
@@ -155,6 +159,9 @@ public class FakeData {
         trainer.setLastName(fakeLastName());
         trainer.setId(fakeID());
         trainer.setCreated(fakePastTimeAfter2000());
+        List<String> birthdayTypes = new LinkedList<>();
+        birthdayTypes.add("Rocket");
+        trainer.setBirthdayTypes(birthdayTypes);
         boolean found = false;
         LocalDateTime updated = null;
         while(!found){
@@ -175,7 +182,7 @@ public class FakeData {
         bday.setCustomerDtos(customers);
         bday.setHeadcount(fakeAge(2,10));
         bday.setTrainer(fakeTrainerDto());
-        bday.setBirthdayType(BirthdayType.Rocket);
+        bday.setBirthdayType("Rocket");
         List<RoomUse> rooms = new LinkedList<>();
         rooms.add(fakeRoomUseDto());
         bday.setRoomUses(rooms);

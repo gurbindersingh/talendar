@@ -1,7 +1,8 @@
-package at.ac.tuwien.sepm.groupphase.backend.TestObjects;
+package at.ac.tuwien.sepm.groupphase.backend.testObjects;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 public class TrainerDto {
@@ -12,6 +13,7 @@ public class TrainerDto {
     private LocalDate birthday;
     private String phone;
     private String email;
+    private List<String> birthdayTypes;
     // List<Event> excluded from test Trainer Dummy because List of events that a trainer hosts does not affect his validity
     private LocalDateTime created;
     private LocalDateTime updated;
@@ -21,12 +23,23 @@ public class TrainerDto {
     }
 
 
-    public TrainerDto (String firstName, String lastName, LocalDate birthday, String phone, String email) {
+    public TrainerDto (String firstName, String lastName, LocalDate birthday, String phone, String email, List<String> birthdayTypes) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthday = birthday;
         this.phone = phone;
         this.email = email;
+        this.birthdayTypes = birthdayTypes;
+    }
+
+
+    public List<String> getBirthdayTypes () {
+        return birthdayTypes;
+    }
+
+
+    public void setBirthdayTypes (List<String> birthdayTypes) {
+        this.birthdayTypes = birthdayTypes;
     }
 
 
@@ -143,6 +156,7 @@ public class TrainerDto {
             ", email='" + email + '\'' +
             ", created=" + created +
             ", updated=" + updated +
+            ", birthdayTypes=" + birthdayTypes +
             '}';
     }
 }
