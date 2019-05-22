@@ -1,27 +1,35 @@
-<h2>Betreuer erstellen</h2>
+<h1>{{ title }}</h1>
+<hr />
 
-<form id="trainerForm" #form (submit)="postTrainer(form)">
-    <div class="form-group">
-        <label for="trainerFirstName">Vorname</label>
-        <input
-            type="text"
-            class="form-control"
-            name="firstName"
-            id="trainerFirstName"
-            placeholder="Ned"
-            required
-        />
-    </div>
-    <div class="form-group">
-        <label for="trainerLastName">Nachname</label>
-        <input
-            type="text"
-            class="form-control"
-            name="lastName"
-            id="trainerLastName"
-            placeholder="Stark"
-            required
-        />
+<form
+    id="trainerForm"
+    #trainerForm
+    (ngsubmit)="postTrainer(trainerForm)"
+    class="container-fluid"
+>
+    <div class="form-row">
+        <div class="form-group col-lg-6">
+            <label for="trainerFirstName">Vorname</label>
+            <input
+                type="text"
+                class="form-control"
+                name="firstName"
+                id="trainerFirstName"
+                placeholder="Ned"
+                required
+            />
+        </div>
+        <div class="form-group col-lg-6">
+            <label for="trainerLastName">Nachname</label>
+            <input
+                type="text"
+                class="form-control"
+                name="lastName"
+                id="trainerLastName"
+                placeholder="Stark"
+                required
+            />
+        </div>
     </div>
     <div class="form-group">
         <label for="trainerAge">Geburtstag</label>
@@ -33,33 +41,35 @@
             required
         />
     </div>
-    <div class="form-group">
-        <label for="trainerEmail"></label>
-        <input
-            type="email"
-            class="form-control"
-            name="email"
-            id="trainerEmail"
-            placeholder="ned.stark@raben.winterfell"
-            required
-        />
-    </div>
-    <div class="form-group">
-        <label for="trainerPhone"></label>
-        <input
-            type="tel"
-            class="form-control"
-            name="phone"
-            id="trainerPhone"
-            placeholder="0660 123 456 78"
-            required
-        />
+    <div class="form-row">
+        <div class="form-group col-lg-6">
+            <label for="trainerEmail">Email</label>
+            <input
+                type="email"
+                class="form-control"
+                name="email"
+                id="trainerEmail"
+                placeholder="ned.stark@raben.winterfell"
+                required
+            />
+        </div>
+        <div class="form-group col-lg-6">
+            <label for="trainerPhone">Telefonnummer</label>
+            <input
+                type="tel"
+                class="form-control"
+                name="phone"
+                id="trainerPhone"
+                placeholder="0660 123 456 78"
+                required
+            />
+        </div>
     </div>
 
     <!-- this inputs for setting ad confirming a new password are only accessible by the admin -->
     <div class="form-row">
         <div class="form-group col-lg-6">
-            <label for="trainerPw"></label>
+            <label for="trainerPw">Neues Passwort eingeben</label>
             <input
                 type="password"
                 class="form-control"
@@ -71,7 +81,7 @@
         </div>
 
         <div class="form-group col-lg-6">
-            <label for="trainerPwRepeat"></label>
+            <label for="trainerPwRepeat">Passwort wiederholen</label>
             <input
                 type="password"
                 class="form-control"
@@ -84,21 +94,21 @@
     </div>
 
     <div class="form-row justify-content-center">
-        <div class="col-4">
+        <div class="col-4 m-auto">
             Here goes a container for a profile picture if uploaded, else an
             icon
         </div>
 
-        <div class="col-4">
+        <div class="col-4 m-auto">
             Here should be a clickable icon to upload a picture
         </div>
     </div>
 
     <div class="form-row justify-content-center">
-        <button type="submit" class="btn btn-primary col-4 center ml-auto">
+        <button type="submit" class="btn btn-primary col-sm-6" id="save">
             Neuen Betreuer Anlegen
         </button>
-        <button type="reset" class="btn btn-danger col-4 center mr-auto">
+        <button type="reset" class="btn btn-danger col-sm-6" id="cancel">
             Anlegen abbrechen
         </button>
     </div>
