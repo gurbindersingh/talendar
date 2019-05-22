@@ -1,6 +1,10 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest.dto;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 public class TrainerDto{
@@ -8,9 +12,11 @@ public class TrainerDto{
     private Long id;
     private String firstName;
     private String lastName;
-    private Integer age;
+    private LocalDate birthday;
     private String phone;
     private String email;
+    private List<EventDto> events;
+    private List<String> birthdayTypes;
     private LocalDateTime created;
     private LocalDateTime updated;
 
@@ -19,12 +25,16 @@ public class TrainerDto{
     }
 
 
-    public TrainerDto (String firstName, String lastName, Integer age, String phone, String email) {
+    public TrainerDto (Long id, String firstName, String lastName, LocalDate birthday, String phone, String email, List<EventDto> events, List<String> birthdayTypes, LocalDateTime created, LocalDateTime updated) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.age = age;
+        this.birthday = birthday;
         this.phone = phone;
         this.email = email;
+        this.events = events;
+        this.created = created;
+        this.updated = updated;
     }
 
 
@@ -58,13 +68,13 @@ public class TrainerDto{
     }
 
 
-    public Integer getAge () {
-        return age;
+    public LocalDate getBirthday () {
+        return birthday;
     }
 
 
-    public void setAge (Integer age) {
-        this.age = age;
+    public void setBirthday (LocalDate birthday) {
+        this.birthday = birthday;
     }
 
 
@@ -85,6 +95,26 @@ public class TrainerDto{
 
     public void setEmail (String email) {
         this.email = email;
+    }
+
+
+    public List<EventDto> getEvents () {
+        return events;
+    }
+
+
+    public void setEvents (List<EventDto> events) {
+        this.events = events;
+    }
+
+
+    public List<String> getBirthdayTypes () {
+        return birthdayTypes;
+    }
+
+
+    public void setBirthdayTypes (List<String> birthdayTypes) {
+        this.birthdayTypes = birthdayTypes;
     }
 
 
@@ -116,9 +146,11 @@ public class TrainerDto{
         return Objects.equals(id, that.id) &&
             Objects.equals(firstName, that.firstName) &&
             Objects.equals(lastName, that.lastName) &&
-            Objects.equals(age, that.age) &&
+            Objects.equals(birthday, that.birthday) &&
             Objects.equals(phone, that.phone) &&
             Objects.equals(email, that.email) &&
+            Objects.equals(events, that.events) &&
+            Objects.equals(birthdayTypes, that.birthdayTypes) &&
             Objects.equals(created, that.created) &&
             Objects.equals(updated, that.updated);
     }
@@ -126,7 +158,7 @@ public class TrainerDto{
 
     @Override
     public int hashCode () {
-        return Objects.hash(id, firstName, lastName, age, phone, email, created, updated);
+        return Objects.hash(id, firstName, lastName, birthday, phone, email, events, birthdayTypes, created, updated);
     }
 
 
@@ -136,9 +168,11 @@ public class TrainerDto{
             "id=" + id +
             ", firstName='" + firstName + '\'' +
             ", lastName='" + lastName + '\'' +
-            ", age=" + age +
+            ", birthday=" + birthday +
             ", phone='" + phone + '\'' +
             ", email='" + email + '\'' +
+            ", events=" + events +
+            ", birthdayTypes=" + birthdayTypes +
             ", created=" + created +
             ", updated=" + updated +
             '}';

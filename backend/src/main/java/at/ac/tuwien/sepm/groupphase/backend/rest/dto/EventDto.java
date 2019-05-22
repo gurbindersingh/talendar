@@ -1,56 +1,102 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest.dto;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.enums.EventType;
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
+import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
-@JsonTypeInfo(
-    use = JsonTypeInfo.Id.CLASS,
-    include = JsonTypeInfo.As.PROPERTY,
-    property = "eventType",
-    visible = true)
-@JsonSubTypes({
-    @JsonSubTypes.Type(value = BirthdayDto.class, name = "Birthday")
-})
-public abstract class EventDto {
+public class EventDto {
 
 
-    private Integer id;
-    @NotNull
+    /*
+       These Variables are used by all event Types
+    */
+    private Long id;
     private EventType eventType;
     private String name;
+    @JsonIgnoreProperties("event")
     private List<RoomUse> roomUses = new LinkedList<>();
     private LocalDateTime created;
-    private LocalDateTime updated; //LocalDateTime > Date
+    private LocalDateTime updated;
+    @JsonIgnoreProperties("eventDtos")
+    private Set<CustomerDto> customerDtos;
+
+    /*
+        These Variables are used by non Rent Types
+     */
+    @JsonIgnoreProperties("events")
+    private Trainer trainer;
+
+    /*
+        These Variables are birthday specific
+     */
+
+    private int headcount;
+    private int ageToBe;
+    private String birthdayType;
+
+     /*
+        These Variables are Consulatation Specicfic
+     */
+
+
+    /*
+        These Variables are Course Specific
+     */
+
+    private LocalDateTime endOfApplication;
+    private Double price;
+    private Integer maxParticipant;
+    private String description;
+    private Integer minAge;
+    private Integer maxAge;
+
+
+
+
+    /*
+        These Variables are Rent Specific
+     */
+
 
     public EventDto(){
 
     }
 
 
-    public EventDto (Integer id, EventType eventType, String name, List<RoomUse> roomUses, LocalDateTime created, LocalDateTime updated) {
+    public EventDto (Long id, EventType eventType, String name, List<RoomUse> roomUses, LocalDateTime created, LocalDateTime updated, Set<CustomerDto> customerDtos, Trainer trainer, int headcount, int ageToBe, String birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipant, String description, Integer minAge, Integer maxAge) {
         this.id = id;
         this.eventType = eventType;
         this.name = name;
         this.roomUses = roomUses;
         this.created = created;
         this.updated = updated;
+        this.customerDtos = customerDtos;
+        this.trainer = trainer;
+        this.headcount = headcount;
+        this.ageToBe = ageToBe;
+        this.birthdayType = birthdayType;
+        this.endOfApplication = endOfApplication;
+        this.price = price;
+        this.maxParticipant = maxParticipant;
+        this.description = description;
+        this.minAge = minAge;
+        this.maxAge = maxAge;
     }
 
 
-    public Integer getId () {
+    public Long getId () {
         return id;
     }
 
 
-    public void setId (Integer id) {
+    public void setId (Long id) {
         this.id = id;
     }
 
@@ -105,23 +151,144 @@ public abstract class EventDto {
     }
 
 
+    public Set<CustomerDto> getCustomerDtos () {
+        return customerDtos;
+    }
+
+
+    public void setCustomerDtos (Set<CustomerDto> customerDtos) {
+        this.customerDtos = customerDtos;
+    }
+
+
+    public Trainer getTrainer () {
+        return trainer;
+    }
+
+
+    public void setTrainer (Trainer trainer) {
+        this.trainer = trainer;
+    }
+
+
+    public int getHeadcount () {
+        return headcount;
+    }
+
+
+    public void setHeadcount (int headcount) {
+        this.headcount = headcount;
+    }
+
+
+    public int getAgeToBe () {
+        return ageToBe;
+    }
+
+
+    public void setAgeToBe (int ageToBe) {
+        this.ageToBe = ageToBe;
+    }
+
+
+    public String getBirthdayType () {
+        return birthdayType;
+    }
+
+
+    public void setBirthdayType (String birthdayType) {
+        this.birthdayType = birthdayType;
+    }
+
+
+    public LocalDateTime getEndOfApplication () {
+        return endOfApplication;
+    }
+
+
+    public void setEndOfApplication (LocalDateTime endOfApplication) {
+        this.endOfApplication = endOfApplication;
+    }
+
+
+    public Double getPrice () {
+        return price;
+    }
+
+
+    public void setPrice (Double price) {
+        this.price = price;
+    }
+
+
+    public Integer getMaxParticipant () {
+        return maxParticipant;
+    }
+
+
+    public void setMaxParticipant (Integer maxParticipant) {
+        this.maxParticipant = maxParticipant;
+    }
+
+
+    public String getDescription () {
+        return description;
+    }
+
+
+    public void setDescription (String description) {
+        this.description = description;
+    }
+
+
+    public Integer getMinAge () {
+        return minAge;
+    }
+
+
+    public void setMinAge (Integer minAge) {
+        this.minAge = minAge;
+    }
+
+
+    public Integer getMaxAge () {
+        return maxAge;
+    }
+
+
+    public void setMaxAge (Integer maxAge) {
+        this.maxAge = maxAge;
+    }
+
+
     @Override
     public boolean equals (Object o) {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
         EventDto eventDto = (EventDto) o;
-        return Objects.equals(id, eventDto.id) &&
+        return headcount == eventDto.headcount &&
+            ageToBe == eventDto.ageToBe &&
+            Objects.equals(id, eventDto.id) &&
             eventType == eventDto.eventType &&
             Objects.equals(name, eventDto.name) &&
             Objects.equals(roomUses, eventDto.roomUses) &&
             Objects.equals(created, eventDto.created) &&
-            Objects.equals(updated, eventDto.updated);
+            Objects.equals(updated, eventDto.updated) &&
+            Objects.equals(customerDtos, eventDto.customerDtos) &&
+            Objects.equals(trainer, eventDto.trainer) &&
+            birthdayType == eventDto.birthdayType &&
+            Objects.equals(endOfApplication, eventDto.endOfApplication) &&
+            Objects.equals(price, eventDto.price) &&
+            Objects.equals(maxParticipant, eventDto.maxParticipant) &&
+            Objects.equals(description, eventDto.description) &&
+            Objects.equals(minAge, eventDto.minAge) &&
+            Objects.equals(maxAge, eventDto.maxAge);
     }
 
 
     @Override
     public int hashCode () {
-        return Objects.hash(id, eventType, name, roomUses, created, updated);
+        return Objects.hash(id, eventType, name, roomUses, created, updated, customerDtos, trainer, headcount, ageToBe, birthdayType, endOfApplication, price, maxParticipant, description, minAge, maxAge);
     }
 
 
@@ -134,6 +301,17 @@ public abstract class EventDto {
             ", roomUses=" + roomUses +
             ", created=" + created +
             ", updated=" + updated +
+            ", customerDtos=" + customerDtos +
+            ", trainer=" + trainer +
+            ", headcount=" + headcount +
+            ", ageToBe=" + ageToBe +
+            ", birthdayType=" + birthdayType +
+            ", endOfApplication=" + endOfApplication +
+            ", price=" + price +
+            ", maxParticipant=" + maxParticipant +
+            ", description='" + description + '\'' +
+            ", minAge=" + minAge +
+            ", maxAge=" + maxAge +
             '}';
     }
 }

@@ -1,7 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.Entity;
 
-import at.ac.tuwien.sepm.groupphase.backend.Entity.enums.Room;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import at.ac.tuwien.sepm.groupphase.backend.enums.Room;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -13,7 +13,7 @@ import java.util.Objects;
 public class RoomUse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
     @NotNull
     private LocalDateTime begin;
     @NotNull
@@ -24,10 +24,13 @@ public class RoomUse {
     private Room room;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id")
+    @JsonIgnoreProperties("roomUses")
     private Event event;
 
+    public RoomUse(){
 
-    public RoomUse (Integer id, @NotNull LocalDateTime begin, @NotNull LocalDateTime end, @NotNull Room room, Event event) {
+    }
+    public RoomUse (Long id, @NotNull LocalDateTime begin, @NotNull LocalDateTime end, @NotNull Room room, Event event) {
         this.id = id;
         this.begin = begin;
         this.end = end;
@@ -36,12 +39,12 @@ public class RoomUse {
     }
 
 
-    public Integer getId () {
+    public Long getId () {
         return id;
     }
 
 
-    public void setId (Integer id) {
+    public void setId (Long id) {
         this.id = id;
     }
 
