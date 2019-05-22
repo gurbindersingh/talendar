@@ -61,7 +61,7 @@ public class EventService implements IEventService {
         switch(event.getEventType()) {
             case Birthday:
                   try {
-                      validator.validateBirthday(event);
+                      validator.validateEvent(event);
                       event.setTrainer(findTrainerForBirthday(event.getRoomUses(), event.getBirthdayType()));
                       event = synchRoomUses(event);
                   }
@@ -74,7 +74,7 @@ public class EventService implements IEventService {
                   break;
             case Course:
                 try {
-                    validator.validateCourse(event);
+                    validator.validateEvent(event);
                 }
                 catch(InvalidEntityException e) {
                     throw new ValidationException("Given Course is invalid: " + e.getMessage(), e);
@@ -82,7 +82,7 @@ public class EventService implements IEventService {
                 break;
             case Rent:
                 try {
-                    validator.validateRent(event);
+                    validator.validateEvent(event);
                 }
                 catch(InvalidEntityException e) {
                     throw new ValidationException("Given Course is invalid: " + e.getMessage(), e);

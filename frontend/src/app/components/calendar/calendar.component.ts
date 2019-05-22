@@ -6,7 +6,7 @@ import { CalendarDateFormatter, CalendarView } from 'angular-calendar';
 
 import { CustomDateFormatter } from './CustomDateFormatter';
 import { Event } from './Event';
-import { BREAKPOINTS } from 'src/utils/Breakpoints';
+import { BREAKPOINTS } from 'src/app/utils/Breakpoints';
 
 /**
  * In order to display week days in German the locale data
