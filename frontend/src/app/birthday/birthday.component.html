@@ -1,53 +1,81 @@
-<form>
-  <div class="row">
-      <label class="form-control">Art vom Geburtstag:</label>
 
-      <select class="col-3" name="birthdays">
+<h2>Geburtstag erstellen</h2>
+
+<form id = "birthdayForm" #form (submit)="postBirthday(form)">
+  <div class="form-group">
+      <label for="birthdayType" >Art vom Geburtstag:</label>
+
+      <select class="form-control" name="birthdays" id="birthdayType" required>
           <option value="DryIce"> Trockeneis Geburtstag</option>
           <option value="Rocket"> Raketen Geburtstag</option>
           <option value="Superhero"> Superhelden Geburtstag</option>
           <option value="Photo"> Photo Geburtstag</option>
           <option value="Painting"> Malen Geburtstag</option>
       </select>
-      <label class="form-control">Anzahl an kommende Kinder (ca.):</label>
-
-      <select class="col-3" name="headcount">
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-          <option value="8">8</option>
-          <option value="9">9</option>
-          <option value="10">10</option>
-          <option value="11">11</option>
-          <option value="12">12</option>
-          <option value="13">13</option>
-          <option value="14">14</option>
-          <option value="15">15</option>
-          <option value="16">16</option>
-          <option value="17">17</option>
-          <option value="18">18</option>
-          <option value="19">19</option>
-          <option value="20">20</option>
+  </div>
+  <div class = "form-group">
+      <label for="birthdayHeadcount">Anzahl an kommende Kinder (ca.):</label>
+      <select class="form-control" name="headcount" id="birthdayHeadcount">
+          <option *ngFor="let number of ageList" [value]="number">{{number}}</option>
       </select>
   </div>
-  <div class="row">
-      <label class="form-control">Wie alt wird es denn?</label>
-
-      <select class="col-3" name="ageToBe">
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-          <option value="8">8</option>
-          <option value="9">9</option>
-          <option value="10">10</option>
-          <option value="11">11</option>
-          <option value="12">12</option>
-          <option value="13">13</option>
-          <option value="14">14</option>
-          <option value="15">15</option>
+  <div class="form-group">
+      <label for = "birthdayAgeToBe">Wie alt wird es denn?</label>
+      <select class="form-control" name="ageToBe" id = "birthdayAgeToBe">
+        <option *ngFor="let number of ageListb" [value]="number">{{number}}</option>
       </select>
-      <label class="form-control"
-          >Wann wollen sie den Geburtstag gestalten?</label
-      >
-  </div>
+    </div>
+    <div class= "form-group">
+        <label for = "birthdayBegin">Wann wollen sie den Geburtstag gestalten?</label>
+        <input
+            class = "form-control"
+            id="birthdayBegin"
+            [owlDateTime]="dt1"
+            [owlDateTimeTrigger]="dt1"
+            placeholder="Ende: Datum Uhrzeit"
+            pickerType="both"
+            required
+        />
+        <owl-date-time #dt1></owl-date-time><br />
+    </div>
+    <div class = "form-group">
+        <label for="customerFirstName">Vorname</label>
+        <input type = "text" class = "form-control" id="customerFirstName" name ="firstName" placeholder="Marie" required>
+    </div>
+    <div class = "form-group">
+        <label for="customerLastName">Nachname</label>
+        <input type = "text" class = "form-control" id="customerLastName" name ="LastName" placeholder="Steiner" required>
+    </div>
+    <div class = "form-group">
+        <label for="customerEmail">E-mail</label>
+        <input
+            type="email"
+            class="form-control"
+            name="email"
+            id="customerEmail"
+            placeholder="marie.steiner@dorf.at"
+            required
+        />
+    </div>
+    <div class = "form-group">
+        <label for = "customerPhone">Telefonnummer</label>
+        <input
+            type = "tel"
+            class = "form-control"
+            name = "telephoneNumber"
+            id = "customerPhone"
+            placeholder="(0123) 456 78 90"
+            required
+        />
+    </div>
+
+    <div class="form-row justify-content-center">
+        <button type="submit" class="btn btn-primary col-4 center ml-auto">
+            Kurs Buchen
+        </button>
+        <button type="reset" class="btn btn-danger col-4 center mr-auto">
+            Neustarten
+        </button>
+    </div>
+  
 </form>

@@ -52,7 +52,6 @@ public class Validator{
         }
     }
 
-
     public void validateCourse(Event course) throws InvalidEntityException{
         LocalDateTime now = LocalDateTime.now();
 
@@ -116,8 +115,6 @@ public class Validator{
         }
 
     }
-
-
 
     public void validateBirthday(Event birthday) throws InvalidEntityException{
         if(birthday.getEventType() != EventType.Birthday){
