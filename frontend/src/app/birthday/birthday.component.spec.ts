@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AddPrivateMeetingComponent } from './add-private-meeting.component';
+import { BirthdayComponent } from './birthday.component';
 
-describe('AddPrivateMeetingComponent', () => {
-  let component: AddPrivateMeetingComponent;
-  let fixture: ComponentFixture<AddPrivateMeetingComponent>;
+describe('BirthdayComponent', () => {
+  let component: BirthdayComponent;
+  let fixture: ComponentFixture<BirthdayComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AddPrivateMeetingComponent ]
+      declarations: [ BirthdayComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AddPrivateMeetingComponent);
+    fixture = TestBed.createComponent(BirthdayComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

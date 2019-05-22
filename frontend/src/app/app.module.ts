@@ -11,14 +11,23 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 
 import { AppComponent } from './app.component';
+import { BirthdayComponent } from './birthday/birthday.component';
 import { CalendarComponent } from './calendar/calendar.component';
-import { AddCourseComponent } from './add-course/add-course.component';
-import { NewBirthdayComponent } from './new-birthday/new-birthday.component';
-import { AddPrivateMeetingComponent } from './add-private-meeting/add-private-meeting.component';
-import { AddTrainerComponent } from './add-trainer/add-trainer.component';
+import { CourseComponent } from './course/course.component';
+import { HolidayComponent } from './holiday/holiday.component';
+import { MeetingComponent } from './meeting/meeting.component';
+import { TrainerComponent } from './trainer/trainer.component';
 
 @NgModule({
-    declarations: [AppComponent, CalendarComponent, AddCourseComponent, AddPrivateMeetingComponent, NewBirthdayComponent, AddTrainerComponent],
+    declarations: [
+        AppComponent,
+        CalendarComponent,
+        BirthdayComponent,
+        CourseComponent,
+        HolidayComponent,
+        MeetingComponent,
+        TrainerComponent,
+    ],
     imports: [
         AppRoutingModule,
         BrowserAnimationsModule,

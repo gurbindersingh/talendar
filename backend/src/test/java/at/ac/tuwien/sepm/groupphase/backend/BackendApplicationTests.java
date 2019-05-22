@@ -8,6 +8,8 @@ import at.ac.tuwien.sepm.groupphase.backend.TestMappers.TrainerMapper;
 import at.ac.tuwien.sepm.groupphase.backend.TestObjects.CustomerDto;
 import at.ac.tuwien.sepm.groupphase.backend.TestObjects.EventDto;
 import at.ac.tuwien.sepm.groupphase.backend.TestObjects.TrainerDto;
+import at.ac.tuwien.sepm.groupphase.backend.TestObjects.TrainerDto;
+import at.ac.tuwien.sepm.groupphase.backend.rest.dto.HolidayDto;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,12 +22,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
 import java.util.regex.Pattern;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -39,37 +41,41 @@ public class BackendApplicationTests {
     private static final String BASE_URL = "http://localhost:";
     private static final String TRAINER_URL = "/api/talendar/trainers";
     private static final String EVENT_URL = "/api/talendar/events";
+    private static final String HOLIDAY_URL = "/api/talendar/holiday";
 
     private TrainerMapper trainerMapper;
     @LocalServerPort
     private int port = 8080;
 
-	@Test
-	public void wcontextLoads() {
-	    assertEquals("Hello Test", "Hello Test");
-	    assertThat("Hello Test", equalToIgnoringCase("HELLO TEST"));
-	}
+
+    @Test
+    public void wcontextLoads () {
+        assertEquals("Hello Test", "Hello Test");
+        assertThat("Hello Test", equalToIgnoringCase("HELLO TEST"));
+    }
 
 
-	@Test
-    public void checkFakeDataEmail(){
+    @Test
+    public void checkFakeDataEmail () {
         FakeData fakeData = new FakeData();
-        for(int i = 0; i< 100; i++) {
+        for(int i = 0; i < 100; i++) {
             assert ( emailPattern.matcher(fakeData.fakeEmail()).find() );
         }
     }
 
+
     @Test
-    public void checkFakeDataPhoneNumber(){
+    public void checkFakeDataPhoneNumber () {
         FakeData fakeData = new FakeData();
-        for(int i = 0; i< 100; i++) {
+        for(int i = 0; i < 100; i++) {
             String number = fakeData.fakePhoneNumber();
-            assert ( phonePattern.matcher(number).find());
+            assert ( phonePattern.matcher(number).find() );
         }
     }
 
+
     @Test
-    public void postTrainerResponse(){
+    public void postTrainerResponse () {
         FakeData fakeData = new FakeData();
         TrainerDto trainer = fakeData.fakeTrainerDto();
         trainer.setId(null);
@@ -83,9 +89,10 @@ public class BackendApplicationTests {
         assertNotNull(trainerResponse.getId());
     }
 
+
     @Test
-    public void postBirthdayResponse(){
-	    FakeData fakeData = new FakeData();
+    public void postBirthdayResponse () {
+        FakeData fakeData = new FakeData();
         EventDto birthday = fakeData.fakeBirthday();
 
         TrainerDto trainer = fakeData.fakeTrainerDto();
@@ -102,7 +109,7 @@ public class BackendApplicationTests {
         birthday.setCreated(null);
         birthday.setTrainer(trainerResponse);
         for(CustomerDto x : birthday.getCustomerDtos()
-            ) {
+        ) {
             x.setId(null);
         }
         HttpEntity<EventDto> request = new HttpEntity<>(birthday);
@@ -116,8 +123,9 @@ public class BackendApplicationTests {
         assertNotNull(birthdayResponse.getId());
     }
 
+
     @Test
-    public void postCourseResponse(){
+    public void postCourseResponse () {
         FakeData fakeData = new FakeData();
         EventDto course = fakeData.fakeCourse();
 
@@ -133,7 +141,7 @@ public class BackendApplicationTests {
         course.setId(null);
         course.setUpdated(null);
         course.setCreated(null);
-        course.setTrainer(trainerResponse );
+        course.setTrainer(trainerResponse);
         course.setCustomerDtos(null);
         HttpEntity<EventDto> request = new HttpEntity<>(course);
         System.out.println(request.toString());
@@ -146,8 +154,30 @@ public class BackendApplicationTests {
         assertNotNull(courseResponse.getId());
     }
 
+    @Test
+    public void postHolidayResponse ( ) {
+        HolidayDto holiday = new HolidayDto(null, 1, LocalDateTime.now().plusDays(1), LocalDateTime.now().plusDays(3));
+        HttpEntity<HolidayDto> request = new HttpEntity<>(holiday);
+        ResponseEntity<HolidayDto> response = REST_TEMPLATE.exchange(BASE_URL + port + HOLIDAY_URL, HttpMethod.POST, request, HolidayDto.class);
+        HolidayDto holidayResponse = response.getBody();
+        assertNotNull(holidayResponse);
+        System.out.println(holidayResponse);
+        assertNotNull(holidayResponse.getId());
+    }
 
+    @Test
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public void postHolidayStartInPastThenStatus400(){
+        HolidayDto holiday = new HolidayDto(null, 2, LocalDateTime.now().minusDays(1), LocalDateTime.now().plusDays(3));
+        HttpEntity<HolidayDto> request = new HttpEntity<>(holiday);
+        System.out.println("400 Bad Request");
+    }
 
-
-
+    @Test
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public void postHolidayEndBeforeStartThenStatus400(){
+        HolidayDto holiday = new HolidayDto(null, 2, LocalDateTime.now().plusDays(5), LocalDateTime.now().plusDays(3));
+        HttpEntity<HolidayDto> request = new HttpEntity<>(holiday);
+        System.out.println("400 Bad Request");
+    }
 }

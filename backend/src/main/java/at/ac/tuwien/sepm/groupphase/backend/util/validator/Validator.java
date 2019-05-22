@@ -1,5 +1,13 @@
 package at.ac.tuwien.sepm.groupphase.backend.util.validator;
 
+
+
+import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidEntityException;
+
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Holiday;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
+
 import at.ac.tuwien.sepm.groupphase.backend.Entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidEntityException;
@@ -224,7 +232,22 @@ public class Validator{
         }
 
         if (entity.getCreated().isAfter(entity.getUpdated())) {
-            throw new InvalidEntityException("create time may not be changed afterwards and has to be before latest update time");
+            throw new InvalidEntityException("create time may not be changed afterwards and has to be before latest update time");}
+    }
+
+    public void validateHoliday (Holiday holiday) throws InvalidEntityException {
+
+        if (holiday.getId() != null) {
+            throw new InvalidEntityException("id must be null");
+        }
+        if (holiday.getTrainerid() == null) {
+            throw new InvalidEntityException("Trainerid must not be null");
+        }
+        if (holiday.getHolidayStart().isAfter(holiday.getHolidayEnd())) {
+            throw new InvalidEntityException("Start of holiday must be before the end");
+        }
+        if (holiday.getHolidayStart().isBefore(LocalDateTime.now())) {
+            throw new InvalidEntityException("Holidays can only take place in the future");
         }
     }
 }
