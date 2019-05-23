@@ -16,4 +16,14 @@ public interface ITrainerService {
      * @throws ValidationException will be thrown if the given instance has invalid properties. The cause will be reported.
      */
     Trainer save (Trainer trainer) throws ServiceException, ValidationException;
+
+    /**
+     * This method will update the trainer entity which is referenced by the given parameter (reference by ID:long)
+     *
+     * @param trainer the given trainer that holds the new values
+     * @return the persistently saved and updated instance is returned
+     * @throws ServiceException will be thrown if any error occurs during data processing that leads to an unsuccessfula operation.
+     * @throws ValidationException will be thrown if the given instance has invalid properties. The cause will be reported.
+     */
+    Trainer update(Trainer trainer) throws ServiceException, ValidationException;
 }

@@ -63,4 +63,51 @@ public class TrainerService implements ITrainerService {
             throw new ServiceException("Error while performing a data access operation", e);
         }
     }
+
+
+    @Override
+    public Trainer update (Trainer trainer) throws ServiceException, ValidationException {
+        LOGGER.info("Prepare update for trainer with id {}.\nProposed updated entity: {}", trainer.getId(), trainer);
+        LocalDateTime timeOfUpdate = LocalDateTime.now();
+
+        Trainer currentVersion;
+        trainer.setUpdated(timeOfUpdate);
+
+        try {
+            validator.validateTrainer(trainer);
+        } catch(InvalidEntityException e) {
+            throw new ValidationException("Given trainer is invalid: " + e.getMessage(), e);
+        }
+
+        // probably a sleep is needed
+
+        try {
+            currentVersion = trainerRepository.getOne(trainer.getId());
+            // merge the new values from trainer (as received from frontend) to the stored entity (which is managed by JPA)
+            return mergeTrainers(currentVersion, trainer);
+        } catch(DataAccessException e) {
+            throw new ServiceException("Error while performing merge and update operation", e);
+        }
+    }
+
+
+    /**
+     *  This Will surprisingly persist the changes.
+     *
+     *  NOTE: JPA will keep track of each entity that has been retrieved.
+     *  If this entities' values are reset, this changes are reflected to the database
+     *
+     * @param persisted the JPA tracked entity
+     * @param newVersion the new version
+     */
+    private Trainer mergeTrainers(Trainer persisted, Trainer newVersion) {
+        // all values can be updated except id (obviously), timestamps, and related events
+        persisted.setFirstName(newVersion.getFirstName());
+        persisted.setLastName(newVersion.getLastName());
+        persisted.setBirthday(newVersion.getBirthday());
+        persisted.setBirthdayTypes(newVersion.getBirthdayTypes());
+        persisted.setEmail(newVersion.getEmail());
+        persisted.setPhone(newVersion.getPhone());
+        return persisted;
+    }
 }

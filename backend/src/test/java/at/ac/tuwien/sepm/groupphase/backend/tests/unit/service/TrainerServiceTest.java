@@ -161,6 +161,33 @@ public class TrainerServiceTest {
 
 
 
+
+    /**
+     * UPDATE TESTED
+     *
+     *
+     * Test Update Mechanism: Consider Repeating Each Test Is Not Sensible.
+     *
+     * Premise. Validations Are All Done Within A Separate Class, Either This Class Fails On Save
+     * Too Or Updates Could Only Fail If The Validator Is Not Applied
+     *
+     * ==> just test that there is a validator throwing exception on bad arguments in the first place
+     */
+
+    @Test
+    public void test_updateWithInvalidTrainer_missingEmail_shouldThrowException() {
+        assertThrows(ValidationException.class, () -> trainerService.update(INVALID_TRAINER_MISSING_MAIL));
+    }
+
+    @Test
+    public void test_updateWithInvalidTrainer_missingPhone_shouldThrowException() {
+        assertThrows(ValidationException.class, () -> trainerService.update(INVALID_TRAINER_MISSING_PHONE));
+    }
+
+
+
+
+
     /**
      * Test Validator Exclusively: Because Date Stamps Are Set Within Service Correctly Which Makes
      * It Impossible To Test Validator Correctness
