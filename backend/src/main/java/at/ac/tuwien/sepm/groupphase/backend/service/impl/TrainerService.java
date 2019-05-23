@@ -69,10 +69,11 @@ public class TrainerService implements ITrainerService {
 
 
     @Override
-    public Trainer update (Trainer trainer) throws ServiceException, ValidationException {
+    public Trainer update (Trainer trainer) throws ServiceException, ValidationException, NotFoundException {
         LOGGER.info("Prepare update for trainer with id {}.\nProposed updated entity: {}", trainer.getId(), trainer);
         LocalDateTime timeOfUpdate = LocalDateTime.now();
 
+        Optional<Trainer> queryResult;
         Trainer currentVersion;
         trainer.setUpdated(timeOfUpdate);
 
@@ -85,7 +86,16 @@ public class TrainerService implements ITrainerService {
         // probably a sleep is needed
 
         try {
-            currentVersion = trainerRepository.getOne(trainer.getId());
+            queryResult = trainerRepository.findById(trainer.getId());
+
+            // retrieve query result
+            if (queryResult.isPresent()) {
+                currentVersion = queryResult.get();
+            } else {
+                // if not found, no update is possible
+                throw new NotFoundException("Trainer with id " + trainer.getId() + " does not exist. Update not possible");
+            }
+
             // merge the new values from trainer (as received from frontend) to the stored entity (which is managed by JPA)
             return mergeTrainers(currentVersion, trainer);
         } catch(DataAccessException e) {

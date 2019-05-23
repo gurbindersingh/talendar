@@ -27,8 +27,9 @@ public interface ITrainerService {
      * @return the persistently saved and updated instance is returned
      * @throws ServiceException will be thrown if any error occurs during data processing that leads to an unsuccessfula operation.
      * @throws ValidationException will be thrown if the given instance has invalid properties. The cause will be reported.
+     * @throws NotFoundException will be thrown if no entity exists which is referenced by the id of the submitted instance.
      */
-    Trainer update(Trainer trainer) throws ServiceException, ValidationException;
+    Trainer update(Trainer trainer) throws ServiceException, ValidationException, NotFoundException;
 
     /**
      * This method returns an entity referenced by the given ID
