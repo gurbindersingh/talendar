@@ -7,7 +7,9 @@ import {
 import { Observable, EMPTY, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { SessionStorageService } from '../services/session-storage-service';
+import { Injectable } from '@angular/core';
 
+@Injectable()
 export class SimpleHttpInterceptor implements HttpInterceptor {
     constructor(private sessionService: SessionStorageService) {}
 

@@ -4,10 +4,6 @@ import {
     HttpParams,
 } from '@angular/common/http';
 
-import 'rxjs/add/observable/throw';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/share';
-
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 import { share } from 'rxjs/operators';
