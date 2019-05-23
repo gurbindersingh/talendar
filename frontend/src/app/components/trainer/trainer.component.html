@@ -5,6 +5,7 @@
     id="trainerForm"
     #trainerForm
     (submit)="postTrainer(trainerForm)"
+    (change)="clearInfoMsg()"
     class="container-fluid"
 >
     <div class="form-row">
@@ -111,8 +112,28 @@
         </div>
     </div>
 
+    <div class="row" *ngIf="errorMsg">
+        <div class="col-sm-12">
+            <p class="alert alert-danger">
+                {{ errorMsg }}
+            </p>
+        </div>
+    </div>
+    <div class="row" *ngIf="successMsg">
+        <div class="col-sm-12">
+            <p class="alert alert-success">
+                {{ successMsg }}
+            </p>
+        </div>
+    </div>
+
     <div class="form-row justify-content-center">
-        <button type="submit" class="btn btn-primary col-sm-6" id="save">
+        <button
+            type="submit"
+            [disabled]="!isCompleted()"
+            class="btn btn-primary col-sm-6"
+            id="save"
+        >
             Neuen Betreuer Anlegen
         </button>
         <button type="reset" class="btn btn-danger col-sm-6" id="cancel">
