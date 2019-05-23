@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.sql.rowset.serial.SerialException;
-
 @RestController
 @RequestMapping("/api/talendar/events")
 public class EventEndpoint {
