@@ -22,6 +22,8 @@ import {
 } from 'src/app/components';
 
 import { httpInterceptorProviders } from './http-interceptors';
+import { SessionStorageService } from './services/session-storage-service';
+import { SimpleHttpInterceptor } from './http-interceptors/simple-http-interceptor';
 
 @NgModule({
     declarations: [
@@ -48,7 +50,11 @@ import { httpInterceptorProviders } from './http-interceptors';
         OwlDateTimeModule,
         OwlNativeDateTimeModule,
     ],
-    providers: [httpInterceptorProviders],
+    providers: [
+        httpInterceptorProviders,
+        SessionStorageService,
+        SimpleHttpInterceptor,
+    ],
     bootstrap: [AppComponent],
 })
 export class AppModule {}
