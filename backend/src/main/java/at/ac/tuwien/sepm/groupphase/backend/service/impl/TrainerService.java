@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
+import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.PersistenceException;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -87,6 +90,38 @@ public class TrainerService implements ITrainerService {
             return mergeTrainers(currentVersion, trainer);
         } catch(DataAccessException e) {
             throw new ServiceException("Error while performing merge and update operation", e);
+        }
+    }
+
+
+    @Override
+    public Trainer getById (Long id) throws ServiceException, NotFoundException {
+        LOGGER.info("Try to retrieve trainer with id {}", id);
+
+        Optional<Trainer> result;
+
+        try {
+            result = trainerRepository.findById(id);
+        } catch(DataAccessException e) {
+            throw new ServiceException("Error while performing a data access operation", e);
+        }
+
+        if (result.isPresent()) {
+            return result.get();
+        } else {
+            throw new NotFoundException("The trainer with id " + id + " does not exist");
+        }
+    }
+
+
+    @Override
+    public List<Trainer> getAll () throws ServiceException {
+        LOGGER.info("Try to retrieve a list of all trainers");
+
+        try {
+            return trainerRepository.findAll();
+        } catch(DataAccessException e) {
+            throw new ServiceException("Error while performing a data access operation", e);
         }
     }
 
