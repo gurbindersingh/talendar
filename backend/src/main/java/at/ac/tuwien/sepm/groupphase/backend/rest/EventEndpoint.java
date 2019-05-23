@@ -57,5 +57,4 @@ public class EventEndpoint {
         return eventDto;
     }
 
-
 }

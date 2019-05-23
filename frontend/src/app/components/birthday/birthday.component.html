@@ -1,11 +1,10 @@
 
-<h2>Geburtstag erstellen</h2>
-
-<form id = "birthdayForm" #form (submit)="postBirthday(form)">
+<h1>Geburtstag erstellen</h1>
+<hr/>
+<form id = "birthdayForm" #form = "ngForm"  (ngSubmit)="postBirthday(form)">
   <div class="form-group">
       <label for="birthdayType" >Art vom Geburtstag:</label>
-
-      <select class="form-control" name="birthdays" id="birthdayType" required>
+      <select class="form-control" name="birthdays" id="birthdayType" [(ngModel)] = "event.birthdayType" required>
           <option value="DryIce"> Trockeneis Geburtstag</option>
           <option value="Rocket"> Raketen Geburtstag</option>
           <option value="Superhero"> Superhelden Geburtstag</option>
@@ -16,14 +15,21 @@
   <div class = "form-group">
       <label for="birthdayHeadcount">Anzahl an kommende Kinder (ca.):</label>
       <select class="form-control" name="headcount" id="birthdayHeadcount">
-          <option *ngFor="let number of ageList" [value]="number">{{number}}</option>
+          <option *ngFor="let number of ageList" [value]="hc">{{hc}}</option>
       </select>
   </div>
   <div class="form-group">
       <label for = "birthdayAgeToBe">Wie alt wird es denn?</label>
-      <select class="form-control" name="ageToBe" id = "birthdayAgeToBe">
+      <select class="form-control" name="ageToBe" id = "birthdayAgeToBe" >
         <option *ngFor="let number of ageListb" [value]="number">{{number}}</option>
       </select>
+    </div>
+    <div class = "form-group">
+        <label for="birthdayHeadcount">In welchem Zimmer wollen sie den Geburtstag gestalten</label>
+        <select class="form-control" name="room" id="birthdayRoom" >
+            <option value = "GroundFloor">Erdgeschoss</option>
+            <option value = "OrangeRoom">Orangene Raum</option>
+        </select>
     </div>
     <div class= "form-group">
         <label for = "birthdayBegin">Wann wollen sie den Geburtstag gestalten?</label>
@@ -40,7 +46,7 @@
     </div>
     <div class = "form-group">
         <label for="customerFirstName">Vorname</label>
-        <input type = "text" class = "form-control" id="customerFirstName" name ="firstName" placeholder="Marie" required>
+        <input type = "text" class = "form-control" id="customerFirstName" name ="firstName" placeholder="Marie" required >
     </div>
     <div class = "form-group">
         <label for="customerLastName">Nachname</label>
@@ -71,7 +77,7 @@
 
     <div class="form-row justify-content-center">
         <button type="submit" class="btn btn-primary col-4 center ml-auto">
-            Kurs Buchen
+            Geburtstag Buchen
         </button>
         <button type="reset" class="btn btn-danger col-4 center mr-auto">
             Neustarten
