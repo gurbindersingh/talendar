@@ -54,9 +54,11 @@ public class FakeData {
         return LocalDateTime.ofInstant(faker.date().between(Date.valueOf("2019-06-01"), Date.valueOf("2025-01-01")).toInstant(), ZoneId.systemDefault());
 
     }
+
     public LocalDateTime fakeTimeAfter(LocalDateTime dateTime){
         return LocalDateTime.ofInstant(faker.date().between(Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant()), Date.valueOf("2025-01-01")).toInstant(), ZoneId.systemDefault());
     }
+
     public int fakeAge(int min, int max){
         return faker.number().numberBetween(min, max);
     }
@@ -88,7 +90,6 @@ public class FakeData {
         trainer.setUpdated(updated);
         return trainer;
     }
-
 
     public Trainer fakeTrainerEntity() {
         Trainer trainer = new Trainer();
@@ -150,27 +151,18 @@ public class FakeData {
         }
     }
 
-    public Trainer fakeTrainerE(){
+    public Trainer fakeNewTrainerEntity(){
         Trainer trainer = new Trainer();
         trainer.setBirthday(fakeAgeAsLocalDate(16, 100));
         trainer.setEmail(fakeEmail());
         trainer.setPhone(fakePhoneNumber());
         trainer.setFirstName(fakeFirstName());
         trainer.setLastName(fakeLastName());
-        trainer.setId(fakeID());
-        trainer.setCreated(fakePastTimeAfter2000());
-        List<String> birthdayTypes = new LinkedList<>();
-        birthdayTypes.add("Rocket");
-        trainer.setBirthdayTypes(birthdayTypes);
-        boolean found = false;
-        LocalDateTime updated = null;
-        while(!found){
-            updated = fakePastTimeAfter2000();
-            if(trainer.getCreated().isBefore(updated)){
-                found = true;
-            }
-        }
-        trainer.setUpdated(updated);
+        trainer.setId(null);
+        trainer.setCreated(null);
+        trainer.setUpdated(null);
+
+        trainer.setBirthdayTypes(randomBirthdayTypes());
         return trainer;
     }
 
@@ -201,6 +193,16 @@ public class FakeData {
         return bday;
     }
 
+    public List<String> randomBirthdayTypes(){
+        String[] types = {"Rocket", "Dryice", "Superhero", "Photography", "Painting"};
+        shuffleArray(types);
+        int typeCount = randomInt(0,4);
+        List<String> ret = new LinkedList<>();
+        for(int i = 0; i <= typeCount; i++){
+            ret.add(types[i]);
+        }
+        return ret;
+    }
 
     public EventDto fakeCourse(){
         EventDto course = new EventDto();
@@ -228,5 +230,19 @@ public class FakeData {
         course.setMinAge(3);
         return course;
     }
+
+
+    static void shuffleArray(String[] ar) {
+        Random rnd = new Random();
+        for (int i = ar.length - 1; i > 0; i--)
+        {
+             int index = rnd.nextInt(i + 1);
+             // Simple swap
+             String a = ar[index];
+             ar[index] = ar[i];
+             ar[i] = a;
+        }
+    }
+
 
 }
