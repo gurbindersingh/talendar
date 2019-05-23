@@ -26,16 +26,19 @@ public class RoomUse {
     @JoinColumn(name = "event_id")
     @JsonIgnoreProperties("roomUses")
     private Event event;
+    @Column
+    private boolean deleted;
 
     public RoomUse(){
 
     }
-    public RoomUse (Long id, @NotNull LocalDateTime begin, @NotNull LocalDateTime end, @NotNull Room room, Event event) {
+    public RoomUse (Long id, @NotNull LocalDateTime begin, @NotNull LocalDateTime end, @NotNull Room room, Event event, boolean deleted) {
         this.id = id;
         this.begin = begin;
         this.end = end;
         this.room = room;
         this.event = event;
+        this.deleted = deleted;
     }
 
 
@@ -86,6 +89,16 @@ public class RoomUse {
 
     public void setEvent (Event event) {
         this.event = event;
+    }
+
+
+    public boolean isDeleted () {
+        return deleted;
+    }
+
+
+    public void setDeleted (boolean deleted) {
+        this.deleted = deleted;
     }
 
 

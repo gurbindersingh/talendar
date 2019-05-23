@@ -52,6 +52,9 @@ public class Event {
     @JsonIgnoreProperties("events")
     private Set<Customer> customers;
 
+    @Column
+    private boolean deleted;
+
     /*
         These Variables are used by non Rent Types
      */
@@ -110,7 +113,7 @@ public class Event {
     }
 
 
-    public Event (@NotBlank String name, @NotNull List<RoomUse> roomUses, @Past @NotNull LocalDateTime created, @Past @NotNull LocalDateTime updated, EventType eventType, Set<Customer> customers, Trainer trainer, int headcount, int ageToBe, String birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipant, String description, Integer minAge, Integer maxAge) {
+    public Event (@NotBlank String name, @NotNull List<RoomUse> roomUses, @Past @NotNull LocalDateTime created, @Past @NotNull LocalDateTime updated, EventType eventType, Set<Customer> customers, Trainer trainer, int headcount, int ageToBe, String birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipant, String description, Integer minAge, Integer maxAge, boolean deleted) {
         this.name = name;
         this.roomUses = roomUses;
         this.created = created;
@@ -127,6 +130,7 @@ public class Event {
         this.description = description;
         this.minAge = minAge;
         this.maxAge = maxAge;
+        this.deleted = deleted;
     }
 
 
@@ -299,6 +303,15 @@ public class Event {
         this.maxAge = maxAge;
     }
 
+
+    public boolean isDeleted () {
+        return deleted;
+    }
+
+
+    public void setDeleted (boolean deleted) {
+        this.deleted = deleted;
+    }
 
 
     @Override

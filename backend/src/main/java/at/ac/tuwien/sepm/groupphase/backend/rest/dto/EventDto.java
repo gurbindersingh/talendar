@@ -26,6 +26,7 @@ public class EventDto {
     private LocalDateTime updated;
     @JsonIgnoreProperties("eventDtos")
     private Set<CustomerDto> customerDtos;
+    private boolean deleted;
 
     /*
         These Variables are used by non Rent Types
@@ -70,7 +71,7 @@ public class EventDto {
     }
 
 
-    public EventDto (Long id, EventType eventType, String name, List<RoomUse> roomUses, LocalDateTime created, LocalDateTime updated, Set<CustomerDto> customerDtos, Trainer trainer, int headcount, int ageToBe, String birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipant, String description, Integer minAge, Integer maxAge) {
+    public EventDto (Long id, EventType eventType, String name, List<RoomUse> roomUses, LocalDateTime created, LocalDateTime updated, Set<CustomerDto> customerDtos, Trainer trainer, int headcount, int ageToBe, String birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipant, String description, Integer minAge, Integer maxAge, boolean deleted) {
         this.id = id;
         this.eventType = eventType;
         this.name = name;
@@ -88,6 +89,7 @@ public class EventDto {
         this.description = description;
         this.minAge = minAge;
         this.maxAge = maxAge;
+        this.deleted = deleted;
     }
 
 
@@ -258,6 +260,16 @@ public class EventDto {
 
     public void setMaxAge (Integer maxAge) {
         this.maxAge = maxAge;
+    }
+
+
+    public boolean isDeleted () {
+        return deleted;
+    }
+
+
+    public void setDeleted (boolean deleted) {
+        this.deleted = deleted;
     }
 
 

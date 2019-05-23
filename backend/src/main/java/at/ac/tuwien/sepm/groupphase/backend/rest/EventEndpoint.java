@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.rest;
 
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.BackendException;
+import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.EventDto;
 import at.ac.tuwien.sepm.groupphase.backend.service.IEventService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
@@ -10,12 +11,10 @@ import at.ac.tuwien.sepm.groupphase.backend.util.mapper.EventMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.sql.rowset.serial.SerialException;
+import java.security.Provider;
 
 @RestController
 @RequestMapping("/api/talendar/events")
@@ -57,5 +56,10 @@ public class EventEndpoint {
         return eventDto;
     }
 
+    @DeleteMapping
+    public void deleteCourse(Long id){
+        LOGGER.info("Incoming DELETE Request for an Event with id " +  id);
+        eventService.deleteEvent(id);
+    }
 
 }

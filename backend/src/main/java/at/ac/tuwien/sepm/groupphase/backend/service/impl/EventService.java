@@ -4,6 +4,7 @@ import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Holiday;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
+import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.TimeNotAvailableException;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.TrainerNotAvailableException;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.EventRepository;
@@ -50,7 +51,7 @@ public class EventService implements IEventService {
         LocalDateTime now = LocalDateTime.now();
         event.setCreated(now);
         event.setUpdated(now);
-
+        event.setDeleted(false);
         try {
             Thread.sleep(1);
         }
@@ -100,6 +101,12 @@ public class EventService implements IEventService {
         return eventRepository.save(event);
     }
 
+    @Override
+    public void deleteEvent(Long id){
+        eventRepository.deleteThisEvent(id);
+        roomUseRepository.deleteTheseRoomUses(id);
+    }
+
     public Trainer findTrainerForBirthday(List<RoomUse> roomUses, String birthdayType) throws TrainerNotAvailableException{
         List<Trainer> appropriateTrainers = trainerRepository.findByBirthdayTypes(birthdayType);;
         Collections.shuffle(appropriateTrainers);
@@ -111,6 +118,7 @@ public class EventService implements IEventService {
         }
         throw new TrainerNotAvailableException("There are no trainers who can do a " + birthdayType + " birthday during the allotted time");
     }
+
     public Event synchRoomUses(Event event){
         for(RoomUse x: event.getRoomUses()
             ) {
@@ -120,7 +128,7 @@ public class EventService implements IEventService {
     }
 
     public boolean trainerAvailable(Trainer trainer, List<RoomUse> roomUses){
-        List<RoomUse> trainersEvents = eventRepository.findByTrainer_IdAndRoomUses_BeginGreaterThanEqual(trainer.getId(), LocalDateTime.now());
+        List<RoomUse> trainersEvents = eventRepository.findByTrainer_IdAndRoomUses_BeginGreaterThanEqualAndDeletedIs(trainer.getId(), LocalDateTime.now(),false);
         List<Holiday> trainerHoliday = holidayRepository.findByTrainer_Id(trainer.getId());
 
         for(RoomUse x: roomUses
@@ -143,7 +151,7 @@ public class EventService implements IEventService {
 
     public void isAvailable(List<RoomUse> roomUseList) throws TimeNotAvailableException {
         LocalDateTime now = LocalDateTime.now();
-        List<RoomUse> dbRooms = roomUseRepository.findByBeginGreaterThanEqual(now);
+        List<RoomUse> dbRooms = roomUseRepository.findByBeginGreaterThanEqualAndDeletedIs(now,false);
         for(RoomUse x: roomUseList
             ) {
             for(RoomUse db: roomUseList
