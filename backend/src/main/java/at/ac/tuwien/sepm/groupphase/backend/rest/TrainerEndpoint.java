@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest;
 
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.BackendException;
+import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.TrainerDto;
 import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
@@ -9,8 +10,12 @@ import at.ac.tuwien.sepm.groupphase.backend.util.mapper.TrainerMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Exception that occur within the underlying services will be reported and rethrown.
@@ -35,6 +40,57 @@ public class TrainerEndpoint {
         this.trainerService = trainerService;
         this.mapper = mapper;
     }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}")
+    public TrainerDto getOneTrainerById(@PathVariable("id") Long id) throws BackendException {
+        LOGGER.info("Incoming Request To Retrieve Trainer With ID {}", id);
+
+        try {
+            return mapper.entityToTrainerDto(trainerService.getById(id));
+        } catch(ServiceException e) {
+            LOGGER.error("GET Request unsuccessful: " + e.getMessage(), e);
+            throw new BackendException("Internal Error In Backend", e);
+        } catch(NotFoundException e) {
+            LOGGER.error("GET Request unsuccessful: " + e.getMessage(), e);
+            throw new BackendException("Trainer with id " + id + " does not exist", e);
+        }
+    }
+
+
+
+    @RequestMapping(method = RequestMethod.GET)
+    public List<TrainerDto> getAllTrainers() throws BackendException {
+        LOGGER.info("Incoming Request To Retrieve List Of All Trainers");
+
+        try {
+            return trainerService.getAll().stream().map(mapper::entityToTrainerDto).collect(Collectors.toList());
+        } catch(ServiceException e) {
+            LOGGER.error("GET Request unsuccessful: " + e.getMessage(), e);
+            throw new BackendException("Internal Error In Backend", e);
+        }
+    }
+
+
+
+    @RequestMapping(method = RequestMethod.PUT)
+    public TrainerDto updateTrainer(@RequestBody TrainerDto trainerDto) throws BackendException {
+        LOGGER.info("Incoming Request To Update An Existing Trainer With Id {}", trainerDto.getId());
+
+        try {
+            return mapper.entityToTrainerDto(trainerService.update(mapper.dtoToTrainerEntity(trainerDto)));
+        } catch(ServiceException e) {
+            LOGGER.error("PATCH Request unsuccessful: " + e.getMessage(), e);
+            throw new BackendException("Internal Error In Backend", e);
+        } catch(ValidationException e) {
+            LOGGER.error("PATCH Request unsuccessful " + e.getMessage(), e);
+            throw new BackendException("Validation Error In Backend: " + e.getMessage(), e);
+        } catch(NotFoundException e) {
+            LOGGER.error("PATCH Request unsuccessful: " + e.getMessage(), e);
+            throw new BackendException("Trainer With Id " + trainerDto.getId() + " does not exist", e);
+        }
+    }
+
+
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
