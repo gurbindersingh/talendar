@@ -229,4 +229,18 @@ public class FakeData {
         return course;
     }
 
+    public EventDto fakeConsultation() {
+        EventDto consultation = new EventDto();
+        consultation.setName("Consultation1");
+        consultation.setEventType(EventType.Consultation);
+        consultation.setTrainer(fakeTrainerDto());
+        List<RoomUse> rooms = new LinkedList<>();
+        rooms.add(fakeRoomUseDto());
+        consultation.setRoomUses(rooms);
+        Set<CustomerDto> customers = new HashSet<>();
+        customers.add(fakeCustomer());
+        consultation.setCustomerDtos(customers);
+        return consultation;
+    }
+
 }

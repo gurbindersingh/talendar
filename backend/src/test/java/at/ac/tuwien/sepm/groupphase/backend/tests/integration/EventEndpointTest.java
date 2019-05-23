@@ -88,4 +88,33 @@ public class EventEndpointTest {
         System.out.println(courseResponse);
         assertNotNull(courseResponse.getId());
     }
+
+    @Test
+    public void postConsultationResponse() {
+        FakeData fakeData = new FakeData();
+        EventDto consultation = fakeData.fakeConsultation();
+
+        TrainerDto trainer = fakeData.fakeTrainerDto();
+        trainer.setId(null);
+        trainer.setUpdated(null);
+        trainer.setCreated(null);
+        HttpEntity<TrainerDto> trequest = new HttpEntity<>(trainer);
+        ResponseEntity<TrainerDto> tresponse = REST_TEMPLATE.exchange(URL.BASE + port + URL.TRAINER, HttpMethod.POST, trequest, TrainerDto.class);
+        TrainerDto trainerResponse = tresponse.getBody();
+        System.out.println(trainerResponse);
+
+        consultation.setId(null);
+        consultation.setUpdated(null);
+        consultation.setCreated(null);
+        consultation.setTrainer(trainerResponse);
+        consultation.setCustomerDtos(null);
+        HttpEntity<EventDto> request = new HttpEntity<>(consultation);
+        System.out.println(request.toString());
+        ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.EVENT, HttpMethod.POST, request, EventDto.class);
+        EventDto consultationResponse = response.getBody();
+
+        assertNotNull(consultationResponse);
+        System.out.println(consultationResponse);
+        assertNotNull(consultationResponse.getId());
+    }
 }
