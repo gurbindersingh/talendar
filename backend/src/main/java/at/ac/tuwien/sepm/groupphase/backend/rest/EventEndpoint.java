@@ -39,7 +39,7 @@ public class EventEndpoint {
                 return eventMapper.entityToEventDto(eventService.save(eventMapper.dtoToEventEntity((eventDto))));
             }
             else if(eventDto.getEventType() == EventType.Consultation) {
-                //TODO: fill in the rest of the Event subtypes
+                return eventMapper.entityToEventDto(eventService.save(eventMapper.dtoToEventEntity(eventDto)));
             }
             else if(eventDto.getEventType() == EventType.Course) {
                 return eventMapper.entityToEventDto(eventService.save(eventMapper.dtoToEventEntity(eventDto)));

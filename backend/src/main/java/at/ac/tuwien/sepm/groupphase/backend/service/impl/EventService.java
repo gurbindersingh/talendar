@@ -68,7 +68,7 @@ public class EventService implements IEventService {
                   catch(InvalidEntityException e) {
                       throw new ValidationException("Given Birthday is invalid: " + e.getMessage(), e);
                   }catch(TrainerNotAvailableException e){
-                      throw new ServiceException("There are no Trainers available for this birthday " + e.getMessage(),e);
+                      throw new ValidationException("There are no Trainers available for this birthday " + e.getMessage(),e);
                   }
 
                   break;
@@ -85,11 +85,18 @@ public class EventService implements IEventService {
                     validator.validateEvent(event);
                 }
                 catch(InvalidEntityException e) {
-                    throw new ValidationException("Given Course is invalid: " + e.getMessage(), e);
+                    throw new ValidationException("Given Rent is invalid: " + e.getMessage(), e);
                 }
                 break;
             case Consultation:
-                //TODO
+                try {
+                    validator.validateEvent(event);
+                    trainerAvailable(event.getTrainer(), event.getRoomUses());
+                } catch (InvalidEntityException e) {
+                    throw new ValidationException("Given Consultation is invalid: " + e.getMessage(), e);
+                } catch (TrainerNotAvailableException e) {
+                    throw new ValidationException("The specified trainer is not available during the allocated time frame" + e.getMessage(), e);
+                }
                 break;
         }
         try{
@@ -101,15 +108,18 @@ public class EventService implements IEventService {
     }
 
     public Trainer findTrainerForBirthday(List<RoomUse> roomUses, String birthdayType) throws TrainerNotAvailableException{
-        List<Trainer> appropriateTrainers = trainerRepository.findByBirthdayTypes(birthdayType);;
+        List<Trainer> appropriateTrainers = trainerRepository.findByBirthdayTypes(birthdayType);
         Collections.shuffle(appropriateTrainers);
         for(Trainer t: appropriateTrainers
             ) {
-            if(trainerAvailable(t, roomUses)){
+            try {
+                trainerAvailable(t, roomUses);
                 return t;
+            } catch (TrainerNotAvailableException e) {
+                throw new TrainerNotAvailableException("There are no trainers who can do a " + birthdayType + " birthday during the allotted time");
             }
         }
-        throw new TrainerNotAvailableException("There are no trainers who can do a " + birthdayType + " birthday during the allotted time");
+        return null;
     }
     public Event synchRoomUses(Event event){
         for(RoomUse x: event.getRoomUses()
@@ -119,7 +129,7 @@ public class EventService implements IEventService {
         return event;
     }
 
-    public boolean trainerAvailable(Trainer trainer, List<RoomUse> roomUses){
+    public void trainerAvailable(Trainer trainer, List<RoomUse> roomUses) throws TrainerNotAvailableException {
         List<RoomUse> trainersEvents = eventRepository.findByTrainer_IdAndRoomUses_BeginGreaterThanEqual(trainer.getId(), LocalDateTime.now());
         List<Holiday> trainerHoliday = holidayRepository.findByTrainer_Id(trainer.getId());
 
@@ -128,17 +138,16 @@ public class EventService implements IEventService {
             for(RoomUse db: trainersEvents
                 ) {
                 if(x.getBegin().isAfter(db.getBegin()) && x.getBegin().isBefore(db.getEnd()) || x.getEnd().isBefore(db.getEnd()) && x.getEnd().isAfter(db.getBegin()) || x.getBegin().isBefore(db.getBegin()) && x.getEnd().isAfter(db.getEnd())) {
-                    return false;
+                    throw new TrainerNotAvailableException("The specified trainer is not available for the allocated time frame");
                 }
             }
             for(Holiday db: trainerHoliday
                 ) {
                 if(x.getBegin().isAfter(db.getHolidayStart()) && x.getBegin().isBefore(db.getHolidayEnd()) || x.getEnd().isBefore(db.getHolidayEnd()) && x.getEnd().isAfter(db.getHolidayStart()) || x.getBegin().isBefore(db.getHolidayStart()) && x.getEnd().isAfter(db.getHolidayEnd())) {
-                    return false;
+                    throw new TrainerNotAvailableException("The specified trainer is not available for the allocated time frame");
                 }
             }
         }
-        return true;
     }
 
     public void isAvailable(List<RoomUse> roomUseList) throws TimeNotAvailableException {
