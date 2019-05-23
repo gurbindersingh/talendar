@@ -4,7 +4,7 @@
 <form
     id="trainerForm"
     #trainerForm
-    (ngsubmit)="postTrainer(trainerForm)"
+    (submit)="postTrainer(trainerForm)"
     class="container-fluid"
 >
     <div class="form-row">
@@ -12,6 +12,7 @@
             <label for="trainerFirstName">Vorname</label>
             <input
                 type="text"
+                [(ngModel)]="trainer.firstName"
                 class="form-control"
                 name="firstName"
                 id="trainerFirstName"
@@ -23,6 +24,7 @@
             <label for="trainerLastName">Nachname</label>
             <input
                 type="text"
+                [(ngModel)]="trainer.lastName"
                 class="form-control"
                 name="lastName"
                 id="trainerLastName"
@@ -35,6 +37,7 @@
         <label for="trainerAge">Geburtstag</label>
         <input
             type="date"
+            [(ngModel)]="trainer.birthday"
             class="form-control"
             name="birthday"
             id="trainerAge"
@@ -46,6 +49,7 @@
             <label for="trainerEmail">Email</label>
             <input
                 type="email"
+                [(ngModel)]="trainer.email"
                 class="form-control"
                 name="email"
                 id="trainerEmail"
@@ -57,6 +61,7 @@
             <label for="trainerPhone">Telefonnummer</label>
             <input
                 type="tel"
+                [(ngModel)]="trainer.phone"
                 class="form-control"
                 name="phone"
                 id="trainerPhone"
@@ -65,6 +70,8 @@
             />
         </div>
     </div>
+
+    <!-- password is not considered yet - store it within trainer but then it is sent across the network (not so smart) unless https protected -->
 
     <!-- this inputs for setting ad confirming a new password are only accessible by the admin -->
     <div class="form-row">

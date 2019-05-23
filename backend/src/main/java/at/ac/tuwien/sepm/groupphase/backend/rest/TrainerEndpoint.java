@@ -36,6 +36,7 @@ public class TrainerEndpoint {
         this.mapper = mapper;
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public TrainerDto createNewTrainer(@RequestBody TrainerDto trainerDto) throws BackendException {
