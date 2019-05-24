@@ -24,6 +24,7 @@ import {
 import { httpInterceptorProviders } from './http-interceptors';
 import { SessionStorageService } from './services/session-storage-service';
 import { SimpleHttpInterceptor } from './http-interceptors/simple-http-interceptor';
+import { ConsultationComponent } from './components/consultation/consultation.component';
 
 @NgModule({
     declarations: [
@@ -35,6 +36,7 @@ import { SimpleHttpInterceptor } from './http-interceptors/simple-http-intercept
         MeetingComponent,
         NavigationComponent,
         TrainerComponent,
+        ConsultationComponent,
     ],
     imports: [
         AppRoutingModule,

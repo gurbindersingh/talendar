@@ -1,0 +1,70 @@
+<h1>Beratungstermin erstellen</h1>
+
+<form id="consultationForm" #form (submit)="postConsultation(form)">
+    <div class="form-group">
+        <label for="consultationTitle">Titel</label>
+        <input
+            type="text"
+            class="form-control"
+            name="title"
+            id="consultationTitle"
+            placeholder="Beratungstermin1"
+            required
+        />
+    </div>
+    <div id="form-group">
+        <label for="customerEmail">Email Adresse</label>
+        <input
+            type="text"
+            class="form-control"
+            name="emailAddress"
+            id="customerEmail"
+            placeholder="example@gmail.com"
+            required
+        />
+    </div>
+    <div id="form-group">
+        <label for="customerPhone">Telefonnummer</label>
+        <input
+            type="text"
+            class="form-control"
+            name="phone"
+            id="customerPhone"
+            placeholder="+436641234567"
+            required
+        />
+    </div>
+    <div id="form-group">
+        <label for="consultationBegin">Von</label>
+        <input
+            class="form-control"
+            [owlDateTime]="consultationBegin"
+            [owlDateTimeTrigger]="consultationBegin"
+            placeholder=""
+            id="consultationDateTimeBegin"
+            required
+        />
+        <owl-date-time #consultationBegin></owl-date-time>
+    </div>
+    <div id="form-group">
+        <label for="consultationEnd">Bis</label>
+        <input
+            class="form-control"
+            [owlDateTime]="consultationEnd"
+            [owlDateTimeTrigger]="consultationEnd"
+            placeholder=""
+            id="consultationDateTimeEnd"
+            required
+        />
+        <owl-date-time #consultationEnd></owl-date-time>
+    </div>
+
+    <div class="form-row justify-content-center">
+        <button type="submit" class="btn btn-primary col-4 center ml-auto">
+            Beratungstermin anfordern
+        </button>
+        <button type="reset" class="btn btn-danger col-4 center mr-auto">
+            Abbrechen
+        </button>
+    </div>
+</form>
