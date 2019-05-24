@@ -10,6 +10,7 @@ import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 
+
 import { AppComponent } from './app.component';
 import {
     CalendarComponent,
@@ -24,6 +25,7 @@ import {
 import { httpInterceptorProviders } from './http-interceptors';
 import { SessionStorageService } from './services/session-storage-service';
 import { SimpleHttpInterceptor } from './http-interceptors/simple-http-interceptor';
+import {HolidayClient} from 'src/app/rest/holiday-client';
 
 @NgModule({
     declarations: [
@@ -54,6 +56,7 @@ import { SimpleHttpInterceptor } from './http-interceptors/simple-http-intercept
         httpInterceptorProviders,
         SessionStorageService,
         SimpleHttpInterceptor,
+        HolidayClient,
     ],
     bootstrap: [AppComponent],
 })

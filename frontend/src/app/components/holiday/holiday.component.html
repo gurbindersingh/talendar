@@ -1,12 +1,18 @@
 <div class="container">
     <h1>{{ title }}</h1>
-    <form>
+    <form novalidate (ngSubmit)="onSubmit()">
+
+
+        {{holidayModel | json}}
+
         <div class="form-row">
             <div class="col-sm">
                 <input 
                     class="form-control" 
+                    name="trainer"
                     id="TrainerId" 
-                    placeholder="TrainerID - developerphase, wird automatisiert durch login" 
+                    placeholder="1" 
+                    [(ngModel)] = "holidayModel.trainer"
                 />
             </div>
         </div>
@@ -26,6 +32,9 @@
                         id="startdate"
                         ngbDatepicker #dstart="ngbDatepicker"
                         placeholder="yyyy-mm-dd"
+                        
+                        name="holidayStart"
+                        [(ngModel)] = "holidayModel.holidayStart"
                     />
                     <div class="input-group-append">
                         <button
@@ -39,11 +48,14 @@
             </div>
             <div class="col-sm">
                 <div class="input-group">
-                    <ngb-timepicker 
-                        name="starttimepicker"
+                    <ngb-timepicker
                         id="starttime"
                         [(ngModel)]="stime"
                         [minuteStep]=15
+
+                        
+                        name="holidayStart"
+                        [(ngModel)] = "holidayModel.holidayStart"
                     >
                     </ngb-timepicker>
                 </div>
@@ -101,10 +113,8 @@
             </div>
             <div class="col-sm">
                 <button
+                    class="btn btn-primary"
                     type="submit"
-                    class="btn btn-success"
-                    id="submit"
-                    [disabled]="clicked"
                 >
                     Urlaub eintragen
                 </button>
