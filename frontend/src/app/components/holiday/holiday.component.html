@@ -1,112 +1,114 @@
-<h1>{{ title }}</h1>
 <div class="container">
-    <div class="row">
-        <div class="col-sm">
-            <input 
-                class="form-control" 
-                id="TrainerId" 
-                placeholder="TrainerID - developerphase, wird automatisiert durch login" 
-            />
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm">
-            <label for="startdate" id="labelstartdate">Datum (von):</label>
-        </div>
-        <div class="col-sm">
-            <label for="starttime" id="labelstarttime">Zeit (von):</label>
-        </div>
-    </div>
-    <div class="row align-items-center">
-        <div class="col-sm">
-            <div class="input-group">
+    <h1>{{ title }}</h1>
+    <form>
+        <div class="form-row">
+            <div class="col-sm">
                 <input 
-                    class="form-control"
-                    id="startdate"
-                    ngbDatepicker #dstart="ngbDatepicker"
-                    placeholder="yyyy-mm-dd"
+                    class="form-control" 
+                    id="TrainerId" 
+                    placeholder="TrainerID - developerphase, wird automatisiert durch login" 
                 />
-                <div class="input-group-append">
-                    <button
-                        class="btn btn-outline-secondary calendar fa fa-calendar"
-                        id="bstartdate"
-                        (click)="dstart.toggle()"
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm">
+                <label for="startdate" id="labelstartdate">Datum (von):</label>
+            </div>
+            <div class="col-sm">
+                <label for="starttime" id="labelstarttime">Zeit (von):</label>
+            </div>
+        </div>
+        <div class="row align-items-center">
+            <div class="col-sm">
+                <div class="input-group">
+                    <input 
+                        class="form-control"
+                        id="startdate"
+                        ngbDatepicker #dstart="ngbDatepicker"
+                        placeholder="yyyy-mm-dd"
+                    />
+                    <div class="input-group-append">
+                        <button
+                            class="btn btn-outline-secondary calendar fa fa-calendar"
+                            id="bstartdate"
+                            (click)="dstart.toggle()"
+                        >
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm">
+                <div class="input-group">
+                    <ngb-timepicker 
+                        name="starttimepicker"
+                        id="starttime"
+                        [(ngModel)]="stime"
+                        [minuteStep]=15
                     >
-                    </button>
+                    </ngb-timepicker>
                 </div>
             </div>
         </div>
-        <div class="col-sm">
-            <div class="input-group">
-                <ngb-timepicker 
-                    [(ngModel)]="time"
-                    id="starttime"
-                    [minuteStep]=15
-                >
-                </ngb-timepicker>
+        <div class="row">
+            <div class="col-sm">
+                <label for="enddate" id="labelenddate">Datum (bis):</label>
+            </div>
+            <div class="col-sm">
+                <label for="endtime" id="labelendtime">Zeit (bis):</label>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-sm">
-            <label for="enddate" id="labelenddate">Datum (bis):</label>
-        </div>
-        <div class="col-sm">
-            <label for="endtime" id="labelendtime">Zeit (bis):</label>
-        </div>
-    </div>
-    <div class="row align-items-center">
-        <div class="col-sm">
-            <div class="input-group">
-                <input 
-                    class="form-control"
-                    id="enddate"
-                    ngbDatepicker #dend="ngbDatepicker"
-                    placeholder="yyyy-mm-dd"
-                />
-                <div class="input-group-append">
-                    <button
-                        class="btn btn-outline-secondary calendar fa fa-calendar"
-                        id="benddate"
-                        (click)="dend.toggle()"
-                    >
-                    </button>
+        <div class="row align-items-center">
+            <div class="col-sm">
+                <div class="input-group">
+                    <input 
+                        class="form-control"
+                        id="enddate"
+                        ngbDatepicker #dend="ngbDatepicker"
+                        placeholder="yyyy-mm-dd"
+                    />
+                    <div class="input-group-append">
+                        <button
+                            class="btn btn-outline-secondary calendar fa fa-calendar"
+                            id="benddate"
+                            (click)="dend.toggle()"
+                        >
+                        </button>
+                    </div>
                 </div>
             </div>
+            <div class="col-sm">
+                <div class="input-group">
+                    <ngb-timepicker 
+                        name="endtimepicker"
+                        id="endtime"
+                        [(ngModel)]="etime"
+                        [minuteStep]=15
+                    >
+                    </ngb-timepicker>
+                </div>
+            </div>
+
         </div>
-        <div class="col-sm">
-            <div class="input-group">
-                <ngb-timepicker 
-                    [(ngModel)]="time"
-                    id="endtime"
-                    [minuteStep]=15
+        <div class="row">
+            <div class="col-sm">
+                <button
+                    class="form-control"
+                    id="moreoptions"
+                    [disabled]="clicked"
                 >
-                </ngb-timepicker>
+                    Wiederkehrende Optionen
+                </button>
+            </div>
+            <div class="col-sm">
+                <button
+                    type="submit"
+                    class="btn btn-success"
+                    id="submit"
+                    [disabled]="clicked"
+                >
+                    Urlaub eintragen
+                </button>
             </div>
         </div>
-
-    </div>
-    <div class="row">
-        <div class="col-sm">
-            <button
-                class="form-control"
-                id="moreoptions"
-                [disabled]="clicked"
-            >
-                Wiederkehrende Optionen
-            </button>
-        </div>
-        <div class="col-sm">
-            <button
-                class="form-control"
-                id="submit"
-                [disabled]="clicked"
-            >
-                Urlaub eintragen
-            </button>
-        </div>
-    </div>
-    
-
+    </form>
 </div>
-
