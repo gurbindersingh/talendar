@@ -46,9 +46,11 @@ public class TrainerEndpointTest {
         HttpEntity<TrainerDto> request = new HttpEntity<>(trainer);
         ResponseEntity<TrainerDto> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.TRAINER, HttpMethod.POST, request, TrainerDto.class);
         TrainerDto trainerResponse = response.getBody();
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.CREATED));
         assertNotNull(trainerResponse);
-        System.out.println(trainerResponse);
         assertNotNull(trainerResponse.getId());
+        assertNotNull(trainerResponse.getCreated());
+        assertNotNull(trainerResponse.getUpdated());
     }
 
 
@@ -175,4 +177,18 @@ public class TrainerEndpointTest {
         trainerDto.setUpdated(null);
     }
 
+    @Test
+    public void postInvalidTrainer_Status400Expected()  {
+        FakeData fakeData = new FakeData();
+        TrainerDto trainer = fakeData.fakeTrainerDto();
+        trainer.setId(null);
+        trainer.setUpdated(null);
+        trainer.setCreated(null);
+        trainer.setFirstName("");
+        HttpEntity<TrainerDto> request = new HttpEntity<>(trainer);
+        assertThrows(HttpClientErrorException.class, () -> {
+            final ResponseEntity<TrainerDto> response =  REST_TEMPLATE.exchange(URL.BASE + port + URL.TRAINER, HttpMethod.POST, request, TrainerDto.class);
+            assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+        });
+    }
 }

@@ -24,6 +24,7 @@ import {
 import { httpInterceptorProviders } from './http-interceptors';
 import { SessionStorageService } from './services/session-storage-service';
 import { SimpleHttpInterceptor } from './http-interceptors/simple-http-interceptor';
+import { TrainerClient } from './rest/trainer-client';
 
 @NgModule({
     declarations: [
@@ -54,6 +55,7 @@ import { SimpleHttpInterceptor } from './http-interceptors/simple-http-intercept
         httpInterceptorProviders,
         SessionStorageService,
         SimpleHttpInterceptor,
+        TrainerClient,
     ],
     bootstrap: [AppComponent],
 })
