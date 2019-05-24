@@ -10,10 +10,10 @@ import at.ac.tuwien.sepm.groupphase.backend.util.mapper.EventMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import javax.sql.rowset.serial.SerialException;
 
 @RestController
 @RequestMapping("/api/talendar/events")
@@ -29,22 +29,13 @@ public class EventEndpoint {
         this.eventMapper = eventMapper;
     }
 
-    @PostMapping
+    @CrossOrigin(origins = "http://localhost:4200")
+    @RequestMapping(method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
     public EventDto createNewEvent(@RequestBody EventDto eventDto) throws BackendException {
-        LOGGER.info("Incoming POST Request for an Event with type: " + eventDto.getEventType());
+        LOGGER.info("Incoming POST Request for an Event with type: " + eventDto.toString());
         try {
-            if(eventDto.getEventType() == EventType.Birthday) {
-                return eventMapper.entityToEventDto(eventService.save(eventMapper.dtoToEventEntity((eventDto))));
-            }
-            else if(eventDto.getEventType() == EventType.Consultation) {
-                return eventMapper.entityToEventDto(eventService.save(eventMapper.dtoToEventEntity(eventDto)));
-            }
-            else if(eventDto.getEventType() == EventType.Course) {
-                return eventMapper.entityToEventDto(eventService.save(eventMapper.dtoToEventEntity(eventDto)));
-            }
-            else if(eventDto.getEventType() == EventType.Rent) {
-
-            }
+            return eventMapper.entityToEventDto(eventService.save(eventMapper.dtoToEventEntity(eventDto)));
         }catch(ValidationException e){
             LOGGER.error("Error in the backend: " + e.getMessage(), e);
             throw new BackendException("Validation Error in the Backend: " + e.getMessage(), e);
@@ -52,7 +43,6 @@ public class EventEndpoint {
             LOGGER.error("Error in the backend: " + e.getMessage(), e);
             throw new BackendException("Service Error in the Backend: " + e.getMessage(), e);
         }
-        return eventDto;
     }
 
 

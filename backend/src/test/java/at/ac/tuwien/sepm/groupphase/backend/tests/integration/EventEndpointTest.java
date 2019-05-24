@@ -89,6 +89,30 @@ public class EventEndpointTest {
         assertNotNull(courseResponse.getId());
     }
 
+
+    @Test
+    public void postRentResponse(){
+        FakeData fakeData = new FakeData();
+        EventDto rent = fakeData.fakeRent();
+
+        rent.setId(null);
+        rent.setUpdated(null);
+        rent.setCreated(null);
+        for(CustomerDto x : rent.getCustomerDtos()
+        ) {
+            x.setId(null);
+        }
+        HttpEntity<EventDto> request = new HttpEntity<>(rent);
+        System.out.println(request.toString());
+        ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.EVENT, HttpMethod.POST, request, EventDto.class);
+        EventDto courseResponse = response.getBody();
+
+
+        assertNotNull(courseResponse);
+        System.out.println(courseResponse);
+        assertNotNull(courseResponse.getId());
+    }
+
     @Test
     public void postConsultationResponse() {
         FakeData fakeData = new FakeData();

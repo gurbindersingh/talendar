@@ -229,6 +229,34 @@ public class FakeData {
         return course;
     }
 
+
+    public EventDto fakeRent(){
+        EventDto rent = new EventDto();
+
+        rent.setEventType(EventType.Rent);
+
+        Set<CustomerDto> customerDto = new HashSet<>();
+        customerDto.add(fakeCustomer());
+        rent.setCustomerDtos(customerDto);
+
+        List<RoomUse> rooms = new LinkedList<>();
+        rooms.add(fakeRoomUseDto());
+        rent.setRoomUses(rooms);
+
+        rent.setCreated(fakePastTimeAfter2000());
+        boolean found = false;
+        LocalDateTime updated = null;
+        while(!found){
+            updated = fakePastTimeAfter2000();
+            if(rent.getCreated().isBefore(updated)){
+                found = true;
+            }
+        }
+        rent.setUpdated(updated);
+
+        return rent;
+    }
+
     public EventDto fakeConsultation() {
         EventDto consultation = new EventDto();
         consultation.setName("Consultation1");
