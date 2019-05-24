@@ -1,3 +1,5 @@
+import {Event} from '../models/event';
+
 export class RoomUse{
     public id: bigint;
     public begin: Date;

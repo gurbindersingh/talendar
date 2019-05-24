@@ -10,14 +10,7 @@ export class EventClient extends RestClient {
         super('events', httpClient);
     }
 
-    public postNewBirthday(event: Event): Observable<Event> {
-        event.eventType = EventType.Birthday;
-        event.endOfApplication = null;
-        event.price = null;
-        event.maxParticipant = null;
-        event.description = null;
-        event.minAge = null;
-        event.maxAge = null;
+    public postNewEvent(event: Event): Observable<Event> {
         return super.post(
             (error: HttpErrorResponse) => {
                 console.log('HTTP POST Birthday Failed: ' + error.message);
