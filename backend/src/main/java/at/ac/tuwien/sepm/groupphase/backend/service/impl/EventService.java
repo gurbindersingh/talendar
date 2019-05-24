@@ -1,9 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Holiday;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.*;
+import at.ac.tuwien.sepm.groupphase.backend.enums.Room;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.TimeNotAvailableException;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.TrainerNotAvailableException;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.EventRepository;
@@ -25,6 +23,8 @@ import javax.sql.rowset.serial.SerialException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 @Service
 public class EventService implements IEventService {
@@ -61,9 +61,13 @@ public class EventService implements IEventService {
         switch(event.getEventType()) {
             case Birthday:
                   try {
-                      validator.validateEvent(event);
                       event.setTrainer(findTrainerForBirthday(event.getRoomUses(), event.getBirthdayType()));
+
+                      validator.validateEvent(event);
                       event = synchRoomUses(event);
+                      event = synchCustomers(event);
+
+
                   }
                   catch(InvalidEntityException e) {
                       throw new ValidationException("Given Birthday is invalid: " + e.getMessage(), e);
@@ -116,6 +120,15 @@ public class EventService implements IEventService {
         for(RoomUse x: event.getRoomUses()
             ) {
             x.setEvent(event);
+        }
+        return event;
+    }
+
+    public Event synchCustomers(Event event){
+        Set<Event> events = new TreeSet<>();
+        events.add(event);
+        for(Customer x: event.getCustomers()){
+            x.setEvents(events);
         }
         return event;
     }

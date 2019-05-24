@@ -10,7 +10,7 @@ export class Event{
     public created: Date;
     public updated: Date;
     public eventType: EventType;
-    public customers: Customer[];
+    public customerDtos: Customer[];
     public trainer: Trainer;
     public headcount: number;
     public ageToBe: number;

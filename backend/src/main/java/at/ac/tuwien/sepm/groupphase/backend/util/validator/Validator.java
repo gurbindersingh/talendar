@@ -70,13 +70,17 @@ public class Validator{
             catch(InvalidEntityException e) {
                 throw e;
             }
-
+            if(event.getTrainer() == null || event.getTrainer().getId() == null){
+                throw new InvalidEntityException("An Birthday must have a trainer set");
+            }
+            /*
             try {
                 validateTrainer(event.getTrainer());
             }
             catch(InvalidEntityException e) {
                 throw e;
             }
+            */
         }
 
         // Validator for Consultation

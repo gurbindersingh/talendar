@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.sql.rowset.serial.SerialException;
 
+@CrossOrigin(origins = {"http://localhost:4200","http://localhost:8080" })
 @RestController
 @RequestMapping("/api/talendar/events")
 public class EventEndpoint {
@@ -28,10 +29,10 @@ public class EventEndpoint {
         this.eventMapper = eventMapper;
     }
 
-    @CrossOrigin("http://localhost:4200/")
+
     @PostMapping
     public EventDto createNewEvent(@RequestBody EventDto eventDto) throws BackendException {
-        LOGGER.info("Incoming POST Request for an Event with type: " + eventDto.getEventType());
+        LOGGER.info("Incoming POST Request for an Event" + eventDto);
         try {
             if(eventDto.getEventType() == EventType.Birthday) {
                 return eventMapper.entityToEventDto(eventService.save(eventMapper.dtoToEventEntity((eventDto))));

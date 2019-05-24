@@ -5,10 +5,12 @@ import {EventClient} from '../../rest/event-client';
 import { RoomUse,Room } from 'src/app/models/roomUse';
 import { Customer } from 'src/app/models/customer';
 import {
-  NgbDateParserFormatter,
   NgbDateStruct,
   NgbTimeStruct,
 } from '@ng-bootstrap/ng-bootstrap';
+import {NgbDateParserFormatterImplementation} from '../../services/parserformatter';
+import { Trainer } from 'src/app/models/trainer';
+import { convertPropertyBindingBuiltins } from '@angular/compiler/src/compiler_util/expression_converter';
 
 @Component({
   selector: 'app-birthday',
@@ -21,9 +23,9 @@ public ageListb: Number[] = [5,6,7,8,9,10,11,12,13,14,15];
 private event: Event = new Event();
 private room: RoomUse = new RoomUse();
 private customer: Customer = new Customer();
-private startDate:NgbDateStruct;
-private startTime:NgbTimeStruct;
-private parserFormatter: NgbDateParserFormatter;
+private startDate:NgbDateStruct = {day: 1, month: 1, year: 2030};
+private startTime:NgbTimeStruct = {hour: 13, minute: 30, second: 0};
+private parserFormatter: NgbDateParserFormatterImplementation = new NgbDateParserFormatterImplementation();
 
   constructor(private eventClient: EventClient) {}
 
@@ -35,13 +37,13 @@ private parserFormatter: NgbDateParserFormatter;
     this.startTime.hour = this.startTime.hour + 3;
     this.room.end = this.dateToString(this.startDate, this.startTime);
     this.event.eventType = EventType.Birthday;
+    this.customer.events = null;
+    this.room.event = null;
     let roomUses: RoomUse[] = [this.room];
     let customers: Customer[] = [this.customer];
     this.event.roomUses = roomUses;
-    this.event.customers = customers;
-    this.event.name = this.event.birthdayType + ' Geburtstag fuer ' + this.event.customers[0].firstName + ' ' + this.event.customers[0].lastName + ' am ' + this.event.roomUses[0].begin;
-    this.event.roomUses[0].event = this.event;
-    this.event.customers[0].events =  [this.event];
+    this.event.customerDtos = customers;
+    this.event.name = this.event.birthdayType + ' Geburtstag fuer ' + this.customer.firstName+ ' ' + this.customer.lastName + ' am ' + this.event.roomUses[0].begin;
     console.log("Passing Data to Rest Client");
     this.eventClient.postNewEvent(this.event).subscribe(
       (data: Event) => {

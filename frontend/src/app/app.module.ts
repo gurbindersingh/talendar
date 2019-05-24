@@ -51,6 +51,7 @@ import { EventClient } from './rest/event-client';
         HttpClientModule,
         OwlDateTimeModule,
         OwlNativeDateTimeModule,
+
     ],
     providers: [
         httpInterceptorProviders,

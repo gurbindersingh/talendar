@@ -39,7 +39,7 @@
         <label>Feier findet staat am:</label>
         <input id="startDateTime" ngbDatepicker #varname="ngbDatepicker" [(ngModel)] = "startDate" name  = "startDate"/>
         <div class = "input-group-append">
-            <button class = "btn btn-outline-secondary calendar fa fa-calendar" (click)="varname.toggle()" ></button>
+            <button type="button" class = "btn btn-outline-secondary calendar fa fa-calendar" (click)="varname.toggle()" ></button>
         </div>
     </div>
     <div class = "form-group col-sm-3">

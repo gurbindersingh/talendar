@@ -11,6 +11,7 @@ export class EventClient extends RestClient {
     }
 
     public postNewEvent(event: Event): Observable<Event> {
+        console.log(JSON.stringify(event));
         return super.post(
             (error: HttpErrorResponse) => {
                 console.log('HTTP POST Birthday Failed: ' + error.message);
