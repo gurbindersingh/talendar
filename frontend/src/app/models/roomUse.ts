@@ -2,8 +2,8 @@ import {Event} from '../models/event';
 
 export class RoomUse{
     public id: bigint;
-    public begin: Date;
-    public end: Date;
+    public begin: String;
+    public end: String;
     public room: Room;
     public event: Event;
 }

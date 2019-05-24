@@ -4,6 +4,11 @@ import {Event, EventType} from '../../models/event';
 import {EventClient} from '../../rest/event-client';
 import { RoomUse,Room } from 'src/app/models/roomUse';
 import { Customer } from 'src/app/models/customer';
+import {
+  NgbDateParserFormatter,
+  NgbDateStruct,
+  NgbTimeStruct,
+} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-birthday',
@@ -16,6 +21,9 @@ public ageListb: Number[] = [5,6,7,8,9,10,11,12,13,14,15];
 private event: Event = new Event();
 private room: RoomUse = new RoomUse();
 private customer: Customer = new Customer();
+private startDate:NgbDateStruct;
+private startTime:NgbTimeStruct;
+private parserFormatter: NgbDateParserFormatter;
 
   constructor(private eventClient: EventClient) {}
 
@@ -23,7 +31,9 @@ private customer: Customer = new Customer();
   }
   
   postBirthday(form: NgForm){
-    this.room.end.setHours(this.room.begin.getHours() + 3);
+    this.room.begin = this.dateToString(this.startDate, this.startTime);
+    this.startTime.hour = this.startTime.hour + 3;
+    this.room.end = this.dateToString(this.startDate, this.startTime);
     this.event.eventType = EventType.Birthday;
     let roomUses: RoomUse[] = [this.room];
     let customers: Customer[] = [this.customer];
@@ -65,7 +75,10 @@ private customer: Customer = new Customer();
       if(this.customer.phone == ''){
         return false;
       }
-      if(this.room.begin == null){
+      if(this.startDate == null){
+        return false;
+      }
+      if(this.startTime == null){
         return false;
       }
       if(this.room.room == null){
@@ -73,5 +86,125 @@ private customer: Customer = new Customer();
       }
       return true;
   }
-  
+
+  private dateToString(date: NgbDateStruct, time: NgbTimeStruct) {
+    let stringMinute = '';
+    let stringHour = '';
+    let isChangedHour = false;
+    let isChangedMinute = false;
+
+    if (time.minute == 1) {
+        stringMinute = '01';
+        isChangedMinute = true;
+    }
+    if (time.minute == 2) {
+        stringMinute = '02';
+        isChangedMinute = true;
+    }
+    if (time.minute == 3) {
+        stringMinute = '03';
+        isChangedMinute = true;
+    }
+    if (time.minute == 4) {
+        stringMinute = '04';
+        isChangedMinute = true;
+    }
+    if (time.minute == 5) {
+        stringMinute = '05';
+        isChangedMinute = true;
+    }
+    if (time.minute == 6) {
+        stringMinute = '06';
+        isChangedMinute = true;
+    }
+    if (time.minute == 7) {
+        stringMinute = '07';
+        isChangedMinute = true;
+    }
+    if (time.minute == 8) {
+        stringMinute = '08';
+        isChangedMinute = true;
+    }
+    if (time.minute == 9) {
+        stringMinute = '09';
+        isChangedMinute = true;
+    }
+if (time.hour == 1) {
+        stringHour = '01';
+        isChangedHour = true;
+    }
+    if (time.hour == 2) {
+        stringHour = '02';
+        isChangedHour = true;
+    }
+    if (time.hour == 3) {
+        stringHour = '03';
+        isChangedHour = true;
+    }
+    if (time.hour == 4) {
+        stringHour = '04';
+        isChangedHour = true;
+    }
+    if (time.hour == 5) {
+        stringHour = '05';
+        isChangedHour = true;
+    }
+    if (time.hour == 6) {
+        stringHour = '06';
+        isChangedHour = true;
+    }
+    if (time.hour == 7) {
+        stringHour = '07';
+        isChangedHour = true;
+    }
+    if (time.hour == 8) {
+        stringHour = '08';
+        isChangedHour = true;
+    }
+    if (time.hour == 9) {
+        stringHour = '09';
+        isChangedHour = true;
+    }
+if (isChangedHour && isChangedMinute) {
+        return (
+            this.parserFormatter.format(date) +
+            'T' +
+            stringHour +
+            ':' +
+            stringMinute +
+            ':00'
+        );
+    }
+
+    if (isChangedHour) {
+        return (
+            this.parserFormatter.format(date) +
+            'T' +
+            stringHour +
+            ':' +
+            time.minute +
+            ':00'
+        );
+    }
+
+    if (isChangedMinute) {
+        return (
+            this.parserFormatter.format(date) +
+            'T' +
+            time.hour +
+            ':' +
+            time.minute +
+            ':00'
+        );
+    }
+
+    return (
+        this.parserFormatter.format(date) +
+        'T' +
+        time.hour +
+        ':' +
+        time.minute +
+        ':00'
+    );
+}
 }

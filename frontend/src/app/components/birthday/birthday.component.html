@@ -1,5 +1,5 @@
-
-<h1>Geburtstag erstellen</h1>
+<div class = "container">
+<h1>Geburtstag buchen</h1>
 <hr/>
 <form id = "birthdayForm" #form = "ngForm"  (ngSubmit)="postBirthday(form)">
   <div class="form-group">
@@ -12,41 +12,42 @@
           <option value="Painting"> Malen Geburtstag</option>
       </select>
   </div>
-  <div class = "form-group">
+  <div class = "row align-items-center">
+  <div class = "form-group col-sm">
       <label for="birthdayHeadcount">Anzahl an kommende Kinder (ca.):</label>
       <select class="form-control" name="headcount" id="birthdayHeadcount" [(ngModel)] = "event.headcount" required>
           <option *ngFor="let number of ageList" [value]="number">{{number}}</option>
       </select>
   </div>
-  <div class="form-group">
+  <div class="form-group col-sm">
       <label for = "birthdayAgeToBe">Wie alt wird es denn?</label>
       <select class="form-control" name="ageToBe" id = "birthdayAgeToBe" [(ngModel)] = "event.ageToBe" requried >
         <option *ngFor="let number of ageListb" [value]="number">{{number}}</option>
       </select>
     </div>
-    <div class = "form-group">
+</div>
+<div class ="row justify-content-center">
+    <div class = "col-sm-6">
         <label for="birthdayRoom">In welchem Zimmer wollen sie den Geburtstag gestalten</label>
         <select class="form-control" name="room" id="birthdayRoom" [(ngModel)] = "room.room" required>
             <option value = "GroundFloor">Erdgeschoss</option>
             <option value = "Orange">Orangene Raum</option>
         </select>
     </div>
-    <div class= "form-group">
-        <label for = "birthdayBegin">Wann wollen sie den Geburtstag gestalten?</label>
-        <input
-            class = "form-control"
-            id="birthdayBegin"
-            name = "birthdayBegin"
-            [owlDateTime]="dt1"
-            [owlDateTimeTrigger]="dt1"
-            placeholder="Begin: Datum Uhrzeit"
-            pickerType="both"
-            [(ngModel)] = "room.begin"
-            type = "date"
-            required
-        />
-        <owl-date-time #dt1></owl-date-time><br />
+    
+    <div class = "input-group col-sm-3">
+        <label>Feier findet staat am:</label>
+        <input id="startDateTime" ngbDatepicker #varname="ngbDatepicker" [(ngModel)] = "startDate" name  = "startDate"/>
+        <div class = "input-group-append">
+            <button class = "btn btn-outline-secondary calendar fa fa-calendar" (click)="varname.toggle()" ></button>
+        </div>
     </div>
+    <div class = "form-group col-sm-3">
+        <ngb-timepicker id ="startTime" [minuteStep]=15 [(ngModel)] = "startTime" name = "startTime"></ngb-timepicker>
+    </div>
+</div>
+    <h2>Kundendaten</h2>
+    <hr/>
     <div class = "form-group">
         <label for="customerFirstName">Vorname</label>
         <input type = "text" class = "form-control" id="customerFirstName" name ="firstName" placeholder="Marie" required [(ngModel)] = "customer.firstName">
@@ -90,3 +91,4 @@
     </div>
   
 </form>
+</div>

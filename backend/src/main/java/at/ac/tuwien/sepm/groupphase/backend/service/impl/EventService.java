@@ -111,6 +111,7 @@ public class EventService implements IEventService {
         }
         throw new TrainerNotAvailableException("There are no trainers who can do a " + birthdayType + " birthday during the allotted time");
     }
+
     public Event synchRoomUses(Event event){
         for(RoomUse x: event.getRoomUses()
             ) {
