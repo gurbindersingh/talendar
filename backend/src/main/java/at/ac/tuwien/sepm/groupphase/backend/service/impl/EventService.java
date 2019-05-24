@@ -51,33 +51,45 @@ public class EventService implements IEventService {
 
         try {
             Thread.sleep(1);
-        } catch (InterruptedException e) {
+        }
+        catch(InterruptedException e) {
             e.printStackTrace();
         }
 
-        switch (event.getEventType()) {
+        switch(event.getEventType()) {
             case Birthday:
                 try {
                     validator.validateEvent(event);
-                    event.setTrainer(findTrainerForBirthday(event.getRoomUses(), event.getBirthdayType()));
+                    event.setTrainer(findTrainerForBirthday(event.getRoomUses(),
+                                                            event.getBirthdayType()
+                    ));
                     event = synchRoomUses(event);
-                } catch (InvalidEntityException e) {
-                    throw new ValidationException("Given Birthday is invalid: " + e.getMessage(), e);
-                } catch (TrainerNotAvailableException e) {
-                    throw new ValidationException("There are no Trainers available for this birthday " + e.getMessage(), e);
+                }
+                catch(InvalidEntityException e) {
+                    throw new ValidationException("Given Birthday is invalid: " + e.getMessage(),
+                                                  e
+                    );
+                }
+                catch(TrainerNotAvailableException e) {
+                    throw new ValidationException(
+                        "There are no Trainers available for this birthday " + e.getMessage(),
+                        e
+                    );
                 }
                 break;
             case Course:
                 try {
                     validator.validateEvent(event);
-                } catch (InvalidEntityException e) {
+                }
+                catch(InvalidEntityException e) {
                     throw new ValidationException("Given Course is invalid: " + e.getMessage(), e);
                 }
                 break;
             case Rent:
                 try {
                     validator.validateEvent(event);
-                } catch (InvalidEntityException e) {
+                }
+                catch(InvalidEntityException e) {
                     throw new ValidationException("Given Rent is invalid: " + e.getMessage(), e);
                 }
                 break;
@@ -85,17 +97,28 @@ public class EventService implements IEventService {
                 try {
                     validator.validateEvent(event);
                     trainerAvailable(event.getTrainer(), event.getRoomUses());
-                } catch (InvalidEntityException e) {
-                    throw new ValidationException("Given Consultation is invalid: " + e.getMessage(), e);
-                } catch (TrainerNotAvailableException e) {
-                    throw new ValidationException("The specified trainer is not available during the allocated time frame" + e.getMessage(), e);
+                }
+                catch(InvalidEntityException e) {
+                    throw new ValidationException("Given Consultation is invalid: " +
+                                                  e.getMessage(), e);
+                }
+                catch(TrainerNotAvailableException e) {
+                    throw new ValidationException(
+                        "The specified trainer is not available during the allocated time frame" +
+                        e.getMessage(),
+                        e
+                    );
                 }
                 break;
         }
         try {
             isAvailable(event.getRoomUses());
-        } catch (TimeNotAvailableException e) {
-            throw new ValidationException("The event is attempting to be booked during a different event: " + e.getMessage(), e);
+        }
+        catch(TimeNotAvailableException e) {
+            throw new ValidationException(
+                "The event is attempting to be booked during a different event: " + e.getMessage(),
+                e
+            );
         }
         return eventRepository.save(event);
     }
@@ -103,19 +126,22 @@ public class EventService implements IEventService {
     public Trainer findTrainerForBirthday(List<RoomUse> roomUses, String birthdayType) throws TrainerNotAvailableException{
         List<Trainer> appropriateTrainers = trainerRepository.findByBirthdayTypes(birthdayType);
         Collections.shuffle(appropriateTrainers);
-        for (Trainer t : appropriateTrainers) {
+        for(Trainer t : appropriateTrainers) {
             try {
                 trainerAvailable(t, roomUses);
                 return t;
-            } catch (TrainerNotAvailableException e) {
-                throw new TrainerNotAvailableException("There are no trainers who can do a " + birthdayType + " birthday during the allotted time");
+            }
+            catch(TrainerNotAvailableException e) {
+                throw new TrainerNotAvailableException("There are no trainers who can do a " +
+                                                       birthdayType +
+                                                       " birthday during the allotted time");
             }
         }
         return null;
     }
 
     public Event synchRoomUses(Event event) {
-        for (RoomUse x : event.getRoomUses()) {
+        for(RoomUse x : event.getRoomUses()) {
             x.setEvent(event);
         }
         return event;
@@ -125,9 +151,9 @@ public class EventService implements IEventService {
         List<RoomUse> trainersEvents = eventRepository.findByTrainer_IdAndRoomUses_BeginGreaterThanEqual(trainer.getId(), LocalDateTime.now());
         List<Holiday> trainerHoliday = holidayRepository.findByTrainer_Id(trainer.getId());
 
-        for (RoomUse x : roomUses) {
-            for (RoomUse db : trainersEvents) {
-                if (x.getBegin().isAfter(db.getBegin()) &&
+        for(RoomUse x : roomUses) {
+            for(RoomUse db : trainersEvents) {
+                if(x.getBegin().isAfter(db.getBegin()) &&
                         x.getBegin().isBefore(db.getEnd()) ||
                         x.getEnd().isBefore(db.getEnd()) &&
                         x.getEnd().isAfter(db.getBegin()) ||
@@ -136,8 +162,8 @@ public class EventService implements IEventService {
                     throw new TrainerNotAvailableException("The specified trainer is not available for the allocated time frame");
                 }
             }
-            for (Holiday db : trainerHoliday) {
-                if (x.getBegin().isAfter(db.getHolidayStart()) &&
+            for(Holiday db : trainerHoliday) {
+                if(x.getBegin().isAfter(db.getHolidayStart()) &&
                         x.getBegin().isBefore(db.getHolidayEnd()) ||
                         x.getEnd().isBefore(db.getHolidayEnd()) &&
                         x.getEnd().isAfter(db.getHolidayStart()) ||
@@ -152,10 +178,10 @@ public class EventService implements IEventService {
     public void isAvailable(List<RoomUse> roomUseList) throws TimeNotAvailableException {
         LocalDateTime now = LocalDateTime.now();
         List<RoomUse> dbRooms = roomUseRepository.findByBeginGreaterThanEqual(now);
-        for (RoomUse x : roomUseList) {
-            for (RoomUse db : roomUseList) {
-                if (x.getRoom() == db.getRoom()) {
-                    if (x.getBegin().isAfter(db.getBegin()) &&
+        for(RoomUse x : roomUseList) {
+            for(RoomUse db : roomUseList) {
+                if(x.getRoom() == db.getRoom()) {
+                    if(x.getBegin().isAfter(db.getBegin()) &&
                             x.getBegin().isBefore(db.getEnd()) ||
                             x.getEnd().isBefore(db.getEnd()) &&
                             x.getEnd().isAfter(db.getBegin()) ||
