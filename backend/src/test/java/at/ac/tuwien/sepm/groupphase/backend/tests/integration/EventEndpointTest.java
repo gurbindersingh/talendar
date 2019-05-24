@@ -46,6 +46,7 @@ public class EventEndpointTest {
         for(CustomerDto x : birthday.getCustomerDtos()
         ) {
             x.setId(null);
+            x.setEmail("nikita2kholodnyi@gmail.com");
         }
         HttpEntity<EventDto> request = new HttpEntity<>(birthday);
         System.out.println(request.toString());

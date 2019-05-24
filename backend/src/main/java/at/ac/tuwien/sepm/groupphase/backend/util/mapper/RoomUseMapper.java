@@ -13,12 +13,7 @@ public abstract class RoomUseMapper {
 
     public abstract RoomUse dtoToRoomUseEntity(RoomUseDto roomUseDto);
 
-    @Mapping(target = "event", ignore = true)
     public abstract RoomUseDto entityToRoomUseDto(RoomUse roomUse);
 
-    @AfterMapping
-    protected void ignoreEventRooms(RoomUse entity, @MappingTarget RoomUseDto dto){
-        dto.getEvent().setRoomUses(null);
-    }
 
 }

@@ -350,7 +350,6 @@ public class Event {
         return "Event{" +
             "id=" + id +
             ", name='" + name + '\'' +
-            ", roomUses=" + roomUses +
             ", created=" + created +
             ", updated=" + updated +
             ", eventType=" + eventType +

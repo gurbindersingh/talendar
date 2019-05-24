@@ -62,4 +62,10 @@ public class EventEndpoint {
         eventService.deleteEvent(id);
     }
 
+    @PutMapping
+    public void cancelEvent(Long id){
+        LOGGER.info("Incoming DELETE Request for an Event with id " + id);
+
+    }
+
 }

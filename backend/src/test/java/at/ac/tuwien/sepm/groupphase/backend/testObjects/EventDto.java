@@ -292,7 +292,6 @@ public class EventDto {
             "id=" + id +
             ", eventType=" + eventType +
             ", name='" + name + '\'' +
-            ", roomUses=" + roomUses +
             ", created=" + created +
             ", updated=" + updated +
             ", customerDtos=" + customerDtos +
