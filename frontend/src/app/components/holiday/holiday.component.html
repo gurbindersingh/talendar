@@ -1,21 +1,10 @@
 <div class="container">
     <h1>{{ title }}</h1>
-    <form novalidate (ngSubmit)="onSubmit()">
-
-
-        {{holidayModel | json}}
-
-        <div class="form-row">
-            <div class="col-sm">
-                <input 
-                    class="form-control" 
-                    name="trainer"
-                    id="TrainerId" 
-                    placeholder="1" 
-                    [(ngModel)] = "holidayModel.trainer"
-                />
-            </div>
-        </div>
+    <form 
+        novalidate 
+        (ngSubmit)="postHoliday(holiday)"
+        >
+        {{holiday | json}}
         <div class="row">
             <div class="col-sm">
                 <label for="startdate" id="labelstartdate">Datum (von):</label>
@@ -34,10 +23,11 @@
                         placeholder="yyyy-mm-dd"
                         
                         name="holidayStart"
-                        [(ngModel)] = "holidayModel.holidayStart"
+                        [(ngModel)] = "holiday.holidayStart"
                     />
                     <div class="input-group-append">
                         <button
+                            type="button"
                             class="btn btn-outline-secondary calendar fa fa-calendar"
                             id="bstartdate"
                             (click)="dstart.toggle()"
@@ -53,9 +43,8 @@
                         [(ngModel)]="stime"
                         [minuteStep]=15
 
-                        
                         name="holidayStart"
-                        [(ngModel)] = "holidayModel.holidayStart"
+                        [(ngModel)] = "holiday.holidayStart"
                     >
                     </ngb-timepicker>
                 </div>
@@ -77,12 +66,16 @@
                         id="enddate"
                         ngbDatepicker #dend="ngbDatepicker"
                         placeholder="yyyy-mm-dd"
+
+                        name="holidayEnd"
+                        [(ngModel)] = "holiday.holidayEnd"
                     />
                     <div class="input-group-append">
                         <button
                             class="btn btn-outline-secondary calendar fa fa-calendar"
                             id="benddate"
                             (click)="dend.toggle()"
+                            type="button"
                         >
                         </button>
                     </div>
@@ -95,6 +88,9 @@
                         id="endtime"
                         [(ngModel)]="etime"
                         [minuteStep]=15
+                        
+                        name="holidayEnd"
+                        [(ngModel)] = "holiday.holidayEnd"
                     >
                     </ngb-timepicker>
                 </div>
@@ -104,9 +100,9 @@
         <div class="row">
             <div class="col-sm">
                 <button
+                    type="button"
                     class="form-control"
                     id="moreoptions"
-                    [disabled]="clicked"
                 >
                     Wiederkehrende Optionen
                 </button>
@@ -122,3 +118,17 @@
         </div>
     </form>
 </div>
+
+<!-- 
+        <div class="form-row">
+            <div class="col-sm">
+                <input 
+                    class="form-control" 
+                    name="trainer"
+                    id="TrainerId" 
+                    placeholder="1" 
+                    [(ngModel)] = "holiday.trainer"
+                />
+            </div>
+        </div>
+ -->

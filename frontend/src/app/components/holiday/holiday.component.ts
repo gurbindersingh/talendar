@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Holiday} from 'src/app/models/holiday';
 import {NgbDateParserFormatter, NgbDateStruct, NgbTimeStruct} from '@ng-bootstrap/ng-bootstrap';
+import { NgForm } from '@angular/forms';
+import { Trainer } from 'src/app/models/trainer';
+import { HolidayClient } from 'src/app/rest/holiday-client';
 
 @Component({
   selector: 'app-holiday',
@@ -9,26 +12,38 @@ import {NgbDateParserFormatter, NgbDateStruct, NgbTimeStruct} from '@ng-bootstra
 })
 
 export class HolidayComponent implements OnInit {
+    title = 'Neuen Urlaub einrichten';
+    stime = {hour: 13, minute: 30};
+    etime = {hour: 14, minute: 30};
 
-  constructor() {}
+    private errorMsg: string;
+    private successMsg: string;
+    private holiday: Holiday = new Holiday();
+    private trainer: Trainer = new Trainer();
 
-  ngOnInit() {
-  }
-  title = 'Neuen Urlaub einrichten';
-  stime = {hour: 13, minute: 30};
-  etime = {hour: 14, minute: 30};
+    constructor(private holidayClient: HolidayClient) {
+    }
 
-  startDate = ('2019-06-17T03:24');
-  endDate = ('2019-06-18T03:24');
+    ngOnInit() {
+    }
 
-  model = new Holiday(null, null, this.startDate, this.endDate);
-
-  holidayModel = new Holiday(null, null, this.startDate, this.endDate);
-
-  get diagnostic() {return JSON.stringify(this.model);}
-
-  onSubmit() {
-    console.log(this.holidayModel);
-  }
-
+    public postHoliday(form: NgForm): void {
+        console.log('Pass Form Data To Rest Client');
+        this.holiday.id = null;
+        this.holiday.trainer = this.trainer;
+        this.holidayClient.postNewHoliday(this.holiday).subscribe(
+            (data: Holiday) => {
+                console.log(data);
+                this.successMsg = 'Der Urlaub wurde erfolgreich gespeichert';
+            },
+            (error) => {
+                console.log(error);
+                this.errorMsg = 'Der Urlaub konnte nicht angelegt werden!';
+            }
+        );
+    }
+    public clearInfoMsg(): void {
+      this.errorMsg = undefined;
+      this.successMsg = undefined;
+    }
 }

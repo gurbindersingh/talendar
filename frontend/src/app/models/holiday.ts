@@ -1,8 +1,8 @@
+import { Trainer } from './trainer';
+
 export class Holiday {
-    constructor(
-        public id: number,
-        public trainer: number,
-        public holidayStart: String,
-        public holidayEnd: String,
-    ) { }
+    public id: bigint;
+    public trainer: Trainer;
+    public holidayStart: string;
+    public holidayEnd: string;
 }
