@@ -40,10 +40,10 @@
     </div>
     <div class = "form-group col-md-3">
         <label>Feier findet staat:</label>
-        <input class = "form-control" id="startDateTime" ngbDatepicker (click)= "varname.toggle()" #varname="ngbDatepicker" [(ngModel)] = "startDate" name  = "startDate"/>
+        <input [readonly] = "true" class = "form-control" id="startDateTime" ngbDatepicker (click)= "varname.toggle()" #varname="ngbDatepicker" [(ngModel)] = "startDate" name  = "startDate"/>
     </div>
     <div class = "col-md-3" id="startTimeBox">
-        <ngb-timepicker id ="startTime" [minuteStep]=15 [(ngModel)] = "startTime" name = "startTime"></ngb-timepicker>
+        <ngb-timepicker   readonlyInputs = "true" id ="startTime" [minuteStep]=15 [(ngModel)] = "startTime" name = "startTime"></ngb-timepicker>
     </div>
 </div>
     <h2>Kundendaten</h2>
