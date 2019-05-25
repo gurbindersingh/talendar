@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.PersistenceException;
 import java.time.LocalDateTime;
@@ -68,6 +69,7 @@ public class TrainerService implements ITrainerService {
     }
 
 
+    @Transactional
     @Override
     public Trainer update (Trainer trainer) throws ServiceException, ValidationException, NotFoundException {
         LOGGER.info("Prepare update for trainer with id {}.\nProposed updated entity: {}", trainer.getId(), trainer);
