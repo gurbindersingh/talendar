@@ -1,6 +1,7 @@
 import {Trainer} from './trainer';
 import {RoomUse} from './roomUse';
 import {Customer} from './customer';
+import {EventType} from './enum/eventType';
 
 export class Event{
     public id: number;
@@ -10,10 +11,10 @@ export class Event{
     public updated: Date;
     public eventType: EventType;
     public customerDtos: Customer[];
-    // using by non rent types
+    // used by non rent types
     public trainer: Trainer;
     // birthday specific
-    public headCount: number;
+    public headcount: number;
     public ageToBe: number;
     public birthdayType: string;
     // course specific
@@ -23,12 +24,4 @@ export class Event{
     public description: string;
     public minAge: number;
     public maxAge: number;
-}
-
-export enum EventType{
-    Birthday,
-    Consultation,
-    Course,
-    Rent
-}
 }

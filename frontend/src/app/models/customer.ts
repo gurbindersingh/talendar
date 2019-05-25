@@ -8,4 +8,4 @@ export class Customer{
     public lastName: string;
     public events: Event[];
 }
-}
+

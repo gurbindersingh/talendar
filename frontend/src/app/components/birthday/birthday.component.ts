@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import {Event, EventType} from '../../models/event';
+import {Event} from '../../models/event';
 import {EventClient} from '../../rest/event-client';
-import { RoomUse,Room } from 'src/app/models/roomUse';
+import { RoomUse} from 'src/app/models/roomUse';
 import { Customer } from 'src/app/models/customer';
+import {EventType} from '../../models/enum/eventType';
 import {
   NgbDateStruct,
   NgbTimeStruct,

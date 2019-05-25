@@ -192,7 +192,7 @@ public class FakeData {
         Set<CustomerDto> customers = new HashSet<>();
         customers.add(fakeCustomer());
         bday.setCustomerDtos(customers);
-        bday.setHeadcount(fakeAge(2,10));
+        bday.setHeadcount(fakeAge(5,10));
         bday.setTrainer(fakeTrainerDto());
         bday.setBirthdayType("Rocket");
         List<RoomUse> rooms = new LinkedList<>();

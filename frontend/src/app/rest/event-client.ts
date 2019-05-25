@@ -1,7 +1,7 @@
 import { RestClient } from './rest-client';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import {Event, EventType} from '../models/event';
+import {Event} from '../models/event';
 import { Observable } from 'rxjs';
 
 @Injectable()

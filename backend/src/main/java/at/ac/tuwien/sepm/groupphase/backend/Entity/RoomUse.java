@@ -115,7 +115,6 @@ public class RoomUse {
             ", begin=" + begin +
             ", end=" + end +
             ", room=" + room +
-            ", event=" + event +
             '}';
     }
 }

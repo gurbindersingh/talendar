@@ -1,4 +1,5 @@
 import {Event} from '../models/event';
+import {Room} from './enum/room';
 
 export class RoomUse{
     public id: bigint;
@@ -8,9 +9,3 @@ export class RoomUse{
     public event: Event;
 }
 
-export enum Room{
-    Green,
-    Orange,
-    GroundFloor
-}
-}
