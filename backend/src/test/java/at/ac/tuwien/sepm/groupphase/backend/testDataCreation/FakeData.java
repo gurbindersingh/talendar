@@ -1,10 +1,12 @@
 package at.ac.tuwien.sepm.groupphase.backend.testDataCreation;
 
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.enums.Room;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
 import at.ac.tuwien.sepm.groupphase.backend.testObjects.CustomerDto;
 import at.ac.tuwien.sepm.groupphase.backend.testObjects.EventDto;
-import at.ac.tuwien.sepm.groupphase.backend.testObjects.Trainer;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.testObjects.TrainerDto;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import com.github.javafaker.Faker;
@@ -54,9 +56,11 @@ public class FakeData {
         return LocalDateTime.ofInstant(faker.date().between(Date.valueOf("2019-06-01"), Date.valueOf("2025-01-01")).toInstant(), ZoneId.systemDefault());
 
     }
+
     public LocalDateTime fakeTimeAfter(LocalDateTime dateTime){
         return LocalDateTime.ofInstant(faker.date().between(Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant()), Date.valueOf("2025-01-01")).toInstant(), ZoneId.systemDefault());
     }
+
     public int fakeAge(int min, int max){
         return faker.number().numberBetween(min, max);
     }
@@ -88,7 +92,6 @@ public class FakeData {
         trainer.setUpdated(updated);
         return trainer;
     }
-
 
     public Trainer fakeTrainerEntity() {
         Trainer trainer = new Trainer();
@@ -138,6 +141,24 @@ public class FakeData {
         return karen;
     }
 
+    public Customer fakeNewCustomerEntity(){
+        Customer karen = new Customer();
+        karen.setId(null);
+        karen.setEmail(fakeEmail());
+        karen.setPhone(fakePhoneNumber());
+        karen.setFirstName(fakeFirstName());
+        karen.setLastName(fakeLastName());
+        return karen;
+    }
+    public Customer fakeCustomerEntity(){
+        Customer karen = new Customer();
+        karen.setId(fakeID());
+        karen.setEmail(fakeEmail());
+        karen.setPhone(fakePhoneNumber());
+        karen.setFirstName(fakeFirstName());
+        karen.setLastName(fakeLastName());
+        return karen;
+    }
     public RoomUse fakeRoomUseDto(){
         RoomUse roomUse = new RoomUse();
         roomUse.setBegin(fakeFutureTime());
@@ -150,6 +171,20 @@ public class FakeData {
         }
     }
 
+    public Trainer fakeNewTrainerEntity(){
+        Trainer trainer = new Trainer();
+        trainer.setBirthday(fakeAgeAsLocalDate(16, 100));
+        trainer.setEmail(fakeEmail());
+        trainer.setPhone(fakePhoneNumber());
+        trainer.setFirstName(fakeFirstName());
+        trainer.setLastName(fakeLastName());
+        trainer.setId(null);
+        trainer.setCreated(null);
+        trainer.setUpdated(null);
+
+        trainer.setBirthdayTypes(randomBirthdayTypes());
+        return trainer;
+    }
 
     public EventDto fakeBirthday(){
         EventDto bday = new EventDto();
@@ -157,7 +192,7 @@ public class FakeData {
         Set<CustomerDto> customers = new HashSet<>();
         customers.add(fakeCustomer());
         bday.setCustomerDtos(customers);
-        bday.setHeadcount(fakeAge(2,10));
+        bday.setHeadcount(fakeAge(5,10));
         bday.setTrainer(fakeTrainerDto());
         bday.setBirthdayType("Rocket");
         List<RoomUse> rooms = new LinkedList<>();
@@ -178,6 +213,16 @@ public class FakeData {
         return bday;
     }
 
+    public List<String> randomBirthdayTypes(){
+        String[] types = {"Rocket", "Dryice", "Superhero", "Photography", "Painting"};
+        shuffleArray(types);
+        int typeCount = randomInt(0,4);
+        List<String> ret = new LinkedList<>();
+        for(int i = 0; i <= typeCount; i++){
+            ret.add(types[i]);
+        }
+        return ret;
+    }
 
     public EventDto fakeCourse(){
         EventDto course = new EventDto();
@@ -247,5 +292,61 @@ public class FakeData {
         consultation.setCustomerDtos(customers);
         return consultation;
     }
+    public Event fakeNewBirthdayEntity(){
+        Event event = new Event();
+        List<RoomUse> roomUses = new LinkedList<>();
+        roomUses.add(fakeRoomUseDto());
+        event.setAgeToBe(randomInt(5,14));
+        String[] types = {"Rocket", "Dryice", "Superhero", "Photography", "Painting"};
+        shuffleArray(types);
+        event.setBirthdayType(types[0]);
+        event.setEventType(EventType.Birthday);
+        event.setId(null);
+        event.setHeadcount(randomInt(5,18));
+        event.setName("This is a birthday");
+        event.setCreated(null);
+        event.setUpdated(null);
+        event.setRoomUses(roomUses);
+        Set<Customer> customers = new HashSet<>();
+        Customer customer = fakeCustomerEntity();
+        Set<Event> events = new HashSet<>();
+        events.add(event);
+        customer.setEvents(events);
+        customers.add(customer);
+        event.setCustomers(customers);
+        return event;
+    }
+
+    public Event fakeBirthdayEntity(){
+        Event event = new Event();
+        List<RoomUse> roomUses = new LinkedList<>();
+        roomUses.add(fakeRoomUseDto());
+        event.setAgeToBe(randomInt(5,14));
+        String[] types = {"Rocket", "Dryice", "Superhero", "Photography", "Painting"};
+        shuffleArray(types);
+        event.setBirthdayType(types[0]);
+        event.setEventType(EventType.Birthday);
+        event.setId(fakeID());
+        event.setHeadcount(randomInt(5,18));
+        event.setName("This is a birthday");
+        event.setCreated(fakePastTimeAfter2000());
+        event.setUpdated(event.getCreated());
+        event.setRoomUses(roomUses);
+        Set<Customer> customers = new HashSet<>();
+        customers.add(fakeNewCustomerEntity());
+        return event;
+    }
+    static void shuffleArray(String[] ar) {
+        Random rnd = new Random();
+        for (int i = ar.length - 1; i > 0; i--)
+        {
+             int index = rnd.nextInt(i + 1);
+             // Simple swap
+             String a = ar[index];
+             ar[index] = ar[i];
+             ar[i] = a;
+        }
+    }
+
 
 }

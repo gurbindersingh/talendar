@@ -6,10 +6,8 @@ import at.ac.tuwien.sepm.groupphase.backend.util.mapper.HolidayMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Exception that occur within the underlying services will be reported and rethrown.
@@ -21,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/api/talendar/holiday")
+@RequestMapping("/api/v1/talendar/holiday")
 public class HolidayEndpoint {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HolidayEndpoint.class);
@@ -35,7 +33,9 @@ public class HolidayEndpoint {
         this.mapper = mapper;
     }
 
-    @PostMapping
+    @CrossOrigin(origins = "http://localhost:4200")
+    @RequestMapping(method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
     public HolidayDto createNewHoliday(@RequestBody HolidayDto holidayDto) throws Exception {
         LOGGER.info("Incoming POST holiday Request");
 

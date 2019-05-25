@@ -1,20 +1,20 @@
-import { RoomUse } from './roomUse';
-import { Customer } from './customer';
-import { Trainer } from './trainer';
-import { EventType } from 'src/app/models/enum/eventType';
+import {Trainer} from './trainer';
+import {RoomUse} from './roomUse';
+import {Customer} from './customer';
+import {EventType} from './enum/eventType';
 
-export class Event {
-    public id: bigint;
+export class Event{
+    public id: number;
     public name: string;
     public roomUses: RoomUse[];
     public created: Date;
     public updated: Date;
     public eventType: EventType;
     public customerDtos: Customer[];
-    // using by non rent types
+    // used by non rent types
     public trainer: Trainer;
     // birthday specific
-    public headCount: number;
+    public headcount: number;
     public ageToBe: number;
     public birthdayType: string;
     // course specific

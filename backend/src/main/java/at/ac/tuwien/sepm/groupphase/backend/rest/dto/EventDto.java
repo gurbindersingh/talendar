@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest.dto;
 
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
@@ -25,7 +26,7 @@ public class EventDto {
     private LocalDateTime created;
     private LocalDateTime updated;
     @JsonIgnoreProperties("eventDtos")
-    private Set<CustomerDto> customerDtos;
+    private List<CustomerDto> customerDtos = new LinkedList<>();
 
     /*
         These Variables are used by non Rent Types
@@ -70,7 +71,7 @@ public class EventDto {
     }
 
 
-    public EventDto (Long id, EventType eventType, String name, List<RoomUse> roomUses, LocalDateTime created, LocalDateTime updated, Set<CustomerDto> customerDtos, Trainer trainer, int headcount, int ageToBe, String birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipant, String description, Integer minAge, Integer maxAge) {
+    public EventDto (Long id, EventType eventType, String name, List<RoomUse> roomUses, LocalDateTime created, LocalDateTime updated, List<CustomerDto> customerDtos, Trainer trainer, int headcount, int ageToBe, String birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipant, String description, Integer minAge, Integer maxAge) {
         this.id = id;
         this.eventType = eventType;
         this.name = name;
@@ -151,12 +152,12 @@ public class EventDto {
     }
 
 
-    public Set<CustomerDto> getCustomerDtos () {
+    public List<CustomerDto> getCustomerDtos () {
         return customerDtos;
     }
 
 
-    public void setCustomerDtos (Set<CustomerDto> customerDtos) {
+    public void setCustomerDtos (List<CustomerDto> customerDtos) {
         this.customerDtos = customerDtos;
     }
 
@@ -301,7 +302,7 @@ public class EventDto {
             ", roomUses=" + roomUses +
             ", created=" + created +
             ", updated=" + updated +
-            ", customerDtos=" + customerDtos +
+            ", customers=" + customerDtos +
             ", trainer=" + trainer +
             ", headcount=" + headcount +
             ", ageToBe=" + ageToBe +

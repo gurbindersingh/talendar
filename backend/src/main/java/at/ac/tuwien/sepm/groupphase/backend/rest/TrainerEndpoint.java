@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 
 
 @RestController
-@RequestMapping("/api/talendar/trainers")
+@RequestMapping("/api/v1/talendar/trainers")
 public class TrainerEndpoint {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainerEndpoint.class);

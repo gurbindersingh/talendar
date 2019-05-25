@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.rest.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -12,13 +13,13 @@ public class CustomerDto {
     private String firstName;
     private String lastName;
     @JsonIgnoreProperties("customerDtos")
-    private Set<EventDto> eventDtos;
+    private List<EventDto> eventDtos;
 
 
     public CustomerDto(){
 
     }
-    public CustomerDto (Long id, String email, String phone, String firstName, String lastName, Set<EventDto> eventDtos) {
+    public CustomerDto (Long id, String email, String phone, String firstName, String lastName, List<EventDto> eventDtos) {
         this.id = id;
         this.email = email;
         this.phone = phone;
@@ -77,12 +78,12 @@ public class CustomerDto {
     }
 
 
-    public Set<EventDto> getEventDtos () {
+    public List<EventDto> getEventDtos () {
         return eventDtos;
     }
 
 
-    public void setEventDtos (Set<EventDto> eventDtos) {
+    public void setEventDtos (List<EventDto> eventDtos) {
         this.eventDtos = eventDtos;
     }
 
