@@ -186,6 +186,21 @@ public class FakeData {
         return trainer;
     }
 
+    public TrainerDto fakeNewTrainerDto() {
+        TrainerDto trainerDto = new TrainerDto();
+        trainerDto.setBirthday(fakeAgeAsLocalDate(16, 100));
+        trainerDto.setEmail(fakeEmail());
+        trainerDto.setPhone(fakePhoneNumber());
+        trainerDto.setFirstName(fakeFirstName());
+        trainerDto.setLastName(fakeLastName());
+        trainerDto.setId(null);
+        trainerDto.setCreated(null);
+        trainerDto.setUpdated(null);
+
+        trainerDto.setBirthdayTypes(randomBirthdayTypes());
+        return trainerDto;
+    }
+
     public EventDto fakeBirthday(){
         EventDto bday = new EventDto();
         bday.setAgeToBe(fakeAge(5,19));
