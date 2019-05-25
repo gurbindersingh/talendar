@@ -83,8 +83,7 @@ public class TrainerEndpointTest {
     @Test
     public void getExistentTrainer_shouldReturnThisDto() {
         // post trainer
-        TrainerDto trainer = fakeData.fakeTrainerDto();
-        resetToMinimum(trainer);
+        TrainerDto trainer = fakeData.fakeNewTrainerDto();
         HttpEntity<TrainerDto> saveRequest = new HttpEntity<>(trainer);
         ResponseEntity<TrainerDto> saveResponse = REST_TEMPLATE.postForEntity(URL.BASE + port + URL.TRAINER, saveRequest, TrainerDto.class);
         TrainerDto postedAndSaved = saveResponse.getBody();
@@ -99,8 +98,7 @@ public class TrainerEndpointTest {
     @Test
     public void getNonExistentTrainer_responseStatus404expected() {
         // post trainer
-        TrainerDto trainer = fakeData.fakeTrainerDto();
-        resetToMinimum(trainer);
+        TrainerDto trainer = fakeData.fakeNewTrainerDto();
         HttpEntity<TrainerDto> saveRequest = new HttpEntity<>(trainer);
         ResponseEntity<TrainerDto> saveResponse = REST_TEMPLATE.postForEntity(URL.BASE + port + URL.TRAINER, saveRequest, TrainerDto.class);
         TrainerDto postedAndSaved = saveResponse.getBody();
@@ -127,12 +125,9 @@ public class TrainerEndpointTest {
         // post list of 3 trainers
         List<TrainerDto> postedTrainers = new LinkedList<>();
         List<TrainerDto> savedTrainers = new LinkedList<>();
-        TrainerDto trainerDto1 = fakeData.fakeTrainerDto();
-        TrainerDto trainerDto2 = fakeData.fakeTrainerDto();
-        TrainerDto trainerDto3 = fakeData.fakeTrainerDto();
-        resetToMinimum(trainerDto1);
-        resetToMinimum(trainerDto2);
-        resetToMinimum(trainerDto3);
+        TrainerDto trainerDto1 = fakeData.fakeNewTrainerDto();
+        TrainerDto trainerDto2 = fakeData.fakeNewTrainerDto();
+        TrainerDto trainerDto3 = fakeData.fakeNewTrainerDto();
         postedTrainers.add(trainerDto1);
         postedTrainers.add(trainerDto2);
         postedTrainers.add(trainerDto3);
@@ -164,8 +159,7 @@ public class TrainerEndpointTest {
 
     @Test
     public void testUpdate_IdIsNotReplacedAndNewValuesAreSet() {
-        TrainerDto postedOriginalTrainer = fakeData.fakeTrainerDto();
-        resetToMinimum(postedOriginalTrainer);
+        TrainerDto postedOriginalTrainer = fakeData.fakeNewTrainerDto();
         HttpEntity<TrainerDto> saveRequestOriginal = new HttpEntity<>(postedOriginalTrainer);
         ResponseEntity<TrainerDto> saveResponseOriginal = REST_TEMPLATE.postForEntity(URL.BASE + port + URL.TRAINER, saveRequestOriginal, TrainerDto.class);
         TrainerDto  originalTrainer = saveResponseOriginal.getBody();
@@ -197,10 +191,4 @@ public class TrainerEndpointTest {
         assertThat(results.size(), equalTo(1));
     }
 
-
-    private void resetToMinimum(TrainerDto trainerDto) {
-        trainerDto.setId(null);
-        trainerDto.setCreated(null);
-        trainerDto.setUpdated(null);
-    }
 }
