@@ -26,6 +26,8 @@ import { httpInterceptorProviders } from './http-interceptors';
 import { SessionStorageService } from './services/session-storage-service';
 import { SimpleHttpInterceptor } from './http-interceptors/simple-http-interceptor';
 import { TrainerClient } from './rest/trainer-client';
+import { EventClient } from './rest/event-client';
+import { ConsultationComponent } from './components/consultation/consultation.component';
 import {HolidayClient} from 'src/app/rest/holiday-client';
 
 @NgModule({
@@ -38,6 +40,7 @@ import {HolidayClient} from 'src/app/rest/holiday-client';
         MeetingComponent,
         NavigationComponent,
         TrainerComponent,
+        ConsultationComponent,
     ],
     imports: [
         AppRoutingModule,
@@ -58,6 +61,7 @@ import {HolidayClient} from 'src/app/rest/holiday-client';
         SessionStorageService,
         SimpleHttpInterceptor,
         TrainerClient,
+        EventClient,
         HolidayClient,
     ],
     bootstrap: [AppComponent],
