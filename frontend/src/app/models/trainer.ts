@@ -1,12 +1,14 @@
+import { Event } from './event';
+
 export class Trainer {
-    public id: bigint;
+    public id: number;
     public firstName: string;
     public lastName: string;
     public email: string;
     public phone: string;
     public birthday: Date;
-    public birthdayTypes: string[];
+    public birthdayTypes: string[] = [];
     public created: Date;
     public updated: Date;
-    // list ov events for
+    public events: Event;
 }

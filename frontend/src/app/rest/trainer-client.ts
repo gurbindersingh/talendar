@@ -26,7 +26,7 @@ export class TrainerClient extends RestClient {
         }, '');
     }
 
-    public getById(id: bigint): Observable<Trainer> {
+    public getById(id: number): Observable<Trainer> {
         console.log(id);
         return super.get((error: HttpErrorResponse) => {
             console.log(
@@ -36,7 +36,7 @@ export class TrainerClient extends RestClient {
     }
 
     public update(trainer: Trainer): Observable<Trainer> {
-        return super.patch(
+        return super.put(
             (error: HttpErrorResponse) => {
                 console.log(
                     'HTTP PATCH To Update Trainer With ID' +

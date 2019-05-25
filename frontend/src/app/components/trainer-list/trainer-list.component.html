@@ -1,10 +1,10 @@
 <header id="trainerListHeader">
-    <h1>{{ title }}</h1>
+    <h1 class="row justify-content-center">{{ title }}</h1>
     <button type="button" class="btn" [routerLink]="['/trainer']">
         <i class="fas fa-user-plus fa-3x"></i>
     </button>
-    
-    <hr />   
+
+    <hr />
 </header>
 
 <div *ngFor="let trainer of trainerList">
@@ -17,8 +17,8 @@
                 <h4 class="card-title" id="cardHeader">
                     {{ trainer.firstName }} {{ trainer.lastName }}
                 </h4>
-      
-                <hr>
+
+                <hr />
                 <p clas="card-text" id="cardContent">
                     Telefonnummer: {{ trainer.phone }}<br />
                     Email: {{ trainer.email }} <br />
@@ -27,19 +27,18 @@
             </div>
         </div>
         <div class="card-footer flex-column" id="cardRight">
-          <!-- for more details admin can go to profile site of trainer (same infos, plus trainer related content like hosted events) -->
-          <div class="mb-4 mt-2">
-            <button type="button" class="btn">
-                <i class="fas fa-user fa-3x"></i>
-            </button>
-          </div>
-          <!-- -->
-          <div [routerLink]="['/trainer']" [queryParams]="{id: trainer.id}">
-            <button type="button" class="btn">
-                <i class="fas fa-pencil-alt fa-3x"></i>
-            </button>    
-          </div>
+            <!-- for more details admin can go to profile site of trainer (same infos, plus trainer related content like hosted events) -->
+            <div class="mb-4 mt-2">
+                <button type="button" class="btn">
+                    <i class="fas fa-user fa-3x"></i>
+                </button>
+            </div>
+            <!-- -->
+            <div [routerLink]="['/trainer']" [queryParams]="{ id: trainer.id }">
+                <button type="button" class="btn">
+                    <i class="fas fa-pencil-alt fa-3x"></i>
+                </button>
+            </div>
         </div>
     </div>
 </div>
-

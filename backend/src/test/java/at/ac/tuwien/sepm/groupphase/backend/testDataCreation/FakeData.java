@@ -150,29 +150,6 @@ public class FakeData {
         }
     }
 
-    public Trainer fakeTrainerE(){
-        Trainer trainer = new Trainer();
-        trainer.setBirthday(fakeAgeAsLocalDate(16, 100));
-        trainer.setEmail(fakeEmail());
-        trainer.setPhone(fakePhoneNumber());
-        trainer.setFirstName(fakeFirstName());
-        trainer.setLastName(fakeLastName());
-        trainer.setId(fakeID());
-        trainer.setCreated(fakePastTimeAfter2000());
-        List<String> birthdayTypes = new LinkedList<>();
-        birthdayTypes.add("Rocket");
-        trainer.setBirthdayTypes(birthdayTypes);
-        boolean found = false;
-        LocalDateTime updated = null;
-        while(!found){
-            updated = fakePastTimeAfter2000();
-            if(trainer.getCreated().isBefore(updated)){
-                found = true;
-            }
-        }
-        trainer.setUpdated(updated);
-        return trainer;
-    }
 
     public EventDto fakeBirthday(){
         EventDto bday = new EventDto();

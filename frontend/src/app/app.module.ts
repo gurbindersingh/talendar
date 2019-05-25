@@ -7,7 +7,7 @@ import { NgModule } from '@angular/core';
 
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModule, NgbDateNativeAdapter } from '@ng-bootstrap/ng-bootstrap';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 
 import { AppComponent } from './app.component';
@@ -62,6 +62,7 @@ import { ConsultationComponent } from './components/consultation/consultation.co
         SimpleHttpInterceptor,
         TrainerClient,
         EventClient,
+        NgbDateNativeAdapter
     ],
     bootstrap: [AppComponent],
 })

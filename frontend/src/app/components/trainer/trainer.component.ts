@@ -4,6 +4,10 @@ import { TrainerClient } from 'src/app/rest/trainer-client';
 import { Trainer } from 'src/app/models/trainer';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
+import {
+    NgbDateNativeAdapter,
+    NgbDateStruct,
+} from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
     selector: 'app-trainer',
@@ -13,16 +17,23 @@ import { Location } from '@angular/common';
 export class TrainerComponent implements OnInit {
     private title: string;
     private trainer: Trainer = new Trainer();
+    private birthday: NgbDateStruct;
     private isSaveMode: boolean;
     private btnContextDescription: string;
     private errorMsg: string;
     private successMsg: string;
 
+    /**
+     * values of checkboxes
+     */
+    private birthdayTypes: string[] = [];
+
     constructor(
         private trainerClient: TrainerClient,
         private route: ActivatedRoute,
         private router: Router,
-        private location: Location
+        private location: Location,
+        private adapter: NgbDateNativeAdapter
     ) {}
 
     /**
@@ -34,7 +45,7 @@ export class TrainerComponent implements OnInit {
     ngOnInit() {
         console.log('Initialize trainer component');
 
-        const id: bigint = this.route.snapshot.queryParams.id;
+        const id: number = this.route.snapshot.queryParams.id;
 
         if (id === undefined) {
             this.title = 'Trainer Erstellen';
@@ -48,6 +59,7 @@ export class TrainerComponent implements OnInit {
                 (data: Trainer) => {
                     console.log(data);
                     this.trainer = data;
+                    this.birthday = this.transformToNgbDate(data.birthday);
                 },
                 (error: Error) => {
                     /**
@@ -56,10 +68,7 @@ export class TrainerComponent implements OnInit {
                      * But what to do?!?
                      * just stay here and continue with save made (imo not sensible too)
                      */
-                    alert(
-                        'The requested trainer could not be laoded: ' +
-                            error.message
-                    );
+                    alert('The requested trainer could not be loaded');
                     this.location.back();
                 }
             );
@@ -68,6 +77,8 @@ export class TrainerComponent implements OnInit {
 
     public postTrainer(form: NgForm): void {
         console.log('Pass Form Data To Rest Client');
+
+        this.trainer.birthday = this.transformToDate(this.birthday);
 
         if (this.isSaveMode) {
             this.trainerClient.postNewTrainer(this.trainer).subscribe(
@@ -79,7 +90,8 @@ export class TrainerComponent implements OnInit {
                 (error: Error) => {
                     console.log(error.message);
                     this.errorMsg =
-                        'Der Betreuer konnte nicht angelegt werden!';
+                        'Der Betreuer konnte nicht angelegt werden: ' +
+                        error.message;
                 }
             );
         } else {
@@ -92,7 +104,8 @@ export class TrainerComponent implements OnInit {
                 (error: Error) => {
                     console.log(error.message);
                     this.errorMsg =
-                        'Der Betreuer konnte nicht erfolgreich aktualisiert werden';
+                        'Der Betreuer konnte nicht erfolgreich aktualisiert werden: ' +
+                        error.message;
                 }
             );
         }
@@ -111,7 +124,7 @@ export class TrainerComponent implements OnInit {
         ) {
             return false;
         }
-        if (this.trainer.birthday === undefined) {
+        if (this.birthday === undefined) {
             return false;
         }
         if (this.trainer.email === undefined || this.trainer.email === '') {
@@ -130,5 +143,13 @@ export class TrainerComponent implements OnInit {
 
     public cancel(): void {
         this.location.back();
+    }
+
+    private transformToDate(date: NgbDateStruct): Date {
+        return this.adapter.toModel(date);
+    }
+
+    private transformToNgbDate(date: Date): NgbDateStruct {
+        return this.adapter.fromModel(date);
     }
 }
