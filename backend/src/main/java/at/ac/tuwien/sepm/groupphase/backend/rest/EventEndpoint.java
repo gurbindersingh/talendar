@@ -38,10 +38,10 @@ public class EventEndpoint {
             return eventMapper.entityToEventDto(eventService.save(eventMapper.dtoToEventEntity(eventDto)));
         }catch(ValidationException e){
             LOGGER.error("Error in the backend: " + e.getMessage(), e);
-            throw new BackendException("Validation Error in the Backend: " + e.getMessage(), e);
+            throw new BackendException(e.getMessage(), e);
         }catch(ServiceException e){
             LOGGER.error("Error in the backend: " + e.getMessage(), e);
-            throw new BackendException("Service Error in the Backend: " + e.getMessage(), e);
+            throw new BackendException(e.getMessage(), e);
         }
     }
 
