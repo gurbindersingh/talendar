@@ -29,6 +29,7 @@ import { SimpleHttpInterceptor } from './http-interceptors/simple-http-intercept
 import { TrainerClient } from './rest/trainer-client';
 import { EventClient } from './rest/event-client';
 import { ConsultationComponent } from './components/consultation/consultation.component';
+import { DateTimeParserService } from './services/date-time-parser.service';
 import {HolidayClient} from 'src/app/rest/holiday-client';
 
 @NgModule({
@@ -65,6 +66,7 @@ import {HolidayClient} from 'src/app/rest/holiday-client';
         SimpleHttpInterceptor,
         TrainerClient,
         EventClient,
+        DateTimeParserService,
         HolidayClient,
     ],
     bootstrap: [AppComponent],

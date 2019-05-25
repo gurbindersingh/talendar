@@ -154,6 +154,9 @@ public class Validator{
                 for(Customer c : event.getCustomers()) {
                     validateCustomer(c);
                 }
+                for(RoomUse r : event.getRoomUses()) {
+                    validateRoomUse(r);
+                }
             }
             catch(InvalidEntityException ie) {
                 throw ie;
@@ -163,6 +166,7 @@ public class Validator{
 
 
     public void validateRoomUse (RoomUse entity) throws InvalidEntityException {
+        LocalDateTime now = LocalDateTime.now();
         if(entity.getBegin().isAfter(entity.getEnd())) {
             throw new InvalidEntityException("The End of the use cannot be later than the begining");
         }
@@ -171,6 +175,9 @@ public class Validator{
         }
         if(entity.getEnd().getHour() < 8 || entity.getEnd().getHour() > 22) {
             throw new InvalidEntityException("The end of this event is not during work hours");
+        }
+        if(entity.getBegin().isBefore(now)){
+            throw new InvalidEntityException("Event cannot be in the past");
         }
     }
 

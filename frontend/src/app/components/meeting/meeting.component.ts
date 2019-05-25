@@ -6,10 +6,9 @@ import { NgForm } from '@angular/forms';
 import { Room } from 'src/app/models/enum/room';
 import { EventType } from 'src/app/models/enum/eventType';
 import { EventClient } from 'src/app/rest/event-client';
-import { HttpResponse } from '@angular/common/http';
+import { DateTimeParserService } from 'src/app/services/date-time-parser.service';
 
 import {
-    NgbDateParserFormatter,
     NgbDateStruct,
     NgbTimeStruct,
 } from '@ng-bootstrap/ng-bootstrap';
@@ -24,8 +23,14 @@ export class MeetingComponent implements OnInit {
     private customer: Customer = new Customer();
     private roomUse: RoomUse = new RoomUse();
 
+    private dateTimeParser: DateTimeParserService;
+
     private errorMsg: string;
     private successMsg: string;
+
+    greenRadioButton: RadioNodeList;
+
+    radioButtonSelected = '';
 
     startDate: NgbDateStruct;
     startTime: NgbTimeStruct;
@@ -33,21 +38,23 @@ export class MeetingComponent implements OnInit {
     endTime: NgbTimeStruct;
 
     title = 'Raum mieten';
-    roomString = 'Raum auswählen';
-    rooms = ['Grün', 'Orange', 'Erdgeschoss'];
     minuteStep = 15;
 
     constructor(
         private eventClient: EventClient,
-        private parserFormatter: NgbDateParserFormatter
-    ) {}
+        dateTimeParser: DateTimeParserService,
+    ) {
+        this.dateTimeParser = dateTimeParser;
+        this.startTime = { hour: 13, minute: 0, second: 0};
+        this.endTime = { hour: 14, minute: 0, second: 0};
+    }
 
     ngOnInit() {}
 
     public postMeeting(form: NgForm): void {
-        this.roomUse.begin = this.dateToString(this.startDate, this.startTime);
-        this.roomUse.end = this.dateToString(this.endDate, this.endTime);
-        this.roomUse.room = this.roomSelected(this.roomString);
+        this.roomUse.begin = this.dateTimeParser.dateTimeToString(this.startDate, this.startTime);
+        this.roomUse.end = this.dateTimeParser.dateTimeToString(this.endDate, this.endTime);
+        this.roomUse.room = this.getSelectedRadioButtonRoom();
 
         this.event.customerDtos = [ this.customer ];
         this.event.roomUses = [ this.roomUse ];
@@ -58,28 +65,33 @@ export class MeetingComponent implements OnInit {
                 console.log(data);
                 this.successMsg = 'Deine Reservierung wurde erfolgreich gespeichert';
             },
-            (error) => {
+            (error: Error) => {
                 console.log(error);
-                this.errorMsg = 'Deine Reservierung konnte nicht angelegt werden!';
+                this.errorMsg = error.message;
             }
         );
     }
 
-    public changeSortOrder(room: string): void {
-        this.roomString = room;
+    public greenSelected(): void {
+        this.radioButtonSelected = 'Grün';
     }
 
-    private roomSelected(room: string): Room {
-        if (this.roomString === 'Grün') {
+    public orangeSelected(): void {
+        this.radioButtonSelected = 'Orange';
+    }
+
+    public groundFloorSelected(): void {
+        this.radioButtonSelected = 'Erdgeschoss';
+    }
+
+    public getSelectedRadioButtonRoom(): Room {
+        if (this.radioButtonSelected === 'Grün') {
             return Room.Green;
         }
-        if (this.roomString === 'Orange') {
+        if (this.radioButtonSelected === 'Orange') {
             return Room.Orange;
         }
-        if (this.roomString === 'Erdgeschoss') {
-            return Room.Groundfloor;
-        }
-        return undefined;
+        return Room.Groundfloor;
     }
 
     public isCompleted(): boolean {
@@ -114,100 +126,6 @@ export class MeetingComponent implements OnInit {
             return false;
         }
         return true;
-    }
-
-    private dateToString(date: NgbDateStruct, time: NgbTimeStruct) {
-        let stringMinute = '';
-        let stringHour = '';
-        let isChangedHour = false;
-        let isChangedMinute = false;
-
-        if (time.minute === 0) {
-            stringMinute = '00';
-            isChangedMinute = true;
-        }
-        if (time.hour === 0) {
-            stringHour = '00';
-            isChangedHour = true;
-        }
-        if (time.hour === 1) {
-            stringHour = '01';
-            isChangedHour = true;
-        }
-        if (time.hour === 2) {
-            stringHour = '02';
-            isChangedHour = true;
-        }
-        if (time.hour === 3) {
-            stringHour = '03';
-            isChangedHour = true;
-        }
-        if (time.hour === 4) {
-            stringHour = '04';
-            isChangedHour = true;
-        }
-        if (time.hour === 5) {
-            stringHour = '05';
-            isChangedHour = true;
-        }
-        if (time.hour === 6) {
-            stringHour = '06';
-            isChangedHour = true;
-        }
-        if (time.hour === 7) {
-            stringHour = '07';
-            isChangedHour = true;
-        }
-        if (time.hour === 8) {
-            stringHour = '08';
-            isChangedHour = true;
-        }
-        if (time.hour === 9) {
-            stringHour = '09';
-            isChangedHour = true;
-        }
-
-        if (isChangedHour && isChangedMinute) {
-            return (
-                this.parserFormatter.format(date) +
-                'T' +
-                stringHour +
-                ':' +
-                stringMinute +
-                ':00'
-            );
-        }
-
-        if (isChangedHour) {
-            return (
-                this.parserFormatter.format(date) +
-                'T' +
-                stringHour +
-                ':' +
-                time.minute +
-                ':00'
-            );
-        }
-
-        if (isChangedMinute) {
-            return (
-                this.parserFormatter.format(date) +
-                'T' +
-                time.hour +
-                ':' +
-                time.minute +
-                ':00'
-            );
-        }
-
-        return (
-            this.parserFormatter.format(date) +
-            'T' +
-            time.hour +
-            ':' +
-            time.minute +
-            ':00'
-        );
     }
 
     public clearInfoMsg(): void {
