@@ -58,7 +58,7 @@ public class TrainerService implements ITrainerService {
         try {
             validator.validateTrainer(trainer);
         } catch(InvalidEntityException e) {
-            throw new ValidationException("Given trainer is invalid: " + e.getMessage(), e);
+            throw new ValidationException(e.getMessage(), e);
         }
 
         try {
@@ -82,7 +82,7 @@ public class TrainerService implements ITrainerService {
         try {
             validator.validateTrainer(trainer);
         } catch(InvalidEntityException e) {
-            throw new ValidationException("Given trainer is invalid: " + e.getMessage(), e);
+            throw new ValidationException(e.getMessage(), e);
         }
 
         // probably a sleep is needed

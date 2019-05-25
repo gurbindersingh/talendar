@@ -85,7 +85,7 @@ public class TrainerEndpoint {
             throw new BackendException("Internal Error In Backend", e);
         } catch(ValidationException e) {
             LOGGER.error("PATCH Request unsuccessful " + e.getMessage(), e);
-            throw new BackendException("Validation Error In Backend: " + e.getMessage(), e);
+            throw new BackendException(e.getMessage(), e);
         } catch(NotFoundException e) {
             LOGGER.error("PATCH Request unsuccessful: " + e.getMessage(), e);
             throw new BackendException("Trainer With Id " + trainerDto.getId() + " does not exist", e);
@@ -104,7 +104,7 @@ public class TrainerEndpoint {
             return mapper.entityToTrainerDto(trainerService.save(mapper.dtoToTrainerEntity(trainerDto)));
         } catch(ValidationException e) {
             LOGGER.error("POST Request unsuccessful: " + e.getMessage(), e);
-            throw new BackendException("Validation Error in Backend: " + e.getMessage(), e);
+            throw new BackendException(e.getMessage(), e);
         } catch(ServiceException e) {
             LOGGER.error("POST Request unsuccessful: " + e.getMessage(), e);
             throw new BackendException("Internal Error in Backend", e);
