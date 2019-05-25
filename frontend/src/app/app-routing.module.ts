@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import {
     CalendarComponent,
+    ConsultationComponent,
     BirthdayComponent,
     CourseComponent,
     HolidayComponent,
@@ -19,6 +20,10 @@ const routes: Routes = [
     {
         path: 'holiday',
         component: HolidayComponent,
+    },
+    {
+        path: 'consultation',
+        component: ConsultationComponent,
     },
     {
         path: 'birthday',
