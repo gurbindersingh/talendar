@@ -55,6 +55,7 @@ import {HolidayClient} from 'src/app/rest/holiday-client';
         HttpClientModule,
         OwlDateTimeModule,
         OwlNativeDateTimeModule,
+
     ],
     providers: [
         httpInterceptorProviders,

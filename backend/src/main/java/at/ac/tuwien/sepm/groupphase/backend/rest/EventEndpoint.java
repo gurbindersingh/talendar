@@ -1,6 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest;
 
-import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
+
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.BackendException;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.EventDto;
 import at.ac.tuwien.sepm.groupphase.backend.service.IEventService;
@@ -10,14 +10,12 @@ import at.ac.tuwien.sepm.groupphase.backend.util.mapper.EventMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.sql.rowset.serial.SerialException;
 
+@CrossOrigin(origins = { "http://localhost:4200", "http://localhost:8080" })
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
-@RequestMapping("/api/v1/talender/events")
+@RequestMapping("/api/v1/talendar/events")
 public class EventEndpoint {
     private static Logger LOGGER = LoggerFactory.getLogger(TrainerEndpoint.class);
 
@@ -31,11 +29,9 @@ public class EventEndpoint {
         this.eventMapper = eventMapper;
     }
 
-
-    @RequestMapping(method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
-    public EventDto createNewEvent (@RequestBody EventDto eventDto) throws BackendException {
-        LOGGER.info("Incoming POST Request for an Event with type: " + eventDto.toString());
+    @PostMapping
+    public EventDto createNewEvent(@RequestBody EventDto eventDto) throws BackendException {
+        LOGGER.info("Incoming POST Request for an Event" + eventDto);
         try {
             return eventMapper.entityToEventDto(eventService.save(eventMapper.dtoToEventEntity(
                 eventDto)));

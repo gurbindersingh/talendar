@@ -10,4 +10,6 @@ import java.util.List;
 public interface TrainerRepository extends JpaRepository<Trainer, Long> {
 
     List<Trainer> findByBirthdayTypes(String birthdayType);
+
+    Trainer findByEvents_Id(Long id);
 }

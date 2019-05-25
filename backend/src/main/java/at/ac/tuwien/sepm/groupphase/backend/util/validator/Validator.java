@@ -38,19 +38,26 @@ public class Validator{
         if(event.getCreated().isAfter(event.getUpdated())) {
             throw new InvalidEntityException("create time may not be changed afterwards and has to be before last update time");
         }
-
+        if(event.getName() == null || event.getName().isBlank()){
+            throw new InvalidEntityException("Event Name must be set");
+        }
+        if(event.getRoomUses() == null){
+            throw new InvalidEntityException("RoomUses was not set, event must take place somwhere and sometime");
+        }
         // Validator for Birthdays
         if(event.getEventType() == EventType.Birthday) {
-            if(event.getHeadcount() < 0 || event.getHeadcount() > 20) {
+            if(event.getHeadcount() < 5 || event.getHeadcount() > 20) {
                 throw new InvalidEntityException("Head Count cannot be less than 0 or more than 20");
             }
             if(event.getAgeToBe() < 0 || event.getAgeToBe() > 20) {
                 throw new InvalidEntityException("Average age invalid");
             }
-            if(event.getCustomers().size() != 1) {
+            if(event.getCustomers() == null || event.getCustomers().size() != 1) {
                 throw new InvalidEntityException("Too many or too little customers for a birthday");
             }
-
+            if(event.getBirthdayType() == null || event.getBirthdayType().isBlank()){
+                throw new InvalidEntityException("This birthday has no birthday type");
+            }
             try {
                 for(Customer x : event.getCustomers()
                 ) {
@@ -71,12 +78,6 @@ public class Validator{
                 throw e;
             }
 
-            try {
-                validateTrainer(event.getTrainer());
-            }
-            catch(InvalidEntityException e) {
-                throw e;
-            }
         }
 
         // Validator for Consultation

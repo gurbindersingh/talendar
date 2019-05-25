@@ -45,5 +45,11 @@ public class BeansConfiguration {
     	return eventMapper;
     }
 
+    @Bean
+    public RoomUseMapper createRoomUseMapper(){
+        RoomUseMapper roomUseMapper = RoomUseMapper.INSTANCE;
+        return roomUseMapper;
+    }
+
 
 }

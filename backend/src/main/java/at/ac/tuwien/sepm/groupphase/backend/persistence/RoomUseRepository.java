@@ -12,4 +12,6 @@ import java.util.List;
 public interface RoomUseRepository extends JpaRepository<RoomUse, Long> {
 
     List<RoomUse> findByBeginGreaterThanEqual(LocalDateTime begin);
+
+    List<RoomUse> findByEventId(Long id);
 }
