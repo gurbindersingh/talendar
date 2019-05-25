@@ -74,7 +74,7 @@ public class TrainerEndpoint {
 
 
     @CrossOrigin(origins = "http://localhost:4200")
-    @RequestMapping(method = RequestMethod.PATCH)
+    @RequestMapping(method = RequestMethod.PUT)
     public TrainerDto updateTrainer(@RequestBody TrainerDto trainerDto) throws BackendException {
         LOGGER.info("Incoming Request To Update An Existing Trainer With Id {}", trainerDto.getId());
 
