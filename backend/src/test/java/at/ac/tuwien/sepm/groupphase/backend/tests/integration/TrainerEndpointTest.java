@@ -37,6 +37,12 @@ public class TrainerEndpointTest {
 
     private FakeData fakeData = new FakeData();
 
+
+    /**
+     *  TEST Trainer Post (Valid Trainer Saved And Id/Timestamps Set and Invalid Leads To Bad
+     *  Request Status)
+     */
+
     @Test
     public void postTrainerResponse () {
         TrainerDto trainer = fakeData.fakeTrainerDto();
@@ -53,6 +59,26 @@ public class TrainerEndpointTest {
         assertNotNull(trainerResponse.getUpdated());
     }
 
+
+    @Test
+    public void postInvalidTrainer_Status400Expected()  {
+        FakeData fakeData = new FakeData();
+        TrainerDto trainer = fakeData.fakeTrainerDto();
+        trainer.setId(null);
+        trainer.setUpdated(null);
+        trainer.setCreated(null);
+        trainer.setFirstName("");
+        HttpEntity<TrainerDto> request = new HttpEntity<>(trainer);
+        assertThrows(HttpClientErrorException.class, () -> {
+            final ResponseEntity<TrainerDto> response =  REST_TEMPLATE.exchange(URL.BASE + port + URL.TRAINER, HttpMethod.POST, request, TrainerDto.class);
+            assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
+        });
+    }
+
+
+     /**
+     * Assure Saved Trainer Can Be Delivered By Backend
+     */
 
     @Test
     public void getExistentTrainer_shouldReturnThisDto() {
@@ -134,30 +160,30 @@ public class TrainerEndpointTest {
     }
 
 
-    // TODO issue with this test: PATCH method for REST_TEMPLATE seems to be buggy and not so well supported
+    
 
-   /* @Test
+    @Test
     public void testUpdate_IdIsNotReplacedAndNewValuesAreSet() {
         TrainerDto postedOriginalTrainer = fakeData.fakeTrainerDto();
         resetToMinimum(postedOriginalTrainer);
         HttpEntity<TrainerDto> saveRequestOriginal = new HttpEntity<>(postedOriginalTrainer);
         ResponseEntity<TrainerDto> saveResponseOriginal = REST_TEMPLATE.postForEntity(URL.BASE + port + URL.TRAINER, saveRequestOriginal, TrainerDto.class);
         TrainerDto  originalTrainer = saveResponseOriginal.getBody();
-        long originalID = originalTrainer.getId();
 
 
         TrainerDto postedUpdateTrainer = fakeData.fakeTrainerDto();
-        resetToMinimum(postedUpdateTrainer);
         // prepare for update operation
         postedUpdateTrainer.setId(originalTrainer.getId());
 
 
         HttpEntity<TrainerDto> request = new HttpEntity<>(postedUpdateTrainer);
-        ResponseEntity<TrainerDto> responseAfterPatch = REST_TEMPLATE.exchange(URL.BASE + port + URL.TRAINER,HttpMethod.PATCH, request, TrainerDto.class);
+        ResponseEntity<TrainerDto> responseAfterPatch = REST_TEMPLATE.exchange(URL.BASE + port + URL.TRAINER,HttpMethod.PUT, request, TrainerDto.class);
         TrainerDto response = responseAfterPatch.getBody();
         //REST_TEMPLATE.put(URL.BASE + port + URL.TRAINER, postedUpdateTrainer);
 
-        assertThat(response.getId(), equalTo(postedOriginalTrainer.getId()));
+        // id is not reasigned but the same
+        assertThat(response.getId(), equalTo(originalTrainer.getId()));
+        // all other values are set as proposed by the update
         assertThat(response.getFirstName(), equalTo(postedUpdateTrainer.getFirstName()));
         assertThat(response.getLastName(), equalTo(postedUpdateTrainer.getLastName()));
         assertThat(response.getEmail(), equalTo(postedUpdateTrainer.getEmail()));
@@ -169,26 +195,12 @@ public class TrainerEndpointTest {
         ResponseEntity<List<TrainerDto>> responseListOfAllTrainers = REST_TEMPLATE.exchange(URL.BASE + port + URL.TRAINER, HttpMethod.GET, null, new ParameterizedTypeReference<List<TrainerDto>>(){});
         List<TrainerDto> results = responseListOfAllTrainers.getBody();
         assertThat(results.size(), equalTo(1));
-    }*/
+    }
+
 
     private void resetToMinimum(TrainerDto trainerDto) {
         trainerDto.setId(null);
         trainerDto.setCreated(null);
         trainerDto.setUpdated(null);
-    }
-
-    @Test
-    public void postInvalidTrainer_Status400Expected()  {
-        FakeData fakeData = new FakeData();
-        TrainerDto trainer = fakeData.fakeTrainerDto();
-        trainer.setId(null);
-        trainer.setUpdated(null);
-        trainer.setCreated(null);
-        trainer.setFirstName("");
-        HttpEntity<TrainerDto> request = new HttpEntity<>(trainer);
-        assertThrows(HttpClientErrorException.class, () -> {
-            final ResponseEntity<TrainerDto> response =  REST_TEMPLATE.exchange(URL.BASE + port + URL.TRAINER, HttpMethod.POST, request, TrainerDto.class);
-            assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
-        });
     }
 }
