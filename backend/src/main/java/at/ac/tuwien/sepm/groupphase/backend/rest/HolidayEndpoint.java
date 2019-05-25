@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/api/talendar/holiday")
+@RequestMapping("/api/v1/talender/holiday")
 public class HolidayEndpoint {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HolidayEndpoint.class);
