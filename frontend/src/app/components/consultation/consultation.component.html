@@ -1,69 +1,207 @@
-<h1>Beratungstermin erstellen</h1>
+<h1 class="row justify-content-center">Beratungstermin buchen</h1>
+<hr />
 
-<form id="consultationForm" #form (submit)="postConsultation(form)">
-    <div class="form-group">
-        <label for="consultationTitle">Titel</label>
-        <input
-            type="text"
-            class="form-control"
-            name="title"
-            id="consultationTitle"
-            placeholder="Beratungstermin1"
-            required
-        />
-    </div>
-    <div id="form-group">
-        <label for="customerEmail">Email Adresse</label>
-        <input
-            type="text"
-            class="form-control"
-            name="emailAddress"
-            id="customerEmail"
-            placeholder="example@gmail.com"
-            required
-        />
-    </div>
-    <div id="form-group">
-        <label for="customerPhone">Telefonnummer</label>
-        <input
-            type="text"
-            class="form-control"
-            name="phone"
-            id="customerPhone"
-            placeholder="+436641234567"
-            required
-        />
-    </div>
-    <div id="form-group">
-        <label for="consultationBegin">Von</label>
-        <input
-            class="form-control"
-            [owlDateTime]="consultationBegin"
-            [owlDateTimeTrigger]="consultationBegin"
-            placeholder=""
-            id="consultationDateTimeBegin"
-            required
-        />
-        <owl-date-time #consultationBegin></owl-date-time>
-    </div>
-    <div id="form-group">
-        <label for="consultationEnd">Bis</label>
-        <input
-            class="form-control"
-            [owlDateTime]="consultationEnd"
-            [owlDateTimeTrigger]="consultationEnd"
-            placeholder=""
-            id="consultationDateTimeEnd"
-            required
-        />
-        <owl-date-time #consultationEnd></owl-date-time>
+<form
+    id="consultationForm"
+    #consultationForm
+    (change)="clearInfoMsg()"
+    class="container-fluid"
+>
+    <!-- First row -->
+    <div class="row justify-content-center">
+        <div class="form-group col-lg-3">
+            <label for="consultationTitle">Titel</label>
+            <input
+                type="text"
+                [(ngModel)]="consultation.title"
+                class="form-control"
+                name="title"
+                id="consultationTitle"
+                placeholder="Beratungstermin1"
+                required
+            />
+        </div>
+        <div class="col-lg-3" id="meetingDropDown">
+            <div ngbDropdown class="d-inline-block col-lg-3">
+                <button
+                    class="btn btn-outline-primary"
+                    id="roomButtonStart"
+                    name="roomButton"
+                    ngbDropdownToggle
+                >
+                    {{ roomString }}
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                    <button
+                        class="dropdown-item"
+                        id="roomButtonSelected"
+                        name="roomButton"
+                        *ngFor="let room of rooms"
+                        (click)="changeSortOrder(room)"
+                    >
+                        {{ room }}
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="form-row justify-content-center">
-        <button type="submit" class="btn btn-primary col-4 center ml-auto">
+    <!-- Second row -->
+    <div class="row justify-content-center">
+        <div class="form-group col-lg-3">
+            <label for="consultationFirstName">Vorname</label>
+            <input
+                class="form-control"
+                [(ngModel)]="customer.firstName"
+                type="text"
+                name="firstName"
+                id="consultationFirstName"
+                placeholder="Maximilian"
+                required
+            />
+        </div>
+        <div class="form-group col-lg-3">
+            <label for="consultationLastName">Nachname</label>
+            <input
+                class="form-control"
+                [(ngModel)]="customer.lastName"
+                type="text"
+                name="lastName"
+                id="consultationLastName"
+                placeholder="Mustermann"
+                required
+            />
+        </div>
+    </div>
+
+    <!-- Third row -->
+    <div class="row justify-content-center">
+        <div class="form-group col-lg-3">
+            <label for="consultationPhoneNumber">Telefonnummer</label>
+            <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="customer.phone"
+                name="phoneNumber"
+                id="consultationPhoneNumber"
+                placeholder="+436641234567"
+                required
+            />
+        </div>
+        <div class="form-group col-lg-3">
+            <label for="consultationEmail">Email</label>
+            <input
+                type="email"
+                class="form-control"
+                name="email"
+                [(ngModel)]="customer.email"
+                id="customerEmail"
+                placeholder="max.mustermann@email.com"
+                required
+            />
+        </div>
+    </div>
+
+    <!-- Fourth row -->
+    <div class="row justify-content-center">
+        <div class="form-group col-lg-3" id="datePicker-dp-start">
+            <label class="col-sm-2" for="dp">Von</label>
+            <div class="input-group">
+                <input
+                    class="form-control"
+                    id="dp-input-start"
+                    name="dp"
+                    [(ngModel)]="startDate"
+                    ngbDatepicker
+                    #d1="ngbDatepicker"
+                />
+
+                <div class="input-group-append">
+                    <button
+                        class="btn btn-outline-secondary calendar fa fa-calendar"
+                        (click)="d1.toggle()"
+                        type="button"
+                    ></button>
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-lg-3" id="startTime_css">
+            <ngb-timepicker
+                [(ngModel)]="startTime"
+                id="tp-input-start"
+                name="startTime"
+                [minuteStep]="minuteStep"
+            >
+            </ngb-timepicker>
+        </div>
+    </div>
+
+    <!-- Fifth row -->
+    <div class="row justify-content-md-center">
+        <div class="form-group col-lg-3" id="datePicker-dp-end">
+            <label class="col-sm-2" id="datePicker-label-end" for="dp2"
+                >Bis</label
+            >
+            <div class="input-group">
+                <input
+                    class="form-control"
+                    placeholder="yyyy-mm-dd"
+                    name="dp2"
+                    [(ngModel)]="endDate"
+                    ngbDatepicker
+                    #d2="ngbDatepicker"
+                />
+
+                <div class="input-group-append">
+                    <button
+                        class="btn btn-outline-secondary calendar fa fa-calendar"
+                        (click)="d2.toggle()"
+                        type="button"
+                    ></button>
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-lg-3" id="endTime_css">
+            <ngb-timepicker
+                [(ngModel)]="endTime"
+                name="endTime"
+                [minuteStep]="minuteStep"
+            >
+            </ngb-timepicker>
+        </div>
+    </div>
+
+    <div class="row" *ngIf="errorMsg">
+        <div class="col-sm-12">
+            <p class="alert alert-danger">
+                {{ errorMsg }}
+            </p>
+        </div>
+    </div>
+    <div class="row" *ngIf="successMsg">
+        <div class="col-sm-12">
+            <p class="alert alert-success">
+                {{ successMsg }}
+            </p>
+        </div>
+    </div>
+    <br />
+
+    <div class="row justify-content-center">
+        <button
+            type="submit"
+            class="btn btn-primary col-3"
+            [disabled]="!isCompleted()"
+            (click)="postConsultation(consultationForm)"
+            id="consultationSave"
+        >
             Beratungstermin anfordern
         </button>
-        <button type="reset" class="btn btn-danger col-4 center mr-auto">
+        <button
+            type="reset"
+            class="btn btn-danger col-3"
+            id="cancel"
+        >
             Abbrechen
         </button>
     </div>
