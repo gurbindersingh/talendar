@@ -8,11 +8,13 @@ import {
     NgbDateNativeAdapter,
     NgbDateStruct,
 } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateStructAdapter } from '@ng-bootstrap/ng-bootstrap/datepicker/adapters/ngb-date-adapter';
 
 @Component({
     selector: 'app-trainer',
     templateUrl: './trainer.component.html',
     styleUrls: ['./trainer.component.scss'],
+    providers: [NgbDateNativeAdapter]
 })
 export class TrainerComponent implements OnInit {
     private title: string;
@@ -45,6 +47,8 @@ export class TrainerComponent implements OnInit {
     ngOnInit() {
         console.log('Initialize trainer component');
 
+        // check whether this site was loaded with a query param (edit) else
+        // we are in save mode
         const id: number = this.route.snapshot.queryParams.id;
 
         if (id === undefined) {
@@ -68,7 +72,7 @@ export class TrainerComponent implements OnInit {
                      * But what to do?!?
                      * just stay here and continue with save made (imo not sensible too)
                      */
-                    alert('The requested trainer could not be loaded');
+                    this.errorMsg = 'Der ausgewählte Trainer konnte leider nicht geladen werden.'
                     this.location.back();
                 }
             );
