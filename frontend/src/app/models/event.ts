@@ -10,13 +10,16 @@ export class Event{
     public updated: Date;
     public eventType: EventType;
     public customerDtos: Customer[];
+    // using by non rent types
     public trainer: Trainer;
-    public headcount: number;
+    // birthday specific
+    public headCount: number;
     public ageToBe: number;
     public birthdayType: string;
-    public endOfApplication: Date;
+    // course specific
+    public endOfApplication: string;
     public price: number;
-    public maxParticipant: number;
+    public maxParticipants: number;
     public description: string;
     public minAge: number;
     public maxAge: number;
@@ -27,4 +30,5 @@ export enum EventType{
     Consultation,
     Course,
     Rent
+}
 }

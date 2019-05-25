@@ -11,7 +11,9 @@ import { HttpResponse } from '@angular/common/http';
 })
 export class TrainerComponent implements OnInit {
     private title = 'Betreuer erstellen';
-    public trainer: Trainer = new Trainer();
+    private trainer: Trainer = new Trainer();
+    private errorMsg: string;
+    private successMsg: string;
 
     constructor(private trainerClient: TrainerClient) {}
 
@@ -22,28 +24,42 @@ export class TrainerComponent implements OnInit {
         this.trainerClient.postNewTrainer(this.trainer).subscribe(
             (data: Trainer) => {
                 console.log(data);
+                this.successMsg = 'Der Betreuer wurde erfolgreich gespeichert';
             },
             (error) => {
                 console.log(error);
+                this.errorMsg = 'Der Betreuer konnte nicht angelegt werden!';
             }
         );
     }
 
     public isCompleted(): boolean {
-        if (this.trainer.firstName === '') {
+        if (
+            this.trainer.firstName === undefined ||
+            this.trainer.firstName === ''
+        ) {
             return false;
         }
-        if (this.trainer.lastName === '') {
+        if (
+            this.trainer.lastName === undefined ||
+            this.trainer.lastName === ''
+        ) {
             return false;
         }
-
-        // date check
-        if (this.trainer.email === '') {
+        if (this.trainer.birthday === undefined) {
             return false;
         }
-        if (this.trainer.phone === '') {
+        if (this.trainer.email === undefined || this.trainer.email === '') {
+            return false;
+        }
+        if (this.trainer.phone === undefined || this.trainer.phone === '') {
             return false;
         }
         return true;
+    }
+
+    public clearInfoMsg(): void {
+        this.errorMsg = undefined;
+        this.successMsg = undefined;
     }
 }

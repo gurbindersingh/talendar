@@ -16,15 +16,17 @@ import javax.sql.rowset.serial.SerialException;
 
 @CrossOrigin(origins = {"http://localhost:4200","http://localhost:8080" })
 @RestController
-@RequestMapping("/api/talendar/events")
+@CrossOrigin(origins = "http://localhost:4200")
+@RequestMapping("/api/v1/talender/events")
 public class EventEndpoint {
-    private  static Logger LOGGER = LoggerFactory.getLogger(TrainerEndpoint.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(TrainerEndpoint.class);
 
     private final IEventService eventService;
-    private final EventMapper eventMapper;
+    private final EventMapper   eventMapper;
+
 
     @Autowired
-    public EventEndpoint(IEventService eventService, EventMapper eventMapper){
+    public EventEndpoint (IEventService eventService, EventMapper eventMapper) {
         this.eventService = eventService;
         this.eventMapper = eventMapper;
     }
@@ -34,26 +36,16 @@ public class EventEndpoint {
     public EventDto createNewEvent(@RequestBody EventDto eventDto) throws BackendException {
         LOGGER.info("Incoming POST Request for an Event" + eventDto);
         try {
-            if(eventDto.getEventType() == EventType.Birthday) {
-                return eventMapper.entityToEventDto(eventService.save(eventMapper.dtoToEventEntity((eventDto))));
-            }
-            else if(eventDto.getEventType() == EventType.Consultation) {
-                //TODO: fill in the rest of the Event subtypes
-            }
-            else if(eventDto.getEventType() == EventType.Course) {
-                return eventMapper.entityToEventDto(eventService.save(eventMapper.dtoToEventEntity(eventDto)));
-            }
-            else if(eventDto.getEventType() == EventType.Rent) {
-
-            }
-        }catch(ValidationException e){
+            return eventMapper.entityToEventDto(eventService.save(eventMapper.dtoToEventEntity(
+                eventDto)));
+        }
+        catch(ValidationException e) {
             LOGGER.error("Error in the backend: " + e.getMessage(), e);
             throw new BackendException("Validation Error in the Backend: " + e.getMessage(), e);
-        }catch(ServiceException e){
+        }
+        catch(ServiceException e) {
             LOGGER.error("Error in the backend: " + e.getMessage(), e);
             throw new BackendException("Service Error in the Backend: " + e.getMessage(), e);
         }
-        return eventDto;
     }
-
 }
