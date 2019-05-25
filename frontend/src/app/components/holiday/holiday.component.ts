@@ -36,7 +36,9 @@ export class HolidayComponent implements OnInit {
 
     public postHoliday(form: NgForm): void {
         console.log('Pass Form Data To Rest Client');
+        this.clearInfoMsg();
         this.holiday.id = null;
+        this.trainer.id = 1;
         this.holiday.trainer = this.trainer;
 
         this.holiday.holidayStart = this.dateToString(this.startDate, this.startTime);
