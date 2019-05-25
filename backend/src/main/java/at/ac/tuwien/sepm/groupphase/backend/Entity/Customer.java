@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -24,12 +26,8 @@ public class Customer {
     private String firstName;
     @NotBlank
     private String lastName;
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinTable(
-        name = "event_customer",
-        joinColumns = { @JoinColumn(name = "fk_customer")},
-        inverseJoinColumns = {@JoinColumn(name = "fk_event")}
-    )
+    @ManyToMany(mappedBy = "customers" )
+    @JsonIgnoreProperties("customers")
     private Set<Event> events;
 
 
@@ -96,12 +94,12 @@ public class Customer {
     }
 
 
-    public Set getEvents () {
+    public Set<Event> getEvents () {
         return events;
     }
 
 
-    public void setEvents (Set events) {
+    public void setEvents (Set<Event> events) {
         this.events = events;
     }
 
