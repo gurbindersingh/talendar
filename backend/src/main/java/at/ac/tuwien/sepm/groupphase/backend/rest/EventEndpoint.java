@@ -14,6 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.sql.rowset.serial.SerialException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
@@ -22,11 +25,11 @@ public class EventEndpoint {
     private static Logger LOGGER = LoggerFactory.getLogger(TrainerEndpoint.class);
 
     private final IEventService eventService;
-    private final EventMapper   eventMapper;
+    private final EventMapper eventMapper;
 
 
     @Autowired
-    public EventEndpoint (IEventService eventService, EventMapper eventMapper) {
+    public EventEndpoint(IEventService eventService, EventMapper eventMapper) {
         this.eventService = eventService;
         this.eventMapper = eventMapper;
     }
@@ -34,7 +37,7 @@ public class EventEndpoint {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public EventDto createNewEvent (@RequestBody EventDto eventDto) throws BackendException {
+    public EventDto createNewEvent(@RequestBody EventDto eventDto) throws BackendException {
         LOGGER.info("Incoming POST Request for an Event with type: " + eventDto.toString());
         try {
             return eventMapper.entityToEventDto(eventService.save(eventMapper.dtoToEventEntity(
@@ -47,6 +50,30 @@ public class EventEndpoint {
         catch(ServiceException e) {
             LOGGER.error("Error in the backend: " + e.getMessage(), e);
             throw new BackendException("Service Error in the Backend: " + e.getMessage(), e);
+        }
+    }
+
+
+    @GetMapping
+    @RequestMapping("/trainer/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<EventDto> getAllEvents(@PathVariable Long id) throws BackendException {
+        /*
+         * The JWT needs to be passed to this method to authenticate
+         * the caller and authorize the access to the corresponding
+         * resources.
+         * */
+        LOGGER.info("Incoming GET Request for all Events");
+        try {
+            return this.eventService.getAllEvents(id)
+                                    .stream()
+                                    .map(eventMapper::entityToEventDto)
+                                    .collect(
+                                        Collectors.toList());
+            // return new ArrayList<EventDto>();
+        }
+        catch(ServiceException | ValidationException e) {
+            throw new BackendException(e.getMessage(), e);
         }
     }
 }

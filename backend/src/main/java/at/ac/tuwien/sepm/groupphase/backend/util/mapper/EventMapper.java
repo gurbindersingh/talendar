@@ -6,6 +6,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 @Mapper(uses = { RoomUseMapper.class, CustomerMapper.class, TrainerMapper.class })
 public interface EventMapper {
 
@@ -13,9 +15,11 @@ public interface EventMapper {
 
 
     @Mapping(target = "customers", source = "customerDtos")
-    Event dtoToEventEntity(EventDto eventDto);
+    Event dtoToEventEntity (EventDto eventDto);
 
     @Mapping(target = "customerDtos", source = "customers")
-    EventDto entityToEventDto(Event event);
+    EventDto entityToEventDto (Event event);
 
+    @Mapping(target = "eventDto", source = "event")
+    List<EventDto> entityListToEventDtoList (List<Event> eventList);
 }
