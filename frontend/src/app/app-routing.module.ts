@@ -8,6 +8,7 @@ import {
     HolidayComponent,
     MeetingComponent,
     TrainerComponent,
+    TrainerListComponent,
 } from 'src/app/components';
 
 const routes: Routes = [
@@ -34,6 +35,10 @@ const routes: Routes = [
     {
         path: 'trainer',
         component: TrainerComponent,
+    },
+    {
+        path: 'trainerList',
+        component: TrainerListComponent
     },
 ];
 

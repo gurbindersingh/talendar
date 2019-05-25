@@ -19,6 +19,7 @@ import {
     MeetingComponent,
     NavigationComponent,
     TrainerComponent,
+    TrainerListComponent
 } from 'src/app/components';
 
 import { httpInterceptorProviders } from './http-interceptors';
@@ -36,6 +37,7 @@ import { TrainerClient } from './rest/trainer-client';
         MeetingComponent,
         NavigationComponent,
         TrainerComponent,
+        TrainerListComponent,
     ],
     imports: [
         AppRoutingModule,

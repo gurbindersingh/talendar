@@ -41,6 +41,7 @@ public class TrainerEndpoint {
         this.mapper = mapper;
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")
     public TrainerDto getOneTrainerById(@PathVariable("id") Long id) throws BackendException {
         LOGGER.info("Incoming Request To Retrieve Trainer With ID {}", id);
@@ -58,6 +59,7 @@ public class TrainerEndpoint {
 
 
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(method = RequestMethod.GET)
     public List<TrainerDto> getAllTrainers() throws BackendException {
         LOGGER.info("Incoming Request To Retrieve List Of All Trainers");
@@ -71,8 +73,8 @@ public class TrainerEndpoint {
     }
 
 
-
-    @RequestMapping(method = RequestMethod.PUT)
+    @CrossOrigin(origins = "http://localhost:4200")
+    @RequestMapping(method = RequestMethod.PATCH)
     public TrainerDto updateTrainer(@RequestBody TrainerDto trainerDto) throws BackendException {
         LOGGER.info("Incoming Request To Update An Existing Trainer With Id {}", trainerDto.getId());
 
