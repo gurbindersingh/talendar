@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
-@RequestMapping("/api/v1/talender/trainers")
+@RequestMapping("/api/v1/talendar/trainers")
 public class TrainerEndpoint {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TrainerEndpoint.class);
