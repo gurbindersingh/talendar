@@ -1,10 +1,12 @@
 package at.ac.tuwien.sepm.groupphase.backend.testDataCreation;
 
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.enums.Room;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
 import at.ac.tuwien.sepm.groupphase.backend.testObjects.CustomerDto;
 import at.ac.tuwien.sepm.groupphase.backend.testObjects.EventDto;
-import at.ac.tuwien.sepm.groupphase.backend.testObjects.Trainer;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.testObjects.TrainerDto;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import com.github.javafaker.Faker;
@@ -139,6 +141,24 @@ public class FakeData {
         return karen;
     }
 
+    public Customer fakeNewCustomerEntity(){
+        Customer karen = new Customer();
+        karen.setId(null);
+        karen.setEmail(fakeEmail());
+        karen.setPhone(fakePhoneNumber());
+        karen.setFirstName(fakeFirstName());
+        karen.setLastName(fakeLastName());
+        return karen;
+    }
+    public Customer fakeCustomerEntity(){
+        Customer karen = new Customer();
+        karen.setId(fakeID());
+        karen.setEmail(fakeEmail());
+        karen.setPhone(fakePhoneNumber());
+        karen.setFirstName(fakeFirstName());
+        karen.setLastName(fakeLastName());
+        return karen;
+    }
     public RoomUse fakeRoomUseDto(){
         RoomUse roomUse = new RoomUse();
         roomUse.setBegin(fakeFutureTime());
@@ -231,7 +251,50 @@ public class FakeData {
         return course;
     }
 
+    public Event fakeNewBirthdayEntity(){
+        Event event = new Event();
+        List<RoomUse> roomUses = new LinkedList<>();
+        roomUses.add(fakeRoomUseDto());
+        event.setAgeToBe(randomInt(5,14));
+        String[] types = {"Rocket", "Dryice", "Superhero", "Photography", "Painting"};
+        shuffleArray(types);
+        event.setBirthdayType(types[0]);
+        event.setEventType(EventType.Birthday);
+        event.setId(null);
+        event.setHeadcount(randomInt(5,18));
+        event.setName("This is a birthday");
+        event.setCreated(null);
+        event.setUpdated(null);
+        event.setRoomUses(roomUses);
+        Set<Customer> customers = new HashSet<>();
+        Customer customer = fakeCustomerEntity();
+        Set<Event> events = new HashSet<>();
+        events.add(event);
+        customer.setEvents(events);
+        customers.add(customer);
+        event.setCustomers(customers);
+        return event;
+    }
 
+    public Event fakeBirthdayEntity(){
+        Event event = new Event();
+        List<RoomUse> roomUses = new LinkedList<>();
+        roomUses.add(fakeRoomUseDto());
+        event.setAgeToBe(randomInt(5,14));
+        String[] types = {"Rocket", "Dryice", "Superhero", "Photography", "Painting"};
+        shuffleArray(types);
+        event.setBirthdayType(types[0]);
+        event.setEventType(EventType.Birthday);
+        event.setId(fakeID());
+        event.setHeadcount(randomInt(5,18));
+        event.setName("This is a birthday");
+        event.setCreated(fakePastTimeAfter2000());
+        event.setUpdated(event.getCreated());
+        event.setRoomUses(roomUses);
+        Set<Customer> customers = new HashSet<>();
+        customers.add(fakeNewCustomerEntity());
+        return event;
+    }
     static void shuffleArray(String[] ar) {
         Random rnd = new Random();
         for (int i = ar.length - 1; i > 0; i--)

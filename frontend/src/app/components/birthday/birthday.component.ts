@@ -7,15 +7,17 @@ import { Customer } from 'src/app/models/customer';
 import {
   NgbDateStruct,
   NgbTimeStruct,
+  NgbDateParserFormatter
 } from '@ng-bootstrap/ng-bootstrap';
 import {NgbDateParserFormatterImplementation} from '../../services/parserformatter';
-import { Trainer } from 'src/app/models/trainer';
-import { convertPropertyBindingBuiltins } from '@angular/compiler/src/compiler_util/expression_converter';
-
+import {NgbDateParserFormatterImplementationUser} from '../../services/parserformatterUser';
 @Component({
   selector: 'app-birthday',
   templateUrl: './birthday.component.html',
-  styleUrls: ['./birthday.component.scss']
+  styleUrls: ['./birthday.component.scss'],
+  providers: [
+    {provide: NgbDateParserFormatter, useClass: NgbDateParserFormatterImplementationUser}
+   ]
 })
 export class BirthdayComponent implements OnInit {
 public ageList: Number[] = [5,6,7,8,9,10,11,12,13,14,15,16,17,18,19];
@@ -23,7 +25,8 @@ public ageListb: Number[] = [5,6,7,8,9,10,11,12,13,14,15];
 private event: Event = new Event();
 private room: RoomUse = new RoomUse();
 private customer: Customer = new Customer();
-private startDate:NgbDateStruct = {day: 1, month: 1, year: 2030};
+private date: Date = new Date();
+private startDate:NgbDateStruct = {day: this.date.getUTCDay(), month: this.date.getUTCMonth() + 1, year: this.date.getUTCFullYear()};
 private startTime:NgbTimeStruct = {hour: 13, minute: 30, second: 0};
 private parserFormatter: NgbDateParserFormatterImplementation = new NgbDateParserFormatterImplementation();
 
@@ -32,9 +35,13 @@ private parserFormatter: NgbDateParserFormatterImplementation = new NgbDateParse
   ngOnInit() {
   }
   
+  goBack(){
+    window.history.back();
+  }
+
   postBirthday(form: NgForm){
     this.room.begin = this.dateToString(this.startDate, this.startTime);
-    this.startTime.hour = this.startTime.hour + 3;
+    this.startTime.hour = this.getEndDate(this.startTime);
     this.room.end = this.dateToString(this.startDate, this.startTime);
     this.event.eventType = EventType.Birthday;
     this.customer.events = null;
@@ -55,6 +62,10 @@ private parserFormatter: NgbDateParserFormatterImplementation = new NgbDateParse
     );
   }
 
+  public getEndDate(date: NgbTimeStruct): number{
+      return (date.hour+3)%24;
+    
+  }
   public isComplete(): boolean{
       if(this.event.birthdayType == ''){
         return false;

@@ -2,9 +2,8 @@ import {Trainer} from './trainer';
 import {RoomUse} from './roomUse';
 import {Customer} from './customer';
 
-
 export class Event{
-    public id: bigint;
+    public id: number;
     public name: string;
     public roomUses: RoomUse[];
     public created: Date;

@@ -21,10 +21,7 @@ import org.slf4j.Logger;
 
 import javax.sql.rowset.serial.SerialException;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 @Service
 public class EventService implements IEventService {
@@ -61,12 +58,13 @@ public class EventService implements IEventService {
         switch(event.getEventType()) {
             case Birthday:
                   try {
-                      event.setTrainer(findTrainerForBirthday(event.getRoomUses(), event.getBirthdayType()));
-
                       validator.validateEvent(event);
+
+
                       event = synchRoomUses(event);
                       event = synchCustomers(event);
-
+                      event.setTrainer(findTrainerForBirthday(event.getRoomUses(), event.getBirthdayType()));
+                      //validator.validateTrainer(event.getTrainer());
 
                   }
                   catch(InvalidEntityException e) {
@@ -105,7 +103,7 @@ public class EventService implements IEventService {
     }
 
     public Trainer findTrainerForBirthday(List<RoomUse> roomUses, String birthdayType) throws TrainerNotAvailableException{
-        List<Trainer> appropriateTrainers = trainerRepository.findByBirthdayTypes(birthdayType);;
+        List<Trainer> appropriateTrainers = trainerRepository.findByBirthdayTypes(birthdayType);
         Collections.shuffle(appropriateTrainers);
         for(Trainer t: appropriateTrainers
             ) {
@@ -125,7 +123,7 @@ public class EventService implements IEventService {
     }
 
     public Event synchCustomers(Event event){
-        Set<Event> events = new TreeSet<>();
+        Set<Event> events = new HashSet<>();
         events.add(event);
         for(Customer x: event.getCustomers()){
             x.setEvents(events);
