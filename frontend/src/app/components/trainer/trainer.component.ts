@@ -8,7 +8,6 @@ import {
     NgbDateNativeAdapter,
     NgbDateStruct,
 } from '@ng-bootstrap/ng-bootstrap';
-import { NgbDateStructAdapter } from '@ng-bootstrap/ng-bootstrap/datepicker/adapters/ngb-date-adapter';
 
 @Component({
     selector: 'app-trainer',
