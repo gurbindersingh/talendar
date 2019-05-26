@@ -80,32 +80,28 @@
     </div>
 
     <!-- Fourth row -->
-    <div class="row justify-content-center">
+    <div class="row justify-content-md-center">
         <div class="form-group col-lg-3" id="datePicker-dp-start">
-            <label class="col-sm-2" for="dp">Von</label>
+            <label>Von</label>
             <div class="input-group">
                 <input
+                    [readonly]="true"
                     class="form-control"
-                    id="dp-input-start"
-                    name="dp"
+                    id="startDate"
+                    name="startDate"
                     [(ngModel)]="startDate"
                     ngbDatepicker
-                    #d1="ngbDatepicker"
+                    (click)="dp1.toggle()"
+                    #dp1="ngbDatepicker"
+                    required
                 />
-
-                <div class="input-group-append">
-                    <button
-                        class="btn btn-outline-secondary calendar fa fa-calendar"
-                        (click)="d1.toggle()"
-                        type="button"
-                    ></button>
-                </div>
             </div>
         </div>
-        <div class="form-group col-lg-3" id="startTime_css">
+        <div class="form-group col-lg-3">
             <ngb-timepicker
+                readonlyInputs="true"
                 [(ngModel)]="startTime"
-                id="tp-input-start"
+                id="startTime"
                 name="startTime"
                 [minuteStep]="minuteStep"
             >
@@ -116,30 +112,23 @@
     <!-- Fifth row -->
     <div class="row justify-content-md-center">
         <div class="form-group col-lg-3" id="datePicker-dp-end">
-            <label class="col-sm-2" id="datePicker-label-end" for="dp2"
-                >Bis</label
-            >
+            <label>Bis</label>
             <div class="input-group">
                 <input
+                    [readonly]="true"
                     class="form-control"
-                    placeholder="yyyy-mm-dd"
-                    name="dp2"
+                    name="endDate"
                     [(ngModel)]="endDate"
                     ngbDatepicker
-                    #d2="ngbDatepicker"
+                    (click)="dp2.toggle()"
+                    #dp2="ngbDatepicker"
+                    required
                 />
-
-                <div class="input-group-append">
-                    <button
-                        class="btn btn-outline-secondary calendar fa fa-calendar"
-                        (click)="d2.toggle()"
-                        type="button"
-                    ></button>
-                </div>
             </div>
         </div>
-        <div class="form-group col-lg-3" id="endTime_css">
+        <div class="form-group col-lg-3">
             <ngb-timepicker
+                readonlyInputs="true"
                 [(ngModel)]="endTime"
                 name="endTime"
                 [minuteStep]="minuteStep"
@@ -190,7 +179,7 @@
                         *ngFor="let trainer of trainers"
                         (click)="changeSortOrderTrainer(trainer)"
                     >
-                        {{ trainer.firstName + " " + trainer.lastName }}
+                        {{ trainer.firstName + ' ' + trainer.lastName }}
                     </button>
                 </div>
             </div>

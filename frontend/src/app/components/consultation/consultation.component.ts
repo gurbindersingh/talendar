@@ -32,9 +32,9 @@ export class ConsultationComponent implements OnInit {
     private successMsg: string;
 
     startDate: NgbDateStruct;
-    startTime: NgbTimeStruct;
+    startTime: NgbTimeStruct = {hour: 13, minute: 30, second: 0};;
     endDate: NgbDateStruct;
-    endTime: NgbTimeStruct;
+    endTime: NgbTimeStruct = {hour: 14, minute:30, second: 0};;
 
     title = 'Beratungstermin buchen';
     trainerString = 'Trainer auswählen';
