@@ -1,8 +1,11 @@
-export class Customer {
+import {Event} from '../models/event';
+
+export class Customer{
     public id: bigint;
     public email: string;
     public phone: string;
     public firstName: string;
     public lastName: string;
-    //events
+    public events: Event[];
 }
+

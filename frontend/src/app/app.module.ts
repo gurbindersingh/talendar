@@ -21,6 +21,7 @@ import {
     NavigationComponent,
     TrainerComponent,
     ConsultationComponent,
+    TrainerListComponent
 } from 'src/app/components';
 
 import { httpInterceptorProviders } from './http-interceptors';
@@ -28,6 +29,7 @@ import { SessionStorageService } from './services/session-storage-service';
 import { SimpleHttpInterceptor } from './http-interceptors/simple-http-interceptor';
 import { TrainerClient } from './rest/trainer-client';
 import { EventClient } from './rest/event-client';
+import { DateTimeParserService } from './services/date-time-parser.service';
 import {HolidayClient} from 'src/app/rest/holiday-client';
 
 @NgModule({
@@ -41,6 +43,7 @@ import {HolidayClient} from 'src/app/rest/holiday-client';
         NavigationComponent,
         TrainerComponent,
         ConsultationComponent,
+        TrainerListComponent,
     ],
     imports: [
         AppRoutingModule,
@@ -55,6 +58,7 @@ import {HolidayClient} from 'src/app/rest/holiday-client';
         HttpClientModule,
         OwlDateTimeModule,
         OwlNativeDateTimeModule,
+
     ],
     providers: [
         httpInterceptorProviders,
@@ -62,6 +66,7 @@ import {HolidayClient} from 'src/app/rest/holiday-client';
         SimpleHttpInterceptor,
         TrainerClient,
         EventClient,
+        DateTimeParserService,
         HolidayClient,
     ],
     bootstrap: [AppComponent],

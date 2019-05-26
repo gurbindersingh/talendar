@@ -12,13 +12,17 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class EventEndpointTest {
 
     private static final RestTemplate REST_TEMPLATE = new RestTemplate();
@@ -37,12 +41,13 @@ public class EventEndpointTest {
         HttpEntity<TrainerDto> trequest = new HttpEntity<>(trainer);
         ResponseEntity<TrainerDto> tresponse = REST_TEMPLATE.exchange(URL.BASE + port + URL.TRAINER, HttpMethod.POST, trequest, TrainerDto.class);
         TrainerDto trainerResponse = tresponse.getBody();
-        System.out.println(trainerResponse);
+        List<String> birthdayTypeList = trainerResponse.getBirthdayTypes();
 
+        birthday.setBirthdayType(birthdayTypeList.get(0));
         birthday.setId(null);
         birthday.setUpdated(null);
         birthday.setCreated(null);
-        birthday.setTrainer(trainerResponse);
+        birthday.setTrainer(null);
         for(CustomerDto x : birthday.getCustomerDtos()
         ) {
             x.setId(null);
