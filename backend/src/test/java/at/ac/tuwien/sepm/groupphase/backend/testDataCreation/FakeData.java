@@ -10,6 +10,7 @@ import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.TestObjects.TrainerDto;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import com.github.javafaker.Faker;
+import org.apache.tomcat.jni.Local;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -376,6 +377,27 @@ public class FakeData {
         customer.setEvents(events);
         customers.add(customer);
         event.setCustomers(customers);
+        return event;
+    }
+
+    public Event fakeNewCourseEntity(){
+        Event event = new Event();
+        List<RoomUse> roomUses = new LinkedList<>();
+        roomUses.add(fakeRoomUseDto());
+        event.setRoomUses(roomUses);
+        event.setName("Kurs");
+        event.setDescription("Jo");
+        event.setCreated(null);
+        event.setUpdated(null);
+        event.setMinAge(5);
+        event.setMaxAge(15);
+        event.setEventType(EventType.Course);
+        Trainer trainer = fakeTrainerEntity();
+        trainer.setId(1L);
+        event.setTrainer(trainer);
+        LocalDateTime now = LocalDateTime.now();
+        event.setEndOfApplication(now.plusDays(1));
+        event.setId(null);
         return event;
     }
 
