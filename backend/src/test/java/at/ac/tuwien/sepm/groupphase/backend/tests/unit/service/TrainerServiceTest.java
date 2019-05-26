@@ -2,7 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.tests.unit.service;
 
 
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
-import at.ac.tuwien.sepm.groupphase.backend.TestDataCreation.FakeData;
+import at.ac.tuwien.sepm.groupphase.backend.testDataCreation.FakeData;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;

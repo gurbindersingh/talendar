@@ -1,13 +1,13 @@
-package at.ac.tuwien.sepm.groupphase.backend.TestDataCreation;
+package at.ac.tuwien.sepm.groupphase.backend.testDataCreation;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.enums.Room;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
-import at.ac.tuwien.sepm.groupphase.backend.TestObjects.CustomerDto;
-import at.ac.tuwien.sepm.groupphase.backend.TestObjects.EventDto;
+import at.ac.tuwien.sepm.groupphase.backend.testObjects.CustomerDto;
+import at.ac.tuwien.sepm.groupphase.backend.testObjects.EventDto;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
-import at.ac.tuwien.sepm.groupphase.backend.TestObjects.TrainerDto;
+import at.ac.tuwien.sepm.groupphase.backend.testObjects.TrainerDto;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import com.github.javafaker.Faker;
 
