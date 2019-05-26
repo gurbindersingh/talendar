@@ -349,7 +349,9 @@ public class FakeData {
         rooms.add(fakeRoomUseDto());
         consultation.setRoomUses(rooms);
         Set<CustomerDto> customers = new HashSet<>();
-        customers.add(fakeCustomer());
+        CustomerDto customerDto = fakeCustomer();
+        customerDto.setId(null);
+        customers.add(customerDto);
         consultation.setCustomerDtos(customers);
         return consultation;
     }
