@@ -306,6 +306,7 @@ public class FakeData {
         course.setEndOfApplication(now.plusDays(3));
         course.setMaxParticipant(20);
         course.setMinAge(3);
+        course.setMaxAge(15);
         return course;
     }
 

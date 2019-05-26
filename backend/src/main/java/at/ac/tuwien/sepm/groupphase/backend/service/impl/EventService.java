@@ -83,9 +83,10 @@ public class EventService implements IEventService {
             case Course:
                 try {
                     validator.validateEvent(event);
+                    this.trainerRepository.existsById(event.getTrainer().getId());
                 }
                 catch(InvalidEntityException e) {
-                    throw new ValidationException("Given Course is invalid: " + e.getMessage(), e);
+                    throw new ValidationException(e.getMessage(), e);
                 }
                 break;
             case Rent:
@@ -201,7 +202,9 @@ public class EventService implements IEventService {
                    x.getEnd().isBefore(db.getEnd()) &&
                    x.getEnd().isAfter(db.getBegin()) ||
                    x.getBegin().isBefore(db.getBegin()) &&
-                   x.getEnd().isAfter(db.getEnd())) {
+                   x.getEnd().isAfter(db.getEnd())  ||
+                   x.getBegin().isEqual(db.getBegin()) ||
+                   x.getEnd().isEqual(db.getEnd())) {
                     throw new TrainerNotAvailableException(
                         "The specified trainer is not available for the allocated time frame");
                 }
@@ -212,7 +215,9 @@ public class EventService implements IEventService {
                    x.getEnd().isBefore(db.getHolidayEnd()) &&
                    x.getEnd().isAfter(db.getHolidayStart()) ||
                    x.getBegin().isBefore(db.getHolidayStart()) &&
-                   x.getEnd().isAfter(db.getHolidayEnd())) {
+                   x.getEnd().isAfter(db.getHolidayEnd()) ||
+                   x.getBegin().isEqual(db.getHolidayStart()) ||
+                   x.getEnd().isEqual(db.getHolidayEnd())) {
                     throw new TrainerNotAvailableException(
                         "The specified trainer is not available for the allocated time frame");
                 }
@@ -232,7 +237,9 @@ public class EventService implements IEventService {
                        x.getEnd().isBefore(db.getEnd()) &&
                        x.getEnd().isAfter(db.getBegin()) ||
                        x.getBegin().isBefore(db.getBegin()) &&
-                       x.getEnd().isAfter(db.getEnd())) {
+                       x.getEnd().isAfter(db.getEnd()) ||
+                       x.getBegin().isEqual(db.getBegin()) ||
+                       x.getEnd().isEqual(db.getEnd())) {
                         throw new TimeNotAvailableException(
                             "The Timeslot attempting to be booked is invalid. Attempted Booking: " +
                             x.toString());
