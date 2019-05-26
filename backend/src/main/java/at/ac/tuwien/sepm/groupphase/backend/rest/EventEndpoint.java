@@ -55,9 +55,8 @@ public class EventEndpoint {
     @ResponseStatus(HttpStatus.OK)
     public List<EventDto> getAllEvents (@PathVariable Long id) throws BackendException {
         /*
-         * The JWT needs to be passed to this method to authenticate
-         * the caller and authorize the access to the corresponding
-         * resources.
+         * Pass the JWT to this method to authenticate the caller
+         * and authorize the access to the corresponding resources.
          * */
         LOGGER.info("Incoming GET Request for all Events");
         try {

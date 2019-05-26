@@ -1,4 +1,6 @@
-package at.ac.tuwien.sepm.groupphase.backend.testObjects;
+package at.ac.tuwien.sepm.groupphase.backend.TestObjects;
+
+import at.ac.tuwien.sepm.groupphase.backend.TestObjects.TrainerDto;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -6,18 +8,20 @@ import java.util.Objects;
 public class HolidayDto {
 
 
-
     private Long id;
     private TrainerDto trainer;
     private LocalDateTime holidayStart;
     private LocalDateTime holidayEnd;
 
-    public HolidayDto () {
+
+    public HolidayDto() {
 
     }
 
 
-    public HolidayDto (Long id, TrainerDto trainer, LocalDateTime holidayStart, LocalDateTime holidayEnd) {
+    public HolidayDto(Long id, TrainerDto trainer, LocalDateTime holidayStart,
+                      LocalDateTime holidayEnd
+    ) {
         this.id = id;
         this.trainer = trainer;
         this.holidayStart = holidayStart;
@@ -25,71 +29,71 @@ public class HolidayDto {
     }
 
 
-    public Long getId () {
+    public Long getId() {
         return id;
     }
 
 
-    public void setId (Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
 
-    public TrainerDto getTrainer () {
+    public TrainerDto getTrainer() {
         return trainer;
     }
 
 
-    public void setTrainer (TrainerDto trainer) {
+    public void setTrainer(TrainerDto trainer) {
         this.trainer = trainer;
     }
 
 
-    public LocalDateTime getHolidayStart () {
+    public LocalDateTime getHolidayStart() {
         return holidayStart;
     }
 
 
-    public void setHolidayStart (LocalDateTime holidayStart) {
+    public void setHolidayStart(LocalDateTime holidayStart) {
         this.holidayStart = holidayStart;
     }
 
 
-    public LocalDateTime getHolidayEnd () {
+    public LocalDateTime getHolidayEnd() {
         return holidayEnd;
     }
 
 
-    public void setHolidayEnd (LocalDateTime holidayEnd) {
+    public void setHolidayEnd(LocalDateTime holidayEnd) {
         this.holidayEnd = holidayEnd;
     }
 
 
     @Override
-    public boolean equals (Object o) {
+    public boolean equals(Object o) {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
         HolidayDto that = (HolidayDto) o;
         return Objects.equals(id, that.id) &&
-            Objects.equals(trainer, that.trainer) &&
-            Objects.equals(holidayStart, that.holidayStart) &&
-            Objects.equals(holidayEnd, that.holidayEnd);
+               Objects.equals(trainer, that.trainer) &&
+               Objects.equals(holidayStart, that.holidayStart) &&
+               Objects.equals(holidayEnd, that.holidayEnd);
     }
 
 
     @Override
-    public int hashCode () {
+    public int hashCode() {
         return Objects.hash(id, trainer, holidayStart, holidayEnd);
     }
 
 
     @Override
-    public String toString () {
+    public String toString() {
         return "HolidayDto{" +
-            "id=" + id +
-            ", trainerid=" + trainer +
-            ", holidayStart=" + holidayStart +
-            ", holidayEnd=" + holidayEnd +
-            '}';
+               "id=" + id +
+               ", trainerid=" + trainer +
+               ", holidayStart=" + holidayStart +
+               ", holidayEnd=" + holidayEnd +
+               '}';
     }
 }

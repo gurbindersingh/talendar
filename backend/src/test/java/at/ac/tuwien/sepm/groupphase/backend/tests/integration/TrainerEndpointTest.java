@@ -1,6 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.tests.integration;
 
-import at.ac.tuwien.sepm.groupphase.backend.testDataCreation.FakeData;
+import at.ac.tuwien.sepm.groupphase.backend.TestDataCreation.FakeData;
 import at.ac.tuwien.sepm.groupphase.backend.testObjects.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.testObjects.TrainerDto;
 import at.ac.tuwien.sepm.groupphase.backend.tests.configuration.URL;
@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class TrainerEndpointTest {
 
@@ -39,18 +39,21 @@ public class TrainerEndpointTest {
 
 
     /**
-     *  TEST Trainer Post (Valid Trainer Saved And Id/Timestamps Set and Invalid Leads To Bad
-     *  Request Status)
+     * TEST Trainer Post (Valid Trainer Saved And Id/Timestamps Set and Invalid Leads To Bad
+     * Request Status)
      */
 
     @Test
-    public void postTrainerResponse () {
+    public void postTrainerResponse() {
         TrainerDto trainer = fakeData.fakeTrainerDto();
         trainer.setId(null);
         trainer.setUpdated(null);
         trainer.setCreated(null);
         HttpEntity<TrainerDto> request = new HttpEntity<>(trainer);
-        ResponseEntity<TrainerDto> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.TRAINER, HttpMethod.POST, request, TrainerDto.class);
+        ResponseEntity<TrainerDto> response =
+            REST_TEMPLATE.exchange(URL.BASE + port + URL.TRAINER, HttpMethod.POST, request,
+                                   TrainerDto.class
+            );
         TrainerDto trainerResponse = response.getBody();
         assertThat(response.getStatusCode(), equalTo(HttpStatus.CREATED));
         assertNotNull(trainerResponse);
@@ -61,7 +64,7 @@ public class TrainerEndpointTest {
 
 
     @Test
-    public void postInvalidTrainer_Status400Expected()  {
+    public void postInvalidTrainer_Status400Expected() {
         FakeData fakeData = new FakeData();
         TrainerDto trainer = fakeData.fakeTrainerDto();
         trainer.setId(null);
@@ -70,13 +73,16 @@ public class TrainerEndpointTest {
         trainer.setFirstName("");
         HttpEntity<TrainerDto> request = new HttpEntity<>(trainer);
         assertThrows(HttpClientErrorException.class, () -> {
-            final ResponseEntity<TrainerDto> response =  REST_TEMPLATE.exchange(URL.BASE + port + URL.TRAINER, HttpMethod.POST, request, TrainerDto.class);
+            final ResponseEntity<TrainerDto> response =
+                REST_TEMPLATE.exchange(URL.BASE + port + URL.TRAINER, HttpMethod.POST, request,
+                                       TrainerDto.class
+                );
             assertThat(response.getStatusCode(), equalTo(HttpStatus.BAD_REQUEST));
         });
     }
 
 
-     /**
+    /**
      * Assure Saved Trainer Can Be Delivered By Backend
      */
 
@@ -85,22 +91,32 @@ public class TrainerEndpointTest {
         // post trainer
         TrainerDto trainer = fakeData.fakeNewTrainerDto();
         HttpEntity<TrainerDto> saveRequest = new HttpEntity<>(trainer);
-        ResponseEntity<TrainerDto> saveResponse = REST_TEMPLATE.postForEntity(URL.BASE + port + URL.TRAINER, saveRequest, TrainerDto.class);
+        ResponseEntity<TrainerDto> saveResponse =
+            REST_TEMPLATE.postForEntity(URL.BASE + port + URL.TRAINER, saveRequest,
+                                        TrainerDto.class
+            );
         TrainerDto postedAndSaved = saveResponse.getBody();
 
 
         // find previously posted trainer
-        ResponseEntity<TrainerDto> getResponse = REST_TEMPLATE.getForEntity(URL.BASE + port + URL.TRAINER + "/" + postedAndSaved.getId(), TrainerDto.class);
+        ResponseEntity<TrainerDto> getResponse =
+            REST_TEMPLATE.getForEntity(URL.BASE + port + URL.TRAINER + "/" + postedAndSaved.getId(),
+                                       TrainerDto.class
+            );
         TrainerDto result = getResponse.getBody();
         assertThat(result.getId(), equalTo(postedAndSaved.getId()));
     }
+
 
     @Test
     public void getNonExistentTrainer_responseStatus404expected() {
         // post trainer
         TrainerDto trainer = fakeData.fakeNewTrainerDto();
         HttpEntity<TrainerDto> saveRequest = new HttpEntity<>(trainer);
-        ResponseEntity<TrainerDto> saveResponse = REST_TEMPLATE.postForEntity(URL.BASE + port + URL.TRAINER, saveRequest, TrainerDto.class);
+        ResponseEntity<TrainerDto> saveResponse =
+            REST_TEMPLATE.postForEntity(URL.BASE + port + URL.TRAINER, saveRequest,
+                                        TrainerDto.class
+            );
         TrainerDto postedAndSaved = saveResponse.getBody();
 
 
@@ -111,10 +127,13 @@ public class TrainerEndpointTest {
              * only one entity in DB, most likely 1000 is not the one and only ID, if it were, we just pick the next.
              */
             int wrongID = 1000;
-            if (wrongID == postedAndSaved.getId()) {
+            if(wrongID == postedAndSaved.getId()) {
                 wrongID++;
             }
-            ResponseEntity<TrainerDto> response = REST_TEMPLATE.getForEntity(URL.BASE + port + URL.TRAINER + "/" + wrongID, TrainerDto.class);
+            ResponseEntity<TrainerDto> response =
+                REST_TEMPLATE.getForEntity(URL.BASE + port + URL.TRAINER + "/" + wrongID,
+                                           TrainerDto.class
+                );
             assertThat(response.getStatusCode(), equalTo(HttpStatus.NOT_FOUND));
         });
     }
@@ -134,35 +153,42 @@ public class TrainerEndpointTest {
 
         // save each of the replies from the post requests, i.e. this is the effective list of each saved trainer
         // list of trainers as how they are persisted (incl ID)
-        for (int i = 0; i < postedTrainers.size(); i++) {
+        for(int i = 0; i < postedTrainers.size(); i++) {
             HttpEntity<TrainerDto> saveRequest = new HttpEntity<>(postedTrainers.get(i));
-            ResponseEntity<TrainerDto> saveResponse = REST_TEMPLATE.postForEntity(URL.BASE + port + URL.TRAINER, saveRequest, TrainerDto.class);
+            ResponseEntity<TrainerDto> saveResponse =
+                REST_TEMPLATE.postForEntity(URL.BASE + port + URL.TRAINER, saveRequest,
+                                            TrainerDto.class
+                );
             TrainerDto postedAndSaved = saveResponse.getBody();
             savedTrainers.add(postedAndSaved);
         }
 
 
         // now make request for EACH trainer
-        ResponseEntity<List<TrainerDto>> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.TRAINER, HttpMethod.GET, null, new ParameterizedTypeReference<List<TrainerDto>>(){});
+        ResponseEntity<List<TrainerDto>> response =
+            REST_TEMPLATE.exchange(URL.BASE + port + URL.TRAINER, HttpMethod.GET, null,
+                                   new ParameterizedTypeReference<List<TrainerDto>>() {}
+            );
         List<TrainerDto> results = response.getBody();
 
         // returned size must be equals to 3 === the number of previously posted trainers
         assertThat(results.size(), equalTo(savedTrainers.size()));
         // check that ids are are all equal
-        for (int i = 0; i < results.size(); i++) {
+        for(int i = 0; i < results.size(); i++) {
             assertThat(results.get(i).getId(), equalTo(savedTrainers.get(i).getId()));
         }
     }
 
 
-    
-
     @Test
     public void testUpdate_IdIsNotReplacedAndNewValuesAreSet() {
         TrainerDto postedOriginalTrainer = fakeData.fakeNewTrainerDto();
         HttpEntity<TrainerDto> saveRequestOriginal = new HttpEntity<>(postedOriginalTrainer);
-        ResponseEntity<TrainerDto> saveResponseOriginal = REST_TEMPLATE.postForEntity(URL.BASE + port + URL.TRAINER, saveRequestOriginal, TrainerDto.class);
-        TrainerDto  originalTrainer = saveResponseOriginal.getBody();
+        ResponseEntity<TrainerDto> saveResponseOriginal =
+            REST_TEMPLATE.postForEntity(URL.BASE + port + URL.TRAINER, saveRequestOriginal,
+                                        TrainerDto.class
+            );
+        TrainerDto originalTrainer = saveResponseOriginal.getBody();
 
 
         TrainerDto postedUpdateTrainer = fakeData.fakeTrainerDto();
@@ -171,7 +197,10 @@ public class TrainerEndpointTest {
 
 
         HttpEntity<TrainerDto> request = new HttpEntity<>(postedUpdateTrainer);
-        ResponseEntity<TrainerDto> responseAfterPatch = REST_TEMPLATE.exchange(URL.BASE + port + URL.TRAINER,HttpMethod.PUT, request, TrainerDto.class);
+        ResponseEntity<TrainerDto> responseAfterPatch =
+            REST_TEMPLATE.exchange(URL.BASE + port + URL.TRAINER, HttpMethod.PUT, request,
+                                   TrainerDto.class
+            );
         TrainerDto response = responseAfterPatch.getBody();
         //REST_TEMPLATE.put(URL.BASE + port + URL.TRAINER, postedUpdateTrainer);
 
@@ -186,9 +215,11 @@ public class TrainerEndpointTest {
         assertThat(response.getUpdated().isAfter(response.getCreated()), equalTo(true));
 
 
-        ResponseEntity<List<TrainerDto>> responseListOfAllTrainers = REST_TEMPLATE.exchange(URL.BASE + port + URL.TRAINER, HttpMethod.GET, null, new ParameterizedTypeReference<List<TrainerDto>>(){});
+        ResponseEntity<List<TrainerDto>> responseListOfAllTrainers =
+            REST_TEMPLATE.exchange(URL.BASE + port + URL.TRAINER, HttpMethod.GET, null,
+                                   new ParameterizedTypeReference<List<TrainerDto>>() {}
+            );
         List<TrainerDto> results = responseListOfAllTrainers.getBody();
         assertThat(results.size(), equalTo(1));
     }
-
 }
