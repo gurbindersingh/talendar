@@ -1,9 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend.tests.integration;
 
-import at.ac.tuwien.sepm.groupphase.backend.testDataCreation.FakeData;
-import at.ac.tuwien.sepm.groupphase.backend.testObjects.CustomerDto;
-import at.ac.tuwien.sepm.groupphase.backend.testObjects.EventDto;
-import at.ac.tuwien.sepm.groupphase.backend.testObjects.TrainerDto;
+import at.ac.tuwien.sepm.groupphase.backend.TestDataCreation.FakeData;
+import at.ac.tuwien.sepm.groupphase.backend.TestObjects.CustomerDto;
+import at.ac.tuwien.sepm.groupphase.backend.TestObjects.EventDto;
+import at.ac.tuwien.sepm.groupphase.backend.TestObjects.TrainerDto;
 import at.ac.tuwien.sepm.groupphase.backend.tests.configuration.URL;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,7 +21,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class EventEndpointTest {
 
@@ -29,8 +29,9 @@ public class EventEndpointTest {
     @LocalServerPort
     private int port = 8080;
 
+
     @Test
-    public void postBirthdayResponse () {
+    public void postBirthdayResponse() {
         FakeData fakeData = new FakeData();
         EventDto birthday = fakeData.fakeBirthday();
 
@@ -39,7 +40,11 @@ public class EventEndpointTest {
         trainer.setUpdated(null);
         trainer.setCreated(null);
         HttpEntity<TrainerDto> trequest = new HttpEntity<>(trainer);
-        ResponseEntity<TrainerDto> tresponse = REST_TEMPLATE.exchange(URL.BASE + port + URL.TRAINER, HttpMethod.POST, trequest, TrainerDto.class);
+        ResponseEntity<TrainerDto> tresponse = REST_TEMPLATE.exchange(URL.BASE + port + URL.TRAINER,
+                                                                      HttpMethod.POST,
+                                                                      trequest,
+                                                                      TrainerDto.class
+        );
         TrainerDto trainerResponse = tresponse.getBody();
         List<String> birthdayTypeList = trainerResponse.getBirthdayTypes();
 
@@ -48,13 +53,16 @@ public class EventEndpointTest {
         birthday.setUpdated(null);
         birthday.setCreated(null);
         birthday.setTrainer(null);
-        for(CustomerDto x : birthday.getCustomerDtos()
-        ) {
+        for(CustomerDto x : birthday.getCustomerDtos()) {
             x.setId(null);
         }
         HttpEntity<EventDto> request = new HttpEntity<>(birthday);
         System.out.println(request.toString());
-        ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.EVENT, HttpMethod.POST, request, EventDto.class);
+        ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.EVENT,
+                                                                   HttpMethod.POST,
+                                                                   request,
+                                                                   EventDto.class
+        );
         EventDto birthdayResponse = response.getBody();
 
 
@@ -65,7 +73,7 @@ public class EventEndpointTest {
 
 
     @Test
-    public void postCourseResponse () {
+    public void postCourseResponse() {
         FakeData fakeData = new FakeData();
         EventDto course = fakeData.fakeCourse();
 
@@ -74,7 +82,11 @@ public class EventEndpointTest {
         trainer.setUpdated(null);
         trainer.setCreated(null);
         HttpEntity<TrainerDto> trequest = new HttpEntity<>(trainer);
-        ResponseEntity<TrainerDto> tresponse = REST_TEMPLATE.exchange(URL.BASE + port + URL.TRAINER, HttpMethod.POST, trequest, TrainerDto.class);
+        ResponseEntity<TrainerDto> tresponse = REST_TEMPLATE.exchange(URL.BASE + port + URL.TRAINER,
+                                                                      HttpMethod.POST,
+                                                                      trequest,
+                                                                      TrainerDto.class
+        );
         TrainerDto trainerResponse = tresponse.getBody();
         System.out.println(trainerResponse);
 
@@ -85,7 +97,11 @@ public class EventEndpointTest {
         course.setCustomerDtos(null);
         HttpEntity<EventDto> request = new HttpEntity<>(course);
         System.out.println(request.toString());
-        ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.EVENT, HttpMethod.POST, request, EventDto.class);
+        ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.EVENT,
+                                                                   HttpMethod.POST,
+                                                                   request,
+                                                                   EventDto.class
+        );
         EventDto courseResponse = response.getBody();
 
 
@@ -96,7 +112,7 @@ public class EventEndpointTest {
 
 
     @Test
-    public void postRentResponse(){
+    public void postRentResponse() {
         FakeData fakeData = new FakeData();
         EventDto rent = fakeData.fakeRent();
 
@@ -109,7 +125,11 @@ public class EventEndpointTest {
         }
         HttpEntity<EventDto> request = new HttpEntity<>(rent);
         System.out.println(request.toString());
-        ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.EVENT, HttpMethod.POST, request, EventDto.class);
+        ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.EVENT,
+                                                                   HttpMethod.POST,
+                                                                   request,
+                                                                   EventDto.class
+        );
         EventDto courseResponse = response.getBody();
 
 
@@ -117,6 +137,7 @@ public class EventEndpointTest {
         System.out.println(courseResponse);
         assertNotNull(courseResponse.getId());
     }
+
 
     @Test
     public void postConsultationResponse() {
@@ -128,7 +149,11 @@ public class EventEndpointTest {
         trainer.setUpdated(null);
         trainer.setCreated(null);
         HttpEntity<TrainerDto> trequest = new HttpEntity<>(trainer);
-        ResponseEntity<TrainerDto> tresponse = REST_TEMPLATE.exchange(URL.BASE + port + URL.TRAINER, HttpMethod.POST, trequest, TrainerDto.class);
+        ResponseEntity<TrainerDto> tresponse = REST_TEMPLATE.exchange(URL.BASE + port + URL.TRAINER,
+                                                                      HttpMethod.POST,
+                                                                      trequest,
+                                                                      TrainerDto.class
+        );
         TrainerDto trainerResponse = tresponse.getBody();
         System.out.println(trainerResponse);
 
@@ -139,7 +164,11 @@ public class EventEndpointTest {
         consultation.setCustomerDtos(null);
         HttpEntity<EventDto> request = new HttpEntity<>(consultation);
         System.out.println(request.toString());
-        ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.EVENT, HttpMethod.POST, request, EventDto.class);
+        ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.EVENT,
+                                                                   HttpMethod.POST,
+                                                                   request,
+                                                                   EventDto.class
+        );
         EventDto consultationResponse = response.getBody();
 
         assertNotNull(consultationResponse);

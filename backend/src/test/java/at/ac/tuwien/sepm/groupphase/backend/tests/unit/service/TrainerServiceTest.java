@@ -2,7 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.tests.unit.service;
 
 
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
-import at.ac.tuwien.sepm.groupphase.backend.testDataCreation.FakeData;
+import at.ac.tuwien.sepm.groupphase.backend.TestDataCreation.FakeData;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;
@@ -110,6 +110,7 @@ public class TrainerServiceTest {
         assertThrows(ServiceException.class, () -> trainerService.save(DUMMY));
     }
 
+
     @Test
     public void test_saveValidTrainer_TrainerShouldBeAccepted() throws Exception {
         // just mock it out because we only test service logic
@@ -118,7 +119,8 @@ public class TrainerServiceTest {
 
         assertNotNull(VALID_INCOMING_TRAINER.getCreated());
         assertNotNull(VALID_INCOMING_TRAINER.getUpdated());
-        assertFalse(VALID_INCOMING_TRAINER.getCreated().isAfter(VALID_INCOMING_TRAINER.getUpdated()));
+        assertFalse(
+            VALID_INCOMING_TRAINER.getCreated().isAfter(VALID_INCOMING_TRAINER.getUpdated()));
     }
 
 
@@ -128,18 +130,25 @@ public class TrainerServiceTest {
 
     @Test
     public void test_saveInvalidTrainer_wrongAge_shouldThrowException() {
-        assertThrows(ValidationException.class, () -> trainerService.save(INVALID_TRAINER_TOO_LOW_AGE));
+        assertThrows(ValidationException.class,
+                     () -> trainerService.save(INVALID_TRAINER_TOO_LOW_AGE)
+        );
     }
 
 
     @Test
     public void test_saveInvalidTrainer_wrongNumber_shouldThrowException() {
-        assertThrows(ValidationException.class, () -> trainerService.save(INVALID_TRAINER_NO_REAL_PHONE));
+        assertThrows(ValidationException.class,
+                     () -> trainerService.save(INVALID_TRAINER_NO_REAL_PHONE)
+        );
     }
+
 
     @Test
     public void test_saveInvalidTrainer_wrongEmail_shouldThrowException() {
-        assertThrows(ValidationException.class, () -> trainerService.save(INVALID_TRAINER_NO_REAL_EMAIL));
+        assertThrows(ValidationException.class,
+                     () -> trainerService.save(INVALID_TRAINER_NO_REAL_EMAIL)
+        );
     }
 
 
@@ -149,31 +158,42 @@ public class TrainerServiceTest {
 
     @Test
     public void test_saveInvalidTrainer_missingFN_shouldThrowException() {
-        assertThrows(ValidationException.class, () -> trainerService.save(INVALID_TRAINER_MISSING_FN));
+        assertThrows(ValidationException.class,
+                     () -> trainerService.save(INVALID_TRAINER_MISSING_FN)
+        );
     }
+
 
     @Test
     public void test_saveInvalidTrainer_missingLN_shouldThrowException() {
-        assertThrows(ValidationException.class, () -> trainerService.save(INVALID_TRAINER_MISSING_LN));
+        assertThrows(ValidationException.class,
+                     () -> trainerService.save(INVALID_TRAINER_MISSING_LN)
+        );
     }
+
 
     @Test
     public void test_saveInvalidTrainer_missingAge_shouldThrowException() {
-        assertThrows(ValidationException.class, () -> trainerService.save(INVALID_TRAINER_MISSING_BIRTHDAY));
+        assertThrows(ValidationException.class,
+                     () -> trainerService.save(INVALID_TRAINER_MISSING_BIRTHDAY)
+        );
     }
+
 
     @Test
     public void test_saveInvalidTrainer_missingPhone_shouldThrowException() {
-        assertThrows(ValidationException.class, () -> trainerService.save(INVALID_TRAINER_MISSING_PHONE));
+        assertThrows(ValidationException.class,
+                     () -> trainerService.save(INVALID_TRAINER_MISSING_PHONE)
+        );
     }
+
 
     @Test
     public void test_saveInvalidTrainer_missingMail_shouldThrowException() {
-        assertThrows(ValidationException.class, () -> trainerService.save(INVALID_TRAINER_MISSING_MAIL));
+        assertThrows(ValidationException.class,
+                     () -> trainerService.save(INVALID_TRAINER_MISSING_MAIL)
+        );
     }
-
-
-
 
 
     /**
@@ -190,16 +210,18 @@ public class TrainerServiceTest {
 
     @Test
     public void test_updateWithInvalidTrainer_missingEmail_shouldThrowException() {
-        assertThrows(ValidationException.class, () -> trainerService.update(INVALID_TRAINER_MISSING_MAIL));
+        assertThrows(ValidationException.class,
+                     () -> trainerService.update(INVALID_TRAINER_MISSING_MAIL)
+        );
     }
+
 
     @Test
     public void test_updateWithInvalidTrainer_missingPhone_shouldThrowException() {
-        assertThrows(ValidationException.class, () -> trainerService.update(INVALID_TRAINER_MISSING_PHONE));
+        assertThrows(ValidationException.class,
+                     () -> trainerService.update(INVALID_TRAINER_MISSING_PHONE)
+        );
     }
-
-
-
 
 
     /**
@@ -210,22 +232,32 @@ public class TrainerServiceTest {
 
     @Test
     public void test_saveInvalidTrainer_missingCreated_shouldThrowException() {
-        assertThrows(InvalidEntityException.class, () -> validator.validateTrainer(INVALID_TRAINER_MISSING_CREATED));
+        assertThrows(InvalidEntityException.class,
+                     () -> validator.validateTrainer(INVALID_TRAINER_MISSING_CREATED)
+        );
     }
+
 
     @Test
     public void test_saveInvalidTrainer_missingUpdated_shouldThrowException() {
-        assertThrows(InvalidEntityException.class, () ->validator.validateTrainer(INVALID_TRAINER_MISSING_UPDATE));
+        assertThrows(InvalidEntityException.class,
+                     () -> validator.validateTrainer(INVALID_TRAINER_MISSING_UPDATE)
+        );
     }
+
 
     @Test
     public void test_saveInvalidTrainer_wrongCreation_shouldThrowException() {
-        assertThrows(InvalidEntityException.class, () -> validator.validateTrainer(INVALID_TRAINER_FUTURE_CREATION_TIME));
+        assertThrows(InvalidEntityException.class,
+                     () -> validator.validateTrainer(INVALID_TRAINER_FUTURE_CREATION_TIME)
+        );
     }
+
 
     @Test
     public void test_saveInvalidTrainer_wrongUpdate_shouldThrowException() {
-        assertThrows(InvalidEntityException.class, () -> validator.validateTrainer(INVALID_TRAINER_FUTURE_UPDATE_TIME));
+        assertThrows(InvalidEntityException.class,
+                     () -> validator.validateTrainer(INVALID_TRAINER_FUTURE_UPDATE_TIME)
+        );
     }
-
 }

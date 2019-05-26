@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm.groupphase.backend.testObjects;
+package at.ac.tuwien.sepm.groupphase.backend.TestObjects;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.enums.Room;

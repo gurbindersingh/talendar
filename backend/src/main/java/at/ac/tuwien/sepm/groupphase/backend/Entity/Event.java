@@ -25,25 +25,34 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false)
     private Long id;
+
     @Column(name = "name", nullable = false)
     @NotBlank
     private String name;
+
     @NotNull
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "event", orphanRemoval = true, cascade = {CascadeType.PERSIST, CascadeType.MERGE}) //check how cascade works in all methods
+    @OneToMany(fetch = FetchType.LAZY,
+               mappedBy = "event",
+               orphanRemoval = true,
+               cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    //check how cascade works in all methods
     @JsonIgnoreProperties("event")
     private List<RoomUse> roomUses = new LinkedList<>();
+
     @Column(name = "created", updatable = false)
     @Past
     @NotNull
     private LocalDateTime created;
+
     @Column(name = "updated")
     @Past
     @NotNull
     private LocalDateTime updated; //LocalDateTime > Date
+
     @Column(name = "event_type", nullable = false)
     private EventType eventType;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     @JoinTable(
         name = "event_customer",
         joinColumns = { @JoinColumn(name = "fk_event", referencedColumnName = "id")},
@@ -105,12 +114,18 @@ public class Event {
         These Variables are Rent Specific
      */
 
-    public Event(){
+
+    public Event () {
 
     }
 
 
-    public Event (@NotBlank String name, @NotNull List<RoomUse> roomUses, @Past @NotNull LocalDateTime created, @Past @NotNull LocalDateTime updated, EventType eventType, Set<Customer> customers, Trainer trainer, int headcount, int ageToBe, String birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipant, String description, Integer minAge, Integer maxAge) {
+    public Event (@NotBlank String name, @NotNull List<RoomUse> roomUses,
+                  @Past @NotNull LocalDateTime created, @Past @NotNull LocalDateTime updated,
+                  EventType eventType, Set<Customer> customers, Trainer trainer, int headcount,
+                  int ageToBe, String birthdayType, LocalDateTime endOfApplication, Double price,
+                  Integer maxParticipant, String description, Integer minAge, Integer maxAge
+    ) {
         this.name = name;
         this.roomUses = roomUses;
         this.created = created;
@@ -300,58 +315,60 @@ public class Event {
     }
 
 
-
     @Override
     public boolean equals (Object o) {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
         Event event = (Event) o;
         return headcount == event.headcount &&
-            ageToBe == event.ageToBe &&
-            Objects.equals(id, event.id) &&
-            Objects.equals(name, event.name) &&
-            Objects.equals(roomUses, event.roomUses) &&
-            Objects.equals(created, event.created) &&
-            Objects.equals(updated, event.updated) &&
-            eventType == event.eventType &&
-            Objects.equals(customers, event.customers) &&
-            Objects.equals(trainer, event.trainer) &&
-            birthdayType == event.birthdayType &&
-            Objects.equals(endOfApplication, event.endOfApplication) &&
-            Objects.equals(price, event.price) &&
-            Objects.equals(maxParticipant, event.maxParticipant) &&
-            Objects.equals(description, event.description) &&
-            Objects.equals(minAge, event.minAge) &&
-            Objects.equals(maxAge, event.maxAge);
+               ageToBe == event.ageToBe &&
+               Objects.equals(id, event.id) &&
+               Objects.equals(name, event.name) &&
+               Objects.equals(roomUses, event.roomUses) &&
+               Objects.equals(created, event.created) &&
+               Objects.equals(updated, event.updated) &&
+               eventType == event.eventType &&
+               Objects.equals(customers, event.customers) &&
+               Objects.equals(trainer, event.trainer) &&
+               birthdayType == event.birthdayType &&
+               Objects.equals(endOfApplication, event.endOfApplication) &&
+               Objects.equals(price, event.price) &&
+               Objects.equals(maxParticipant, event.maxParticipant) &&
+               Objects.equals(description, event.description) &&
+               Objects.equals(minAge, event.minAge) &&
+               Objects.equals(maxAge, event.maxAge);
     }
 
 
     @Override
     public int hashCode () {
-        return Objects.hash(id, name, roomUses, created, updated, eventType, customers, trainer, headcount, ageToBe, birthdayType, endOfApplication, price, maxParticipant, description, minAge, maxAge);
+        return Objects.hash(id, name, roomUses, created, updated, eventType, customers, trainer,
+                            headcount, ageToBe, birthdayType, endOfApplication, price,
+                            maxParticipant, description, minAge, maxAge
+        );
     }
 
 
     @Override
     public String toString () {
         return "Event{" +
-            "id=" + id +
-            ", name='" + name + '\'' +
-            ", roomUses=" + roomUses +
-            ", created=" + created +
-            ", updated=" + updated +
-            ", eventType=" + eventType +
-            ", customers=" + customers +
-            ", trainer=" + trainer +
-            ", headcount=" + headcount +
-            ", ageToBe=" + ageToBe +
-            ", birthdayType=" + birthdayType +
-            ", endOfApplication=" + endOfApplication +
-            ", price=" + price +
-            ", maxParticipant=" + maxParticipant +
-            ", description='" + description + '\'' +
-            ", minAge=" + minAge +
-            ", maxAge=" + maxAge +
-            '}';
+               "id=" + id +
+               ", name='" + name + '\'' +
+               ", roomUses=" + roomUses +
+               ", created=" + created +
+               ", updated=" + updated +
+               ", eventType=" + eventType +
+               ", customers=" + customers +
+               ", trainer=" + trainer.getFirstName() + trainer.getLastName() +
+               ", headcount=" + headcount +
+               ", ageToBe=" + ageToBe +
+               ", birthdayType=" + birthdayType +
+               ", endOfApplication=" + endOfApplication +
+               ", price=" + price +
+               ", maxParticipant=" + maxParticipant +
+               ", description='" + description + '\'' +
+               ", minAge=" + minAge +
+               ", maxAge=" + maxAge +
+               '}';
     }
 }

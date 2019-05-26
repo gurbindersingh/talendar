@@ -14,4 +14,6 @@ public interface EventRepository extends JpaRepository<Event, Integer> {
     List<RoomUse> findByTrainer_IdAndRoomUses_BeginGreaterThanEqual(Long id, LocalDateTime now);
 
     Event findById(Long id);
+
+    List<Event> findByTrainer_Id (Long id);
 }
