@@ -7,18 +7,12 @@ import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
-public abstract class RoomUseMapper {
+public interface RoomUseMapper {
 
-    public RoomUseMapper INSTANCE = Mappers.getMapper(RoomUseMapper.class);
+    RoomUseMapper INSTANCE = Mappers.getMapper(RoomUseMapper.class);
 
-    public abstract RoomUse dtoToRoomUseEntity(RoomUseDto roomUseDto);
+    RoomUse dtoToRoomUseEntity(RoomUseDto roomUseDto);
 
-    @Mapping(target = "event", ignore = true)
-    public abstract RoomUseDto entityToRoomUseDto(RoomUse roomUse);
-
-    @AfterMapping
-    protected void ignoreEventRooms(RoomUse entity, @MappingTarget RoomUseDto dto){
-        dto.getEvent().setRoomUses(null);
-    }
+    RoomUseDto entityToRoomUseDto(RoomUse roomUse);
 
 }

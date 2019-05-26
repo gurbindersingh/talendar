@@ -10,8 +10,6 @@ import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
-import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidEntityException;
-import org.apache.tomcat.jni.Local;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -22,232 +20,243 @@ import java.util.regex.Pattern;
 public class Validator{
     // matches any kind of regular phone number format
     // e.g. 0660 123 45 67, +(43) 01 234-56-78
-    String phoneRegex = "^[+]*[(]{0,1}[0-9]{1,5}[)]{0,1}[-\\s\\./0-9]*$";
-    String emailRegex = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])";
-    Pattern phonePattern = Pattern.compile(phoneRegex);
-    Pattern emailPattern = Pattern.compile(emailRegex);
+    private String phoneRegex = "^[+]*[(]{0,1}[0-9]{1,5}[)]{0,1}[-\\s\\./0-9]*$";
+    private String emailRegex = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])";
+    private Pattern phonePattern = Pattern.compile(phoneRegex);
+    private Pattern emailPattern = Pattern.compile(emailRegex);
 
-
-    public void validateRent(Event rent) throws InvalidEntityException{
+    public void validateEvent (Event event) throws InvalidEntityException {
         LocalDateTime now = LocalDateTime.now();
-        if (rent.getCreated() == null || rent.getCreated().isAfter(now)) {
-            throw new InvalidEntityException("creation time must be set (past date)");
+
+        // Validation for common stuff
+        if(event.getCreated() == null || event.getCreated().isAfter(now)) {
+            throw new InvalidEntityException("");
         }
-        if (rent.getUpdated() == null || rent.getUpdated().isAfter(now)) {
-            throw new InvalidEntityException("lates update time must be set (past date)");
+        if(event.getUpdated() == null || event.getUpdated().isAfter(now)) {
+            throw new InvalidEntityException("");
         }
-        if (rent.getCreated().isAfter(rent.getUpdated())) {
-            throw new InvalidEntityException("create time may not be changed afterwards and has to be before latest update time");
+        if(event.getCreated().isAfter(event.getUpdated())) {
+            throw new InvalidEntityException("");
         }
-        if(rent.getCustomers().size() != 1){
-            throw new InvalidEntityException("A Rent cannot have more or less than 1 renter.");
+        if(event.getName() == null || event.getName().isBlank()){
+            throw new InvalidEntityException("Name nicht gesetzt");
         }
-        try {
-            for(Customer c: rent.getCustomers()
+        if(event.getRoomUses() == null){
+            throw new InvalidEntityException("");
+        }
+        // Validator for Birthdays
+        if(event.getEventType() == EventType.Birthday) {
+            if(event.getHeadcount() < 5) {
+                throw new InvalidEntityException("Anzahl der Kinder die kommen ist kleiner 5");
+            }
+            if(event.getHeadcount() > 20){
+                throw new InvalidEntityException("Anzahl der Kinder die kommen ist größer als 20");
+            }
+            if(event.getAgeToBe() < 0){
+                throw new InvalidEntityException("Alter ist negativ");
+            }
+            if(event.getAgeToBe() > 20){
+                throw new InvalidEntityException("Alter ist größer als 20");
+            }
+            if(event.getCustomers() == null || event.getCustomers().size() != 1) {
+                throw new InvalidEntityException("Kunde nicht gesetzt");
+            }
+            if(event.getBirthdayType() == null || event.getBirthdayType().isBlank()){
+                throw new InvalidEntityException("Geburtstagtyp nicht gesetzt");
+            }
+            try {
+                for(Customer x : event.getCustomers()
                 ) {
-                validateCustomer(c);
+                    validateCustomer(x);
+                }
             }
-        } catch(InvalidEntityException ie){
-            throw ie;
-        }
-    }
-
-
-    public void validateCourse(Event course) throws InvalidEntityException{
-        LocalDateTime now = LocalDateTime.now();
-
-        if(course.getName() == null || course.getName().isBlank()){
-            throw new InvalidEntityException("Name cannot be empty");
-        }
-        if (course.getCreated() == null || course.getCreated().isAfter(now)) {
-            throw new InvalidEntityException("creation time must be set (past date)");
-        }
-        if (course.getUpdated() == null || course.getUpdated().isAfter(now)) {
-            throw new InvalidEntityException("lates update time must be set (past date)");
-        }
-        if (course.getCreated().isAfter(course.getUpdated())) {
-            throw new InvalidEntityException("create time may not be changed afterwards and has to be before latest update time");
-        }
-
-        if(course.getEndOfApplication() == null){
-            throw new InvalidEntityException("End of application is not set");
-        } else if(course.getEndOfApplication().isBefore(now)){
-            throw new InvalidEntityException("End of application should be in future");
-        }
-
-        if(course.getPrice() == null){
-            throw new InvalidEntityException("Price not set");
-        } else if(course.getPrice() < 0){
-            throw new InvalidEntityException("Price cant be negative");
-        }
-
-        if(course.getMaxParticipant() == null){
-            throw new InvalidEntityException("Maximum participant is not set");
-        } else if(course.getMaxParticipant() < 5){
-            throw new InvalidEntityException("Maximum participant should be bigger than 5");
-        }
-
-        if(course.getMinAge() != null && course.getMaxAge() != null) {
-            if(course.getMinAge() < 0 || course.getMaxAge() > 100 || course.getMinAge() > course.getMaxAge()) {
-                throw new InvalidEntityException("Min or max age is invalid");
-            }
-        } else if(course.getMinAge() != null && course.getMinAge() < 0){
-            throw new InvalidEntityException("Min cant be smaller than 0");
-        } else if(course.getMaxAge() != null && course.getMaxAge() > 100){
-            throw new InvalidEntityException("Min cant be greater than 100");
-        }
-
-        if(course.getDescription() == null || course.getDescription().isBlank()){
-            throw new InvalidEntityException("Description is not set");
-        }
-
-        if(course.getTrainer() == null){
-            throw new InvalidEntityException("Trainer is not set");
-        } else{
-            try{
-                this.validateTrainer(course.getTrainer());
-            } catch(InvalidEntityException e){
+            catch(InvalidEntityException e) {
                 throw e;
             }
-        }
 
-        if(course.getCustomers() != null){
-            throw new InvalidEntityException("Customer list should be null");
-        }
-
-    }
-
-
-
-    public void validateBirthday(Event birthday) throws InvalidEntityException{
-        if(birthday.getEventType() != EventType.Birthday){
-            throw new InvalidEntityException("This is was supposed to be a birthday");
-        }
-        LocalDateTime now = LocalDateTime.now();
-        if(birthday.getName() == null || birthday.getName().isBlank()){
-            throw new InvalidEntityException("Name cannot be empty");
-        }
-        if(birthday.getTrainer() == null){
-            throw new InvalidEntityException("Trainer Invalid");
-        }
-        if (birthday.getCreated() == null || birthday.getCreated().isAfter(now)) {
-            throw new InvalidEntityException("creation time must be set (past date)");
-        }
-        if (birthday.getUpdated() == null || birthday.getUpdated().isAfter(now)) {
-            throw new InvalidEntityException("lates update time must be set (past date)");
-        }
-        if (birthday.getCreated().isAfter(birthday.getUpdated())) {
-            throw new InvalidEntityException("create time may not be changed afterwards and has to be before latest update time");
-        }
-        if(birthday.getHeadcount() < 0){
-            throw new InvalidEntityException("Head Count cannot be less than 0");
-        }
-        if(birthday.getAgeToBe() < 0 || birthday.getAgeToBe() > 20){
-            throw new InvalidEntityException("Average age invalid");
-        }
-        if(birthday.getCustomers().size() != 1){
-            throw new InvalidEntityException("Too many or too little customers for a birthday");
-        }
-
-        try{
-            for(Customer x: birthday.getCustomers()
+            try {
+                for(RoomUse r : event.getRoomUses()
                 ) {
-                validateCustomer(x);
+                    validateRoomUse(r);
+                }
             }
-        }catch(InvalidEntityException e){
-            throw e;
-        }
-
-        try{
-            for(RoomUse r:birthday.getRoomUses()
-                ) {
-                validateRoomUse(r);
+            catch(InvalidEntityException e) {
+                throw e;
             }
-        }catch(InvalidEntityException e){
-            throw e;
+
         }
 
-        try{
-            validateTrainer(birthday.getTrainer());
-        }catch(InvalidEntityException e){
-            throw e;
+        // Validator for Consultation
+        if(event.getEventType() == EventType.Consultation) {
+
         }
 
+        // Validator for Course
+        if(event.getEventType() == EventType.Course) {
+            if(event.getEndOfApplication() == null) {
+                throw new InvalidEntityException("Anmeldefrist ist nicht gesetzt");
+            }
+            else if(event.getEndOfApplication().isBefore(now)) {
+                throw new InvalidEntityException("Anmeldefrist liegt nicht in der Zukunft");
+            }
 
+            if(event.getPrice() == null) {
+                throw new InvalidEntityException("Preis ist nicht gesetzt");
+            }
+            else if(event.getPrice() < 0) {
+                throw new InvalidEntityException("Preis ist negativ");
+            }
 
+            if(event.getMaxParticipant() == null) {
+                throw new InvalidEntityException("Maximale Teilnehmerzahl ist nicht gesetzt");
+            }
+            else if(event.getMaxParticipant() < 5) {
+                throw new InvalidEntityException("Maximale Teilnehmerzahl ist kleiner als 5");
+            }
+
+            if(event.getMinAge() == null){
+                throw new InvalidEntityException("Minimum Alter ist nicht gesetzt");
+            }
+
+            if(event.getMaxAge() == null){
+                throw new InvalidEntityException("Maximum Alter ist nicht gesetzt");
+            }
+
+            if(event.getMinAge() > event.getMaxAge()){
+                throw new InvalidEntityException("Minimum Alter ist größer als maximum Alter");
+            }
+
+            if(event.getMinAge() < 0) {
+                throw new InvalidEntityException("Minimum Alter ist kleiner als 0");
+            }
+
+            if(event.getMaxAge() > 100){
+                throw new InvalidEntityException("Maximum Alter ist größer als 100");
+            }
+
+            if(event.getDescription() == null || event.getDescription().isBlank()) {
+                throw new InvalidEntityException("Beschreibung ist nicht gesetzt");
+            }
+
+            if(event.getTrainer() == null && event.getTrainer().getId() == null) {
+                throw new InvalidEntityException("Trainer Id ist nicht gesetzt");
+            }
+
+            if(event.getCustomers() != null) {
+                throw new InvalidEntityException("Kundenliste ist nicht leer");
+            }
+        }
+
+        // Validator for Rent
+        if(event.getEventType() == EventType.Rent) {
+
+            if(event.getCustomers().size() != 1) {
+                throw new InvalidEntityException("");
+            }
+            try {
+                for(Customer c : event.getCustomers()) {
+                    validateCustomer(c);
+                }
+                for(RoomUse r : event.getRoomUses()) {
+                    validateRoomUse(r);
+                }
+            }
+            catch(InvalidEntityException ie) {
+                throw ie;
+            }
+        }
     }
-    public void validateRoomUse(RoomUse entity) throws InvalidEntityException{
-        if(entity.getBegin().isAfter(entity.getEnd())){
-            throw new InvalidEntityException("The End of the use cannot be later than the begining");
+
+
+    public void validateRoomUse (RoomUse entity) throws InvalidEntityException {
+        LocalDateTime now = LocalDateTime.now();
+        if(entity.getBegin().isAfter(entity.getEnd())) {
+            throw new InvalidEntityException("Das Von-Datum findet später als Bis-Datum statt");
+        }
+        if(entity.getBegin().getHour() < 8 || entity.getBegin().getHour() > 22) {
+            throw new InvalidEntityException("Das Von-Datum findet außerhalb der Öffnungszeiten statt");
+        }
+        if(entity.getEnd().getHour() < 8 || entity.getEnd().getHour() > 22) {
+            throw new InvalidEntityException("Das End-Datum findet außerhalb der Öffnungszeiten statt");
+        }
+        if(entity.getBegin().isBefore(now)){
+            throw new InvalidEntityException("Das Von-Datum findet in der Vegangenheit statt");
         }
     }
 
-    public void validateCustomer(Customer entity) throws InvalidEntityException{
-        if (entity.getPhone() == null || !phonePattern.matcher(entity.getPhone()).find()) {
-            throw new InvalidEntityException("a valid phone number must be set");
+
+    public void validateCustomer (Customer entity) throws InvalidEntityException {
+        if(entity.getPhone() == null || !phonePattern.matcher(entity.getPhone()).find()) {
+            throw new InvalidEntityException("Telefonnummer ist ungültig");
         }
 
-        if (entity.getEmail() == null || !emailPattern.matcher(entity.getEmail()).find()) {
-            throw new InvalidEntityException("a valid email address must be set");
+        if(entity.getEmail() == null || !emailPattern.matcher(entity.getEmail()).find()) {
+            throw new InvalidEntityException("E-Mail Adresse ist ungültig");
         }
-        if (entity.getFirstName() == null || entity.getFirstName().isBlank()) {
-            throw new InvalidEntityException("first name must be set");
+        if(entity.getFirstName() == null || entity.getFirstName().isBlank()) {
+            throw new InvalidEntityException("Vorname ist nicht gesetzt");
         }
-        if (entity.getLastName() == null || entity.getLastName().isBlank()) {
-            throw new InvalidEntityException("last name must be set");
+        if(entity.getLastName() == null || entity.getLastName().isBlank()) {
+            throw new InvalidEntityException("Nachname ist nicht gesetzt");
         }
     }
 
-    public void validateTrainer(Trainer entity) throws InvalidEntityException {
+
+    public void validateTrainer (Trainer entity) throws InvalidEntityException {
         LocalDateTime now = LocalDateTime.now();
 
-        if (entity.getFirstName() == null || entity.getFirstName().isBlank()) {
-            throw new InvalidEntityException("first name must be set");
+        if(entity.getFirstName() == null || entity.getFirstName().isBlank()) {
+            throw new InvalidEntityException("Vorname ist nicht gesetzt");
         }
 
-        if (entity.getLastName() == null || entity.getLastName().isBlank()) {
-            throw new InvalidEntityException("last name must be set");
+        if(entity.getLastName() == null || entity.getLastName().isBlank()) {
+            throw new InvalidEntityException("Nachname ist nicht gesetzt");
         }
 
-        if (entity.getBirthday() ==  null || entity.getBirthday().isAfter(LocalDate.now())) {
-            throw new InvalidEntityException("age must be specified and a past date");
-        } else if (((LocalDate.now().getYear() - entity.getBirthday().getYear()) < 16) || ((LocalDate.now().getYear() - entity.getBirthday().getYear()) > 120) ) {
-            throw new InvalidEntityException("age must be a reasonable value");
+        if(entity.getBirthday() == null || entity.getBirthday().isAfter(LocalDate.now())) {
+            throw new InvalidEntityException("Geburtstag liegt in der Zukunft");
+        }
+        else if(( ( LocalDate.now().getYear() - entity.getBirthday().getYear() ) < 16 ) || ( ( LocalDate.now().getYear() - entity.getBirthday().getYear() ) > 120 )) {
+            throw new InvalidEntityException("Trainer ist jünger als 16 oder älter als 120");
         }
 
-        if (entity.getPhone() == null || !phonePattern.matcher(entity.getPhone()).find()) {
-            throw new InvalidEntityException("a valid phone number must be set");
+        if(entity.getPhone() == null || !phonePattern.matcher(entity.getPhone()).find()) {
+            throw new InvalidEntityException("Telefonnummer ist ungültig");
         }
 
-        if (entity.getEmail() == null || !emailPattern.matcher(entity.getEmail()).find()) {
-            throw new InvalidEntityException("a valid email address must be set");
+        if(entity.getEmail() == null || !emailPattern.matcher(entity.getEmail()).find()) {
+            throw new InvalidEntityException("E-Mail Adresse ist ungültig");
         }
 
-        if (entity.getCreated() == null || entity.getCreated().isAfter(now)) {
-            throw new InvalidEntityException("creation time must be set (past date)");
+        if(entity.getCreated() == null || entity.getCreated().isAfter(now)) {
+            throw new InvalidEntityException("");
         }
 
-        if (entity.getUpdated() == null || entity.getUpdated().isAfter(now)) {
-            throw new InvalidEntityException("lates update time must be set (past date)");
+        if(entity.getUpdated() == null || entity.getUpdated().isAfter(now)) {
+            throw new InvalidEntityException("");
         }
 
-        if (entity.getCreated().isAfter(entity.getUpdated())) {
-            throw new InvalidEntityException("create time may not be changed afterwards and has to be before latest update time");}
+        if(entity.getCreated().isAfter(entity.getUpdated())) {
+            throw new InvalidEntityException("");
+        }
     }
+
 
     public void validateHoliday (Holiday holiday) throws InvalidEntityException {
-
-        if (holiday.getId() != null) {
-            throw new InvalidEntityException("id must be null");
+        if(holiday.getTrainer() == null) {
+            throw new InvalidEntityException("Trainer nicht gesetzt");
         }
-        if (holiday.getTrainerid() == null) {
-            throw new InvalidEntityException("Trainerid must not be null");
+        if(holiday.getId() != null) {
+            throw new InvalidEntityException("Trainer nicht gesetzt");
         }
-        if (holiday.getHolidayStart().isAfter(holiday.getHolidayEnd())) {
-            throw new InvalidEntityException("Start of holiday must be before the end");
+        if(holiday.getTrainer().getId() == null) {
+            throw new InvalidEntityException("Trainer nicht gesetzt");
         }
-        if (holiday.getHolidayStart().isBefore(LocalDateTime.now())) {
-            throw new InvalidEntityException("Holidays can only take place in the future");
+        if(holiday.getHolidayStart().isAfter(holiday.getHolidayEnd())) {
+            throw new InvalidEntityException("Das Von-Datum findet später als Bis-Datum");
+        }
+        if(holiday.getHolidayStart().isBefore(LocalDateTime.now())) {
+            throw new InvalidEntityException("Das Von-Datum findet in der Vergangenheit statt");
         }
     }
 }

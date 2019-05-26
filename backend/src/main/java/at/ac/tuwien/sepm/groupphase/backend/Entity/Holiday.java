@@ -1,9 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.Entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -16,7 +13,8 @@ public class Holiday {
     private Long id;
 
     @NotNull
-    private Integer trainerid;
+    @ManyToOne
+    private Trainer trainer;
 
     @NotNull
     @Future
@@ -29,8 +27,8 @@ public class Holiday {
     public Holiday(){}
 
 
-    public Holiday (@NotNull Integer trainerid, @NotNull LocalDateTime holidayStart, @NotNull LocalDateTime holidayEnd) {
-        this.trainerid = trainerid;
+    public Holiday (@NotNull Trainer trainer, @NotNull LocalDateTime holidayStart, @NotNull LocalDateTime holidayEnd) {
+        this.trainer = trainer;
         this.holidayStart = holidayStart;
         this.holidayEnd = holidayEnd;
     }
@@ -46,13 +44,13 @@ public class Holiday {
     }
 
 
-    public Integer getTrainerid () {
-        return trainerid;
+    public Trainer getTrainer () {
+        return trainer;
     }
 
 
-    public void setTrainerid (Integer trainerid) {
-        this.trainerid = trainerid;
+    public void setTrainer (Trainer trainer) {
+        this.trainer = trainer;
     }
 
 
@@ -82,7 +80,7 @@ public class Holiday {
         if(o == null || getClass() != o.getClass()) return false;
         Holiday holiday = (Holiday) o;
         return Objects.equals(id, holiday.id) &&
-            Objects.equals(trainerid, holiday.trainerid) &&
+            Objects.equals(trainer, holiday.trainer) &&
             Objects.equals(holidayStart, holiday.holidayStart) &&
             Objects.equals(holidayEnd, holiday.holidayEnd);
     }
@@ -90,7 +88,7 @@ public class Holiday {
 
     @Override
     public int hashCode () {
-        return Objects.hash(id, trainerid, holidayStart, holidayEnd);
+        return Objects.hash(id, trainer, holidayStart, holidayEnd);
     }
 
 
@@ -98,7 +96,7 @@ public class Holiday {
     public String toString () {
         return "Holiday{" +
             "id=" + id +
-            ", trainerid=" + trainerid +
+            ", trainerid=" + trainer+
             ", holidayStart=" + holidayStart +
             ", holidayEnd=" + holidayEnd +
             '}';

@@ -1,9 +1,11 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest.dto;
 
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
-import at.ac.tuwien.sepm.groupphase.backend.enums.BirthdayType;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,15 +21,17 @@ public class EventDto {
     private Long id;
     private EventType eventType;
     private String name;
+    @JsonIgnoreProperties("event")
     private List<RoomUse> roomUses = new LinkedList<>();
     private LocalDateTime created;
     private LocalDateTime updated;
-    private Set<CustomerDto> customerDtos;
+    @JsonIgnoreProperties("eventDtos")
+    private List<CustomerDto> customerDtos = new LinkedList<>();
 
     /*
         These Variables are used by non Rent Types
      */
-
+    @JsonIgnoreProperties("events")
     private Trainer trainer;
 
     /*
@@ -36,7 +40,7 @@ public class EventDto {
 
     private int headcount;
     private int ageToBe;
-    private BirthdayType birthdayType;
+    private String birthdayType;
 
      /*
         These Variables are Consulatation Specicfic
@@ -67,7 +71,7 @@ public class EventDto {
     }
 
 
-    public EventDto (Long id, EventType eventType, String name, List<RoomUse> roomUses, LocalDateTime created, LocalDateTime updated, Set<CustomerDto> customerDtos, Trainer trainer, int headcount, int ageToBe, BirthdayType birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipant, String description, Integer minAge, Integer maxAge) {
+    public EventDto (Long id, EventType eventType, String name, List<RoomUse> roomUses, LocalDateTime created, LocalDateTime updated, List<CustomerDto> customerDtos, Trainer trainer, int headcount, int ageToBe, String birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipant, String description, Integer minAge, Integer maxAge) {
         this.id = id;
         this.eventType = eventType;
         this.name = name;
@@ -148,12 +152,12 @@ public class EventDto {
     }
 
 
-    public Set<CustomerDto> getCustomerDtos () {
+    public List<CustomerDto> getCustomerDtos () {
         return customerDtos;
     }
 
 
-    public void setCustomerDtos (Set<CustomerDto> customerDtos) {
+    public void setCustomerDtos (List<CustomerDto> customerDtos) {
         this.customerDtos = customerDtos;
     }
 
@@ -188,12 +192,12 @@ public class EventDto {
     }
 
 
-    public BirthdayType getBirthdayType () {
+    public String getBirthdayType () {
         return birthdayType;
     }
 
 
-    public void setBirthdayType (BirthdayType birthdayType) {
+    public void setBirthdayType (String birthdayType) {
         this.birthdayType = birthdayType;
     }
 
@@ -298,7 +302,7 @@ public class EventDto {
             ", roomUses=" + roomUses +
             ", created=" + created +
             ", updated=" + updated +
-            ", customerDtos=" + customerDtos +
+            ", customers=" + customerDtos +
             ", trainer=" + trainer +
             ", headcount=" + headcount +
             ", ageToBe=" + ageToBe +

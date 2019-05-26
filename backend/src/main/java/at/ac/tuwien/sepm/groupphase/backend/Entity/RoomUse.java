@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.Entity;
 
 import at.ac.tuwien.sepm.groupphase.backend.enums.Room;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -23,6 +24,7 @@ public class RoomUse {
     private Room room;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id")
+    @JsonIgnoreProperties("roomUses")
     private Event event;
 
     public RoomUse(){
@@ -102,7 +104,7 @@ public class RoomUse {
 
     @Override
     public int hashCode () {
-        return Objects.hash(id, begin, end, room, event);
+        return Objects.hash(id, begin, end, room);
     }
 
 
@@ -113,7 +115,6 @@ public class RoomUse {
             ", begin=" + begin +
             ", end=" + end +
             ", room=" + room +
-            ", event=" + event +
             '}';
     }
 }
