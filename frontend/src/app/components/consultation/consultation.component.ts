@@ -4,8 +4,10 @@ import { Customer } from 'src/app/models/customer';
 import { RoomUse } from 'src/app/models/roomUse';
 import { NgForm } from '@angular/forms';
 import { Room } from 'src/app/models/enum/room';
+import { Trainer } from 'src/app/models/trainer';
 import { EventType } from 'src/app/models/enum/eventType';
 import { EventClient } from 'src/app/rest/event-client';
+import { TrainerClient } from 'src/app/rest/trainer-client';
 import { HttpResponse } from '@angular/common/http';
 
 import {
@@ -23,6 +25,8 @@ export class ConsultationComponent implements OnInit {
     private event: Event = new Event();
     private customer: Customer = new Customer();
     private roomUse: RoomUse = new RoomUse();
+    private trainers: Trainer[] = [];
+    private trainer: Trainer = new Trainer();
 
     private errorMsg: string;
     private successMsg: string;
@@ -33,16 +37,28 @@ export class ConsultationComponent implements OnInit {
     endTime: NgbTimeStruct;
 
     title = 'Beratungstermin buchen';
+    trainerString = 'Trainer auswählen';
     roomString = 'Raum auswählen';
     rooms: string[] = ['Grün', 'Orange', 'Erdgeschoss'];
     minuteStep = 15;
 
     constructor(
+        private trainerClient: TrainerClient,
         private eventClient: EventClient,
         private parserFormatter: NgbDateParserFormatter
     ) {}
 
-    ngOnInit() {}
+    ngOnInit() {
+        console.log('Init Trainer List');
+        this.trainerClient.getAll().subscribe(
+            (list: Trainer[]) => {
+                this.trainers = list;
+            },
+            (error) => {
+                console.log(error);
+            }
+        );
+    }
 
     public postConsultation(form: NgForm): void {
         this.roomUse.begin = this.dateToString(this.startDate, this.startTime);
@@ -52,6 +68,7 @@ export class ConsultationComponent implements OnInit {
         this.event.customerDtos = [this.customer];
         this.event.roomUses = [this.roomUse];
         this.event.eventType = EventType.Consultation;
+        this.event.trainer = this.trainer;
 
         this.eventClient.postNewEvent(this.event).subscribe(
             (data: Event) => {
@@ -67,8 +84,13 @@ export class ConsultationComponent implements OnInit {
         );
     }
 
-    public changeSortOrder(room: string): void {
+    public changeSortOrderRoom(room: string): void {
         this.roomString = room;
+    }
+
+    public changeSortOrderTrainer(trainer: Trainer): void {
+        this.trainerString = trainer.firstName + ' ' + trainer.lastName;
+        this.trainer = trainer;
     }
 
     private roomSelected(trainer: string): Room {
@@ -113,6 +135,9 @@ export class ConsultationComponent implements OnInit {
             return false;
         }
         if (this.endTime === undefined) {
+            return false;
+        }
+        if (this.trainer === undefined) {
             return false;
         }
         return true;

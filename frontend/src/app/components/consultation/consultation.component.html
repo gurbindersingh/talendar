@@ -165,36 +165,36 @@
                     id="roomButtonSelected"
                     name="roomButton"
                     *ngFor="let room of rooms"
-                    (click)="changeSortOrder(room)"
+                    (click)="changeSortOrderRoom(room)"
                 >
                     {{ room }}
                 </button>
             </div>
         </div>
 
-        <!-- <div class="col-lg-3" id="consultationDropDown">
+        <div class="col-lg-3" id="consultationDropDown">
             <div ngbDropdown class="d-inline-block col-lg-3">
                 <button
                     class="btn btn-outline-primary"
-                    id="roomButtonStart"
-                    name="roomButton"
+                    id="trainerButtonStart"
+                    name="trainerButton"
                     ngbDropdownToggle
                 >
-                    {{ roomString }}
+                    {{ trainerString }}
                 </button>
                 <div ngbDropdownMenu aria-labelledby="dropdownBasic2">
                     <button
                         class="dropdown-item"
-                        id="roomButtonSelected"
-                        name="roomButton"
-                        *ngFor="let room of rooms"
-                        (click)="changeSortOrder(room)"
+                        id="trainerButtonSelected"
+                        name="trainerButton"
+                        *ngFor="let trainer of trainers"
+                        (click)="changeSortOrderTrainer(trainer)"
                     >
-                        {{ room }}
+                        {{ trainer.firstName + " " + trainer.lastName }}
                     </button>
                 </div>
             </div>
-        </div> -->
+        </div>
     </div>
 
     <div class="row" *ngIf="errorMsg">
