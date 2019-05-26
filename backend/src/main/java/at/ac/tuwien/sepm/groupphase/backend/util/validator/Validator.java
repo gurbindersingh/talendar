@@ -107,11 +107,15 @@ public class Validator{
                 throw new InvalidEntityException("Preis ist negativ");
             }
 
-            if(event.getMaxParticipant() == null) {
-                throw new InvalidEntityException("Maximale Teilnehmerzahl ist nicht gesetzt");
+            if(event.getMaxParticipants() == null) {
+                throw new InvalidEntityException("Maximale Teilnehmeranzahl ist nicht gesetzt");
             }
-            else if(event.getMaxParticipant() < 5) {
-                throw new InvalidEntityException("Maximale Teilnehmerzahl ist kleiner als 5");
+            else if(event.getMaxParticipants() < 5) {
+                throw new InvalidEntityException("Maximale Teilnehmeranzahl ist kleiner als 5");
+            }
+
+            if(event.getMaxParticipants() > 30) {
+                throw new InvalidEntityException("Maximale Teilnehmeranzahl ist größer als 30");
             }
 
             if(event.getMinAge() == null){
@@ -126,8 +130,8 @@ public class Validator{
                 throw new InvalidEntityException("Minimum Alter ist größer als maximum Alter");
             }
 
-            if(event.getMinAge() < 0) {
-                throw new InvalidEntityException("Minimum Alter ist kleiner als 0");
+            if(event.getMinAge() < 5) {
+                throw new InvalidEntityException("Minimum Alter ist kleiner als 5");
             }
 
             if(event.getMaxAge() > 100){
@@ -138,11 +142,10 @@ public class Validator{
                 throw new InvalidEntityException("Beschreibung ist nicht gesetzt");
             }
 
-            if(event.getTrainer() == null && event.getTrainer().getId() == null) {
+            if(event.getTrainer() == null || event.getTrainer().getId() == null) {
                 throw new InvalidEntityException("Trainer Id ist nicht gesetzt");
             }
-
-            if(event.getCustomers() != null) {
+            if(event.getCustomers() != null && !event.getCustomers().isEmpty()) {
                 throw new InvalidEntityException("Kundenliste ist nicht leer");
             }
         }

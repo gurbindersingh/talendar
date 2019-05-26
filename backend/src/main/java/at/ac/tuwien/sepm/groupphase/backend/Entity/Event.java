@@ -97,7 +97,7 @@ public class Event {
     private Double price;
 
     @Column
-    private Integer maxParticipant;
+    private Integer maxParticipants;
 
     @Column
     private String description;
@@ -124,7 +124,7 @@ public class Event {
                   @Past @NotNull LocalDateTime created, @Past @NotNull LocalDateTime updated,
                   EventType eventType, Set<Customer> customers, Trainer trainer, int headcount,
                   int ageToBe, String birthdayType, LocalDateTime endOfApplication, Double price,
-                  Integer maxParticipant, String description, Integer minAge, Integer maxAge
+                  Integer maxParticipants, String description, Integer minAge, Integer maxAge
     ) {
         this.name = name;
         this.roomUses = roomUses;
@@ -138,7 +138,7 @@ public class Event {
         this.birthdayType = birthdayType;
         this.endOfApplication = endOfApplication;
         this.price = price;
-        this.maxParticipant = maxParticipant;
+        this.maxParticipants = maxParticipants;
         this.description = description;
         this.minAge = minAge;
         this.maxAge = maxAge;
@@ -275,13 +275,13 @@ public class Event {
     }
 
 
-    public Integer getMaxParticipant () {
-        return maxParticipant;
+    public Integer getMaxParticipants () {
+        return maxParticipants;
     }
 
 
-    public void setMaxParticipant (Integer maxParticipant) {
-        this.maxParticipant = maxParticipant;
+    public void setMaxParticipants (Integer maxParticipants) {
+        this.maxParticipants = maxParticipants;
     }
 
 
@@ -333,7 +333,7 @@ public class Event {
                birthdayType == event.birthdayType &&
                Objects.equals(endOfApplication, event.endOfApplication) &&
                Objects.equals(price, event.price) &&
-               Objects.equals(maxParticipant, event.maxParticipant) &&
+               Objects.equals(maxParticipants, event.maxParticipants) &&
                Objects.equals(description, event.description) &&
                Objects.equals(minAge, event.minAge) &&
                Objects.equals(maxAge, event.maxAge);
@@ -344,7 +344,7 @@ public class Event {
     public int hashCode () {
         return Objects.hash(id, name, roomUses, created, updated, eventType, customers, trainer,
                             headcount, ageToBe, birthdayType, endOfApplication, price,
-                            maxParticipant, description, minAge, maxAge
+                            maxParticipants, description, minAge, maxAge
         );
     }
 
@@ -365,7 +365,7 @@ public class Event {
                ", birthdayType=" + birthdayType +
                ", endOfApplication=" + endOfApplication +
                ", price=" + price +
-               ", maxParticipant=" + maxParticipant +
+               ", maxParticipants=" + maxParticipants +
                ", description='" + description + '\'' +
                ", minAge=" + minAge +
                ", maxAge=" + maxAge +

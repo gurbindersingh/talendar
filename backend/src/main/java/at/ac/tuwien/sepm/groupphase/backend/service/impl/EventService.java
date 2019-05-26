@@ -83,7 +83,10 @@ public class EventService implements IEventService {
             case Course:
                 try {
                     validator.validateEvent(event);
-                    this.trainerRepository.existsById(event.getTrainer().getId());
+                    if(!this.trainerRepository.existsById(event.getTrainer().getId())){
+                        InvalidEntityException e = new InvalidEntityException("Trainer mit Id nicht gefunden");
+                        throw new ValidationException(e.getMessage(), e);
+                    }
                 }
                 catch(InvalidEntityException e) {
                     throw new ValidationException(e.getMessage(), e);
@@ -122,7 +125,7 @@ public class EventService implements IEventService {
         }
         catch(TimeNotAvailableException e) {
             throw new ValidationException(
-                "The event is attempting to be booked during a different event: " + e.getMessage(),
+                e.getMessage(),
                 e
             );
         }
@@ -240,9 +243,7 @@ public class EventService implements IEventService {
                        x.getEnd().isAfter(db.getEnd()) ||
                        x.getBegin().isEqual(db.getBegin()) ||
                        x.getEnd().isEqual(db.getEnd())) {
-                        throw new TimeNotAvailableException(
-                            "The Timeslot attempting to be booked is invalid. Attempted Booking: " +
-                            x.toString());
+                        throw new TimeNotAvailableException("Der Raum " + x.getRoom() + " ist von " + x.getBegin() + " bis " + x.getEnd() + " besetzt");
                     }
                 }
             }
