@@ -1,19 +1,18 @@
-<div class="container">
-    <h1>{{ title }}</h1>
-    <form 
+<h1 class="row justify-content-center">{{ title }}</h1>
+<hr />
+<div class="row">
+    <div class="col-lg-3">
+    </div>
+    <div class="col-lg-6">
+        <form 
+        class="container-fluid"
         novalidate 
         (ngSubmit)="postHoliday(holiday)"
         >
         <div class="row">
-            <div class="col-sm-4">
-                <label for="startdate" id="labelstartdate">Datum (von):</label>
-            </div>
-            <div class="col-sm-4">
-                <label for="starttime" id="labelstarttime">Zeit (von):</label>
-            </div>
-        </div>
-        <div class="row align-items-center">
-            <div class="col-sm-4">
+            <div class="col-lg-2"></div>
+            <div class="col-lg-6" id="d6p1">
+                <label for="startdate" id="labelvon">Von</label>
                 <div class="input-group">
                     <input 
                         class="form-control"
@@ -27,7 +26,7 @@
                     />
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="col-lg-4">
                 <div class="input-group">
                     <ngb-timepicker
                         id="starttime"
@@ -42,15 +41,9 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-4">
-                <label for="enddate" id="labelenddate">Datum (bis):</label>
-            </div>
-            <div class="col-sm-4">
-                <label for="endtime" id="labelendtime">Zeit (bis):</label>
-            </div>
-        </div>
-        <div class="row align-items-center">
-            <div class="col-sm-4">
+            <div class="col-lg-2"></div>
+            <div class="col-lg-6" id="d6p2">
+                <label for="enddate" id="labelbis">Bis</label>
                 <div class="input-group">
                     <input 
                         class="form-control"
@@ -64,7 +57,7 @@
                     />
                 </div>
             </div>
-            <div class="col-sm-4">
+            <div class="col-lg-4">
                 <div class="input-group">
                     <ngb-timepicker 
                         name="endtimepicker"
@@ -82,53 +75,31 @@
         </div>
                 
         <div class="row" *ngIf="errorMsg">
-            <div class="col-sm-12">
+            <div class="col-lg-6">
                 <p class="alert alert-danger">
                     {{ errorMsg }}
                 </p>
             </div>
         </div>
         <div class="row" *ngIf="successMsg">
-            <div class="col-sm-12">
+            <div class="col-lg-6">
                 <p class="alert alert-success">
                     {{ successMsg }}
                 </p>
             </div>
         </div>
-
-        <div class="row">
-            <div class="col-sm-4">
-                <button
-                    type="button"
-                    class="btn btn-info"
-                    id="moreoptions"
-                >
-                    Wiederkehrende Optionen
-                </button>
-            </div>
-            <div class="col-sm-4">
-                <button
-                    [disabled]="!isCompleted()"
-                    class="btn btn-success"
-                    type="submit"
-                >
-                    Urlaub eintragen
-                </button>
-            </div>
+        <br />
+        <div class="row justify-content-end">
+            <button
+                [disabled]="!isCompleted()"
+                class="btn btn-primary"
+                type="submit"
+            >
+                Urlaub eintragen
+            </button>
         </div>
     </form>
+    </div>
+    <div class="col-lg-3">
+    </div>
 </div>
-
-<!-- 
-        <div class="form-row">
-            <div class="col-sm">
-                <input 
-                    class="form-control" 
-                    name="trainer"
-                    id="TrainerId" 
-                    placeholder="1" 
-                    [(ngModel)] = "holiday.trainer"
-                />
-            </div>
-        </div>
- -->
