@@ -38,19 +38,26 @@ public class Validator{
         if(event.getCreated().isAfter(event.getUpdated())) {
             throw new InvalidEntityException("create time may not be changed afterwards and has to be before last update time");
         }
-
+        if(event.getName() == null || event.getName().isBlank()){
+            throw new InvalidEntityException("Event Name must be set");
+        }
+        if(event.getRoomUses() == null){
+            throw new InvalidEntityException("RoomUses was not set, event must take place somwhere and sometime");
+        }
         // Validator for Birthdays
         if(event.getEventType() == EventType.Birthday) {
-            if(event.getHeadcount() < 0 || event.getHeadcount() > 20) {
+            if(event.getHeadcount() < 5 || event.getHeadcount() > 20) {
                 throw new InvalidEntityException("Head Count cannot be less than 0 or more than 20");
             }
             if(event.getAgeToBe() < 0 || event.getAgeToBe() > 20) {
                 throw new InvalidEntityException("Average age invalid");
             }
-            if(event.getCustomers().size() != 1) {
+            if(event.getCustomers() == null || event.getCustomers().size() != 1) {
                 throw new InvalidEntityException("Too many or too little customers for a birthday");
             }
-
+            if(event.getBirthdayType() == null || event.getBirthdayType().isBlank()){
+                throw new InvalidEntityException("This birthday has no birthday type");
+            }
             try {
                 for(Customer x : event.getCustomers()
                 ) {
@@ -71,12 +78,6 @@ public class Validator{
                 throw e;
             }
 
-            try {
-                validateTrainer(event.getTrainer());
-            }
-            catch(InvalidEntityException e) {
-                throw e;
-            }
         }
 
         // Validator for Consultation
@@ -153,6 +154,9 @@ public class Validator{
                 for(Customer c : event.getCustomers()) {
                     validateCustomer(c);
                 }
+                for(RoomUse r : event.getRoomUses()) {
+                    validateRoomUse(r);
+                }
             }
             catch(InvalidEntityException ie) {
                 throw ie;
@@ -162,6 +166,7 @@ public class Validator{
 
 
     public void validateRoomUse (RoomUse entity) throws InvalidEntityException {
+        LocalDateTime now = LocalDateTime.now();
         if(entity.getBegin().isAfter(entity.getEnd())) {
             throw new InvalidEntityException("The End of the use cannot be later than the begining");
         }
@@ -170,6 +175,9 @@ public class Validator{
         }
         if(entity.getEnd().getHour() < 8 || entity.getEnd().getHour() > 22) {
             throw new InvalidEntityException("The end of this event is not during work hours");
+        }
+        if(entity.getBegin().isBefore(now)){
+            throw new InvalidEntityException("Event cannot be in the past");
         }
     }
 
@@ -205,7 +213,7 @@ public class Validator{
         if(entity.getBirthday() == null || entity.getBirthday().isAfter(LocalDate.now())) {
             throw new InvalidEntityException("age must be specified and a past date");
         }
-        else if(( ( LocalDate.now().getYear() - entity.getBirthday().getYear() ) < 16 ) || ( ( LocalDate.now().getYear() - entity.getBirthday().getYear() ) > 120 )) {
+        else if(( ( LocalDate.now().getYear() - entity.getBirthday().getYear() ) < 15 ) || ( ( LocalDate.now().getYear() - entity.getBirthday().getYear() ) > 120 )) {
             throw new InvalidEntityException("age must be a reasonable value");
         }
 

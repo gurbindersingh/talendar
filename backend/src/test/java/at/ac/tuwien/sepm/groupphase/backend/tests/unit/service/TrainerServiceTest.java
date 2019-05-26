@@ -1,11 +1,13 @@
 package at.ac.tuwien.sepm.groupphase.backend.tests.unit.service;
 
 
+import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.testDataCreation.FakeData;
-import at.ac.tuwien.sepm.groupphase.backend.testObjects.Trainer;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
+import at.ac.tuwien.sepm.groupphase.backend.testObjects.exceptions.TestJpaException;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.Validator;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidEntityException;
 import org.junit.jupiter.api.BeforeAll;
@@ -46,6 +48,8 @@ public class TrainerServiceTest {
      * Create Initial All Valid Trainers
      */
 
+    // dummy has any kind of values, we dont care, just use it to pass it to method
+    private static Trainer DUMMY = trainerFaker.fakeTrainerEntity();
     private static Trainer VALID_INCOMING_TRAINER = trainerFaker.fakeTrainerEntity();
     private static Trainer PERSISTED_TRAINER = trainerFaker.fakeTrainerEntity();
     private static Trainer INVALID_TRAINER_MISSING_FN = trainerFaker.fakeTrainerEntity();
@@ -95,6 +99,16 @@ public class TrainerServiceTest {
      * After The Service Handles This Request, The Trainer's Created And Updated Stamps Have
      * To Be Set
      */
+
+    @Test
+    public void test_persistenceLayerThrowsException_serviceLayerWrapsToServiceException() {
+        when(trainerRepository.save(any())).thenThrow(TestJpaException.class);
+
+        // we dont care why JPA throws an exception,
+        // just in case if an exception would be thrown, service has to react
+        // therefore INVALID_TRAINER_MISSING_CREATED is passed but could by any other entity too
+        assertThrows(ServiceException.class, () -> trainerService.save(DUMMY));
+    }
 
     @Test
     public void test_saveValidTrainer_TrainerShouldBeAccepted() throws Exception {
@@ -157,6 +171,33 @@ public class TrainerServiceTest {
     public void test_saveInvalidTrainer_missingMail_shouldThrowException() {
         assertThrows(ValidationException.class, () -> trainerService.save(INVALID_TRAINER_MISSING_MAIL));
     }
+
+
+
+
+
+    /**
+     * UPDATE TESTED
+     *
+     *
+     * Test Update Mechanism: Consider Repeating Each Test Is Not Sensible.
+     *
+     * Premise. Validations Are All Done Within A Separate Class, Either This Class Fails On Save
+     * Too Or Updates Could Only Fail If The Validator Is Not Applied
+     *
+     * ==> just test that there is a validator throwing exception on bad arguments in the first place
+     */
+
+    @Test
+    public void test_updateWithInvalidTrainer_missingEmail_shouldThrowException() {
+        assertThrows(ValidationException.class, () -> trainerService.update(INVALID_TRAINER_MISSING_MAIL));
+    }
+
+    @Test
+    public void test_updateWithInvalidTrainer_missingPhone_shouldThrowException() {
+        assertThrows(ValidationException.class, () -> trainerService.update(INVALID_TRAINER_MISSING_PHONE));
+    }
+
 
 
 

@@ -1,6 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest;
 
-import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
+
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.BackendException;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.EventDto;
 import at.ac.tuwien.sepm.groupphase.backend.service.IEventService;
@@ -18,38 +18,34 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@CrossOrigin(origins = { "http://localhost:4200", "http://localhost:8080" })
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
-@RequestMapping("/api/v1/talender/events")
+@RequestMapping("/api/v1/talendar/events")
 public class EventEndpoint {
     private static Logger LOGGER = LoggerFactory.getLogger(TrainerEndpoint.class);
 
     private final IEventService eventService;
-    private final EventMapper eventMapper;
+    private final EventMapper   eventMapper;
 
 
     @Autowired
-    public EventEndpoint(IEventService eventService, EventMapper eventMapper) {
+    public EventEndpoint (IEventService eventService, EventMapper eventMapper) {
         this.eventService = eventService;
         this.eventMapper = eventMapper;
     }
 
 
-    @RequestMapping(method = RequestMethod.POST)
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public EventDto createNewEvent(@RequestBody EventDto eventDto) throws BackendException {
+    public EventDto createNewEvent (@RequestBody EventDto eventDto) throws BackendException {
         LOGGER.info("Incoming POST Request for an Event with type: " + eventDto.toString());
         try {
             return eventMapper.entityToEventDto(eventService.save(eventMapper.dtoToEventEntity(
                 eventDto)));
         }
-        catch(ValidationException e) {
+        catch(ValidationException | ServiceException e) {
             LOGGER.error("Error in the backend: " + e.getMessage(), e);
-            throw new BackendException("Validation Error in the Backend: " + e.getMessage(), e);
-        }
-        catch(ServiceException e) {
-            LOGGER.error("Error in the backend: " + e.getMessage(), e);
-            throw new BackendException("Service Error in the Backend: " + e.getMessage(), e);
+            throw new BackendException(e.getMessage(), e);
         }
     }
 
@@ -57,7 +53,7 @@ public class EventEndpoint {
     @GetMapping
     @RequestMapping("/trainer/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public List<EventDto> getAllEvents(@PathVariable Long id) throws BackendException {
+    public List<EventDto> getAllEvents (@PathVariable Long id) throws BackendException {
         /*
          * The JWT needs to be passed to this method to authenticate
          * the caller and authorize the access to the corresponding

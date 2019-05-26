@@ -55,8 +55,8 @@ public class Event {
     @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     @JoinTable(
         name = "event_customer",
-        joinColumns = { @JoinColumn(name = "fk_event") },
-        inverseJoinColumns = { @JoinColumn(name = "fk_customer") }
+        joinColumns = { @JoinColumn(name = "fk_event", referencedColumnName = "id")},
+        inverseJoinColumns = {@JoinColumn(name = "fk_customer" , referencedColumnName = "id")}
     )
     @JsonIgnoreProperties("events")
     private Set<Customer> customers;

@@ -1,31 +1,43 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest.dto;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
-public class TrainerDto{
+public class TrainerDto {
 
-    private Long id;
-    private String firstName;
-    private String lastName;
-    private LocalDate birthday;
-    private String phone;
-    private String email;
-    private List<EventDto> events;
-    private List<String> birthdayTypes;
-    private LocalDateTime created;
-    private LocalDateTime updated;
+    private Long             id;
+    private String           firstName;
+    private String           lastName;
+    private LocalDate        birthday;
+    private String           phone;
+    private String           email;
+    private List<EventDto>   events;
+    private List<String>     birthdayTypes;
+    private List<HolidayDto> holidays;
+    private LocalDateTime    created;
+    private LocalDateTime    updated;
 
-    public TrainerDto() {
+
+    public TrainerDto () {
 
     }
 
 
-    public TrainerDto (Long id, String firstName, String lastName, LocalDate birthday, String phone, String email, List<EventDto> events, List<String> birthdayTypes, LocalDateTime created, LocalDateTime updated) {
+    public TrainerDto (Long id,
+                       String firstName,
+                       String lastName,
+                       LocalDate birthday,
+                       String phone,
+                       String email,
+                       List<EventDto> events,
+                       List<String> birthdayTypes,
+                       List<HolidayDto> holidays,
+                       LocalDateTime created,
+                       LocalDateTime updated
+    ) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -33,6 +45,8 @@ public class TrainerDto{
         this.phone = phone;
         this.email = email;
         this.events = events;
+        this.birthdayTypes = birthdayTypes;
+        this.holidays = holidays;
         this.created = created;
         this.updated = updated;
     }
@@ -98,6 +112,7 @@ public class TrainerDto{
     }
 
 
+
     public List<EventDto> getEvents () {
         return events;
     }
@@ -115,6 +130,16 @@ public class TrainerDto{
 
     public void setBirthdayTypes (List<String> birthdayTypes) {
         this.birthdayTypes = birthdayTypes;
+    }
+
+
+    public List<HolidayDto> getHolidays () {
+        return holidays;
+    }
+
+
+    public void setHolidays (List<HolidayDto> holidays) {
+        this.holidays = holidays;
     }
 
 
@@ -144,37 +169,50 @@ public class TrainerDto{
         if(o == null || getClass() != o.getClass()) return false;
         TrainerDto that = (TrainerDto) o;
         return Objects.equals(id, that.id) &&
-            Objects.equals(firstName, that.firstName) &&
-            Objects.equals(lastName, that.lastName) &&
-            Objects.equals(birthday, that.birthday) &&
-            Objects.equals(phone, that.phone) &&
-            Objects.equals(email, that.email) &&
-            Objects.equals(events, that.events) &&
-            Objects.equals(birthdayTypes, that.birthdayTypes) &&
-            Objects.equals(created, that.created) &&
-            Objects.equals(updated, that.updated);
+               Objects.equals(firstName, that.firstName) &&
+               Objects.equals(lastName, that.lastName) &&
+               Objects.equals(birthday, that.birthday) &&
+               Objects.equals(phone, that.phone) &&
+               Objects.equals(email, that.email) &&
+               Objects.equals(events, that.events) &&
+               Objects.equals(birthdayTypes, that.birthdayTypes) &&
+               Objects.equals(holidays, that.holidays) &&
+               Objects.equals(created, that.created) &&
+               Objects.equals(updated, that.updated);
     }
 
 
     @Override
     public int hashCode () {
-        return Objects.hash(id, firstName, lastName, birthday, phone, email, events, birthdayTypes, created, updated);
+        return Objects.hash(id,
+                            firstName,
+                            lastName,
+                            birthday,
+                            phone,
+                            email,
+                            events,
+                            birthdayTypes,
+                            holidays,
+                            created,
+                            updated
+        );
     }
 
 
     @Override
     public String toString () {
         return "TrainerDto{" +
-            "id=" + id +
-            ", firstName='" + firstName + '\'' +
-            ", lastName='" + lastName + '\'' +
-            ", birthday=" + birthday +
-            ", phone='" + phone + '\'' +
-            ", email='" + email + '\'' +
-            ", events=" + events +
-            ", birthdayTypes=" + birthdayTypes +
-            ", created=" + created +
-            ", updated=" + updated +
-            '}';
+               "id=" + id +
+               ", firstName='" + firstName + '\'' +
+               ", lastName='" + lastName + '\'' +
+               ", birthday=" + birthday +
+               ", phone='" + phone + '\'' +
+               ", email='" + email + '\'' +
+               ", events=" + events +
+               ", birthdayTypes=" + birthdayTypes +
+               ", holidays=" + holidays +
+               ", created=" + created +
+               ", updated=" + updated +
+               '}';
     }
 }

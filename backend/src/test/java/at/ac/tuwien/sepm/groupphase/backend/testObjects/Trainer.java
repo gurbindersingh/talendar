@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.testObjects;
 
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,7 +16,7 @@ public class Trainer extends at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer
     private String phone;
     private String email;
     private List<String> birthdayTypes;
-    // List<Event> excluded from test Trainer Dummy because List of events that a trainer hosts does not affect his validity
+    List<Event> events;
     private LocalDateTime created;
     private LocalDateTime updated;
 
@@ -22,7 +24,7 @@ public class Trainer extends at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer
 
     }
 
-    public Trainer (Long id, String firstName,String lastName,LocalDate birthday, String phone,String email,LocalDateTime created,LocalDateTime updated, List<String> birthdayTypes) {
+    public Trainer (Long id, String firstName,String lastName,LocalDate birthday, String phone,String email,LocalDateTime created,LocalDateTime updated, List<String> birthdayTypes, List<Event> events) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -32,6 +34,7 @@ public class Trainer extends at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer
         this.created = created;
         this.updated = updated;
         this.birthdayTypes = birthdayTypes;
+        this.events = events;
     }
 
 
@@ -124,6 +127,18 @@ public class Trainer extends at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer
 
     public void setUpdated (LocalDateTime updated) {
         this.updated = updated;
+    }
+
+
+    @Override
+    public List<Event> getEvents () {
+        return events;
+    }
+
+
+    @Override
+    public void setEvents (List<Event> events) {
+        this.events = events;
     }
 
 
