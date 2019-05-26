@@ -18,13 +18,15 @@ public interface EventMapper {
 
 
     @Mapping(target = "customers", source = "customerDtos")
-    Event dtoToEventEntity(EventDto eventDto);
+    Event dtoToEventEntity (EventDto eventDto);
 
     Set<Customer> listToSet(List<CustomerDto> customerList);
 
     List<CustomerDto> setToList(Set<Customer> customerSet);
 
     @Mapping(target = "customerDtos", source = "customers")
-    EventDto entityToEventDto(Event event);
+    EventDto entityToEventDto (Event event);
 
+    @Mapping(target = "eventDto", source = "event")
+    List<EventDto> entityListToEventDtoList (List<Event> eventList);
 }

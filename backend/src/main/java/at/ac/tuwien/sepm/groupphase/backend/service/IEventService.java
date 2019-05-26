@@ -5,8 +5,11 @@ import at.ac.tuwien.sepm.groupphase.backend.exceptions.TrainerNotAvailableExcept
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
 
+import java.util.List;
 
 
 public interface IEventService {
     Event save (Event event) throws ValidationException, ServiceException;
+
+    List<Event> getAllEvents(Long trainerId) throws ValidationException, ServiceException;
 }
