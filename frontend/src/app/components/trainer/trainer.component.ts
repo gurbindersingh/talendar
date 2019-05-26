@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, SimpleChanges, OnChanges } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { TrainerClient } from 'src/app/rest/trainer-client';
 import { Trainer } from 'src/app/models/trainer';
@@ -13,9 +13,10 @@ import {
     selector: 'app-trainer',
     templateUrl: './trainer.component.html',
     styleUrls: ['./trainer.component.scss'],
-    providers: [NgbDateNativeAdapter]
+    providers: [NgbDateNativeAdapter],
 })
 export class TrainerComponent implements OnInit {
+    //  Variables accessed in the template should not be private!
     private title: string;
     private trainer: Trainer = new Trainer();
     private birthday: NgbDateStruct;
@@ -23,6 +24,15 @@ export class TrainerComponent implements OnInit {
     private btnContextDescription: string;
     private errorMsg: string;
     private successMsg: string;
+    birthdayOptionsColumn1: any = {
+        Trockeneis: false,
+        Raketen: false,
+        Superhelden: false,
+    };
+    birthdayOptionsColumn2: any = {
+        Photo: false,
+        Malen: false,
+    };
 
     /**
      * values of checkboxes
@@ -36,6 +46,14 @@ export class TrainerComponent implements OnInit {
         private location: Location,
         private adapter: NgbDateNativeAdapter
     ) {}
+
+    getBirthdayColumn1Keys() {
+        return Object.keys(this.birthdayOptionsColumn1);
+    }
+
+    getBirthdayColumn2Keys() {
+        return Object.keys(this.birthdayOptionsColumn2);
+    }
 
     /**
      * Upon loading this component, we will either save a new trainer (no id query param)
@@ -58,7 +76,7 @@ export class TrainerComponent implements OnInit {
             this.title = 'Trainer Bearbeiten';
             this.btnContextDescription = 'Änderungen speichern';
             this.isSaveMode = false;
-            this.trainerClient.getById(id).subscribe(
+            /*this.trainerClient.getById(id).subscribe(
                 (data: Trainer) => {
                     console.log(data);
                     this.trainer = data;
@@ -70,18 +88,32 @@ export class TrainerComponent implements OnInit {
                      * this is not the smoothest solution.
                      * But what to do?!?
                      * just stay here and continue with save made (imo not sensible too)
-                     */
-                    this.errorMsg = 'Der ausgewählte Trainer konnte leider nicht geladen werden.'
+
+                    this.errorMsg =
+                        'Der ausgewählte Trainer konnte leider nicht geladen werden.';
                     this.location.back();
                 }
-            );
+            );*/
         }
     }
 
     public postTrainer(form: NgForm): void {
         console.log('Pass Form Data To Rest Client');
+        const supervisesBirthdays: string[] = [];
+        const allBirthdayOptions = Object.assign(
+            {},
+            this.birthdayOptionsColumn1,
+            this.birthdayOptionsColumn2
+        );
 
+        for (const option of Object.keys(allBirthdayOptions)) {
+            if (allBirthdayOptions[option]) {
+                supervisesBirthdays.push(option + ' Geburtstag');
+            }
+        }
         this.trainer.birthday = this.transformToDate(this.birthday);
+        this.trainer.birthdayTypes = supervisesBirthdays;
+        console.log(this.trainer);
 
         if (this.isSaveMode) {
             this.trainerClient.postNewTrainer(this.trainer).subscribe(
@@ -97,7 +129,7 @@ export class TrainerComponent implements OnInit {
                         error.message;
                 }
             );
-        } else {
+        } /*else {
             this.trainerClient.update(this.trainer).subscribe(
                 (data: Trainer) => {
                     console.log(data);
@@ -111,7 +143,7 @@ export class TrainerComponent implements OnInit {
                         error.message;
                 }
             );
-        }
+        }*/
     }
 
     public isCompleted(): boolean {
