@@ -53,7 +53,7 @@ public class EventDto {
 
     private LocalDateTime endOfApplication;
     private Double price;
-    private Integer maxParticipant;
+    private Integer maxParticipants;
     private String description;
     private Integer minAge;
     private Integer maxAge;
@@ -71,7 +71,7 @@ public class EventDto {
     }
 
 
-    public EventDto (Long id, EventType eventType, String name, List<RoomUse> roomUses, LocalDateTime created, LocalDateTime updated, List<CustomerDto> customerDtos, Trainer trainer, int headcount, int ageToBe, String birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipant, String description, Integer minAge, Integer maxAge) {
+    public EventDto (Long id, EventType eventType, String name, List<RoomUse> roomUses, LocalDateTime created, LocalDateTime updated, List<CustomerDto> customerDtos, Trainer trainer, int headcount, int ageToBe, String birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipants, String description, Integer minAge, Integer maxAge) {
         this.id = id;
         this.eventType = eventType;
         this.name = name;
@@ -85,7 +85,7 @@ public class EventDto {
         this.birthdayType = birthdayType;
         this.endOfApplication = endOfApplication;
         this.price = price;
-        this.maxParticipant = maxParticipant;
+        this.maxParticipants = maxParticipants;
         this.description = description;
         this.minAge = minAge;
         this.maxAge = maxAge;
@@ -222,13 +222,13 @@ public class EventDto {
     }
 
 
-    public Integer getMaxParticipant () {
-        return maxParticipant;
+    public Integer getMaxParticipants () {
+        return maxParticipants;
     }
 
 
-    public void setMaxParticipant (Integer maxParticipant) {
-        this.maxParticipant = maxParticipant;
+    public void setMaxParticipants (Integer maxParticipants) {
+        this.maxParticipants = maxParticipants;
     }
 
 
@@ -280,7 +280,7 @@ public class EventDto {
             birthdayType == eventDto.birthdayType &&
             Objects.equals(endOfApplication, eventDto.endOfApplication) &&
             Objects.equals(price, eventDto.price) &&
-            Objects.equals(maxParticipant, eventDto.maxParticipant) &&
+            Objects.equals(maxParticipants, eventDto.maxParticipants) &&
             Objects.equals(description, eventDto.description) &&
             Objects.equals(minAge, eventDto.minAge) &&
             Objects.equals(maxAge, eventDto.maxAge);
@@ -289,7 +289,7 @@ public class EventDto {
 
     @Override
     public int hashCode () {
-        return Objects.hash(id, eventType, name, roomUses, created, updated, customerDtos, trainer, headcount, ageToBe, birthdayType, endOfApplication, price, maxParticipant, description, minAge, maxAge);
+        return Objects.hash(id, eventType, name, roomUses, created, updated, customerDtos, trainer, headcount, ageToBe, birthdayType, endOfApplication, price, maxParticipants, description, minAge, maxAge);
     }
 
 
@@ -309,7 +309,7 @@ public class EventDto {
             ", birthdayType=" + birthdayType +
             ", endOfApplication=" + endOfApplication +
             ", price=" + price +
-            ", maxParticipant=" + maxParticipant +
+            ", maxParticipants=" + maxParticipants +
             ", description='" + description + '\'' +
             ", minAge=" + minAge +
             ", maxAge=" + maxAge +
