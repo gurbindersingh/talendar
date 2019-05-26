@@ -40,14 +40,13 @@ public class EventEndpoint {
     public EventDto createNewEvent (@RequestBody EventDto eventDto) throws BackendException {
         LOGGER.info("Incoming POST Request for an Event with type: " + eventDto.toString());
         try {
-            return eventMapper.entityToEventDto(eventService.save(eventMapper.dtoToEventEntity(
-                eventDto)));
-        }
-        catch(ValidationException e) {
+            return eventMapper.entityToEventDto(eventService.save(eventMapper.dtoToEventEntity(eventDto)));
+        }catch(ValidationException e) {
             LOGGER.error(e.getMessage(), e);
             throw new BackendException(e.getMessage(), e);
         }catch(ServiceException e){
             LOGGER.error(e.getMessage(), e);
+            throw new BackendException(e.getMessage(), e);
         }
     }
 
