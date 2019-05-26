@@ -13,7 +13,7 @@ public class URL {
      * Existing Api Urls
      */
     public static final String BASE = "http://localhost:";
-    public static final String TRAINER = "/api/v1/talender/trainers";
-    public static final String EVENT = "/api/v1/talender/events";
-    public static final String HOLIDAY = "/api/v1/talender/holiday";
+    public static final String TRAINER = "/api/v1/talendar/trainers";
+    public static final String EVENT = "/api/v1/talendar/events";
+    public static final String HOLIDAY = "/api/v1/talendar/holiday";
 }
