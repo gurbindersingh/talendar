@@ -247,16 +247,16 @@ public class Validator{
 
     public void validateHoliday (Holiday holiday) throws InvalidEntityException {
         if(holiday.getTrainer() == null) {
-            throw new InvalidEntityException("Trainer nicht gesetzt");
+            throw new InvalidEntityException("Trainer ist eventuell nicht eingeloggt");
         }
         if(holiday.getId() != null) {
-            throw new InvalidEntityException("Trainer nicht gesetzt");
+            throw new InvalidEntityException("Frontend hat eine ID geschickt");
         }
         if(holiday.getTrainer().getId() == null) {
-            throw new InvalidEntityException("Trainer nicht gesetzt");
+            throw new InvalidEntityException("Trainer ist eventuell nicht eingeloggt");
         }
         if(holiday.getHolidayStart().isAfter(holiday.getHolidayEnd())) {
-            throw new InvalidEntityException("Das Von-Datum findet später als Bis-Datum");
+            throw new InvalidEntityException("Das Von-Datum findet später als das Bis-Datum statt");
         }
         if(holiday.getHolidayStart().isBefore(LocalDateTime.now())) {
             throw new InvalidEntityException("Das Von-Datum findet in der Vergangenheit statt");
