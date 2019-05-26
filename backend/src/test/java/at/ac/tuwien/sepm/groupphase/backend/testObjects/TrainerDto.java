@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm.groupphase.backend.testObjects;
+package at.ac.tuwien.sepm.groupphase.backend.TestObjects;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

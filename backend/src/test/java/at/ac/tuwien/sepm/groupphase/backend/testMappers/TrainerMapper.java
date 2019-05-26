@@ -1,7 +1,7 @@
-package at.ac.tuwien.sepm.groupphase.backend.testMappers;
+package at.ac.tuwien.sepm.groupphase.backend.TestMappers;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
-import at.ac.tuwien.sepm.groupphase.backend.testObjects.TrainerDto;
+import at.ac.tuwien.sepm.groupphase.backend.TestObjects.TrainerDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
