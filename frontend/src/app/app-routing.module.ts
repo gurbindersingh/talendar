@@ -45,7 +45,11 @@ const routes: Routes = [
     },
     {
         path: 'trainerList',
-        component: TrainerListComponent
+        component: TrainerListComponent,
+    },
+    {
+        path: '*',
+        component: CalendarComponent,
     },
     {
         path: 'cancelEvent',

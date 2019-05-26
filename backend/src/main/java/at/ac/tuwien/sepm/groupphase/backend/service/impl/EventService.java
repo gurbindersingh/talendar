@@ -131,7 +131,7 @@ public class EventService implements IEventService {
 
                 }
                 catch(InvalidEntityException e) {
-                    throw new ValidationException("Given Course is invalid: " + e.getMessage(), e);
+                    throw new ValidationException(e.getMessage(), e);
                 }
             case Rent:
                 try {
