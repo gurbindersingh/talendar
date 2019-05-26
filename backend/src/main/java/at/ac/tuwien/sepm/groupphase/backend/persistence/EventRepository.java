@@ -13,9 +13,13 @@ import java.util.List;
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
 
+
+    Event findByIdAndDeletedFalse(Long id);
+
+    List<Event> findByTrainer_IdAndDeletedFalse (Long id);
     List<RoomUse> findByTrainer_IdAndRoomUses_BeginGreaterThanEqualAndDeletedIs(Long id, LocalDateTime now, boolean deleted);
 
-    List<Event> findByEventTypeEqualsAndDeletedIs(EventType eventType, boolean deleted);
+    List<Event> findByEventTypeEqualsAndDeletedFalse(EventType eventType);
 
     @Query(value = "update Event e set e.deleted = true where e.id = ?1", nativeQuery = true)
     void deleteThisEvent(Long id);

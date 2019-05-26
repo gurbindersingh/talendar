@@ -117,7 +117,7 @@ public class RoomUse {
 
     @Override
     public int hashCode () {
-        return Objects.hash(id, begin, end, room, event);
+        return Objects.hash(id, begin, end, room);
     }
 
 

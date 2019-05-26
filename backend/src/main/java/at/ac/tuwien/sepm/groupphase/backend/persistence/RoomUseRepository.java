@@ -12,8 +12,11 @@ import java.util.List;
 @Repository
 public interface RoomUseRepository extends JpaRepository<RoomUse, Long> {
 
-    List<RoomUse> findByBeginGreaterThanEqualAndDeletedIs(LocalDateTime begin, boolean deleted);
+    List<RoomUse> findByBeginGreaterThanEqualAndEvent_DeletedFalse(LocalDateTime begin);
 
     @Query(value = "update RoomUse r set r.deleted = true where r.event_id = ?1", nativeQuery = true)
     void deleteTheseRoomUses(Long id);
+    List<RoomUse> findByBeginGreaterThanEqualAndEvent_DeletedFalse(LocalDateTime begin);
+
+    List<RoomUse> findByEvent_IdAndEvent_DeletedFalse(Long id);
 }

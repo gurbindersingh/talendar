@@ -1,63 +1,215 @@
-<form>
-    <div class="jumbotron">
-        <h2>Raum mieten</h2>
-    </div>
-    <div class="form-group">
-        <label for="name">Vorname</label>
-        <input type="text" class="form-control" id="firstName" placeholder="" />
-    </div>
-    <div class="form-group">
-        <label for="name">Nachname</label>
-        <input type="text" class="form-control" id="name" placeholder="" />
-    </div>
-    <div class="form-group">
-        <label for="name">Telefonnummer</label>
-        <input type="text" class="form-control" id="phone" placeholder="" />
-    </div>
-    <div class="form-group">
-        <label for="description">Email</label>
-        <input type="email" class="form-control" id="email" placeholder="" />
-    </div>
-    <div class="form-group">
-        <label for="dt2">Von</label>
-        <input
-            class="form-control"
-            [owlDateTime]="dt2"
-            [owlDateTimeTrigger]="dt2"
-            placeholder=""
-            id="dateTimeBegin"
-        />
-        <owl-date-time #dt2></owl-date-time>
-    </div>
-    <div class="form-group">
-        <label for="dt3">Bis</label>
-        <input
-            class="form-control"
-            [owlDateTime]="dt3"
-            [owlDateTimeTrigger]="dt3"
-            placeholder=""
-            id="dateTimeEnd"
-        />
-        <owl-date-time #dt3></owl-date-time>
-    </div>
-    <div class="col">
-        <div ngbDropdown class="d-inline-block">
-            <button class="btn btn-outline-primary" id="room" ngbDropdownToggle>
-                {{ roomString }}
-            </button>
-            <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-                <button
-                    class="dropdown-item"
-                    *ngFor="let room of rooms"
-                    (click)="ChangeSortOrder(room)"
-                >
-                    {{ room }}
-                </button>
+<h1 class="row justify-content-center">{{ title }}</h1>
+<hr />
+
+<div class="row">
+    <div class="col-lg-3"></div>
+    <div class="col-lg-6">
+        <form
+            id="meetingForm"
+            #meetingForm
+            (change)="clearInfoMsg()"
+            class="container-fluid"
+        >
+            <div class="row">
+                <div class="form-group col-lg-6">
+                    <label for="meetingFirstName">Vorname</label>
+                    <input
+                        class="form-control"
+                        [(ngModel)]="customer.firstName"
+                        type="text"
+                        name="firstName"
+                        id="meetingFirstName"
+                        required
+                    />
+                </div>
+                <div class="form-group col-lg-6">
+                    <label for="meetingLastName">Nachname</label>
+                    <input
+                        class="form-control"
+                        [(ngModel)]="customer.lastName"
+                        type="text"
+                        name="lastName"
+                        id="meetingLastName"
+                        placeholder="Mustermann"
+                        required
+                    />
+                </div>
             </div>
-        </div>
+
+            <div class="row">
+                <div class="form-group col-lg-6">
+                    <label for="meetingPhoneNumber">Telefonnummer</label>
+                    <input
+                        class="form-control"
+                        [(ngModel)]="customer.phone"
+                        type="text"
+                        name="phoneNumber"
+                        id="meetingPhoneNumber"
+                        placeholder="0676 433 2222"
+                        required
+                    />
+                </div>
+                <div class="form-group col-lg-6">
+                    <label for="meetingEmail">Email</label>
+                    <input
+                        class="form-control"
+                        [(ngModel)]="customer.email"
+                        type="email"
+                        name="email"
+                        id="meetingEmail"
+                        placeholder="max.mustermann@email.com"
+                        required
+                    />
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="form-group col-lg-6" id="datePicker-dp-start">
+                    <label class="col-sm-2" for="dp">Von</label>
+                    <div class="input-group">
+                        <input
+                            class="form-control"
+                            id="dp-input-start"
+                            name="dp"
+                            [(ngModel)]="startDate"
+                            ngbDatepicker
+                            #d1="ngbDatepicker"
+                            (click)="d1.toggle()"
+                            required
+                        />
+                    </div>
+                </div>
+                <div class="form-group col-lg-6" id="startTime_css">
+                    <ngb-timepicker
+                        [(ngModel)]="startTime"
+                        id="tp-input-start"
+                        name="startTime"
+                        [minuteStep]="minuteStep"
+                        readonlyInputs="true"
+                    >
+                    </ngb-timepicker>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-lg-6" id="datePicker-dp-end">
+                    <label class="col-sm-2" id="datePicker-label-end" for="dp2"
+                        >Bis</label
+                    >
+                    <div class="input-group">
+                        <input
+                            class="form-control"
+                            placeholder="yyyy-mm-dd"
+                            name="dp2"
+                            [(ngModel)]="endDate"
+                            ngbDatepicker
+                            #d2="ngbDatepicker"
+                            (click)="d2.toggle()"
+                            required
+                        />
+                    </div>
+                </div>
+                <div class="form-group col-lg-6" id="endTime_css">
+                    <ngb-timepicker
+                        [(ngModel)]="endTime"
+                        name="endTime"
+                        [minuteStep]="minuteStep"
+                        readonlyInputs="true"
+                    >
+                    </ngb-timepicker>
+                </div>
+            </div>
+
+            <div class="row">
+                <label class="col-lg-1">Raum</label>
+            </div>
+
+            <div class="row" id="radioButtonRow">
+                <div
+                    class="custom-control custom-radio custom-control-inline col-lg-3"
+                >
+                    <input
+                        type="radio"
+                        id="greenRadioButton"
+                        name="customRadioInline1"
+                        class="custom-control-input"
+                        (click)="greenSelected()"
+                    />
+                    <label class="custom-control-label" for="greenRadioButton"
+                        >Grün</label
+                    >
+                </div>
+                <div
+                    class="custom-control custom-radio custom-control-inline col-lg-3"
+                >
+                    <input
+                        type="radio"
+                        id="orangeRadioButton"
+                        name="customRadioInline1"
+                        class="custom-control-input"
+                        (click)="orangeSelected()"
+                    />
+                    <label class="custom-control-label" for="orangeRadioButton"
+                        >Orange</label
+                    >
+                </div>
+                <div
+                    class="custom-control custom-radio custom-control-inline col-lg-3"
+                >
+                    <input
+                        type="radio"
+                        id="groundFloorRadioButton"
+                        name="customRadioInline1"
+                        class="custom-control-input"
+                        (click)="groundFloorSelected()"
+                    />
+                    <label
+                        class="custom-control-label"
+                        for="groundFloorRadioButton"
+                        >Erdgeschoss</label
+                    >
+                </div>
+            </div>
+
+            <div class="row" *ngIf="errorMsg">
+                <div class="col-sm-12">
+                    <p class="alert alert-danger">
+                        {{ errorMsg }}
+                    </p>
+                </div>
+            </div>
+            <div class="row" *ngIf="successMsg">
+                <div class="col-sm-12">
+                    <p class="alert alert-success">
+                        {{ successMsg }}
+                    </p>
+                </div>
+            </div>
+            <br />
+            <div class="row justify-content-end">
+                <div class="col-lg-3">
+                    <label id="meetingPrice" class="form-group">
+                        (Price €)</label
+                    >
+                </div>
+            </div>
+
+            <div class="row justify-content-end">
+                <button type="reset" class="btn btn-light col-lg-2" id="cancel">
+                    Abbrechen
+                </button>
+
+                <input
+                    type="submit"
+                    class="btn btn-primary col-lg-3"
+                    [disabled]="!isCompleted()"
+                    id="meetingSave"
+                    value="Mieten"
+                    (click)="postMeeting(meetingForm)"
+                />
+            </div>
+        </form>
     </div>
-    <div>
-        <label>Price</label>
-    </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+
+    <div class="col-lg-3"></div>
+</div>
+<br />

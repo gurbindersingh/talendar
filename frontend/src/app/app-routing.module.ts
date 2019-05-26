@@ -3,11 +3,13 @@ import { Routes, RouterModule } from '@angular/router';
 
 import {
     CalendarComponent,
+    ConsultationComponent,
     BirthdayComponent,
     CourseComponent,
     HolidayComponent,
     MeetingComponent,
     TrainerComponent,
+    TrainerListComponent,
 } from 'src/app/components';
 
 const routes: Routes = [
@@ -18,6 +20,10 @@ const routes: Routes = [
     {
         path: 'holiday',
         component: HolidayComponent,
+    },
+    {
+        path: 'consultation',
+        component: ConsultationComponent,
     },
     {
         path: 'birthday',
@@ -34,6 +40,10 @@ const routes: Routes = [
     {
         path: 'trainer',
         component: TrainerComponent,
+    },
+    {
+        path: 'trainerList',
+        component: TrainerListComponent
     },
 ];
 

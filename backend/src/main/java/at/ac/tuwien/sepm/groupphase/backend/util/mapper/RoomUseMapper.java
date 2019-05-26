@@ -7,13 +7,12 @@ import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
-public abstract class RoomUseMapper {
+public interface RoomUseMapper {
 
-    public RoomUseMapper INSTANCE = Mappers.getMapper(RoomUseMapper.class);
+    RoomUseMapper INSTANCE = Mappers.getMapper(RoomUseMapper.class);
 
-    public abstract RoomUse dtoToRoomUseEntity(RoomUseDto roomUseDto);
+    RoomUse dtoToRoomUseEntity(RoomUseDto roomUseDto);
 
-    public abstract RoomUseDto entityToRoomUseDto(RoomUse roomUse);
-
+    RoomUseDto entityToRoomUseDto(RoomUse roomUse);
 
 }
