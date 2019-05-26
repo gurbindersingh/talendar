@@ -16,33 +16,37 @@ public class Trainer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false,updatable = false)
+    @Column(nullable = false, updatable = false)
     private Long id;
 
     @NotBlank
     @Column(nullable = false)
-    private String firstName;
+    private String        firstName;
     @NotBlank
     @Column(nullable = false)
-    private String lastName;
+    private String        lastName;
     @NotNull
     @Past
     @Column(nullable = false)
-    private LocalDate birthday;
+    private LocalDate     birthday;
     @NotBlank
     @Pattern(regexp = "^[+]*[(]{0,1}[0-9]{1,5}[)]{0,1}[-\\s\\./0-9]*$")
     @Column(nullable = false)
-    private String phone;
+    private String        phone;
     @NotBlank
     @Email
     @Column(nullable = false)
-    private String email;
+    private String        email;
     @OneToMany(mappedBy = "trainer", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JsonIgnoreProperties("trainer")
-    private List<Event> events;
+    private List<Event>   events;
     @ElementCollection
-    @CollectionTable(name = "birthday_types", joinColumns = {@JoinColumn(name = "trainer_id")})
-    private List<String> birthdayTypes;
+    @CollectionTable(name = "birthday_types", joinColumns = { @JoinColumn(name = "trainer_id") })
+    private List<String>  birthdayTypes;
+    @OneToMany(mappedBy = "trainer",
+               fetch = FetchType.LAZY,
+               cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    private List<Holiday> holidays;
 
     @NotNull
     @Past
@@ -53,12 +57,24 @@ public class Trainer {
     @Column(nullable = false)
     private LocalDateTime updated;
 
-    public Trainer() {
-        
+
+    public Trainer () {
+
     }
 
 
-    public Trainer (Long id, @NotBlank String firstName, @NotBlank String lastName, @NotNull @Past LocalDate birthday, @NotBlank @Pattern(regexp = "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$") String phone, @NotBlank @Email String email, List<Event> events, @NotNull List<String> birthdayTypes, @NotNull @Past LocalDateTime created, @NotNull @Past LocalDateTime updated) {
+    public Trainer (Long id,
+                    @NotBlank String firstName,
+                    @NotBlank String lastName,
+                    @NotNull @Past LocalDate birthday,
+                    @NotBlank @Pattern(regexp = "^[+]*[(]{0,1}[0-9]{1,5}[)]{0,1}[-\\s\\./0-9]*$") String phone,
+                    @NotBlank @Email String email,
+                    List<Event> events,
+                    List<Holiday> holidays,
+                    @NotNull List<String> birthdayTypes,
+                    @NotNull @Past LocalDateTime created,
+                    @NotNull @Past LocalDateTime updated
+    ) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -66,6 +82,8 @@ public class Trainer {
         this.phone = phone;
         this.email = email;
         this.events = events;
+        this.holidays = holidays;
+        this.birthdayTypes = birthdayTypes;
         this.created = created;
         this.updated = updated;
     }
@@ -146,6 +164,16 @@ public class Trainer {
     }
 
 
+    public List<Holiday> getHolidays () {
+        return holidays;
+    }
+
+
+    public void setHolidays (List<Holiday> holidays) {
+        this.holidays = holidays;
+    }
+
+
     public void setBirthdayTypes (List<String> birthdayTypes) {
         this.birthdayTypes = birthdayTypes;
     }
@@ -177,37 +205,50 @@ public class Trainer {
         if(o == null || getClass() != o.getClass()) return false;
         Trainer trainer = (Trainer) o;
         return Objects.equals(id, trainer.id) &&
-            Objects.equals(firstName, trainer.firstName) &&
-            Objects.equals(lastName, trainer.lastName) &&
-            Objects.equals(birthday, trainer.birthday) &&
-            Objects.equals(phone, trainer.phone) &&
-            Objects.equals(email, trainer.email) &&
-            Objects.equals(events, trainer.events) &&
-            Objects.equals(birthdayTypes, trainer.birthdayTypes) &&
-            Objects.equals(created, trainer.created) &&
-            Objects.equals(updated, trainer.updated);
+               Objects.equals(firstName, trainer.firstName) &&
+               Objects.equals(lastName, trainer.lastName) &&
+               Objects.equals(birthday, trainer.birthday) &&
+               Objects.equals(phone, trainer.phone) &&
+               Objects.equals(email, trainer.email) &&
+               Objects.equals(events, trainer.events) &&
+               Objects.equals(birthdayTypes, trainer.birthdayTypes) &&
+               Objects.equals(holidays, trainer.holidays) &&
+               Objects.equals(created, trainer.created) &&
+               Objects.equals(updated, trainer.updated);
     }
 
 
     @Override
     public int hashCode () {
-        return Objects.hash(id, firstName, lastName, birthday, phone, email, events, birthdayTypes, created, updated);
+        return Objects.hash(id,
+                            firstName,
+                            lastName,
+                            birthday,
+                            phone,
+                            email,
+                            events,
+                            birthdayTypes,
+                            holidays,
+                            created,
+                            updated
+        );
     }
 
 
     @Override
     public String toString () {
         return "Trainer{" +
-            "id=" + id +
-            ", firstName='" + firstName + '\'' +
-            ", lastName='" + lastName + '\'' +
-            ", birthday=" + birthday +
-            ", phone='" + phone + '\'' +
-            ", email='" + email + '\'' +
-            ", events=" + events +
-            ", birthdayTypes=" + birthdayTypes +
-            ", created=" + created +
-            ", updated=" + updated +
-            '}';
+               "id=" + id +
+               ", firstName='" + firstName + '\'' +
+               ", lastName='" + lastName + '\'' +
+               ", birthday=" + birthday +
+               ", phone='" + phone + '\'' +
+               ", email='" + email + '\'' +
+               ", events=" + events +
+               ", birthdayTypes=" + birthdayTypes +
+               ", holidays" + holidays +
+               ", created=" + created +
+               ", updated=" + updated +
+               '}';
     }
 }

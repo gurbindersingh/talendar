@@ -1,6 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.tests;
 
-import at.ac.tuwien.sepm.groupphase.backend.testDataCreation.FakeData;
+import at.ac.tuwien.sepm.groupphase.backend.TestDataCreation.FakeData;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;

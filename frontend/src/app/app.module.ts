@@ -10,6 +10,7 @@ import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 
+
 import { AppComponent } from './app.component';
 import {
     CalendarComponent,
@@ -19,12 +20,17 @@ import {
     MeetingComponent,
     NavigationComponent,
     TrainerComponent,
+    ConsultationComponent,
+    TrainerListComponent
 } from 'src/app/components';
 
 import { httpInterceptorProviders } from './http-interceptors';
 import { SessionStorageService } from './services/session-storage-service';
 import { SimpleHttpInterceptor } from './http-interceptors/simple-http-interceptor';
 import { TrainerClient } from './rest/trainer-client';
+import { EventClient } from './rest/event-client';
+import { DateTimeParserService } from './services/date-time-parser.service';
+import {HolidayClient} from 'src/app/rest/holiday-client';
 
 @NgModule({
     declarations: [
@@ -36,6 +42,8 @@ import { TrainerClient } from './rest/trainer-client';
         MeetingComponent,
         NavigationComponent,
         TrainerComponent,
+        ConsultationComponent,
+        TrainerListComponent,
     ],
     imports: [
         AppRoutingModule,
@@ -50,12 +58,16 @@ import { TrainerClient } from './rest/trainer-client';
         HttpClientModule,
         OwlDateTimeModule,
         OwlNativeDateTimeModule,
+
     ],
     providers: [
         httpInterceptorProviders,
         SessionStorageService,
         SimpleHttpInterceptor,
         TrainerClient,
+        EventClient,
+        DateTimeParserService,
+        HolidayClient,
     ],
     bootstrap: [AppComponent],
 })

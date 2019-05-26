@@ -19,4 +19,34 @@ export class TrainerClient extends RestClient {
             trainer
         );
     }
+
+    public getAll(): Observable<Trainer[]> {
+        return super.get((error: HttpErrorResponse) => {
+            console.log('HTTP GET All Trainer Failed: ' + error.message);
+        }, '');
+    }
+
+    public getById(id: number): Observable<Trainer> {
+        console.log(id);
+        return super.get((error: HttpErrorResponse) => {
+            console.log(
+                'HTTP GET Trainer With ID ' + id + ' Failed: ' + error.message
+            );
+        }, '/' + id);
+    }
+
+    public update(trainer: Trainer): Observable<Trainer> {
+        return super.put(
+            (error: HttpErrorResponse) => {
+                console.log(
+                    'HTTP PATCH To Update Trainer With ID' +
+                        trainer.id +
+                        ' Failed: ' +
+                        error.message
+                );
+            },
+            '',
+            trainer
+        );
+    }
 }

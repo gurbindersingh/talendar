@@ -1,53 +1,162 @@
-<form>
-  <div class="row">
-      <label class="form-control">Art vom Geburtstag:</label>
+<div class="col-lg-3"></div>
 
-      <select class="col-3" name="birthdays">
-          <option value="DryIce"> Trockeneis Geburtstag</option>
-          <option value="Rocket"> Raketen Geburtstag</option>
-          <option value="Superhero"> Superhelden Geburtstag</option>
-          <option value="Photo"> Photo Geburtstag</option>
-          <option value="Painting"> Malen Geburtstag</option>
-      </select>
-      <label class="form-control">Anzahl an kommende Kinder (ca.):</label>
+<div class="container col-lg-6">
+    <h1>Geburtstag eintragen</h1>
+    <hr />
+    <form id="birthdayForm" #form="ngForm" (ngSubmit)="postBirthday(form)">
+        <div class="form-group">
+            <label for="birthdayType">Art vom Geburtstag:</label>
+            <select
+                class="form-control"
+                name="birthdays"
+                id="birthdayType"
+                [(ngModel)]="event.birthdayType"
+                required
+            >
+                <option value="DryIce"> Trockeneis Geburtstag</option>
+                <option value="Rocket"> Raketen Geburtstag</option>
+                <option value="Superhero"> Superhelden Geburtstag</option>
+                <option value="Photo"> Photo Geburtstag</option>
+                <option value="Painting"> Malen Geburtstag</option>
+            </select>
+        </div>
+        <div class="row align-items-center">
+            <div class="form-group col-sm">
+                <label for="birthdayHeadcount">Wie viele Kinder kommen?</label>
+                <select
+                    class="form-control"
+                    name="headcount"
+                    id="birthdayHeadcount"
+                    [(ngModel)]="event.headcount"
+                    required
+                >
+                    <option *ngFor="let number of ageList" [value]="number">{{
+                        number
+                    }}</option>
+                </select>
+            </div>
+            <div class="form-group col-sm">
+                <label for="birthdayAgeToBe">Alter des Geburtstagskinds?</label>
+                <select
+                    class="form-control"
+                    name="ageToBe"
+                    id="birthdayAgeToBe"
+                    [(ngModel)]="event.ageToBe"
+                    requried
+                >
+                    <option *ngFor="let number of ageListb" [value]="number">{{
+                        number
+                    }}</option>
+                </select>
+            </div>
+        </div>
+        <div class="row align-items-center" id="preCustomerRow">
+            <div class="form-group col-md-6">
+                <label for="birthdayRoom"
+                    >Welche Zimmer wollen sie verwenden?</label
+                >
+                <select
+                    class="form-control"
+                    name="room"
+                    id="birthdayRoom"
+                    [(ngModel)]="room.room"
+                    required
+                >
+                    <option value="GroundFloor">Erdgeschoss</option>
+                    <option value="Orange">Orangene Raum</option>
+                </select>
+            </div>
+            <div class="form-group col-md-3">
+                <label>Feier findet staat:</label>
+                <input
+                    [readonly]="true"
+                    class="form-control"
+                    id="startDateTime"
+                    ngbDatepicker
+                    (click)="varname.toggle()"
+                    #varname="ngbDatepicker"
+                    [(ngModel)]="startDate"
+                    name="startDate"
+                />
+            </div>
+            <div class="col-md-3" id="startTimeBox">
+                <ngb-timepicker
+                    readonlyInputs="true"
+                    id="startTime"
+                    [minuteStep]="15"
+                    [(ngModel)]="startTime"
+                    name="startTime"
+                ></ngb-timepicker>
+            </div>
+        </div>
+        <h2>Kundendaten</h2>
+        <hr />
+        <div class="form-group">
+            <label for="customerFirstName">Vorname</label>
+            <input
+                type="text"
+                class="form-control"
+                id="customerFirstName"
+                name="firstName"
+                placeholder="Marie"
+                required
+                [(ngModel)]="customer.firstName"
+            />
+        </div>
+        <div class="form-group">
+            <label for="customerLastName">Nachname</label>
+            <input
+                type="text"
+                class="form-control"
+                id="customerLastName"
+                name="LastName"
+                placeholder="Steiner"
+                required
+                [(ngModel)]="customer.lastName"
+            />
+        </div>
+        <div class="form-group">
+            <label for="customerEmail">E-mail</label>
+            <input
+                type="email"
+                class="form-control"
+                name="email"
+                id="customerEmail"
+                placeholder="marie.steiner@dorf.at"
+                [(ngModel)]="customer.email"
+                required
+            />
+        </div>
+        <div class="form-group">
+            <label for="customerPhone">Telefonnummer</label>
+            <input
+                type="tel"
+                class="form-control"
+                name="telephoneNumber"
+                id="customerPhone"
+                placeholder="(0123) 456 78 90"
+                [(ngModel)]="customer.phone"
+                required
+            />
+        </div>
 
-      <select class="col-3" name="headcount">
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-          <option value="8">8</option>
-          <option value="9">9</option>
-          <option value="10">10</option>
-          <option value="11">11</option>
-          <option value="12">12</option>
-          <option value="13">13</option>
-          <option value="14">14</option>
-          <option value="15">15</option>
-          <option value="16">16</option>
-          <option value="17">17</option>
-          <option value="18">18</option>
-          <option value="19">19</option>
-          <option value="20">20</option>
-      </select>
-  </div>
-  <div class="row">
-      <label class="form-control">Wie alt wird es denn?</label>
+        <div class="form-row justify-content-center">
+            <button
+                [disabled]="!isComplete()"
+                type="submit"
+                class="btn btn-primary col-4 center ml-auto"
+            >
+                Geburtstag Buchen
+            </button>
+            <button
+                type="button"
+                (click)="goBack()"
+                class="btn btn-danger col-4 center mr-auto"
+            >
+                Abbrechen
+            </button>
+        </div>
+    </form>
+</div>
 
-      <select class="col-3" name="ageToBe">
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-          <option value="8">8</option>
-          <option value="9">9</option>
-          <option value="10">10</option>
-          <option value="11">11</option>
-          <option value="12">12</option>
-          <option value="13">13</option>
-          <option value="14">14</option>
-          <option value="15">15</option>
-      </select>
-      <label class="form-control"
-          >Wann wollen sie den Geburtstag gestalten?</label
-      >
-  </div>
-</form>
+<div class="col-lg-3"></div>
