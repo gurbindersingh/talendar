@@ -4,7 +4,7 @@
 
 export const environment = {
     production: false,
-    apiEndpoint: 'http://localhost:8080/api/talendar/',
+    apiEndpoint: 'http://localhost:8080/api/v1/talendar/',
 };
 
 /*
