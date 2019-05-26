@@ -1,4 +1,4 @@
-<h1 class="row justify-content-center">Beratungstermin buchen</h1>
+<h1 class="row justify-content-center">{{ title }}</h1>
 <hr />
 
 <form
@@ -9,40 +9,17 @@
 >
     <!-- First row -->
     <div class="row justify-content-center">
-        <div class="form-group col-lg-3">
-            <label for="consultationTitle">Titel</label>
+        <div class="form-group col-lg-6">
+            <label for="consultationName">Name des Termins</label>
             <input
                 type="text"
-                [(ngModel)]="consultation.title"
+                [(ngModel)]="event.name"
                 class="form-control"
-                name="title"
-                id="consultationTitle"
+                name="name"
+                id="consultationName"
                 placeholder="Beratungstermin1"
                 required
             />
-        </div>
-        <div class="col-lg-3" id="meetingDropDown">
-            <div ngbDropdown class="d-inline-block col-lg-3">
-                <button
-                    class="btn btn-outline-primary"
-                    id="roomButtonStart"
-                    name="roomButton"
-                    ngbDropdownToggle
-                >
-                    {{ roomString }}
-                </button>
-                <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-                    <button
-                        class="dropdown-item"
-                        id="roomButtonSelected"
-                        name="roomButton"
-                        *ngFor="let room of rooms"
-                        (click)="changeSortOrder(room)"
-                    >
-                        {{ room }}
-                    </button>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -171,6 +148,55 @@
         </div>
     </div>
 
+    <!-- Sixth row -->
+    <div class="row justify-content-md-center" id="consultationDropDown">
+        <div ngbDropdown class="d-inline-block col-lg-3">
+            <button
+                class="btn btn-outline-primary"
+                id="roomButtonStart"
+                name="roomButton"
+                ngbDropdownToggle
+            >
+                {{ roomString }}
+            </button>
+            <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                <button
+                    class="dropdown-item"
+                    id="roomButtonSelected"
+                    name="roomButton"
+                    *ngFor="let room of rooms"
+                    (click)="changeSortOrder(room)"
+                >
+                    {{ room }}
+                </button>
+            </div>
+        </div>
+
+        <!-- <div class="col-lg-3" id="consultationDropDown">
+            <div ngbDropdown class="d-inline-block col-lg-3">
+                <button
+                    class="btn btn-outline-primary"
+                    id="roomButtonStart"
+                    name="roomButton"
+                    ngbDropdownToggle
+                >
+                    {{ roomString }}
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownBasic2">
+                    <button
+                        class="dropdown-item"
+                        id="roomButtonSelected"
+                        name="roomButton"
+                        *ngFor="let room of rooms"
+                        (click)="changeSortOrder(room)"
+                    >
+                        {{ room }}
+                    </button>
+                </div>
+            </div>
+        </div> -->
+    </div>
+
     <div class="row" *ngIf="errorMsg">
         <div class="col-sm-12">
             <p class="alert alert-danger">
@@ -187,6 +213,7 @@
     </div>
     <br />
 
+    <!-- Seventh row -->
     <div class="row justify-content-center">
         <button
             type="submit"
@@ -197,11 +224,7 @@
         >
             Beratungstermin anfordern
         </button>
-        <button
-            type="reset"
-            class="btn btn-danger col-3"
-            id="cancel"
-        >
+        <button type="reset" class="btn btn-danger col-3" id="cancel">
             Abbrechen
         </button>
     </div>

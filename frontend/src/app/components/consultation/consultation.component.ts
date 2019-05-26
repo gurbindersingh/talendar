@@ -32,9 +32,9 @@ export class ConsultationComponent implements OnInit {
     endDate: NgbDateStruct;
     endTime: NgbTimeStruct;
 
-    title = 'Beratunstermin buchen';
+    title = 'Beratungstermin buchen';
     roomString = 'Raum auswählen';
-    rooms = ['Grün', 'Orange', 'Erdgeschoss'];
+    rooms: string[] = ['Grün', 'Orange', 'Erdgeschoss'];
     minuteStep = 15;
 
     constructor(
