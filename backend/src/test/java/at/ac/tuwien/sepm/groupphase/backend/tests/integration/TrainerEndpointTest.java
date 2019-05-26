@@ -1,8 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.tests.integration;
 
 import at.ac.tuwien.sepm.groupphase.backend.TestDataCreation.FakeData;
-import at.ac.tuwien.sepm.groupphase.backend.testObjects.Trainer;
-import at.ac.tuwien.sepm.groupphase.backend.testObjects.TrainerDto;
+import at.ac.tuwien.sepm.groupphase.backend.TestObjects.Trainer;
+import at.ac.tuwien.sepm.groupphase.backend.TestObjects.TrainerDto;
 import at.ac.tuwien.sepm.groupphase.backend.tests.configuration.URL;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
