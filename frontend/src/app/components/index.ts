@@ -6,3 +6,4 @@ export * from './meeting/meeting.component';
 export * from './navigation/navigation.component';
 export * from './trainer/trainer.component';
 export * from './consultation/consultation.component';
+export * from './trainer-list/trainer-list.component';

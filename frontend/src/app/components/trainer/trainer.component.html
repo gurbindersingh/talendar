@@ -1,142 +1,245 @@
-<h1>{{ title }}</h1>
+<h1 class="row justify-content-center">{{ title }}</h1>
 <hr />
-<form
-    id="trainerForm"
-    #trainerForm
-    (submit)="postTrainer(trainerForm)"
-    (change)="clearInfoMsg()"
-    class="container-fluid"
->
-    <div class="form-row">
-        <div class="form-group col-lg-6">
-            <label for="trainerFirstName">Vorname</label>
-            <input
-                type="text"
-                [(ngModel)]="trainer.firstName"
-                class="form-control"
-                name="firstName"
-                id="trainerFirstName"
-                placeholder="Ned"
-                required
-            />
-        </div>
-        <div class="form-group col-lg-6">
-            <label for="trainerLastName">Nachname</label>
-            <input
-                type="text"
-                [(ngModel)]="trainer.lastName"
-                class="form-control"
-                name="lastName"
-                id="trainerLastName"
-                placeholder="Stark"
-                required
-            />
-        </div>
-    </div>
-    <div class="form-group">
-        <label for="trainerAge">Geburtstag</label>
-        <input
-            type="date"
-            [(ngModel)]="trainer.birthday"
-            class="form-control"
-            name="birthday"
-            id="trainerAge"
-            required
-        />
-    </div>
-    <div class="form-row">
-        <div class="form-group col-lg-6">
-            <label for="trainerEmail">Email</label>
-            <input
-                type="email"
-                [(ngModel)]="trainer.email"
-                class="form-control"
-                name="email"
-                id="trainerEmail"
-                placeholder="ned.stark@raben.winterfell"
-                required
-            />
-        </div>
-        <div class="form-group col-lg-6">
-            <label for="trainerPhone">Telefonnummer</label>
-            <input
-                type="tel"
-                [(ngModel)]="trainer.phone"
-                class="form-control"
-                name="phone"
-                id="trainerPhone"
-                placeholder="0660 123 456 78"
-                required
-            />
-        </div>
-    </div>
 
-    <!-- password is not considered yet - store it within trainer but then it is sent across the network (not so smart) unless https protected -->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-3"></div>
+        <div class="col-lg-6">
+            <form
+                id="trainerForm"
+                #trainerForm
+                (submit)="postTrainer(trainerForm)"
+                (change)="clearInfoMsg()"
+                class="container-fluid"
+            >
+                <div class="form-row">
+                    <div class="form-group col-lg-4">
+                        <label for="trainerFirstName">Vorname</label>
+                        <input
+                            type="text"
+                            [(ngModel)]="trainer.firstName"
+                            class="form-control"
+                            name="firstName"
+                            id="trainerFirstName"
+                            placeholder="Ned"
+                            required
+                        />
+                    </div>
+                    <div class="form-group col-lg-4">
+                        <label for="trainerLastName">Nachname</label>
+                        <input
+                            type="text"
+                            [(ngModel)]="trainer.lastName"
+                            class="form-control"
+                            name="lastName"
+                            id="trainerLastName"
+                            placeholder="Stark"
+                            required
+                        />
+                    </div>
+                    <div class="form-group col-lg-4">
+                        <label for="trainerBirthday">Geburtstag</label>
+                        <input
+                            class="datepicker"
+                            data-date-format="mm/dd/yyyy"
+                            [(ngModel)]="birthday"
+                            class="form-control"
+                            name="birthday"
+                            id="trainerBirthday"
+                            required
+                            ngbDatepicker
+                            (click)="varname.toggle()"
+                            #varname="ngbDatepicker"
+                            placeholder="YYYY-mm-dd"
+                        />
+                    </div>
+                </div>
 
-    <!-- this inputs for setting ad confirming a new password are only accessible by the admin -->
-    <div class="form-row">
-        <div class="form-group col-lg-6">
-            <label for="trainerPw">Neues Passwort eingeben</label>
-            <input
-                type="password"
-                class="form-control"
-                name="password"
-                id="trainerPw"
-                placeholder="Neues Passwort"
-                required
-            />
-        </div>
+                <div class="form-row">
+                    <div class="col-lg-12">
+                        <label>Wählen der betreuten Geburtstage:</label>
+                    </div>
+                </div>
 
-        <div class="form-group col-lg-6">
-            <label for="trainerPwRepeat">Passwort wiederholen</label>
-            <input
-                type="password"
-                class="form-control"
-                name="passwordRepeat"
-                id="trainerPwRepeat"
-                placeholder="Passwort wiederholen"
-                required
-            />
+                <div class="form-row">
+                    <div class="col-lg-6">
+                        <div class="custom-control custom-checkbox">
+                            <input
+                                class="custom-control-input"
+                                type="checkbox"
+                                name="cbTrockeneis"
+                                id="cb1"
+                                [(ngModel)]="trainer.birthdayTypes[0]"
+                                value="Trockeneis Geburtstag"
+                            />
+                            <label class="custom-control-label" for="cb1">
+                                Trockeneis Geburtstag
+                            </label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input
+                                class="custom-control-input"
+                                type="checkbox"
+                                name="cbRaketen"
+                                id="cb2"
+                                [(ngModel)]="trainer.birthdayTypes[1]"
+                                value="Raketen Geburtstag"
+                            />
+                            <label class="custom-control-label" for="cb2">
+                                Raketen Geburtstag
+                            </label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input
+                                class="custom-control-input"
+                                type="checkbox"
+                                name="cbSuperhelden"
+                                id="cb3"
+                                [(ngModel)]="trainer.birthdayTypes[2]"
+                                value="Superhelden Geburtstag"
+                            />
+                            <label class="custom-control-label" for="cb3">
+                                Superhelden Geburtstag
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="custom-control custom-checkbox">
+                            <input
+                                class="custom-control-input"
+                                type="checkbox"
+                                name="cbPhoto"
+                                id="cb4"
+                                [(ngModel)]="trainer.birthdayTypes[3]"
+                                value="Photo Geburtstag"
+                            />
+                            <label class="custom-control-label" for="cb4">
+                                Photo Geburtstag
+                            </label>
+                        </div>
+                        <div class="custom-control custom-checkbox">
+                            <input
+                                class="custom-control-input"
+                                type="checkbox"
+                                name="cbMalen"
+                                id="cb5"
+                                [(ngModel)]="trainer.birthdayTypes[4]"
+                                value="Malen Geburtstag"
+                            />
+                            <label class="custom-control-label" for="cb5">
+                                Malen Geburtstag
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-lg-6">
+                        <label for="trainerEmail">Email</label>
+                        <input
+                            type="email"
+                            [(ngModel)]="trainer.email"
+                            class="form-control"
+                            name="email"
+                            id="trainerEmail"
+                            placeholder="ned.stark@raben.winterfell"
+                            required
+                        />
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <label for="trainerPhone">Telefonnummer</label>
+                        <input
+                            type="tel"
+                            [(ngModel)]="trainer.phone"
+                            class="form-control"
+                            name="phone"
+                            id="trainerPhone"
+                            placeholder="0660 123 456 78"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <!-- password is not considered yet - store it within trainer but then it is sent across the network (not so smart) unless https protected -->
+
+                <!-- this inputs for setting ad confirming a new password are only accessible by the admin -->
+                <div class="form-row">
+                    <div class="form-group col-lg-6">
+                        <label for="trainerPw">Neues Passwort eingeben</label>
+                        <input
+                            type="password"
+                            class="form-control"
+                            name="password"
+                            id="trainerPw"
+                            placeholder="Neues Passwort"
+                            required
+                        />
+                    </div>
+
+                    <div class="form-group col-lg-6">
+                        <label for="trainerPwRepeat"
+                            >Passwort wiederholen</label
+                        >
+                        <input
+                            type="password"
+                            class="form-control"
+                            name="passwordRepeat"
+                            id="trainerPwRepeat"
+                            placeholder="Passwort wiederholen"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="col-6">
+                        Here goes a container for a profile picture if uploaded,
+                        else an icon
+                    </div>
+
+                    <div class="col-6">
+                        Here should be a clickable icon to upload a picture
+                    </div>
+                </div>
+
+                <div class="row" *ngIf="errorMsg">
+                    <div class="col-lg-12">
+                        <p class="alert alert-danger">
+                            {{ errorMsg }}
+                        </p>
+                    </div>
+                </div>
+                <div class="row" *ngIf="successMsg">
+                    <div class="col-lg-12">
+                        <p class="alert alert-success">
+                            {{ successMsg }}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="form-row justify-content-end">
+                    <div>
+                        <button
+                            type="reset"
+                            class="btn btn-light mr-2"
+                            id="cancel"
+                            (click)="cancel()"
+                        >
+                            Abbrechen
+                        </button>
+                        <button
+                            type="submit"
+                            [disabled]="!isCompleted()"
+                            class="btn btn-primary"
+                            id="save"
+                        >
+                            <!-- either 'Neuen Betreuer speichern' oder 'Änderungen speichern'-->
+                            {{ btnContextDescription }}
+                        </button>
+                    </div>
+                </div>
+            </form>
         </div>
+        <div class="col-lg-3"></div>
     </div>
-
-    <div class="form-row justify-content-center">
-        <div class="col-4 m-auto">
-            Here goes a container for a profile picture if uploaded, else an
-            icon
-        </div>
-
-        <div class="col-4 m-auto">
-            Here should be a clickable icon to upload a picture
-        </div>
-    </div>
-
-    <div class="row" *ngIf="errorMsg">
-        <div class="col-sm-12">
-            <p class="alert alert-danger">
-                {{ errorMsg }}
-            </p>
-        </div>
-    </div>
-    <div class="row" *ngIf="successMsg">
-        <div class="col-sm-12">
-            <p class="alert alert-success">
-                {{ successMsg }}
-            </p>
-        </div>
-    </div>
-
-    <div class="form-row justify-content-center">
-        <button
-            type="submit"
-            [disabled]="!isCompleted()"
-            class="btn btn-primary col-sm-6"
-            id="save"
-        >
-            Neuen Betreuer Anlegen
-        </button>
-        <button type="reset" class="btn btn-danger col-sm-6" id="cancel">
-            Anlegen abbrechen
-        </button>
-    </div>
-</form>
+</div>

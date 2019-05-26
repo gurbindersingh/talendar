@@ -20,6 +20,7 @@ import {
     MeetingComponent,
     NavigationComponent,
     TrainerComponent,
+    TrainerListComponent
 } from 'src/app/components';
 
 import { httpInterceptorProviders } from './http-interceptors';
@@ -42,6 +43,7 @@ import {HolidayClient} from 'src/app/rest/holiday-client';
         NavigationComponent,
         TrainerComponent,
         ConsultationComponent,
+        TrainerListComponent,
     ],
     imports: [
         AppRoutingModule,

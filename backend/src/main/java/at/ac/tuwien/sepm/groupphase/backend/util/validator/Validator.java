@@ -213,7 +213,7 @@ public class Validator{
         if(entity.getBirthday() == null || entity.getBirthday().isAfter(LocalDate.now())) {
             throw new InvalidEntityException("age must be specified and a past date");
         }
-        else if(( ( LocalDate.now().getYear() - entity.getBirthday().getYear() ) < 16 ) || ( ( LocalDate.now().getYear() - entity.getBirthday().getYear() ) > 120 )) {
+        else if(( ( LocalDate.now().getYear() - entity.getBirthday().getYear() ) < 15 ) || ( ( LocalDate.now().getYear() - entity.getBirthday().getYear() ) > 120 )) {
             throw new InvalidEntityException("age must be a reasonable value");
         }
 
