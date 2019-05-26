@@ -20,7 +20,7 @@ import {
     MeetingComponent,
     NavigationComponent,
     TrainerComponent,
-    TrainerListComponent
+    TrainerListComponent,
 } from 'src/app/components';
 
 import { httpInterceptorProviders } from './http-interceptors';
@@ -31,6 +31,7 @@ import { EventClient } from './rest/event-client';
 import { ConsultationComponent } from './components/consultation/consultation.component';
 import { DateTimeParserService } from './services/date-time-parser.service';
 import {HolidayClient} from 'src/app/rest/holiday-client';
+import { CancelEventComponent } from './components/cancel-event/cancel-event.component';
 
 @NgModule({
     declarations: [
@@ -44,6 +45,7 @@ import {HolidayClient} from 'src/app/rest/holiday-client';
         TrainerComponent,
         ConsultationComponent,
         TrainerListComponent,
+        CancelEventComponent,
     ],
     imports: [
         AppRoutingModule,

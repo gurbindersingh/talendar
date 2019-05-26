@@ -162,7 +162,6 @@ public class EventEndpointTest {
         consultation.setUpdated(null);
         consultation.setCreated(null);
         consultation.setTrainer(trainerResponse);
-        consultation.setCustomerDtos(null);
         HttpEntity<EventDto> request = new HttpEntity<>(consultation);
         System.out.println(request.toString());
         ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.EVENT,

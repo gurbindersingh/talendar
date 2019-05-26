@@ -3,6 +3,8 @@ package at.ac.tuwien.sepm.groupphase.backend.Entity;
 import at.ac.tuwien.sepm.groupphase.backend.enums.BirthdayType;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.annotations.Generated;
+import org.hibernate.annotations.GenerationTime;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -367,7 +369,7 @@ public class Event {
             ", updated=" + updated +
             ", eventType=" + eventType +
             ", customers=" + customers +
-            ", trainer=" + trainer.getFirstName() + trainer.getLastName() +
+            ", trainer=" + trainer.getFirstName() +
             ", headcount=" + headcount +
             ", ageToBe=" + ageToBe +
             ", birthdayType=" + birthdayType +
@@ -378,23 +380,5 @@ public class Event {
             ", minAge=" + minAge +
             ", maxAge=" + maxAge +
             '}';
-               "id=" + id +
-               ", name='" + name + '\'' +
-               ", roomUses=" + roomUses +
-               ", created=" + created +
-               ", updated=" + updated +
-               ", eventType=" + eventType +
-               ", customers=" + customers +
-               ", trainer=" + trainer.getFirstName() + trainer.getLastName() +
-               ", headcount=" + headcount +
-               ", ageToBe=" + ageToBe +
-               ", birthdayType=" + birthdayType +
-               ", endOfApplication=" + endOfApplication +
-               ", price=" + price +
-               ", maxParticipant=" + maxParticipant +
-               ", description='" + description + '\'' +
-               ", minAge=" + minAge +
-               ", maxAge=" + maxAge +
-               '}';
     }
 }

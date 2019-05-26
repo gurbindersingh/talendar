@@ -6,6 +6,7 @@ import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,8 +17,13 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     Event findByIdAndDeletedFalse(Long id);
 
+
+    //Event save(Event event);
+
+
     List<Event> findByTrainer_IdAndDeletedFalse (Long id);
-    List<RoomUse> findByTrainer_IdAndRoomUses_BeginGreaterThanEqualAndDeletedIs(Long id, LocalDateTime now, boolean deleted);
+
+    List<RoomUse> findByTrainer_IdAndRoomUses_BeginGreaterThanEqualAndDeletedFalse(Long id, LocalDateTime now);
 
     List<Event> findByEventTypeEqualsAndDeletedFalse(EventType eventType);
 

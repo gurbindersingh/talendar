@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.util.validator;
 
 
 
+import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.CancelationException;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidEntityException;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Holiday;
@@ -213,7 +214,7 @@ public class Validator{
         if(entity.getBirthday() == null || entity.getBirthday().isAfter(LocalDate.now())) {
             throw new InvalidEntityException("age must be specified and a past date");
         }
-        else if(( ( LocalDate.now().getYear() - entity.getBirthday().getYear() ) < 15 ) || ( ( LocalDate.now().getYear() - entity.getBirthday().getYear() ) > 120 )) {
+        else if(( ( LocalDate.now().getYear() - entity.getBirthday().getYear() ) <= 15 ) || ( ( LocalDate.now().getYear() - entity.getBirthday().getYear() ) > 120 )) {
             throw new InvalidEntityException("age must be a reasonable value");
         }
 
@@ -254,6 +255,37 @@ public class Validator{
         }
         if(holiday.getHolidayStart().isBefore(LocalDateTime.now())) {
             throw new InvalidEntityException("Holidays can only take place in the future");
+        }
+    }
+
+    public void validateCancelation(Event event) throws CancelationException {
+        switch (event.getEventType()){
+            case Birthday:
+                for(RoomUse r: event.getRoomUses()
+                ) {
+                    if(LocalDateTime.now().isAfter(r.getBegin().minusMonths(1))){
+                        throw new CancelationException("Geburtstage müssen 1 Monat bevor sie stattfinden storniert werden");
+                    }
+                }
+                break;
+            case Consultation:
+                for(RoomUse r: event.getRoomUses()
+                ) {
+                    if(LocalDateTime.now().isAfter(r.getBegin().minusDays(1))){
+                        throw new CancelationException("Beratungstermine müssen 1 Tag bevor sie stattfinden storniert werden");
+                    }
+                }
+                break;
+            case Rent:
+                for(RoomUse r: event.getRoomUses()
+                ) {
+                    if(LocalDateTime.now().isAfter(r.getBegin().minusDays(2))) {
+                        throw new CancelationException("Mietungen müssen 2 Tage bevor sie stattfinden storniert werden");
+                    }
+                }
+                break;
+            default:
+                throw new CancelationException("Irgendwas ist schiefgelaufen");
         }
     }
 }

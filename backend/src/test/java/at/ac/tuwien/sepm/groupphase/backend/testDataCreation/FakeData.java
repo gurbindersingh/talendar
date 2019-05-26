@@ -66,7 +66,7 @@ public class FakeData {
     public LocalDateTime fakeFutureTime() {
         return LocalDateTime.ofInstant(faker.date()
                                             .between(Date.valueOf("2019-06-01"),
-                                                     Date.valueOf("2025-01-01")
+                                                     Date.valueOf("2030-01-01")
                                             )
                                             .toInstant(), ZoneId.systemDefault());
     }
@@ -76,7 +76,7 @@ public class FakeData {
         return LocalDateTime.ofInstant(faker.date()
                                             .between(Date.from(
                                                 dateTime.atZone(ZoneId.systemDefault())
-                                                        .toInstant()), Date.valueOf("2025-01-01"))
+                                                        .toInstant()), Date.valueOf("2040-01-01"))
                                             .toInstant(), ZoneId.systemDefault());
     }
 
@@ -199,6 +199,7 @@ public class FakeData {
         roomUse.setBegin(fakeFutureTime());
         roomUse.setEnd(fakeTimeAfter(roomUse.getBegin()));
         roomUse.setRoom(randomRoom());
+        roomUse.setEnd(roomUse.getBegin().plusDays(1));
         if(roomUse.getBegin().getHour() < 8 ||
            roomUse.getBegin().getHour() > 22 ||
            roomUse.getEnd().getHour() < 8 ||
@@ -369,7 +370,7 @@ public class FakeData {
         event.setUpdated(null);
         event.setRoomUses(roomUses);
         Set<Customer> customers = new HashSet<>();
-        Customer customer = fakeCustomerEntity();
+        Customer customer = fakeNewCustomerEntity();
         Set<Event> events = new HashSet<>();
         events.add(event);
         customer.setEvents(events);
