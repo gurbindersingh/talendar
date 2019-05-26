@@ -1,9 +1,9 @@
-package at.ac.tuwien.sepm.groupphase.backend.TestObjects;
+package at.ac.tuwien.sepm.groupphase.backend.testObjects;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
-import at.ac.tuwien.sepm.groupphase.backend.TestObjects.CustomerDto;
-import at.ac.tuwien.sepm.groupphase.backend.TestObjects.TrainerDto;
+import at.ac.tuwien.sepm.groupphase.backend.testObjects.CustomerDto;
+import at.ac.tuwien.sepm.groupphase.backend.testObjects.TrainerDto;
 
 
 import java.time.LocalDateTime;
