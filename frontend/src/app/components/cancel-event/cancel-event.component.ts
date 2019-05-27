@@ -45,8 +45,8 @@ private errorMsg: String;
         this.valid =false;
       }else{
         console.log('Got event with id ' + this.event.id);
-        this.title = "Hallo " + this.event.customerDtos[0].firstName + " " + this.event.customerDtos[0].lastName + "!";
-        this.textBox = "Wollen sie wirklich " + this.event.name + " stornieren?"; 
+        this.title = "Hallo!";
+        this.textBox = "Wollen sie wirklich stornieren?"; 
         this.valid = true;
       }
     }
