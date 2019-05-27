@@ -5,18 +5,22 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.text.IsEqualIgnoringCase.equalToIgnoringCase;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class BackendApplicationTests {
 
-	@Test
-	public void contextLoads() {
-	    assertEquals("Hello Test", "Hello Test");
-	    assertThat("Hello Test", equalToIgnoringCase("HELLO TEST"));
-	}
+    /**
+     * This is just a simple 'Hello World Equivalent'
+     *
+     * You may not write tests here.
+     * Too unspecific.
+     */
 
+    @Test
+    public void helloSpringTest() {
+        assertEquals("Hello Spring Test", "Hello Spring Test");
+    }
 }

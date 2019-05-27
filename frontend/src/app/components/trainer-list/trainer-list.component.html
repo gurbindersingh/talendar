@@ -1,0 +1,54 @@
+<header id="trainerListHeader">
+    <h1 class="row justify-content-center">{{ title }}</h1>
+    <button type="button" class="btn" [routerLink]="['/trainer']">
+        <i class="fas fa-user-plus fa-3x"></i>
+    </button>
+
+    <hr />
+</header>
+
+<div *ngIf="trainerList.length == 0">
+    <div class="row">
+        <div class="col-lg-12">
+            <p class="alert alert-info">
+                Aktuell sind noch keine Trainer vorhanden!
+            </p>
+        </div>
+    </div>
+</div>
+
+<div *ngFor="let trainer of trainerList">
+    <div class="card border-dark mb-2 flex-row flex-wrap">
+        <div class="card-header bg-secondary" id="cardLeft">
+            Here goes the profil picture
+        </div>
+        <div class="card-block" id="cardMiddle">
+            <div class="card-body" id="cardBody">
+                <h4 class="card-title" id="cardHeader">
+                    {{ trainer.firstName }} {{ trainer.lastName }}
+                </h4>
+
+                <hr />
+                <p clas="card-text" id="cardContent">
+                    Telefonnummer: {{ trainer.phone }}<br />
+                    Email: {{ trainer.email }} <br />
+                    Geburtstag: {{ trainer.birthday }}
+                </p>
+            </div>
+        </div>
+        <div class="card-footer flex-column" id="cardRight">
+            <!-- for more details admin can go to profile site of trainer (same infos, plus trainer related content like hosted events) -->
+            <div class="mb-4 mt-2">
+                <button type="button" class="btn">
+                    <i class="fas fa-user fa-3x"></i>
+                </button>
+            </div>
+            <!-- -->
+            <div [routerLink]="['/trainer']" [queryParams]="{ id: trainer.id }">
+                <button type="button" class="btn">
+                    <i class="fas fa-pencil-alt fa-3x"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

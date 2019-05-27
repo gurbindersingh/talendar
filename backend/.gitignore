@@ -48,7 +48,8 @@ buildNumber.properties
 ############
 
 ### Intellij ###
-.idea/
+.idea/*
+!.idea/codeStyles
 .idea_modules/
 *.iws
 *.iml

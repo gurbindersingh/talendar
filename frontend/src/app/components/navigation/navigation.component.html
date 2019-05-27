@@ -1,0 +1,20 @@
+<nav class="navbar">
+    <div class="navbar-toggler" (click)="toggleMenu()">
+        <i class="fas fa-bars"></i>
+    </div>
+
+    <div
+        id="nav-items"
+        class="navbar-nav overlay"
+        [ngClass]="{ 'vw-100': showMenu }"
+    >
+        <button class="close" (click)="toggleMenu()">
+            <span>&times;</span>
+        </button>
+        <ul class="list-unstyled text-align-center">
+            <li class="nav-link" *ngFor="let nav of navLinks">
+                <a [routerLink]="nav.path"> {{ nav.name }} </a>
+            </li>
+        </ul>
+    </div>
+</nav>

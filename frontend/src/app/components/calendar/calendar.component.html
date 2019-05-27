@@ -1,0 +1,102 @@
+<br />
+<div class="container">
+    <div class="row">
+        <div class="btn-group btn-group-toggle col pb-3">
+            <button
+                class="btn btn-primary"
+                [class.active]="view === calendarView.Month"
+                (click)="toggleView(calendarView.Month)"
+            >
+                Month
+            </button>
+            <button
+                class="btn btn-primary"
+                (click)="toggleView(calendarView.Week)"
+                [class.active]="
+                    view === calendarView.Week && daysInWeek === null
+                "
+            >
+                Woche
+            </button>
+            <button
+                class="btn btn-primary"
+                [class.active]="view === calendarView.Week && daysInWeek === 3"
+                (click)="toggleView(calendarView.Week, 3)"
+            >
+                3 Tage
+            </button>
+            <button
+                class="btn btn-primary"
+                [class.active]="view === calendarView.Week && daysInWeek === 1"
+                (click)="toggleView(calendarView.Week, 1)"
+            >
+                Tag
+            </button>
+        </div>
+
+        <div id="calendar-navigation" class="btn-group col pb-3">
+            <button
+                class="btn btn-primary"
+                mwlCalendarPreviousView
+                [(viewDate)]="viewDate"
+                [view]="view"
+                [daysInWeek]="daysInWeek"
+            >
+                <i class="fas fa-chevron-circle-left"></i>
+                {{ navButtonLabel.prev }}
+            </button>
+
+            <button
+                class="btn btn-primary"
+                mwlCalendarToday
+                [(viewDate)]="viewDate"
+            >
+                <i class="fas fa-calendar-day"></i> Heute
+            </button>
+            <button
+                class="btn btn-primary"
+                mwlCalendarNextView
+                [(viewDate)]="viewDate"
+                [view]="view"
+                [daysInWeek]="daysInWeek"
+            >
+                <i class="fas fa-chevron-circle-right"></i>
+                {{ navButtonLabel.next }}
+            </button>
+        </div>
+    </div>
+</div>
+
+<h3 *ngIf="view === calendarView.Month">
+    {{ viewDate | calendarDate: view + 'ViewTitle':'de-AT' }}
+</h3>
+
+<ng-container *ngIf="view === calendarView.Month; else weekView">
+    <mwl-calendar-month-view
+        [events]="events"
+        [locale]="locale"
+        [viewDate]="viewDate"
+        [weekStartsOn]="weekStartsOn"
+    ></mwl-calendar-month-view>
+</ng-container>
+
+<ng-template #weekView>
+    <!-- 
+        If the daysInWeek property is set to a number, 
+        viewDate will be the first day of the week, to 
+        prevent this from happening in the week view set
+        daysInWeek to NULL.
+    -->
+    <mwl-calendar-week-view
+        [dayEndHour]="dayEndHour"
+        [dayEndMinute]="dayEndMinute"
+        [daysInWeek]="daysInWeek"
+        [dayStartHour]="dayStartHour"
+        [dayStartMinute]="dayStartMinute"
+        [events]="events"
+        [hourSegments]="hourSegments"
+        [locale]="locale"
+        [viewDate]="viewDate"
+        [weekStartsOn]="weekStartsOn"
+    ></mwl-calendar-week-view>
+</ng-template>
