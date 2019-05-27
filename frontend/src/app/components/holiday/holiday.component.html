@@ -1,128 +1,187 @@
-<div class="container">
-    <h1>{{ title }}</h1>
-    <form 
-        novalidate 
-        (ngSubmit)="postHoliday(holiday)"
+<h1 class="row justify-content-center">{{ title }}</h1>
+<hr />
+<div class="row">
+    <div class="col-lg-3"></div>
+    <div class="col-lg-6">
+        <form
+            class="container-fluid"
+            novalidate
+            (ngSubmit)="postHoliday(holiday)"
+            #holidayForm
         >
-        <div class="row">
-            <div class="col-sm">
-                <label for="startdate" id="labelstartdate">Datum (von):</label>
-            </div>
-            <div class="col-sm">
-                <label for="starttime" id="labelstarttime">Zeit (von):</label>
-            </div>
-        </div>
-        <div class="row align-items-center">
-            <div class="col-sm">
-                <div class="input-group">
-                    <input 
-                        class="form-control"
-                        id="startdate"
-                        ngbDatepicker #dstart="ngbDatepicker"
-                        placeholder="yyyy-mm-dd"
-                        
-                        name="holidayStart"
-                        [(ngModel)] = "startDate"
-                    />
-                    <div class="input-group-append">
-                        <button
-                            type="button"
-                            class="btn btn-outline-secondary calendar fa fa-calendar"
-                            id="bstartdate"
+            <div class="row">
+                <div class="col-lg-6" id="d6p1">
+                    <label for="startdate" id="labelvon">Von</label>
+                    <div class="input-group">
+                        <input
+                            class="form-control"
+                            id="startdate"
+                            ngbDatepicker
+                            #dstart="ngbDatepicker"
                             (click)="dstart.toggle()"
+                            placeholder="yyyy-mm-dd"
+                            name="holidayStartDate"
+                            [(ngModel)]="startDate"
+                            required
+                        />
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="input-group">
+                        <ngb-timepicker
+                            id="starttime"
+                            [minuteStep]="15"
+                            readonlyInputs="true"
+                            name="holidayStartTime"
+                            [(ngModel)]="startTime"
                         >
-                        </button>
+                        </ngb-timepicker>
                     </div>
                 </div>
             </div>
-            <div class="col-sm">
-                <div class="input-group">
-                    <ngb-timepicker
-                        id="starttime"
-                        [(ngModel)]="stime"
-                        [minuteStep]=15
-
-                        name="holidayStart"
-                        [(ngModel)] = "startTime"
-                    >
-                    </ngb-timepicker>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm">
-                <label for="enddate" id="labelenddate">Datum (bis):</label>
-            </div>
-            <div class="col-sm">
-                <label for="endtime" id="labelendtime">Zeit (bis):</label>
-            </div>
-        </div>
-        <div class="row align-items-center">
-            <div class="col-sm">
-                <div class="input-group">
-                    <input 
-                        class="form-control"
-                        id="enddate"
-                        ngbDatepicker #dend="ngbDatepicker"
-                        placeholder="yyyy-mm-dd"
-
-                        name="holidayEnd"
-                        [(ngModel)] = "endDate"
-                    />
-                    <div class="input-group-append">
-                        <button
-                            class="btn btn-outline-secondary calendar fa fa-calendar"
-                            id="benddate"
+            <div class="row">
+                <div class="col-lg-6" id="d6p2">
+                    <label for="enddate" id="labelbis">Bis</label>
+                    <div class="input-group">
+                        <input
+                            class="form-control"
+                            id="enddate"
+                            ngbDatepicker
+                            #dend="ngbDatepicker"
                             (click)="dend.toggle()"
-                            type="button"
+                            placeholder="yyyy-mm-dd"
+                            name="holidayEndStart"
+                            [(ngModel)]="endDate"
+                            required
+                        />
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="input-group">
+                        <ngb-timepicker
+                            name="endtimepicker"
+                            id="endtime"
+                            [minuteStep]="15"
+                            readonlyInputs="true"
+                            name="holidayEndTime"
+                            [(ngModel)]="endTime"
                         >
-                        </button>
+                        </ngb-timepicker>
                     </div>
                 </div>
             </div>
-            <div class="col-sm">
-                <div class="input-group">
-                    <ngb-timepicker 
-                        name="endtimepicker"
-                        id="endtime"
-                        [(ngModel)]="etime"
-                        [minuteStep]=15
-                        
-                        name="holidayEnd"
-                        [(ngModel)] = "endTime"
-                    >
-                    </ngb-timepicker>
+
+            <div class="row" *ngIf="errorMsg">
+                <div class="col-lg-6">
+                    <p class="alert alert-danger">
+                        {{ errorMsg }}
+                    </p>
+                </div>
+            </div>
+            <div class="row" *ngIf="successMsg">
+                <div class="col-lg-6">
+                    <p class="alert alert-success">
+                        {{ successMsg }}
+                    </p>
                 </div>
             </div>
 
-        </div>
-                
-        <div class="row" *ngIf="errorMsg">
-            <div class="col-sm-12">
-                <p class="alert alert-danger">
-                    {{ errorMsg }}
-                </p>
-            </div>
-        </div>
-        <div class="row" *ngIf="successMsg">
-            <div class="col-sm-12">
-                <p class="alert alert-success">
-                    {{ successMsg }}
-                </p>
-            </div>
-        </div>
+            <br />
 
-        <div class="row">
-            <div class="col-sm">
-                <button
-                    type="button"
-                    class="form-control"
-                    id="moreoptions"
-                >
-                    Wiederkehrende Optionen
-                </button>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="custom-control custom-switch">
+                        <input
+                            name="toggler"
+                            type="checkbox"
+                            class="custom-control-input"
+                            id="options"
+                            [(ngModel)]="toggleOptions"
+                            (input)="togg()"
+                        />
+                        <label class="custom-control-label" for="options"
+                            >Wiederkehrender Urlaub</label
+                        >
+                    </div>
+                </div>
+
+                <div class="col-lg-4"></div>
             </div>
-            <div class="col-sm">
+            <br />
+
+            <div *ngIf="toggleOptions">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <label for="repeatAt">Wiederhohlen</label>
+                        <select
+                            class="browser-default custom-select"
+                            id="repeatAt"
+                            name="repeatAt"
+                            [(ngModel)]="repeatModul"
+                        >
+                            <option *ngFor="let r of repeatEvery">{{
+                                r
+                            }}</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-4"></div>
+                </div>
+                <br />
+                <div class="row" *ngIf="isRepeat()">
+                    <div class="col-lg-6">
+                        <div class="row">
+                            <div class="col-lg-2">
+                                <label for="repeatAfterX">Alle</label>
+                            </div>
+                            <div class="col-lg-4">
+                                <input
+                                    value="1"
+                                    type="number"
+                                    name="repeatAfterX"
+                                    id="repeatAfterX"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <p>Tage/Wochen/Monate wiederholen</p>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="row">
+                            <div class="col-lg-5" *ngIf="isRepeat()">
+                                <label for="stopAfter">Ended</label>
+                                <select
+                                    class="browser-default custom-select"
+                                    id="stopAfter"
+                                    name="stopAfter"
+                                    [(ngModel)]="terminateModul"
+                                >
+                                    <option *ngFor="let t of terminateAfter">
+                                        {{ t }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-lg-1" *ngIf="isTerminate()">
+                                <input
+                                    value="1"
+                                    type="number"
+                                    name="termAfter"
+                                    id="termAfter"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4" *ngIf="isTerminate()" id="10p">
+                        <p>Tagen/Wochen/Monaten</p>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-lg-7"></div>
                 <button
                     [disabled]="!isCompleted()"
                     class="btn btn-primary"
@@ -131,20 +190,7 @@
                     Urlaub eintragen
                 </button>
             </div>
-        </div>
-    </form>
+        </form>
+    </div>
+    <div class="col-lg-3"></div>
 </div>
-
-<!-- 
-        <div class="form-row">
-            <div class="col-sm">
-                <input 
-                    class="form-control" 
-                    name="trainer"
-                    id="TrainerId" 
-                    placeholder="1" 
-                    [(ngModel)] = "holiday.trainer"
-                />
-            </div>
-        </div>
- -->

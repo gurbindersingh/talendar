@@ -1,15 +1,16 @@
-package at.ac.tuwien.sepm.groupphase.backend.TestDataCreation;
+package at.ac.tuwien.sepm.groupphase.backend.testDataCreation;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.enums.Room;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
-import at.ac.tuwien.sepm.groupphase.backend.TestObjects.CustomerDto;
-import at.ac.tuwien.sepm.groupphase.backend.TestObjects.EventDto;
+import at.ac.tuwien.sepm.groupphase.backend.testObjects.CustomerDto;
+import at.ac.tuwien.sepm.groupphase.backend.testObjects.EventDto;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
-import at.ac.tuwien.sepm.groupphase.backend.TestObjects.TrainerDto;
+import at.ac.tuwien.sepm.groupphase.backend.testObjects.TrainerDto;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import com.github.javafaker.Faker;
+import org.apache.tomcat.jni.Local;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -305,8 +306,8 @@ public class FakeData {
 
 
         course.setEndOfApplication(now.plusDays(3));
-        course.setMaxParticipant(20);
-        course.setMinAge(3);
+        course.setMaxParticipants(20);
+        course.setMinAge(5);
         course.setMaxAge(15);
         return course;
     }
@@ -379,6 +380,27 @@ public class FakeData {
         customer.setEvents(events);
         customers.add(customer);
         event.setCustomers(customers);
+        return event;
+    }
+
+    public Event fakeNewCourseEntity(){
+        Event event = new Event();
+        List<RoomUse> roomUses = new LinkedList<>();
+        roomUses.add(fakeRoomUseDto());
+        event.setRoomUses(roomUses);
+        event.setName("Kurs");
+        event.setDescription("Jo");
+        event.setCreated(null);
+        event.setUpdated(null);
+        event.setMinAge(5);
+        event.setMaxAge(15);
+        event.setEventType(EventType.Course);
+        Trainer trainer = fakeTrainerEntity();
+        trainer.setId(1L);
+        event.setTrainer(trainer);
+        LocalDateTime now = LocalDateTime.now();
+        event.setEndOfApplication(now.plusDays(1));
+        event.setId(null);
         return event;
     }
 

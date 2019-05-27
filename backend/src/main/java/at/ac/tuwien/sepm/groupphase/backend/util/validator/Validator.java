@@ -108,11 +108,15 @@ public class Validator{
                 throw new InvalidEntityException("Preis ist negativ");
             }
 
-            if(event.getMaxParticipant() == null) {
-                throw new InvalidEntityException("Maximale Teilnehmerzahl ist nicht gesetzt");
+            if(event.getMaxParticipants() == null) {
+                throw new InvalidEntityException("Maximale Teilnehmeranzahl ist nicht gesetzt");
             }
-            else if(event.getMaxParticipant() < 5) {
-                throw new InvalidEntityException("Maximale Teilnehmerzahl ist kleiner als 5");
+            else if(event.getMaxParticipants() < 5) {
+                throw new InvalidEntityException("Maximale Teilnehmeranzahl ist kleiner als 5");
+            }
+
+            if(event.getMaxParticipants() > 30) {
+                throw new InvalidEntityException("Maximale Teilnehmeranzahl ist größer als 30");
             }
 
             if(event.getMinAge() == null){
@@ -127,8 +131,8 @@ public class Validator{
                 throw new InvalidEntityException("Minimum Alter ist größer als maximum Alter");
             }
 
-            if(event.getMinAge() < 0) {
-                throw new InvalidEntityException("Minimum Alter ist kleiner als 0");
+            if(event.getMinAge() < 5) {
+                throw new InvalidEntityException("Minimum Alter ist kleiner als 5");
             }
 
             if(event.getMaxAge() > 100){
@@ -139,11 +143,10 @@ public class Validator{
                 throw new InvalidEntityException("Beschreibung ist nicht gesetzt");
             }
 
-            if(event.getTrainer() == null && event.getTrainer().getId() == null) {
+            if(event.getTrainer() == null || event.getTrainer().getId() == null) {
                 throw new InvalidEntityException("Trainer Id ist nicht gesetzt");
             }
-
-            if(event.getCustomers() != null) {
+            if(event.getCustomers() != null && !event.getCustomers().isEmpty()) {
                 throw new InvalidEntityException("Kundenliste ist nicht leer");
             }
         }
@@ -245,16 +248,16 @@ public class Validator{
 
     public void validateHoliday (Holiday holiday) throws InvalidEntityException {
         if(holiday.getTrainer() == null) {
-            throw new InvalidEntityException("Trainer nicht gesetzt");
+            throw new InvalidEntityException("Trainer ist eventuell nicht eingeloggt");
         }
         if(holiday.getId() != null) {
-            throw new InvalidEntityException("Trainer nicht gesetzt");
+            throw new InvalidEntityException("Frontend hat eine ID geschickt");
         }
         if(holiday.getTrainer().getId() == null) {
-            throw new InvalidEntityException("Trainer nicht gesetzt");
+            throw new InvalidEntityException("Trainer ist eventuell nicht eingeloggt");
         }
         if(holiday.getHolidayStart().isAfter(holiday.getHolidayEnd())) {
-            throw new InvalidEntityException("Das Von-Datum findet später als Bis-Datum");
+            throw new InvalidEntityException("Das Von-Datum findet später als das Bis-Datum statt");
         }
         if(holiday.getHolidayStart().isBefore(LocalDateTime.now())) {
             throw new InvalidEntityException("Das Von-Datum findet in der Vergangenheit statt");

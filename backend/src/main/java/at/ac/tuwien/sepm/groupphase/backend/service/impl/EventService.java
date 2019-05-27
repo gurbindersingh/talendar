@@ -118,6 +118,10 @@ public class EventService implements IEventService {
             case Course:
                 try {
                     validator.validateEvent(event);
+                    if(!this.trainerRepository.existsById(event.getTrainer().getId())){
+                        InvalidEntityException e = new InvalidEntityException("Trainer mit Id nicht gefunden");
+                        throw new ValidationException(e.getMessage(), e);
+                    }
                     try {
                         isAvailable(event.getRoomUses());
                     }
