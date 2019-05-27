@@ -189,8 +189,7 @@ public class EventService implements IEventService {
                     return event;
                 }
                 catch(InvalidEntityException e) {
-                    throw new ValidationException("Given Consultation is invalid: " +
-                                                  e.getMessage(), e);
+                    throw new ValidationException(e.getMessage(), e);
                 }catch(EmailException e){
                     throw new ValidationException("Something went wrong while attempting to send an email: " + e.getMessage(), e);
                 }
