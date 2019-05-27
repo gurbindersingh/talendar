@@ -77,9 +77,10 @@ export class ConsultationComponent implements OnInit {
                     'Deine Reservierung wurde erfolgreich gespeichert';
             },
             (error) => {
-                console.log(error);
+                console.log(error.message);
                 this.errorMsg =
-                    'Deine Reservierung konnte nicht angelegt werden!';
+                    'Deine Reservierung konnte nicht angelegt werden: ' +
+                    error.message;
             }
         );
     }
