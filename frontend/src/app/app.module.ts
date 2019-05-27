@@ -8,7 +8,6 @@ import { NgModule } from '@angular/core';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
 import { AppComponent } from './app.component';
 import {
     CalendarComponent,
@@ -19,7 +18,7 @@ import {
     NavigationComponent,
     TrainerComponent,
     ConsultationComponent,
-    TrainerListComponent
+    TrainerListComponent,
 } from 'src/app/components';
 
 import { httpInterceptorProviders } from './http-interceptors';
@@ -28,7 +27,7 @@ import { SimpleHttpInterceptor } from './http-interceptors/simple-http-intercept
 import { TrainerClient } from './rest/trainer-client';
 import { EventClient } from './rest/event-client';
 import { DateTimeParserService } from './services/date-time-parser.service';
-import {HolidayClient} from 'src/app/rest/holiday-client';
+import { HolidayClient } from 'src/app/rest/holiday-client';
 import { CancelEventComponent } from './components/cancel-event/cancel-event.component';
 import { CourseViewComponent } from './components/course-view/course-view.component';
 
@@ -58,9 +57,6 @@ import { CourseViewComponent } from './components/course-view/course-view.compon
         NgbModule,
         FormsModule,
         HttpClientModule,
-        OwlDateTimeModule,
-        OwlNativeDateTimeModule,
-
     ],
     providers: [
         httpInterceptorProviders,
