@@ -23,6 +23,7 @@
                             name="holidayStartDate"
                             [(ngModel)]="startDate"
                             required
+                            readonly
                         />
                     </div>
                 </div>
@@ -53,6 +54,7 @@
                             name="holidayEndStart"
                             [(ngModel)]="endDate"
                             required
+                            readonly
                         />
                     </div>
                 </div>
@@ -71,21 +73,7 @@
                 </div>
             </div>
 
-            <div class="row" *ngIf="errorMsg">
-                <div class="col-lg-6">
-                    <p class="alert alert-danger">
-                        {{ errorMsg }}
-                    </p>
-                </div>
-            </div>
-            <div class="row" *ngIf="successMsg">
-                <div class="col-lg-6">
-                    <p class="alert alert-success">
-                        {{ successMsg }}
-                    </p>
-                </div>
-            </div>
-
+            
             <br />
 
             <div class="row">
@@ -180,6 +168,21 @@
                 </div>
             </div>
             <br />
+            <div class="row" *ngIf="errorMsg">
+                    <div class="col-lg-6">
+                        <p class="alert alert-danger">
+                            {{ errorMsg }}
+                        </p>
+                    </div>
+                </div>
+                <div class="row" *ngIf="successMsg">
+                    <div class="col-lg-6">
+                        <p class="alert alert-success">
+                            {{ successMsg }}
+                        </p>
+                    </div>
+                </div>
+    
             <div class="row">
                 <div class="col-lg-7"></div>
                 <button

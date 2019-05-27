@@ -51,6 +51,7 @@
                             (click)="varname.toggle()"
                             #varname="ngbDatepicker"
                             placeholder="YYYY-mm-dd"
+                            readonly
                         />
                     </div>
                 </div>
@@ -77,7 +78,7 @@
                                 type="checkbox"
                                 [name]="option"
                                 [(ngModel)]="birthdayOptionsColumn1[option]"
-                                value="{{ option }} Geburtstag"
+                                value="{{ option }}"
                             />
                             <label class="custom-control-label" for="option">
                                 {{ option }} Geburtstag
@@ -99,7 +100,7 @@
                                 type="checkbox"
                                 [name]="option"
                                 [(ngModel)]="birthdayOptionsColumn2[option]"
-                                value="{{ option }} Geburtstag"
+                                value="{{ option }}"
                             />
                             <label class="custom-control-label" for="option">
                                 {{ option }} Geburtstag
