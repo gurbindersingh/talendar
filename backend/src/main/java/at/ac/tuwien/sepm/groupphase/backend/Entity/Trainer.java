@@ -67,7 +67,7 @@ public class Trainer {
                     @NotBlank String firstName,
                     @NotBlank String lastName,
                     @NotNull @Past LocalDate birthday,
-                    @NotBlank @Pattern(regexp = "^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\\s\\./0-9]*$") String phone,
+                    @NotBlank @Pattern(regexp = "^[+]*[(]{0,1}[0-9]{1,5}[)]{0,1}[-\\s\\./0-9]*$") String phone,
                     @NotBlank @Email String email,
                     List<Event> events,
                     List<Holiday> holidays,

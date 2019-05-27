@@ -1,92 +1,272 @@
-<form>
-    <div class="jumbotron">
-        <h2>Neuen Kurs anlegen</h2>
+<h1 class="row justify-content-center">{{ title }}</h1>
+<hr />
+
+<div class="row">
+    <div class="col-lg-3"></div>
+    <div class="col-lg-6">
+        <form id="courseForm" #courseForm class="container-fluid" (change)="clearInfoMsg()">
+            <div class="row">
+                <div class="form-group col-lg-12">
+                    <label for="name">Kursname</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        [(ngModel)]="event.name"
+                        name="name"
+                        id="courseName"
+                        placeholder="Programmieren 2 für Kinder"
+                        required
+                    />
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-lg-12">
+                    <label for="courseDescription">Beschreibung</label>
+                    <textarea
+                        type="text"
+                        class="form-control"
+                        rows="4"
+                        name="descriptionTextarea"
+                        [(ngModel)]="description"
+                        id="courseDescription"
+                        ng-trim="false"
+                        maxlength="1024"
+                        placeholder="Beschreibung"
+                        required
+                    ></textarea>
+                </div>
+            </div>
+            <div class="row justify-content-end">
+                <div class="col-lg-2">
+                    <span>{{ description.length }}/1024</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-2"></div>
+                <div class="form-group col-lg-4">
+                    <label for="courseMaxParticipant">Max. Teilnehmer</label>
+                    <input
+                        type="number"
+                        [(ngModel)]="maxParticipants"
+                        class="form-control"
+                        id="courseMaxParticipant"
+                        name="maxParticipants"
+                        step="1"
+                        min="5"
+                        max="30"
+                        placeholder="10"
+                        required
+                    />
+                </div>
+                <div class="form-group col-lg-4">
+                    <label for="coursePrice">Preis</label>
+                    <input
+                        type="number"
+                        lang="en-US"
+                        placeholder="0.5"
+                        [(ngModel)]="price"
+                        class="form-control"
+                        id="coursePrice"
+                        name="coursePrice"
+                        required
+                    />
+                </div>
+                <div class="col-lg-2"></div>
+            </div>
+            <div class="row">
+                <div class="col-lg-2"></div>
+                <div class="form-group col-lg-4">
+                    <label for="courseMinAge">Minimum Alter</label>
+                    <input
+                        type="number"
+                        class="form-control"
+                        [(ngModel)]="minAge"
+                        name="minAge"
+                        id="courseMinAge"
+                        step="1"
+                        placeholder="5"
+                        min="5"
+                        required
+                    />
+                </div>
+                <div class="form-group col-lg-4">
+                    <label for="courseMaxAge">Maximal Alter</label>
+                    <input
+                        type="number"
+                        class="form-control"
+                        [(ngModel)]="maxAge"
+                        name="maxAge"
+                        id="courseMaxAge"
+                        step="1"
+                        placeholder="20"
+                        max="100"
+                        required
+                    />
+                </div>
+                <div class="col-lg-2"></div>
+            </div>
+            <br />
+            <div class="row">
+                <div
+                    class="form-group col-lg-6"
+                    id="datePicker-dp-endOfApplication"
+                >
+                    <label class="col-sm-2" for="dp1">Anmeldefrist</label>
+                    <div class="input-group">
+                        <input
+                            class="form-control"
+                            placeholder="yyyy-mm-dd"
+                            name="dp1"
+                            [readOnly] = "true"
+                            [(ngModel)]="endOfApplicationDate"
+                            ngbDatepicker
+                            #d="ngbDatepicker"
+                            (click)="d.toggle()"
+                            required
+                        />
+                    </div>
+                </div>
+                <div class="form-group col-lg-6">
+                    <ngb-timepicker
+                        [(ngModel)]="endOfApplicationTime"
+                        name="endOfApplicationTime"
+                        [minuteStep]="minuteStep"
+                        readonlyInputs="true"
+                    >
+                    </ngb-timepicker>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-lg-6" id="datePicker-dp-start">
+                    <label class="col-sm-2" for="dp2">Von</label>
+                    <div class="input-group">
+                        <input
+                            class="form-control"
+                            placeholder="yyyy-mm-dd"
+                            name="dp2"
+                            [(ngModel)]="startDate"
+                            ngbDatepicker
+                            #d1="ngbDatepicker"
+                            (click)="d1.toggle()"
+                            required
+                            readonly
+                        />
+                    </div>
+                </div>
+                <div class="form-group col-lg-6">
+                    <ngb-timepicker
+                        [(ngModel)]="startTime"
+                        name="startTime"
+                        [minuteStep]="minuteStep"
+                        readonlyInputs="true"
+                    >
+                    </ngb-timepicker>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-lg-6" id="datePicker-dp-end">
+                    <label class="col-sm-2" for="dp3">Bis</label>
+                    <div class="input-group">
+                        <input
+                            class="form-control"
+                            placeholder="yyyy-mm-dd"
+                            name="dp3"
+                            [(ngModel)]="endDate"
+                            ngbDatepicker
+                            #d2="ngbDatepicker"
+                            (click)="d2.toggle()"
+                            required
+                            readonly
+                        />
+                    </div>
+                </div>
+                <div class="form-group col-lg-6">
+                    <ngb-timepicker
+                        [(ngModel)]="endTime"
+                        name="endTime"
+                        [minuteStep]="minuteStep"
+                        readonlyInputs="true"
+                    >
+                    </ngb-timepicker>
+                </div>
+            </div>
+            <div class="row">
+                <label class="col-lg-1">Raum</label>
+            </div>
+            <div class="row" id="radioButtonRow">
+                <div
+                    class="custom-control custom-radio custom-control-inline col-lg-3"
+                >
+                    <input
+                        type="radio"
+                        id="greenRadioButton"
+                        name="customRadioInline1"
+                        class="custom-control-input"
+                        (click)="greenSelected()"
+                    />
+                    <label class="custom-control-label" for="greenRadioButton"
+                        >Grün</label
+                    >
+                </div>
+                <div
+                    class="custom-control custom-radio custom-control-inline col-lg-3"
+                >
+                    <input
+                        type="radio"
+                        id="orangeRadioButton"
+                        name="customRadioInline1"
+                        class="custom-control-input"
+                        (click)="orangeSelected()"
+                    />
+                    <label class="custom-control-label" for="orangeRadioButton"
+                        >Orange</label
+                    >
+                </div>
+                <div
+                    class="custom-control custom-radio custom-control-inline col-lg-3"
+                >
+                    <input
+                        type="radio"
+                        id="groundFloorRadioButton"
+                        name="customRadioInline1"
+                        class="custom-control-input"
+                        (click)="groundFloorSelected()"
+                    />
+                    <label
+                        class="custom-control-label"
+                        for="groundFloorRadioButton"
+                        >Erdgeschoss</label
+                    >
+                </div>
+            </div>
+            <div class="row" *ngIf="errorMsg">
+                <div class="col-sm-12">
+                    <p class="alert alert-danger">
+                        {{ errorMsg }}
+                    </p>
+                </div>
+            </div>
+            <div class="row" *ngIf="successMsg">
+                <div class="col-sm-12">
+                    <p class="alert alert-success">
+                        {{ successMsg }}
+                    </p>
+                </div>
+            </div>
+            <br />
+            <div class="row justify-content-end">
+                <input
+                    type="submit"
+                    class="btn btn-primary col-lg-3"
+                    id="couseSave"
+                    value="Erstellen"
+                    [disabled]="!isCompleted()"
+                    (click)="postMeeting(courseForm)"
+                />
+            </div>
+        </form>
     </div>
-    <div class="form-group">
-        <label for="name">Name</label>
-        <input type="text" class="form-control" id="name" placeholder="" />
-    </div>
-    <div class="form-group">
-        <label for="description">Beschreibung</label>
-        <input
-            type="text"
-            class="form-control"
-            id="description"
-            placeholder=""
-        />
-    </div>
-    <div class="form-group">
-        <label for="maxParticipant">Max. Teilnehmer</label>
-        <input
-            type="number"
-            min="5"
-            class="form-control"
-            id="maxParticipant"
-            placeholder=""
-        />
-    </div>
-    <div class="form-group">
-        <label for="price">Preis</label>
-        <input
-            type="number"
-            min="0"
-            class="form-control"
-            id="price"
-            placeholder=""
-        />
-    </div>
-    <div class="form-group">
-        <label for="price">Minimum Alter</label>
-        <input
-            type="number"
-            min="0"
-            class="form-control"
-            id="minAge"
-            placeholder=""
-        />
-    </div>
-    <div class="form-group">
-        <label for="price">Maximal Alter</label>
-        <input
-            type="number"
-            min="0"
-            class="form-control"
-            id="maxAge"
-            placeholder=""
-        />
-    </div>
-    <div class="form-group">
-        <label for="dt1">Anmeldefrist</label>
-        <input
-            class="form-control"
-            [owlDateTime]="dt1"
-            [owlDateTimeTrigger]="dt1"
-            placeholder=""
-            id="endOfApplication"
-        />
-        <owl-date-time #dt1></owl-date-time>
-    </div>
-    <div class="form-group">
-        <label for="dt2">Von</label>
-        <input
-            class="form-control"
-            [owlDateTime]="dt2"
-            [owlDateTimeTrigger]="dt2"
-            placeholder=""
-            id="dateTimeBegin"
-        />
-        <owl-date-time #dt2></owl-date-time>
-    </div>
-    <div class="form-group">
-        <label for="dt3">Bis</label>
-        <input
-            class="form-control"
-            [owlDateTime]="dt3"
-            [owlDateTimeTrigger]="dt3"
-            placeholder=""
-            id="dateTimeEnd"
-        />
-        <owl-date-time #dt3></owl-date-time>
-    </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+    <div class="col-lg-3"></div>
+</div>
+<br />
+<br />

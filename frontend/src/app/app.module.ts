@@ -43,6 +43,8 @@ import { CourseViewComponent } from './components/course-view/course-view.compon
         TrainerComponent,
         ConsultationComponent,
         TrainerListComponent,
+        CancelEventComponent,
+        CourseViewComponent,
     ],
     imports: [
         AppRoutingModule,

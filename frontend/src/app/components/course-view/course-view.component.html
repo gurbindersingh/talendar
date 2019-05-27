@@ -1,0 +1,56 @@
+<header id="courseViewHeader">
+  <h1 class = "row justify-content-center">{{ title }}</h1> 
+
+      <button type="button" class="btn" [routerLink]="['/course']">
+        <i class="fas fa-plus-circle fa-3x"></i>
+    </button>
+  <hr />
+</header>
+
+
+<div *ngIf="eventList.length == 0">
+  <div class="row">
+      <div class="col-lg-12">
+          <p class="alert alert-info">
+              Aktuell sind noch keine Kurse vorhanden!
+          </p>
+      </div>
+  </div>
+</div>
+
+<div *ngFor="let event of eventList">
+  <div class="card border-dark mb-2 flex-row flex-wrap">
+      <div class="card-header bg-secondary" id="cardLeft">
+            Hier kommt ein Bild
+        </div>
+        <div class="card-block" id="cardMiddle">
+            <div class="card-body" id="cardBody">
+                <h4 class="card-title" id="cardHeader">
+                    {{ event.name }}
+                </h4>
+
+                <hr />
+                <p clas="card-text" id="cardContent">
+                    Max Teilnehmer: {{ event.maxParticipants }}<br />
+                    Anmeldefrist: {{ event.endOfApplication }} <br />
+                    Kostet: {{ event.price }}
+                </p>
+            </div>
+        </div>
+      <div class="card-footer flex-column" id="cardRight">
+          <div class="mb-4 mt-2">
+              <button type="button" class="btn" (click)="deleteCourse(event.id)" >
+                  <i class="fas fa-trash fa-3x"></i>
+              </button>
+          </div>
+          <div [routerLink]="['/course']" [queryParams]="{ id: event.id }">
+              <button type="button" class="btn">
+                  <i class="fas fa-pencil-alt fa-3x"></i>
+              </button>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+<!-- Modal PopUp --> 

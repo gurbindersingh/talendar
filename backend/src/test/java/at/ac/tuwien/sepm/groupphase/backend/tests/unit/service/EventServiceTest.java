@@ -12,7 +12,7 @@ import at.ac.tuwien.sepm.groupphase.backend.persistence.RoomUseRepository;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.IEventService;
 import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;
-import at.ac.tuwien.sepm.groupphase.backend.TestDataCreation.FakeData;
+import at.ac.tuwien.sepm.groupphase.backend.testDataCreation.FakeData;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.Validator;
@@ -48,18 +48,19 @@ public class EventServiceTest {
     @Autowired
     private ITrainerService trainerService;
 
-    @MockBean
+    @Autowired
     private EventRepository eventRepository;
 
-    @MockBean
+    @Autowired
     private RoomUseRepository roomUseRepository;
 
-    @MockBean
+    @Autowired
     private CustomerRepository  customerRepository;
 
 
 
     private static Event VALID_INCOMING_BIRTHDAY = faker.fakeNewBirthdayEntity();
+    private static Event VALID_INCOMING_COURSE = faker.fakeNewCourseEntity();
     private static Event VALID_INCOMING_BIRTHDAY_B = faker.fakeNewBirthdayEntity();
     private static Event PERSISTED_BIRHDAY = faker.fakeBirthdayEntity();
     private static List<Trainer> savedTrainers = new LinkedList<>();
@@ -77,9 +78,9 @@ public class EventServiceTest {
 
     @Test
     public void test_saveValidEvent_EventShouldBeAccepted() throws Exception{
-        when(eventRepository.save(any(Event.class))).thenReturn(PERSISTED_BIRHDAY);
+        //when(eventRepository.save(any(Event.class))).thenReturn(PERSISTED_BIRHDAY);
         eventService.save(VALID_INCOMING_BIRTHDAY);
-
+        System.out.println(VALID_INCOMING_BIRTHDAY.getId());
         assertNotNull(VALID_INCOMING_BIRTHDAY.getCreated());
         assertNotNull(VALID_INCOMING_BIRTHDAY.getUpdated());
         assertFalse(VALID_INCOMING_BIRTHDAY.getCreated().isAfter(VALID_INCOMING_BIRTHDAY.getUpdated()));
@@ -89,7 +90,7 @@ public class EventServiceTest {
     public void postEvent_CheckRoomUseHasEventId() throws Exception{
 
         Event event = eventService.save(VALID_INCOMING_BIRTHDAY);
-        List<RoomUse> rooms = roomUseRepository.findByEventId(VALID_INCOMING_BIRTHDAY.getId());
+        List<RoomUse> rooms = roomUseRepository.findByEvent_IdAndEvent_DeletedFalse(event.getId());
 
         for(RoomUse r: rooms
             ) {
@@ -100,10 +101,63 @@ public class EventServiceTest {
 
     @Test
     public void postEvent_CheckCustomerHasEventId() throws Exception{
-        eventService.save(VALID_INCOMING_BIRTHDAY);
-        List<Customer> customers = customerRepository.findByEvents_Id(VALID_INCOMING_BIRTHDAY.getId());
+        Event event = eventService.save(VALID_INCOMING_BIRTHDAY);
+        List<Customer> customers = customerRepository.findByEvents_Id(event.getId());
         assertNotNull(customers);
     }
+
+    @Test
+    public void postCourse_MissingName(){
+        VALID_INCOMING_COURSE.setName(null);
+        assertThrows(ValidationException.class, () -> eventService.save(VALID_INCOMING_COURSE));
+    }
+
+    @Test
+    public void postCourse_MissingRoomUse(){
+        VALID_INCOMING_COURSE.setRoomUses(null);
+        assertThrows(ValidationException.class, () -> eventService.save(VALID_INCOMING_COURSE));
+    }
+
+    @Test
+    public void postCourse_MissingMinAge(){
+        VALID_INCOMING_COURSE.setMinAge(null);
+        assertThrows(ValidationException.class, () -> eventService.save(VALID_INCOMING_COURSE));
+    }
+
+    @Test
+    public void postCourse_MissingMaxAge(){
+        VALID_INCOMING_COURSE.setMaxAge(null);
+        assertThrows(ValidationException.class, () -> eventService.save(VALID_INCOMING_COURSE));
+    }
+
+    @Test
+    public void postCourse_MissingEndOfApplication(){
+        VALID_INCOMING_COURSE.setEndOfApplication(null);
+        assertThrows(ValidationException.class, () -> eventService.save(VALID_INCOMING_COURSE));
+    }
+
+    @Test
+    public void postCourse_MissingDescription(){
+        VALID_INCOMING_COURSE.setDescription(null);
+        assertThrows(ValidationException.class, () -> eventService.save(VALID_INCOMING_COURSE));
+    }
+
+    @Test
+    public void postCourse_TrainerNotFound(){
+        VALID_INCOMING_COURSE.getTrainer().setId(200L);
+        assertThrows(ValidationException.class, () -> eventService.save(VALID_INCOMING_COURSE));
+    }
+
+
+    @Test
+    public void postCourse_CustomerIsSet(){
+        RoomUse roomUse = faker.fakeRoomUseDto();
+        List<RoomUse> roomUses = new LinkedList<>();
+        roomUses.add(roomUse);
+        VALID_INCOMING_COURSE.setRoomUses(roomUses);
+        assertThrows(ValidationException.class, () -> eventService.save(VALID_INCOMING_COURSE));
+    }
+
 
     @Test
     public void postBirthday_MissingCustomer(){
