@@ -23,7 +23,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     List<Event> findByTrainer_IdAndDeletedFalse (Long id);
 
-    List<RoomUse> findByTrainer_IdAndRoomUses_BeginGreaterThanEqualAndDeletedFalse(Long id, LocalDateTime now);
 
     List<Event> findByEventTypeEqualsAndDeletedFalse(EventType eventType);
 

@@ -285,7 +285,7 @@ public class EventService implements IEventService {
     }
 
     public void trainerAvailable(Trainer trainer, List<RoomUse> roomUses)throws TrainerNotAvailableException{
-        List<RoomUse> trainersEvents = eventRepository.findByTrainer_IdAndRoomUses_BeginGreaterThanEqualAndDeletedFalse(trainer.getId(), LocalDateTime.now());
+        List<RoomUse> trainersEvents = roomUseRepository.findByEvent_Trainer_IdAndBeginGreaterThanEqualAndEvent_DeletedFalse(trainer.getId(), LocalDateTime.now());
         List<Holiday> trainerHoliday = holidayRepository.findByTrainer_Id(trainer.getId());
 
         for(RoomUse x : roomUses) {
@@ -382,11 +382,25 @@ public class EventService implements IEventService {
         }
         String msg = "";
         msg += "Hallo " +customer.getFirstName() + " " + customer.getLastName() + "!";
-        msg += "\n\n Danke, dass Sie sich bei uns für ein" + event.getEventType() + " angemeldet haben.";
+        msg += "\n\n Danke, dass Sie sich bei uns für " + translateEnumWithArtikel(event.getEventType()) + " angemeldet haben.";
         msg += "\n Falls sie diesen Event stornieren wollen, clicken sie bitte einfach auf diesen link: \n";
         msg += urll;
 
 
         return msg;
+    }
+
+    public String translateEnumWithArtikel(EventType eventType){
+        switch (eventType){
+            case Birthday:
+                return "ein Geburtstag";
+            case Consultation:
+                return "einen Beratungstermin";
+            case Rent:
+                return "eine Mietung";
+            case Course:
+                return "einen Kurs";
+        }
+        return "";
     }
 }
