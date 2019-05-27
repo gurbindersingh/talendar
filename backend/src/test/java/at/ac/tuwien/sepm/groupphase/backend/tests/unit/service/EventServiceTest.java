@@ -48,13 +48,13 @@ public class EventServiceTest {
     @Autowired
     private ITrainerService trainerService;
 
-    @MockBean
+    @Autowired
     private EventRepository eventRepository;
 
-    @MockBean
+    @Autowired
     private RoomUseRepository roomUseRepository;
 
-    @MockBean
+    @Autowired
     private CustomerRepository  customerRepository;
 
 
@@ -78,9 +78,9 @@ public class EventServiceTest {
 
     @Test
     public void test_saveValidEvent_EventShouldBeAccepted() throws Exception{
-        when(eventRepository.save(any(Event.class))).thenReturn(PERSISTED_BIRHDAY);
+        //when(eventRepository.save(any(Event.class))).thenReturn(PERSISTED_BIRHDAY);
         eventService.save(VALID_INCOMING_BIRTHDAY);
-
+        System.out.println(VALID_INCOMING_BIRTHDAY.getId());
         assertNotNull(VALID_INCOMING_BIRTHDAY.getCreated());
         assertNotNull(VALID_INCOMING_BIRTHDAY.getUpdated());
         assertFalse(VALID_INCOMING_BIRTHDAY.getCreated().isAfter(VALID_INCOMING_BIRTHDAY.getUpdated()));
@@ -90,7 +90,7 @@ public class EventServiceTest {
     public void postEvent_CheckRoomUseHasEventId() throws Exception{
 
         Event event = eventService.save(VALID_INCOMING_BIRTHDAY);
-        List<RoomUse> rooms = roomUseRepository.findByEventId(VALID_INCOMING_BIRTHDAY.getId());
+        List<RoomUse> rooms = roomUseRepository.findByEvent_IdAndEvent_DeletedFalse(event.getId());
 
         for(RoomUse r: rooms
             ) {
@@ -101,8 +101,8 @@ public class EventServiceTest {
 
     @Test
     public void postEvent_CheckCustomerHasEventId() throws Exception{
-        eventService.save(VALID_INCOMING_BIRTHDAY);
-        List<Customer> customers = customerRepository.findByEvents_Id(VALID_INCOMING_BIRTHDAY.getId());
+        Event event = eventService.save(VALID_INCOMING_BIRTHDAY);
+        List<Customer> customers = customerRepository.findByEvents_Id(event.getId());
         assertNotNull(customers);
     }
 

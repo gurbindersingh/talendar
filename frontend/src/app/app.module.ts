@@ -31,6 +31,7 @@ import { TrainerClient } from './rest/trainer-client';
 import { EventClient } from './rest/event-client';
 import { DateTimeParserService } from './services/date-time-parser.service';
 import {HolidayClient} from 'src/app/rest/holiday-client';
+import { CancelEventComponent } from './components/cancel-event/cancel-event.component';
 
 @NgModule({
     declarations: [
@@ -44,6 +45,7 @@ import {HolidayClient} from 'src/app/rest/holiday-client';
         TrainerComponent,
         ConsultationComponent,
         TrainerListComponent,
+        CancelEventComponent,
     ],
     imports: [
         AppRoutingModule,

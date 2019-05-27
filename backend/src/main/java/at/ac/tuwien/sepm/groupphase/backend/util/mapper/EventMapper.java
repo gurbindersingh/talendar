@@ -29,4 +29,6 @@ public interface EventMapper {
 
     List<EventDto> entityListToEventDtoList (List<Event> eventList);
 
+
+
 }

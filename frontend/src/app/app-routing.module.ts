@@ -10,7 +10,9 @@ import {
     MeetingComponent,
     TrainerComponent,
     TrainerListComponent,
-} from 'src/app/components';
+} from './components';
+import { CancelEventComponent } from './components/cancel-event/cancel-event.component';
+
 
 const routes: Routes = [
     {
@@ -48,6 +50,10 @@ const routes: Routes = [
     {
         path: '*',
         component: CalendarComponent,
+    },
+    {
+        path: 'cancelEvent',
+        component: CancelEventComponent
     },
 ];
 

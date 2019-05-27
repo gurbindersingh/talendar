@@ -55,6 +55,7 @@ public class EventEndpointTest {
         birthday.setTrainer(null);
         for(CustomerDto x : birthday.getCustomerDtos()) {
             x.setId(null);
+            x.setEmail("nikita2kholodnyi@gmail.com");
         }
         HttpEntity<EventDto> request = new HttpEntity<>(birthday);
         System.out.println(request.toString());
@@ -161,7 +162,6 @@ public class EventEndpointTest {
         consultation.setUpdated(null);
         consultation.setCreated(null);
         consultation.setTrainer(trainerResponse);
-        consultation.setCustomerDtos(null);
         HttpEntity<EventDto> request = new HttpEntity<>(consultation);
         System.out.println(request.toString());
         ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.EVENT,

@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.rest;
 
 
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.BackendException;
+import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.EventDto;
 import at.ac.tuwien.sepm.groupphase.backend.service.IEventService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.sql.rowset.serial.SerialException;
+import java.security.Provider;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,6 +52,28 @@ public class EventEndpoint {
         }
     }
 
+    @DeleteMapping
+    public void deleteCourse(Long id){
+        LOGGER.info("Incoming DELETE Request for an Event with id " +  id);
+        eventService.deleteEvent(id);
+    }
+
+    @PutMapping
+    public void cancelEvent(Long id) throws BackendException{
+        LOGGER.info("Incoming DELETE Request for an Event with id " + id);
+        try {
+            eventService.cancelEvent(id);
+        }catch(ValidationException e){
+            throw new BackendException("Die Validierung von dem Ausgewählten Event ist fehlgeschlagen", e);
+        }
+
+    }
+
+    @GetMapping
+    @RequestMapping("/{id}")
+    public EventDto getEventById(Long id){
+        return eventMapper.entityToEventDto(eventService.getEventById(id));
+    }
 
     @GetMapping
     @RequestMapping("/trainer/{id}")
