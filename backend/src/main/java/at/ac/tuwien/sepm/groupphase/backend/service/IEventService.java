@@ -18,4 +18,6 @@ public interface IEventService {
     void cancelEvent(Long id) throws ValidationException;
 
     Event getEventById(Long id);
+
+    List<Event> getAllFutureCourses();
 }

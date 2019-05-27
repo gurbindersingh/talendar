@@ -22,17 +22,26 @@ export class EventClient extends RestClient {
     }
     
     public cancelEvent(id: number): Observable<Event> {
-        return super.put(
+        return super.delete(
             (error: HttpErrorResponse) => {
                 console.log(
-                    'HTTP PATCH To Update Trainer With ID' +
+                    'HTTP Delete To Cacnel Event With ID' +
                         id +
                         ' Failed: ' +
                         error.message
                 );
             },
-            '/',
-            id
+            '/' + id
+        );
+    }
+
+    public getAllFutureCourses(): Observable<Event[]>{
+        return super.get(
+            (error: HttpErrorResponse) => {
+                console.log(
+                    'HTTP GET All Future Courses Failed ' + error.message
+                );
+            }, ''
         );
     }
 

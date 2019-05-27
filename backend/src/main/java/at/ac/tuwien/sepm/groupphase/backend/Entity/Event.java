@@ -70,7 +70,7 @@ public class Event {
         These Variables are used by non Rent Types
      */
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JsonIgnoreProperties("event")
     private Trainer trainer;
 
