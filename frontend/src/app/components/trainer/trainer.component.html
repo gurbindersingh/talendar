@@ -12,7 +12,7 @@
                 (change)="clearInfoMsg()"
                 class="container-fluid"
             >
-                <div class="form-row">
+                <div class="form-row" od="row1">
                     <div class="form-group col-lg-4">
                         <label for="trainerFirstName">Vorname</label>
                         <input
@@ -56,7 +56,7 @@
                     </div>
                 </div>
 
-                <div class="form-row">
+                <div class="form-row" id="row2">
                     <div class="col-lg-12">
                         <label>Wählen der betreuten Geburtstage:</label>
                     </div>
@@ -109,7 +109,7 @@
                     </div>
                 </div>
 
-                <div class="form-row">
+                <div class="form-row" id="row3">
                     <div class="form-group col-lg-6">
                         <label for="trainerEmail">Email</label>
                         <input
@@ -139,7 +139,7 @@
                 <!-- password is not considered yet - store it within trainer but then it is sent across the network (not so smart) unless https protected -->
 
                 <!-- this inputs for setting ad confirming a new password are only accessible by the admin -->
-                <div class="form-row">
+                <div class="form-row" id="row4">
                     <div class="form-group col-lg-6">
                         <label for="trainerPw">Neues Passwort eingeben</label>
                         <input
@@ -167,7 +167,7 @@
                     </div>
                 </div>
 
-                <div class="form-row">
+                <div class="form-row" id="row5">
                     <div class="col-6">
                         Here goes a container for a profile picture if uploaded,
                         else an icon
