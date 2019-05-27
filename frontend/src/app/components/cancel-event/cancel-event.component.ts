@@ -55,6 +55,7 @@ private errorMsg: String;
   public cancelEvent(form: NgForm): void{
     console.log('Passing id to cancel information');
     const id: number = this.route.snapshot.queryParams.id;
+    
     this.eventClient.cancelEvent(id).subscribe(
       () => {
         this.successMsg =
