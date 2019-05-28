@@ -313,6 +313,23 @@ public class FakeData {
     }
 
 
+    public Event fakeNewRent(){
+        Event rent = new Event();
+        rent.setEventType(EventType.Rent);
+        Set<Customer> customers = new HashSet<>();
+        Customer customer = fakeNewCustomerEntity();
+        customers.add(customer);
+        rent.setCustomers(customers);
+        RoomUse roomUse = fakeRoomUseDto();
+        roomUse.setId(null);
+        LinkedList<RoomUse> roomUses = new LinkedList<>();
+        roomUses.add(roomUse);
+        rent.setRoomUses(roomUses);
+        rent.setId(null);
+        return rent;
+    }
+
+
     public EventDto fakeRent() {
         EventDto rent = new EventDto();
 

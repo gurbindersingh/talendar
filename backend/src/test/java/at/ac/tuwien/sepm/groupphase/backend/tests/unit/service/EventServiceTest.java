@@ -63,6 +63,7 @@ public class EventServiceTest {
     private static Event VALID_INCOMING_COURSE = faker.fakeNewCourseEntity();
     private static Event VALID_INCOMING_BIRTHDAY_B = faker.fakeNewBirthdayEntity();
     private static Event PERSISTED_BIRHDAY = faker.fakeBirthdayEntity();
+    private static Event VALID_INCOMING_RENT = faker.fakeNewRent();
     private static List<Trainer> savedTrainers = new LinkedList<>();
     private static Trainer trainer = faker.fakeNewTrainerEntity();
 
@@ -72,6 +73,8 @@ public class EventServiceTest {
     public void init(){
         VALID_INCOMING_BIRTHDAY = faker.fakeNewBirthdayEntity();
         VALID_INCOMING_BIRTHDAY_B = faker.fakeNewBirthdayEntity();
+        VALID_INCOMING_COURSE = faker.fakeNewCourseEntity();
+        VALID_INCOMING_RENT = faker.fakeNewRent();
         trainer = postTrainer();
     }
 
@@ -105,6 +108,50 @@ public class EventServiceTest {
         List<Customer> customers = customerRepository.findByEvents_Id(event.getId());
         assertNotNull(customers);
     }
+
+    @Test
+    public void postRent_MissingCustomer(){
+        VALID_INCOMING_RENT.setCustomers(null);
+        assertThrows(ValidationException.class, () -> eventService.save(VALID_INCOMING_RENT));
+    }
+
+    @Test
+    public void postRent_MissingRoomUse(){
+        VALID_INCOMING_RENT.setRoomUses(null);
+        assertThrows(ValidationException.class, () -> eventService.save(VALID_INCOMING_RENT));
+    }
+
+
+    @Test
+    public void postRent_IdSet(){
+        VALID_INCOMING_RENT.setId(1L);
+        assertThrows(ValidationException.class, () -> eventService.save(VALID_INCOMING_RENT));
+    }
+
+    @Test
+    public void postRent_MissingEmailInCustomer(){
+        for(Customer x : VALID_INCOMING_RENT.getCustomers()) {
+            x.setEmail(null);
+        }
+        assertThrows(ValidationException.class, () -> eventService.save(VALID_INCOMING_RENT));
+    }
+
+    @Test
+    public void postRent_MissingPhoneNumberInCustomer(){
+        for(Customer x : VALID_INCOMING_RENT.getCustomers()) {
+            x.setPhone(null);
+        }
+        assertThrows(ValidationException.class, () -> eventService.save(VALID_INCOMING_RENT));
+    }
+
+    @Test
+    public void postRent_MissingLastNameInCustomer(){
+        for(Customer x : VALID_INCOMING_RENT.getCustomers()) {
+            x.setLastName(null);
+        }
+        assertThrows(ValidationException.class, () -> eventService.save(VALID_INCOMING_RENT));
+    }
+
 
     @Test
     public void postCourse_MissingName(){
