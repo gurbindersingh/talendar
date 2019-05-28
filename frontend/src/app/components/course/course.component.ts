@@ -24,7 +24,6 @@ export class CourseComponent implements OnInit {
     maxAge: number;
     startDate: NgbDateStruct;
     startTime: NgbTimeStruct;
-    endDate: NgbDateStruct;
     endTime: NgbTimeStruct;
     endOfApplicationDate: NgbDateStruct;
     endOfApplicationTime: NgbTimeStruct;
@@ -67,7 +66,7 @@ export class CourseComponent implements OnInit {
             this.startTime
         );
         this.roomUse.end = this.dateTimeParser.dateTimeToString(
-            this.endDate,
+            this.startDate,
             this.endTime
         );
         this.roomUse.room = this.getSelectedRadioButtonRoom();
@@ -111,7 +110,7 @@ export class CourseComponent implements OnInit {
         if (this.maxAge === undefined) {
             return false;
         }
-        if (this.radioButtonSelected === ''){
+        if (this.radioButtonSelected === '') {
             return false;
         }
         return true;

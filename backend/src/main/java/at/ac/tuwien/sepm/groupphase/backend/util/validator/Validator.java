@@ -32,6 +32,9 @@ public class Validator {
         LocalDateTime now = LocalDateTime.now();
 
         // Validation for common stuff
+        if(event.getId() != null){
+            throw new InvalidEntityException("");
+        }
         if(event.getCreated() == null || event.getCreated().isAfter(now)) {
             throw new InvalidEntityException("");
         }
@@ -165,6 +168,16 @@ public class Validator {
             }
             if(event.getCustomers() != null && !event.getCustomers().isEmpty()) {
                 throw new InvalidEntityException("Kundenliste ist nicht leer");
+            }
+
+            try {
+                for(RoomUse r : event.getRoomUses()
+                ) {
+                    validateRoomUse(r);
+                }
+            }
+            catch(InvalidEntityException e) {
+                throw e;
             }
         }
 
