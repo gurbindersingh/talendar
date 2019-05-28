@@ -94,7 +94,7 @@ public class EventService implements IEventService {
                       }
                       catch(TimeNotAvailableException e) {
                           throw new ValidationException(
-                              "The event is attempting to be booked during a different event: " + e.getMessage(),
+                              e.getMessage(),
                               e
                           );
                       }
@@ -127,7 +127,7 @@ public class EventService implements IEventService {
                     }
                     catch(TimeNotAvailableException e) {
                         throw new ValidationException(
-                            "The event is attempting to be booked during a different event: " + e.getMessage(),
+                            e.getMessage(),
                             e
                         );
                     }
@@ -147,7 +147,7 @@ public class EventService implements IEventService {
                     }
                     catch(TimeNotAvailableException e) {
                         throw new ValidationException(
-                            "The event is attempting to be booked during a different event: " + e.getMessage(),
+                            e.getMessage(),
                             e
                         );
                     }
@@ -175,7 +175,7 @@ public class EventService implements IEventService {
                     }
                     catch(TimeNotAvailableException e) {
                         throw new ValidationException(
-                            "The event is attempting to be booked during a different event: " + e.getMessage(),
+                            e.getMessage(),
                             e
                         );
                     }
@@ -329,10 +329,12 @@ public class EventService implements IEventService {
     }
 
     public void isAvailable (List<RoomUse> roomUseList) throws TimeNotAvailableException {
+        LOGGER.info("Check if Roomuses are available");
         LocalDateTime now = LocalDateTime.now();
-        List<RoomUse> dbRooms = roomUseRepository.findByBeginGreaterThanEqualAndEvent_DeletedFalse(now);
+        List<RoomUse> dbRooms = roomUseRepository.findByBeginGreaterThanEqualAndDeletedFalse(now);
         for(RoomUse x : roomUseList) {
             for(RoomUse db : dbRooms) {
+                LOGGER.info("Database row begin: " + db.getBegin() +  " vs to insert begin: " + x.getBegin());
                 if(x.getRoom() == db.getRoom()) {
                     if(x.getBegin().isAfter(db.getBegin()) &&
                        x.getBegin().isBefore(db.getEnd()) ||
@@ -340,15 +342,18 @@ public class EventService implements IEventService {
                        x.getEnd().isAfter(db.getBegin()) ||
                        x.getBegin().isBefore(db.getBegin()) &&
                        x.getEnd().isAfter(db.getEnd()) ||
+                       x.getEnd().isEqual(db.getEnd()) && x.getBegin().isEqual(db.getBegin()) ||
                        x.getEnd().isEqual(db.getEnd()) ||
                        x.getBegin().isEqual(db.getBegin())) {
                         throw new TimeNotAvailableException(
-                            "The Timeslot attempting to be booked is invalid. Attempted Booking: " +
-                            x.toString());
+                            "Von " + x.getBegin() + " bis " + x.getEnd() + " ist der Raum " + x.getRoom() + " belegt");
                     }
                 }
+
+
             }
         }
+        LOGGER.info("All roomuses are available");
     }
 
     public void sendCancelationMail(String email, Event event, Customer customer) throws EmailException {

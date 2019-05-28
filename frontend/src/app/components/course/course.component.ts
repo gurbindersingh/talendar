@@ -111,7 +111,7 @@ export class CourseComponent implements OnInit {
         if (this.maxAge === undefined) {
             return false;
         }
-        if (this.radioButtonSelected === ''){
+        if (this.radioButtonSelected === '') {
             return false;
         }
         return true;
