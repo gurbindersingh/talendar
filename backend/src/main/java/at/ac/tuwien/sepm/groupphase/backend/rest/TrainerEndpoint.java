@@ -50,10 +50,10 @@ public class TrainerEndpoint {
             return mapper.entityToTrainerDto(trainerService.getById(id));
         } catch(ServiceException e) {
             LOGGER.error("GET Request unsuccessful: " + e.getMessage(), e);
-            throw new BackendException("Internal Error In Backend", e);
+            throw new BackendException("Etwas ist leider am Server schiefgelaufen", e);
         } catch(NotFoundException e) {
             LOGGER.error("GET Request unsuccessful: " + e.getMessage(), e);
-            throw new BackendException("Trainer with id " + id + " does not exist", e);
+            throw new BackendException("Der gesuchte Trainer existiert nicht", e);
         }
     }
 
@@ -68,7 +68,7 @@ public class TrainerEndpoint {
             return trainerService.getAll().stream().map(mapper::entityToTrainerDto).collect(Collectors.toList());
         } catch(ServiceException e) {
             LOGGER.error("GET Request unsuccessful: " + e.getMessage(), e);
-            throw new BackendException("Internal Error In Backend", e);
+            throw new BackendException("Etwas ist leider am Server schiefgelaufen", e);
         }
     }
 
@@ -82,13 +82,13 @@ public class TrainerEndpoint {
             return mapper.entityToTrainerDto(trainerService.update(mapper.dtoToTrainerEntity(trainerDto)));
         } catch(ServiceException e) {
             LOGGER.error("PATCH Request unsuccessful: " + e.getMessage(), e);
-            throw new BackendException("Internal Error In Backend", e);
+            throw new BackendException("Etwas ist leider am Server schiefgelaufen", e);
         } catch(ValidationException e) {
             LOGGER.error("PATCH Request unsuccessful " + e.getMessage(), e);
             throw new BackendException(e.getMessage(), e);
         } catch(NotFoundException e) {
             LOGGER.error("PATCH Request unsuccessful: " + e.getMessage(), e);
-            throw new BackendException("Trainer With Id " + trainerDto.getId() + " does not exist", e);
+            throw new BackendException("Es konnte nicht geupdated werden. Der Trainer existiert nicht", e);
         }
     }
 
@@ -107,7 +107,7 @@ public class TrainerEndpoint {
             throw new BackendException(e.getMessage(), e);
         } catch(ServiceException e) {
             LOGGER.error("POST Request unsuccessful: " + e.getMessage(), e);
-            throw new BackendException("Internal Error in Backend", e);
+            throw new BackendException("Etwas ist leider am Server schiefgelaufen", e);
         }
     }
 }

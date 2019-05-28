@@ -6,7 +6,6 @@ import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
-import at.ac.tuwien.sepm.groupphase.backend.util.validator.IValidator;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.Validator;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidEntityException;
 import org.slf4j.Logger;
@@ -16,7 +15,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.PersistenceException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -43,16 +41,11 @@ public class TrainerService implements ITrainerService {
 
         trainer.setCreated(timeOfCreation);
         trainer.setUpdated(timeOfCreation);
+
         try {
             TimeUnit.MILLISECONDS.sleep(1);
         }catch(InterruptedException e){
             throw new ServiceException("Internal Server error", e);
-        }
-        try {
-            Thread.sleep(1);
-        }
-        catch(InterruptedException e) {
-            e.printStackTrace();
         }
 
         try {
