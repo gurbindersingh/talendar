@@ -410,6 +410,8 @@ public class FakeData {
         event.setCreated(null);
         event.setUpdated(null);
         event.setMinAge(5);
+        event.setPrice(2.0);
+        event.setMaxParticipants(20);
         event.setMaxAge(15);
         event.setEventType(EventType.Course);
         Trainer trainer = fakeTrainerEntity();
