@@ -5,6 +5,7 @@ package at.ac.tuwien.sepm.groupphase.backend.tests.unit.service;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
+import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.TrainerNotAvailableException;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.CustomerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.EventRepository;
@@ -103,6 +104,56 @@ public class EventServiceTest {
     }
 
     @Test
+    public void updateEvent_changedName() throws NotFoundException, ServiceException, ValidationException {
+        String newName = "newNameGuaranteed";
+
+        Event savedEvent = eventService.save(VALID_INCOMING_COURSE);
+
+        savedEvent.setName(newName);
+        Event updatedEvent = this.eventService.update(savedEvent);
+        assertEquals(newName, updatedEvent.getName());
+    }
+
+    @Test
+    public void updateEvent_changedPrice() throws NotFoundException, ServiceException, ValidationException {
+        Double newPrice = 6.2;
+
+        Event savedEvent = eventService.save(VALID_INCOMING_COURSE);
+
+        savedEvent.setPrice(newPrice);
+        Event updatedEvent = this.eventService.update(savedEvent);
+        assertEquals(newPrice, updatedEvent.getPrice());
+    }
+
+    @Test
+    public void updateEvent_changedMaxParticipant() throws NotFoundException, ServiceException, ValidationException {
+        Integer newMaxParticipant = 5;
+
+        Event savedEvent = eventService.save(VALID_INCOMING_COURSE);
+
+        savedEvent.setMaxParticipants(newMaxParticipant);
+        this.eventService.update(savedEvent);
+
+        Event checkEvent = eventService.getEventById(VALID_INCOMING_COURSE.getId());
+        assertEquals(newMaxParticipant, checkEvent.getMaxParticipants());
+    }
+
+    @Test
+    public void updateEvent_changedMinAgeAndMaxAge() throws NotFoundException, ServiceException, ValidationException {
+        Integer newMinAge = VALID_INCOMING_COURSE.getMinAge()+1;
+        Integer newMaxAge = VALID_INCOMING_COURSE.getMaxAge()+1;
+
+        Event savedEvent = eventService.save(VALID_INCOMING_COURSE);
+
+        savedEvent.setMinAge(newMinAge);
+        savedEvent.setMaxAge(newMaxAge);
+        Event updatedEvent = this.eventService.update(savedEvent);
+        assertEquals(newMinAge, updatedEvent.getMinAge());
+        assertEquals(newMaxAge, updatedEvent.getMaxAge());
+    }
+
+
+    @Test
     public void postEvent_CheckCustomerHasEventId() throws Exception{
         Event event = eventService.save(VALID_INCOMING_BIRTHDAY);
         List<Customer> customers = customerRepository.findByEvents_Id(event.getId());
@@ -121,12 +172,6 @@ public class EventServiceTest {
         assertThrows(ValidationException.class, () -> eventService.save(VALID_INCOMING_RENT));
     }
 
-
-    @Test
-    public void postRent_IdSet(){
-        VALID_INCOMING_RENT.setId(1L);
-        assertThrows(ValidationException.class, () -> eventService.save(VALID_INCOMING_RENT));
-    }
 
     @Test
     public void postRent_MissingEmailInCustomer(){

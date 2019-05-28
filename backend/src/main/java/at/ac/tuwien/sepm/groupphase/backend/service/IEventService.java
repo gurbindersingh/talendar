@@ -20,4 +20,6 @@ public interface IEventService {
     Event getEventById(Long id);
 
     List<Event> getAllFutureCourses();
+
+    Event update(Event event) throws ValidationException, NotFoundException, ServiceException;
 }
