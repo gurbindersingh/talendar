@@ -211,6 +211,7 @@
                         type="submit"
                         class="btn btn-primary"
                         [disabled]="!isCompleted()"
+                        (click)="clearInfoMsg()"
                         (click)="postConsultation(consultationForm)"
                         id="consultationSave"
                     >

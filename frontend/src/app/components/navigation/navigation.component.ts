@@ -18,6 +18,7 @@ export class NavigationComponent implements OnInit {
         { name: 'Raum Mieten', path: 'meeting' },
         { name: 'Neuen Trainer anlegen', path: 'trainer' },
         { name: 'Alle Trainer anzeigen', path: 'trainerList' },
+        { name: 'Alle Kurse anzeigen', path: 'courseView' },
     ];
 
     constructor() {}

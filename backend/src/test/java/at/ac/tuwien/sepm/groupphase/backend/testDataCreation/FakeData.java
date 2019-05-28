@@ -1,15 +1,16 @@
-package at.ac.tuwien.sepm.groupphase.backend.TestDataCreation;
+package at.ac.tuwien.sepm.groupphase.backend.testDataCreation;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.enums.Room;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
-import at.ac.tuwien.sepm.groupphase.backend.TestObjects.CustomerDto;
-import at.ac.tuwien.sepm.groupphase.backend.TestObjects.EventDto;
+import at.ac.tuwien.sepm.groupphase.backend.testObjects.CustomerDto;
+import at.ac.tuwien.sepm.groupphase.backend.testObjects.EventDto;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
-import at.ac.tuwien.sepm.groupphase.backend.TestObjects.TrainerDto;
+import at.ac.tuwien.sepm.groupphase.backend.testObjects.TrainerDto;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import com.github.javafaker.Faker;
+import org.apache.tomcat.jni.Local;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -66,7 +67,7 @@ public class FakeData {
     public LocalDateTime fakeFutureTime() {
         return LocalDateTime.ofInstant(faker.date()
                                             .between(Date.valueOf("2019-06-01"),
-                                                     Date.valueOf("2025-01-01")
+                                                     Date.valueOf("2030-01-01")
                                             )
                                             .toInstant(), ZoneId.systemDefault());
     }
@@ -76,7 +77,7 @@ public class FakeData {
         return LocalDateTime.ofInstant(faker.date()
                                             .between(Date.from(
                                                 dateTime.atZone(ZoneId.systemDefault())
-                                                        .toInstant()), Date.valueOf("2025-01-01"))
+                                                        .toInstant()), Date.valueOf("2040-01-01"))
                                             .toInstant(), ZoneId.systemDefault());
     }
 
@@ -199,6 +200,7 @@ public class FakeData {
         roomUse.setBegin(fakeFutureTime());
         roomUse.setEnd(fakeTimeAfter(roomUse.getBegin()));
         roomUse.setRoom(randomRoom());
+        roomUse.setEnd(roomUse.getBegin().plusDays(1));
         if(roomUse.getBegin().getHour() < 8 ||
            roomUse.getBegin().getHour() > 22 ||
            roomUse.getEnd().getHour() < 8 ||
@@ -348,7 +350,9 @@ public class FakeData {
         rooms.add(fakeRoomUseDto());
         consultation.setRoomUses(rooms);
         Set<CustomerDto> customers = new HashSet<>();
-        customers.add(fakeCustomer());
+        CustomerDto customerDto = fakeCustomer();
+        customerDto.setId(null);
+        customers.add(customerDto);
         consultation.setCustomerDtos(customers);
         return consultation;
     }
@@ -370,12 +374,33 @@ public class FakeData {
         event.setUpdated(null);
         event.setRoomUses(roomUses);
         Set<Customer> customers = new HashSet<>();
-        Customer customer = fakeCustomerEntity();
+        Customer customer = fakeNewCustomerEntity();
         Set<Event> events = new HashSet<>();
         events.add(event);
         customer.setEvents(events);
         customers.add(customer);
         event.setCustomers(customers);
+        return event;
+    }
+
+    public Event fakeNewCourseEntity(){
+        Event event = new Event();
+        List<RoomUse> roomUses = new LinkedList<>();
+        roomUses.add(fakeRoomUseDto());
+        event.setRoomUses(roomUses);
+        event.setName("Kurs");
+        event.setDescription("Jo");
+        event.setCreated(null);
+        event.setUpdated(null);
+        event.setMinAge(5);
+        event.setMaxAge(15);
+        event.setEventType(EventType.Course);
+        Trainer trainer = fakeTrainerEntity();
+        trainer.setId(1L);
+        event.setTrainer(trainer);
+        LocalDateTime now = LocalDateTime.now();
+        event.setEndOfApplication(now.plusDays(1));
+        event.setId(null);
         return event;
     }
 
