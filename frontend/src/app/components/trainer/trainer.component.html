@@ -48,6 +48,9 @@
                             id="trainerBirthday"
                             required
                             ngbDatepicker
+                            [maxDate]="getMaxDateForBirth()"
+                            [minDate]="getMinDateForBirth()"
+                            [startDate]="getSelectionStart()"
                             (click)="varname.toggle()"
                             #varname="ngbDatepicker"
                             placeholder="YYYY-mm-dd"

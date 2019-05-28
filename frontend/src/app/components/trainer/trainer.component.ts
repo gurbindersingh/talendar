@@ -36,11 +36,11 @@ export class TrainerComponent implements OnInit {
 
     // only used within component
     private isSaveMode: boolean;
+    private currentDate: Date = new Date();
 
     constructor(
         private trainerClient: TrainerClient,
         private route: ActivatedRoute,
-        private router: Router,
         private location: Location,
         private adapter: NgbDateNativeAdapter
     ) {}
@@ -51,6 +51,37 @@ export class TrainerComponent implements OnInit {
 
     getBirthdayColumn2Keys() {
         return Object.keys(this.birthdayOptionsColumn2);
+    }
+
+    getMinDateForBirth() {
+        return { year: this.currentDate.getFullYear() - 80, month: 0, day: 0 };
+    }
+
+    getMaxDateForBirth() {
+        return {
+            year: this.currentDate.getFullYear(),
+            month: this.currentDate.getMonth(),
+            day: this.currentDate.getDay(),
+        };
+    }
+
+    getSelectionStart() {
+        if (this.isSaveMode) {
+            return {
+                year: this.currentDate.getFullYear() - 20,
+                month: 1,
+                day: 1,
+            };
+        } else {
+            const date: Date = new Date(this.trainer.birthday);
+            return {
+                year: date.getFullYear(),
+                // month january mapped to 0, ngbdatepcicker starts at 1
+                // strange enough selecting day 1 of a month doesn't cause problems
+                month: date.getUTCMonth() + 1,
+                day: date.getUTCDate(),
+            };
+        }
     }
 
     /**
@@ -75,6 +106,16 @@ export class TrainerComponent implements OnInit {
             this.trainerClient.getById(id).subscribe(
                 (data: Trainer) => {
                     console.log(data);
+                    // create ngb data model from trainer data and set bday in form
+                    const loadedDate: Date = new Date(data.birthday);
+                    console.log(loadedDate);
+                    const ngbDate: NgbDate = new NgbDate(
+                        loadedDate.getFullYear(),
+                        loadedDate.getUTCMonth() + 1,
+                        loadedDate.getUTCDate()
+                    );
+                    console.log(ngbDate);
+                    this.birthday = ngbDate;
 
                     // mark active checkboxes of a trainer as selected
                     this.fillCheckboxes(data.birthdayTypes);
@@ -176,6 +217,7 @@ export class TrainerComponent implements OnInit {
     public cancel(): void {
         this.location.back();
     }
+
     private fillCheckboxes(supervisedBirthdays: string[]): void {
         for (const type of this.getBirthdayColumn1Keys()) {
             if (supervisedBirthdays.includes(type)) {
