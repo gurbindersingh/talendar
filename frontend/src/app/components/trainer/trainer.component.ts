@@ -16,14 +16,13 @@ import {
     providers: [NgbDateNativeAdapter],
 })
 export class TrainerComponent implements OnInit {
-    //  Variables accessed in the template should not be private!
-    private title: string;
-    private trainer: Trainer = new Trainer();
-    private birthday: NgbDateStruct;
-    private isSaveMode: boolean;
-    private btnContextDescription: string;
-    private errorMsg: string;
-    private successMsg: string;
+    // these vars are accessed in the template
+    title: string;
+    trainer: Trainer = new Trainer();
+    birthday: NgbDateStruct;
+    btnContextDescription: string;
+    errorMsg: string;
+    successMsg: string;
     birthdayOptionsColumn1: any = {
         Trockeneis: false,
         Raketen: false,
@@ -34,10 +33,8 @@ export class TrainerComponent implements OnInit {
         Malen: false,
     };
 
-    /**
-     * values of checkboxes
-     */
-    private birthdayTypes: string[] = [];
+    // only used within component
+    private isSaveMode: boolean;
 
     constructor(
         private trainerClient: TrainerClient,
@@ -62,8 +59,6 @@ export class TrainerComponent implements OnInit {
      * -> .../trainer?id=xyz
      */
     ngOnInit() {
-        console.log('Initialize trainer component');
-
         // check whether this site was loaded with a query param (edit) else
         // we are in save mode
         const id: number = this.route.snapshot.queryParams.id;
@@ -87,7 +82,7 @@ export class TrainerComponent implements OnInit {
                      * Even though this error situation should be very rare,
                      * this is not the smoothest solution.
                      * But what to do?!?
-                     * just stay here and continue with save made (imo not sensible too) 
+                     * just stay here and continue with save made (imo not sensible too)
                      */
                     this.errorMsg =
                         'Der ausgewählte Trainer konnte leider nicht geladen werden.';
@@ -98,8 +93,7 @@ export class TrainerComponent implements OnInit {
     }
 
     public postTrainer(form: NgForm): void {
-        console.log('Pass Form Data To Rest Client');
-        const supervisesBirthdays: string[] = [];
+        const supervisedBirthdays: string[] = [];
         const allBirthdayOptions = Object.assign(
             {},
             this.birthdayOptionsColumn1,
@@ -108,12 +102,11 @@ export class TrainerComponent implements OnInit {
 
         for (const option of Object.keys(allBirthdayOptions)) {
             if (allBirthdayOptions[option]) {
-                supervisesBirthdays.push(option + ' Geburtstag');
+                supervisedBirthdays.push(option + ' Geburtstag');
             }
         }
+        this.trainer.birthdayTypes = supervisedBirthdays;
         this.trainer.birthday = this.transformToDate(this.birthday);
-        this.trainer.birthdayTypes = supervisesBirthdays;
-        console.log(this.trainer);
 
         if (this.isSaveMode) {
             this.trainerClient.postNewTrainer(this.trainer).subscribe(
@@ -121,9 +114,9 @@ export class TrainerComponent implements OnInit {
                     console.log(data);
                     this.successMsg =
                         'Der Betreuer wurde erfolgreich gespeichert';
+                    form.reset();
                 },
                 (error: Error) => {
-                    console.log(error.message);
                     this.errorMsg =
                         'Der Betreuer konnte nicht angelegt werden: ' +
                         error.message;
@@ -137,7 +130,6 @@ export class TrainerComponent implements OnInit {
                         'Der Betreuer wurde erfolgreich aktualisiert';
                 },
                 (error: Error) => {
-                    console.log(error.message);
                     this.errorMsg =
                         'Der Betreuer konnte nicht erfolgreich aktualisiert werden: ' +
                         error.message;
@@ -168,6 +160,7 @@ export class TrainerComponent implements OnInit {
         if (this.trainer.phone === undefined || this.trainer.phone === '') {
             return false;
         }
+        // todo add check for password as soon as there is a mechanism that supports passwords
         return true;
     }
 
