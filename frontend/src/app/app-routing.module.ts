@@ -12,6 +12,7 @@ import {
     TrainerListComponent,
 } from './components';
 import { CancelEventComponent } from './components/cancel-event/cancel-event.component';
+import { CourseViewComponent } from './components/course-view/course-view.component';
 
 
 const routes: Routes = [
@@ -55,6 +56,10 @@ const routes: Routes = [
         path: 'cancelEvent',
         component: CancelEventComponent
     },
+    {
+        path: 'courseView',
+        component: CourseViewComponent
+    }
 ];
 
 @NgModule({

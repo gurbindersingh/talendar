@@ -42,8 +42,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-2"></div>
-                <div class="form-group col-lg-4">
+                <div class="form-group col-lg-6">
                     <label for="courseMaxParticipant">Max. Teilnehmer</label>
                     <input
                         type="number"
@@ -58,7 +57,7 @@
                         required
                     />
                 </div>
-                <div class="form-group col-lg-4">
+                <div class="form-group col-lg-6">
                     <label for="coursePrice">Preis</label>
                     <input
                         type="number"
@@ -71,11 +70,9 @@
                         required
                     />
                 </div>
-                <div class="col-lg-2"></div>
             </div>
             <div class="row">
-                <div class="col-lg-2"></div>
-                <div class="form-group col-lg-4">
+                <div class="form-group col-lg-6">
                     <label for="courseMinAge">Minimum Alter</label>
                     <input
                         type="number"
@@ -89,7 +86,7 @@
                         required
                     />
                 </div>
-                <div class="form-group col-lg-4">
+                <div class="form-group col-lg-6">
                     <label for="courseMaxAge">Maximal Alter</label>
                     <input
                         type="number"
@@ -103,7 +100,6 @@
                         required
                     />
                 </div>
-                <div class="col-lg-2"></div>
             </div>
             <br />
             <div class="row">
@@ -111,12 +107,13 @@
                     class="form-group col-lg-6"
                     id="datePicker-dp-endOfApplication"
                 >
-                    <label class="col-sm-2" for="dp1">Anmeldefrist</label>
+                    <label for="dp1">Ende der Anmeldefrist</label>
                     <div class="input-group">
                         <input
                             class="form-control"
                             placeholder="yyyy-mm-dd"
                             name="dp1"
+                            [readOnly] = "true"
                             [(ngModel)]="endOfApplicationDate"
                             ngbDatepicker
                             #d="ngbDatepicker"
@@ -125,7 +122,7 @@
                         />
                     </div>
                 </div>
-                <div class="form-group col-lg-6">
+                <div class="form-group col-lg-4">
                     <ngb-timepicker
                         [(ngModel)]="endOfApplicationTime"
                         name="endOfApplicationTime"
@@ -137,7 +134,7 @@
             </div>
             <div class="row">
                 <div class="form-group col-lg-6" id="datePicker-dp-start">
-                    <label class="col-sm-2" for="dp2">Von</label>
+                    <label for="dp2">Findet statt am</label>
                     <div class="input-group">
                         <input
                             class="form-control"
@@ -148,10 +145,14 @@
                             #d1="ngbDatepicker"
                             (click)="d1.toggle()"
                             required
+                            readonly
                         />
                     </div>
                 </div>
-                <div class="form-group col-lg-6">
+            </div>
+            <div class="row">
+                <label class="col-lg-1" id="beginLabel" for="startTime">Von</label>
+                <div class="form-group col-lg-4">
                     <ngb-timepicker
                         [(ngModel)]="startTime"
                         name="startTime"
@@ -160,24 +161,8 @@
                     >
                     </ngb-timepicker>
                 </div>
-            </div>
-            <div class="row">
-                <div class="form-group col-lg-6" id="datePicker-dp-end">
-                    <label class="col-sm-2" for="dp3">Bis</label>
-                    <div class="input-group">
-                        <input
-                            class="form-control"
-                            placeholder="yyyy-mm-dd"
-                            name="dp3"
-                            [(ngModel)]="endDate"
-                            ngbDatepicker
-                            #d2="ngbDatepicker"
-                            (click)="d2.toggle()"
-                            required
-                        />
-                    </div>
-                </div>
-                <div class="form-group col-lg-6">
+                <label class="col-lg-1" id="endLabel" for="endTime">Bis</label>
+                <div class="form-group col-lg-4">
                     <ngb-timepicker
                         [(ngModel)]="endTime"
                         name="endTime"
