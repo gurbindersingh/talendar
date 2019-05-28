@@ -27,8 +27,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -110,8 +112,9 @@ public class EventServiceTest {
         Event savedEvent = eventService.save(VALID_INCOMING_COURSE);
 
         savedEvent.setName(newName);
-        Event updatedEvent = this.eventService.update(savedEvent);
-        assertEquals(newName, updatedEvent.getName());
+        this.eventService.update(savedEvent);
+        Event checkEvent = eventService.getEventById(VALID_INCOMING_COURSE.getId());
+        assertEquals(newName, checkEvent.getName());
     }
 
     @Test
@@ -121,8 +124,9 @@ public class EventServiceTest {
         Event savedEvent = eventService.save(VALID_INCOMING_COURSE);
 
         savedEvent.setPrice(newPrice);
-        Event updatedEvent = this.eventService.update(savedEvent);
-        assertEquals(newPrice, updatedEvent.getPrice());
+        this.eventService.update(savedEvent);
+        Event checkEvent = eventService.getEventById(VALID_INCOMING_COURSE.getId());
+        assertEquals(newPrice, checkEvent.getPrice());
     }
 
     @Test
@@ -147,9 +151,10 @@ public class EventServiceTest {
 
         savedEvent.setMinAge(newMinAge);
         savedEvent.setMaxAge(newMaxAge);
-        Event updatedEvent = this.eventService.update(savedEvent);
-        assertEquals(newMinAge, updatedEvent.getMinAge());
-        assertEquals(newMaxAge, updatedEvent.getMaxAge());
+        this.eventService.update(savedEvent);
+        Event checkEvent = eventService.getEventById(VALID_INCOMING_COURSE.getId());
+        assertEquals(newMinAge, checkEvent.getMinAge());
+        assertEquals(newMaxAge, checkEvent.getMaxAge());
     }
 
 
@@ -243,10 +248,9 @@ public class EventServiceTest {
 
     @Test
     public void postCourse_CustomerIsSet(){
-        RoomUse roomUse = faker.fakeRoomUseDto();
-        List<RoomUse> roomUses = new LinkedList<>();
-        roomUses.add(roomUse);
-        VALID_INCOMING_COURSE.setRoomUses(roomUses);
+        Set<Customer> customers = new HashSet<>();
+        customers.add(faker.fakeNewCustomerEntity());
+        VALID_INCOMING_COURSE.setCustomers(customers);
         assertThrows(ValidationException.class, () -> eventService.save(VALID_INCOMING_COURSE));
     }
 
