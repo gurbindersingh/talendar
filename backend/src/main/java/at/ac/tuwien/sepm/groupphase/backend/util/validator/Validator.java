@@ -169,6 +169,16 @@ public class Validator {
             if(event.getCustomers() != null && !event.getCustomers().isEmpty()) {
                 throw new InvalidEntityException("Kundenliste ist nicht leer");
             }
+
+            try {
+                for(RoomUse r : event.getRoomUses()
+                ) {
+                    validateRoomUse(r);
+                }
+            }
+            catch(InvalidEntityException e) {
+                throw e;
+            }
         }
 
         // Validator for Rent
