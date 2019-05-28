@@ -7,6 +7,7 @@ import { Location } from '@angular/common';
 import {
     NgbDateNativeAdapter,
     NgbDateStruct,
+    NgbDate,
 } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -24,13 +25,13 @@ export class TrainerComponent implements OnInit {
     errorMsg: string;
     successMsg: string;
     birthdayOptionsColumn1: any = {
-        Trockeneis: false,
-        Raketen: false,
-        Superhelden: false,
+        'Trockeneis Geburstag': false,
+        'Raketen Geburstag': false,
+        'Superhelden Geburstag': false,
     };
     birthdayOptionsColumn2: any = {
-        Photo: false,
-        Malen: false,
+        'Photo Geburstag': false,
+        'Malen Geburstag': false,
     };
 
     // only used within component
@@ -74,8 +75,11 @@ export class TrainerComponent implements OnInit {
             this.trainerClient.getById(id).subscribe(
                 (data: Trainer) => {
                     console.log(data);
+
+                    // mark active checkboxes of a trainer as selected
+                    this.fillCheckboxes(data.birthdayTypes);
+
                     this.trainer = data;
-                    this.birthday = this.transformToNgbDate(data.birthday);
                 },
                 (error: Error) => {
                     /**
@@ -102,7 +106,7 @@ export class TrainerComponent implements OnInit {
 
         for (const option of Object.keys(allBirthdayOptions)) {
             if (allBirthdayOptions[option]) {
-                supervisedBirthdays.push(option + ' Geburtstag');
+                supervisedBirthdays.push(option);
             }
         }
         this.trainer.birthdayTypes = supervisedBirthdays;
@@ -172,12 +176,21 @@ export class TrainerComponent implements OnInit {
     public cancel(): void {
         this.location.back();
     }
+    private fillCheckboxes(supervisedBirthdays: string[]): void {
+        for (const type of this.getBirthdayColumn1Keys()) {
+            if (supervisedBirthdays.includes(type)) {
+                this.birthdayOptionsColumn1[type] = true;
+            }
+        }
+
+        for (const type of this.getBirthdayColumn2Keys()) {
+            if (supervisedBirthdays.includes(type)) {
+                this.birthdayOptionsColumn2[type] = true;
+            }
+        }
+    }
 
     private transformToDate(date: NgbDateStruct): Date {
         return this.adapter.toModel(date);
-    }
-
-    private transformToNgbDate(date: Date): NgbDateStruct {
-        return this.adapter.fromModel(date);
     }
 }
