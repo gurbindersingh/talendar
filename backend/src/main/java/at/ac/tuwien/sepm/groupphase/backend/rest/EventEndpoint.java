@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.rest;
 
 
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.BackendException;
+import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.EventDto;
 import at.ac.tuwien.sepm.groupphase.backend.service.IEventService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.sql.rowset.serial.SerialException;
+import java.security.Provider;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,7 +24,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/talendar/events")
 public class EventEndpoint {
-    private static Logger LOGGER = LoggerFactory.getLogger(TrainerEndpoint.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(EventEndpoint.class);
 
     private final IEventService eventService;
     private final EventMapper   eventMapper;
@@ -50,15 +52,33 @@ public class EventEndpoint {
         }
     }
 
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public void cancelEvent(@PathVariable("id") Long id) throws BackendException{
+        LOGGER.info("Incoming DELETE Request for an Event with id " + id);
+        try {
+            eventService.cancelEvent(id);
+        }catch(ValidationException e){
+            throw new BackendException("Die Validierung von dem Ausgewählten Event ist fehlgeschlagen", e);
+        }
 
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public EventDto getEventById(@PathVariable("id") Long id){
+        LOGGER.info("Incomint GET Request for an Event with id " + id);
+        return eventMapper.entityToEventDto(eventService.getEventById(id));
+    }
+
+    /*
     @GetMapping
-    @RequestMapping("/trainer/{id}")
+    @RequestMapping(value = "/trainer/{id}", method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
     public List<EventDto> getAllEvents (@PathVariable Long id) throws BackendException {
         /*
          * Pass the JWT to this method to authenticate the caller
          * and authorize the access to the corresponding resources.
-         * */
+         * *//*
         LOGGER.info("Incoming GET Request for all Events");
         try {
             return this.eventService.getAllEvents(id)
@@ -72,4 +92,14 @@ public class EventEndpoint {
             throw new BackendException(e.getMessage(), e);
         }
     }
+    */
+
+    @GetMapping
+    public List<EventDto> getAllFutureCourses(){
+        LOGGER.info("Incoming GET Request for all future Courses");
+        return eventMapper.entityListToEventDtoList(eventService.getAllFutureCourses());
+    }
+
+
+
 }

@@ -76,7 +76,7 @@ export class TrainerComponent implements OnInit {
             this.title = 'Trainer Bearbeiten';
             this.btnContextDescription = 'Änderungen speichern';
             this.isSaveMode = false;
-            /*this.trainerClient.getById(id).subscribe(
+            this.trainerClient.getById(id).subscribe(
                 (data: Trainer) => {
                     console.log(data);
                     this.trainer = data;
@@ -87,13 +87,13 @@ export class TrainerComponent implements OnInit {
                      * Even though this error situation should be very rare,
                      * this is not the smoothest solution.
                      * But what to do?!?
-                     * just stay here and continue with save made (imo not sensible too)
-
+                     * just stay here and continue with save made (imo not sensible too) 
+                     */
                     this.errorMsg =
                         'Der ausgewählte Trainer konnte leider nicht geladen werden.';
                     this.location.back();
                 }
-            );*/
+            );
         }
     }
 
@@ -129,7 +129,7 @@ export class TrainerComponent implements OnInit {
                         error.message;
                 }
             );
-        } /*else {
+        } else {
             this.trainerClient.update(this.trainer).subscribe(
                 (data: Trainer) => {
                     console.log(data);
@@ -143,7 +143,7 @@ export class TrainerComponent implements OnInit {
                         error.message;
                 }
             );
-        }*/
+        }
     }
 
     public isCompleted(): boolean {
