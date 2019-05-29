@@ -23,6 +23,7 @@
                             name="holidayStartDate"
                             [(ngModel)]="startDate"
                             required
+                            readonly
                         />
                     </div>
                 </div>
@@ -53,6 +54,7 @@
                             name="holidayEndStart"
                             [(ngModel)]="endDate"
                             required
+                            readonly
                         />
                     </div>
                 </div>
@@ -71,20 +73,6 @@
                 </div>
             </div>
 
-            <div class="row" *ngIf="errorMsg">
-                <div class="col-lg-6">
-                    <p class="alert alert-danger">
-                        {{ errorMsg }}
-                    </p>
-                </div>
-            </div>
-            <div class="row" *ngIf="successMsg">
-                <div class="col-lg-6">
-                    <p class="alert alert-success">
-                        {{ successMsg }}
-                    </p>
-                </div>
-            </div>
 
             <br />
 
@@ -135,10 +123,10 @@
                             </div>
                             <div class="col-lg-4">
                                 <input
-                                    value="1"
                                     type="number"
                                     name="repeatAfterX"
                                     id="repeatAfterX"
+                                    [(ngModel)]="alleX"
                                 />
                             </div>
                         </div>
@@ -166,20 +154,35 @@
                             </div>
                             <div class="col-lg-1" *ngIf="isTerminate()">
                                 <input
-                                    value="1"
                                     type="number"
                                     name="termAfter"
                                     id="termAfter"
+                                    [(ngModel)]="endedX"
                                 />
                             </div>
                         </div>
                     </div>
                     <div class="col-lg-4" *ngIf="isTerminate()" id="10p">
-                        <p>Tagen/Wochen/Monaten</p>
+                        <p> Wiederholungen</p>
                     </div>
                 </div>
             </div>
             <br />
+            
+            <div class="row" *ngIf="errorMsg">
+                <div class="col-lg-6">
+                    <p class="alert alert-danger">
+                        {{ errorMsg }}
+                    </p>
+                </div>
+            </div>
+            <div class="row" *ngIf="successMsg">
+                <div class="col-lg-6">
+                    <p class="alert alert-success">
+                        {{ successMsg }}
+                    </p>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-lg-7"></div>
                 <button

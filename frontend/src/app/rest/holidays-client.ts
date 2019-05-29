@@ -3,19 +3,21 @@ import { RestClient } from './rest-client';
 import { Holiday } from '../models/holiday';
 import { Observable } from 'rxjs';
 import { HttpErrorResponse, HttpClient } from '@angular/common/http';
+import { Holidays } from '../models/holidays';
 
 @Injectable()
-export class HolidayClient extends RestClient {
+export class HolidaysClient extends RestClient {
     constructor(httpClient: HttpClient) {
-        super('holiday', httpClient);
+        super('holidays', httpClient);
     }
-    public postNewHoliday(holiday: Holiday): Observable<Holiday> {
+
+    public postNewHolidays(holidays: Holidays): Observable<Holiday[]> {
         return super.post(
             (error: HttpErrorResponse) => {
                 console.log('HTTP POST Holiday Failed: ' + error.message);
             },
             '',
-            holiday
+            holidays
         );
     }
 }
