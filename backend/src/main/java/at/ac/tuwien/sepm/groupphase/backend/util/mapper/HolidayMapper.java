@@ -6,6 +6,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
+import java.util.LinkedList;
+
 @Mapper
 public interface HolidayMapper {
 
@@ -20,4 +22,9 @@ public interface HolidayMapper {
 
     @Mapping(target = "trainer", source = "trainer")
     Holiday dtoToHolidayEntity(HolidayDto holidayDto);
+
+    LinkedList<HolidayDto> entityListToHolidayDtoList(LinkedList<Holiday> holiday);
+
+    LinkedList<Holiday> dtoListToHolidayEntityList(LinkedList<HolidayDto> holidayDto);
+
 }
