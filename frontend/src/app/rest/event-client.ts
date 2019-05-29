@@ -20,4 +20,51 @@ export class EventClient extends RestClient {
             event
         );
     }
+    
+    public cancelEvent(id: number): Observable<Event> {
+        return super.delete(
+            (error: HttpErrorResponse) => {
+                console.log(
+                    'HTTP Delete To Cacnel Event With ID' +
+                        id +
+                        ' Failed: ' +
+                        error.message
+                );
+            },
+            '/' + id
+        );
+    }
+
+    public getAllFutureCourses(): Observable<Event[]>{
+        return super.get(
+            (error: HttpErrorResponse) => {
+                console.log(
+                    'HTTP GET All Future Courses Failed ' + error.message
+                );
+            }, ''
+        );
+    }
+
+    public getEventById(id: number): Observable<Event>{
+        return super.get((error: HttpErrorResponse) => {
+            console.log(
+                'HTTP Get Event with ID' + id + ' Failed: ' + error.message
+            );
+        }, '/' + id);
+    }
+
+    public update(event: Event): Observable<Event> {
+        return super.put(
+            (error: HttpErrorResponse) => {
+                console.log(
+                    'HTTP PATCH To Update Event With ID' +
+                        event.id +
+                        ' Failed: ' +
+                        error.message
+                );
+            },
+            '',
+            event
+        );
+    }
 }
