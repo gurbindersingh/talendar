@@ -5,8 +5,11 @@ import localeDe from '@angular/common/locales/de-AT';
 import { CalendarDateFormatter, CalendarView } from 'angular-calendar';
 
 import { CustomDateFormatter } from './CustomDateFormatter';
-import { Event } from './Event';
+import { MetaEvent } from './MetaEvent';
+import { Event } from '../../models/event';
 import { BREAKPOINTS } from 'src/app/utils/Breakpoints';
+import { EventClient } from 'src/app/rest/event-client';
+import { EventImportService } from 'src/app/services/event-import.service';
 
 /**
  * In order to display week days in German the locale data
@@ -30,7 +33,7 @@ export class CalendarComponent implements OnInit {
     daysInWeek: number | null = null;
     dayStartHour = 8;
     dayStartMinute = 0;
-    events: Event[] = [];
+    events: MetaEvent[] = [];
     hourSegments = 4;
     locale = 'de-AT';
     precision = 'minutes';
@@ -39,7 +42,10 @@ export class CalendarComponent implements OnInit {
     weekStartsOn = 1;
     navButtonLabel: { prev: string; next: string };
 
-    constructor() {
+    constructor(
+        private eventClient: EventClient,
+        private eventImport: EventImportService
+    ) {
         if (screen.width < BREAKPOINTS.medium) {
             this.daysInWeek = 3;
         } else if (screen.width < BREAKPOINTS.small) {
@@ -48,7 +54,11 @@ export class CalendarComponent implements OnInit {
         this.updateNavButtonLabel();
     }
 
-    ngOnInit() {}
+    ngOnInit() {
+        this.eventClient.getAllEvents().subscribe((data: Event[]) => {
+            this.events = this.eventImport.mapEventsToCalendar(data);
+        });
+    }
 
     updateNavButtonLabel() {
         console.log('label getter');

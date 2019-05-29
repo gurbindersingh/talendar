@@ -13,6 +13,8 @@ public interface IEventService {
 
     List<Event> getAllEvents(Long trainerId) throws ValidationException, ServiceException;
 
+    List<Event> getAllEvents() throws ServiceException;
+
     void deleteEvent(Long id);
 
     void cancelEvent(Long id) throws ValidationException;

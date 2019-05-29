@@ -20,6 +20,7 @@ import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidEnt
 import org.apache.tomcat.jni.Local;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import org.slf4j.Logger;
@@ -68,6 +69,15 @@ public class EventService implements IEventService {
         event.setCreated(now);
         event.setUpdated(now);
         event.setDeleted(false);
+
+        /*
+         * We have to set the foreign key property of the 'many-side' roomUses explicitly
+         * RoomUses will be automatically inserted event without this statement
+         * but obviously (or not) jpa is not able to determine the fk key on his own
+         */
+        for (RoomUse roomUse: event.getRoomUses()) {
+            roomUse.setEvent(event);
+        }
 
         try {
             Thread.sleep(1);
@@ -210,10 +220,24 @@ public class EventService implements IEventService {
         return eventRepository.findByIdAndDeletedFalse(id);
     }
 
+
     @Override
     public List<Event> getAllEvents (Long trainerId) throws ValidationException, ServiceException {
         return null;
     }
+
+
+    @Override
+    public List<Event> getAllEvents() throws ServiceException {
+        LOGGER.info("Try to retrieve list of all events");
+
+        try {
+            return this.eventRepository.findAll();
+        } catch (DataAccessException e) {
+            throw new ServiceException("Error while performing a data access operation to retrieve all events", e);
+        }
+    }
+
 
     @Override
     public List<Event> getAllFutureCourses(){
