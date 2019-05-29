@@ -235,9 +235,13 @@ public class EventService implements IEventService {
 
         try {
             return this.eventRepository.findAll();
-        } catch (DataAccessException e) {
-            throw new ServiceException("Error while performing a data access operation to retrieve all events", e);
         }
+        catch(DataAccessException e) {
+            throw new ServiceException(
+                "Error while performing a data access operation to retrieve all events", e);
+        }
+    }
+    
     @Transactional
     @Override
     public Event update(Event event) throws ValidationException, NotFoundException, ServiceException{
