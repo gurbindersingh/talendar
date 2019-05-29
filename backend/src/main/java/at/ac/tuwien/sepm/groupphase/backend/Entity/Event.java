@@ -54,7 +54,7 @@ public class Event {
     @Column(name = "event_type", nullable = false)
     private EventType eventType;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+    @ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
     @JoinTable(
         name = "event_customer",
         joinColumns = { @JoinColumn(name = "fk_event", referencedColumnName = "id")},
