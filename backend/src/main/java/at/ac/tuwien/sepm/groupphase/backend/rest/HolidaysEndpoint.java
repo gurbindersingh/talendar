@@ -23,16 +23,16 @@ import java.util.LinkedList;
 
 
 @RestController
-@RequestMapping("/api/v1/talendar/holiday")
-public class HolidayEndpoint {
+@RequestMapping("/api/v1/talendar/holidays")
+public class HolidaysEndpoint {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HolidayEndpoint.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HolidaysEndpoint.class);
 
     private final IHolidayService holidayService;
     private final HolidayMapper mapper;
 
     @Autowired
-    public HolidayEndpoint(IHolidayService holidayService, HolidayMapper mapper) {
+    public HolidaysEndpoint(IHolidayService holidayService, HolidayMapper mapper) {
         this.holidayService = holidayService;
         this.mapper = mapper;
     }
@@ -40,11 +40,17 @@ public class HolidayEndpoint {
     @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public HolidayDto createNewHoliday(@RequestBody HolidayDto holidayDto) throws Exception {
-        LOGGER.info("Incoming POST holiday Request");
+    public LinkedList<HolidayDto> createNewHolidays(@RequestBody HolidaysDto holidaysDto) throws Exception {
+        LOGGER.info("Incoming POST holidaySSSSS Request");
 
         try {
-            return mapper.entityToHolidayDto(holidayService.save(mapper.dtoToHolidayEntity(holidayDto)));
+            LinkedList<Holiday> resultList = holidayService.saveHolidays(holidaysDto);
+            LOGGER.info("Shoutl return to user:" + resultList);
+            LinkedList<HolidayDto> r = mapper.entityListToHolidayDtoList(resultList);
+            LOGGER.info("Actually returning to user:" + r);
+
+            LOGGER.info("Returning to user now r");
+            return r;
         }
         catch(Exception e) {
             LOGGER.error("POST Request Could Not Be Served Successfully - : {}", e.getMessage(), e);

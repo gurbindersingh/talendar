@@ -13,6 +13,8 @@ public interface IEventService {
 
     List<Event> getAllEvents(Long trainerId) throws ValidationException, ServiceException;
 
+    List<Event> getAllEvents() throws ServiceException;
+
     void deleteEvent(Long id);
 
     void cancelEvent(Long id) throws ValidationException;
@@ -20,4 +22,6 @@ public interface IEventService {
     Event getEventById(Long id);
 
     List<Event> getAllFutureCourses();
+
+    Event update(Event event) throws ValidationException, NotFoundException, ServiceException;
 }
