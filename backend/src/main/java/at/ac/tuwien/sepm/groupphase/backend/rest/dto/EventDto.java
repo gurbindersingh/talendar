@@ -32,7 +32,7 @@ public class EventDto {
     /*
         These Variables are used by non Rent Types
      */
-    @JsonIgnoreProperties("events")
+    @JsonIgnoreProperties({"events", "holidays"})
     private Trainer trainer;
 
     /*

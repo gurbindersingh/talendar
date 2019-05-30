@@ -25,13 +25,13 @@ export class TrainerComponent implements OnInit {
     errorMsg: string;
     successMsg: string;
     birthdayOptionsColumn1: any = {
-        'Trockeneis Geburstag': false,
-        'Raketen Geburstag': false,
-        'Superhelden Geburstag': false,
+        Trockeneis: { selected: false, value: 'DryIce' },
+        Raketen: { selected: false, value: 'Rocket' },
+        Superhelden: { selected: false, value: 'Superhero' },
     };
     birthdayOptionsColumn2: any = {
-        'Photo Geburstag': false,
-        'Malen Geburstag': false,
+        Photo: { selected: false, value: 'Photo' },
+        Malen: { selected: false, value: 'Painting' },
     };
 
     // only used within component
@@ -146,8 +146,8 @@ export class TrainerComponent implements OnInit {
         );
 
         for (const option of Object.keys(allBirthdayOptions)) {
-            if (allBirthdayOptions[option]) {
-                supervisedBirthdays.push(option);
+            if (allBirthdayOptions[option].selected) {
+                supervisedBirthdays.push(allBirthdayOptions[option].value);
             }
         }
         this.trainer.birthdayTypes = supervisedBirthdays;
@@ -219,15 +219,19 @@ export class TrainerComponent implements OnInit {
     }
 
     private fillCheckboxes(supervisedBirthdays: string[]): void {
-        for (const type of this.getBirthdayColumn1Keys()) {
-            if (supervisedBirthdays.includes(type)) {
-                this.birthdayOptionsColumn1[type] = true;
+        const birthdayOptions1 = Object.assign({}, this.birthdayOptionsColumn1);
+
+        for (const option of Object.keys(birthdayOptions1)) {
+            if (supervisedBirthdays.includes(birthdayOptions1[option].value)) {
+                this.birthdayOptionsColumn1[option].selected = true;
             }
         }
 
-        for (const type of this.getBirthdayColumn2Keys()) {
-            if (supervisedBirthdays.includes(type)) {
-                this.birthdayOptionsColumn2[type] = true;
+        const birthdayOptions2 = Object.assign({}, this.birthdayOptionsColumn2);
+
+        for (const option of Object.keys(birthdayOptions2)) {
+            if (supervisedBirthdays.includes(birthdayOptions2[option].value)) {
+                this.birthdayOptionsColumn2[option].selected = true;
             }
         }
     }
