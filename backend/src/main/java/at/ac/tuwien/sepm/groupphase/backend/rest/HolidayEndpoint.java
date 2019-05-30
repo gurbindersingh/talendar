@@ -1,6 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest;
 
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Holiday;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.HolidayDto;
+import at.ac.tuwien.sepm.groupphase.backend.rest.dto.HolidaysDto;
 import at.ac.tuwien.sepm.groupphase.backend.service.IHolidayService;
 import at.ac.tuwien.sepm.groupphase.backend.util.mapper.HolidayMapper;
 import org.slf4j.Logger;
@@ -8,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.LinkedList;
 
 /**
  * Exception that occur within the underlying services will be reported and rethrown.

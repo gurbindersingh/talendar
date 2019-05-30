@@ -12,16 +12,18 @@ public class RoomUseDto {
     private LocalDateTime end;
     private Room room;
     private Event event;
+    private boolean deleted;
 
     public RoomUseDto(){
 
     }
-    public RoomUseDto (Long id, LocalDateTime begin, LocalDateTime end, Room room, Event event) {
+    public RoomUseDto (Long id, LocalDateTime begin, LocalDateTime end, Room room, Event event, boolean deleted) {
         this.id = id;
         this.begin = begin;
         this.end = end;
         this.room = room;
         this.event = event;
+        this.deleted = deleted;
     }
 
 
@@ -72,6 +74,16 @@ public class RoomUseDto {
 
     public void setEvent (Event event) {
         this.event = event;
+    }
+
+
+    public boolean isDeleted () {
+        return deleted;
+    }
+
+
+    public void setDeleted (boolean deleted) {
+        this.deleted = deleted;
     }
 
 

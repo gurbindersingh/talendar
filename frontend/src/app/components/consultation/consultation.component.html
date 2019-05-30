@@ -1,220 +1,225 @@
 <h1 class="row justify-content-center">{{ title }}</h1>
 <hr />
-
-<form
-    id="consultationForm"
-    #consultationForm
-    (change)="clearInfoMsg()"
-    class="container-fluid"
->
-    <!-- First row -->
-    <div class="row justify-content-center">
-        <div class="form-group col-lg-6">
-            <label for="consultationName">Name des Termins</label>
-            <input
-                type="text"
-                [(ngModel)]="event.name"
-                class="form-control"
-                name="name"
-                id="consultationName"
-                placeholder="Beratungstermin1"
-                required
-            />
-        </div>
-    </div>
-
-    <!-- Second row -->
-    <div class="row justify-content-center">
-        <div class="form-group col-lg-3">
-            <label for="consultationFirstName">Vorname</label>
-            <input
-                class="form-control"
-                [(ngModel)]="customer.firstName"
-                type="text"
-                name="firstName"
-                id="consultationFirstName"
-                placeholder="Maximilian"
-                required
-            />
-        </div>
-        <div class="form-group col-lg-3">
-            <label for="consultationLastName">Nachname</label>
-            <input
-                class="form-control"
-                [(ngModel)]="customer.lastName"
-                type="text"
-                name="lastName"
-                id="consultationLastName"
-                placeholder="Mustermann"
-                required
-            />
-        </div>
-    </div>
-
-    <!-- Third row -->
-    <div class="row justify-content-center">
-        <div class="form-group col-lg-3">
-            <label for="consultationPhoneNumber">Telefonnummer</label>
-            <input
-                type="text"
-                class="form-control"
-                [(ngModel)]="customer.phone"
-                name="phoneNumber"
-                id="consultationPhoneNumber"
-                placeholder="+436641234567"
-                required
-            />
-        </div>
-        <div class="form-group col-lg-3">
-            <label for="consultationEmail">Email</label>
-            <input
-                type="email"
-                class="form-control"
-                name="email"
-                [(ngModel)]="customer.email"
-                id="customerEmail"
-                placeholder="max.mustermann@email.com"
-                required
-            />
-        </div>
-    </div>
-
-    <!-- Fourth row -->
-    <div class="row justify-content-md-center">
-        <div class="form-group col-lg-3" id="datePicker-dp-start">
-            <label>Von</label>
-            <div class="input-group">
-                <input
-                    [readonly]="true"
-                    class="form-control"
-                    id="startDate"
-                    name="startDate"
-                    [(ngModel)]="startDate"
-                    ngbDatepicker
-                    (click)="dp1.toggle()"
-                    #dp1="ngbDatepicker"
-                    required
-                />
-            </div>
-        </div>
-        <div class="form-group col-lg-3">
-            <ngb-timepicker
-                readonlyInputs="true"
-                [(ngModel)]="startTime"
-                id="startTime"
-                name="startTime"
-                [minuteStep]="minuteStep"
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-3"></div>
+        <div class="col-lg-6">
+            <form
+                id="consultationForm"
+                #consultationForm
+                (change)="clearInfoMsg()"
+                class="container-fluid"
             >
-            </ngb-timepicker>
-        </div>
-    </div>
+                <!-- First row -->
+                <div class="row">
+                    <div class="form-group col-lg">
+                        <label for="consultationName">Name des Termins</label>
+                        <input
+                            type="text"
+                            [(ngModel)]="event.name"
+                            class="form-control"
+                            name="name"
+                            id="consultationName"
+                            placeholder="Beratungstermin1"
+                            required
+                        />
+                    </div>
+                </div>
 
-    <!-- Fifth row -->
-    <div class="row justify-content-md-center">
-        <div class="form-group col-lg-3" id="datePicker-dp-end">
-            <label>Bis</label>
-            <div class="input-group">
-                <input
-                    [readonly]="true"
-                    class="form-control"
-                    name="endDate"
-                    [(ngModel)]="endDate"
-                    ngbDatepicker
-                    (click)="dp2.toggle()"
-                    #dp2="ngbDatepicker"
-                    required
-                />
-            </div>
-        </div>
-        <div class="form-group col-lg-3">
-            <ngb-timepicker
-                readonlyInputs="true"
-                [(ngModel)]="endTime"
-                name="endTime"
-                [minuteStep]="minuteStep"
-            >
-            </ngb-timepicker>
-        </div>
-    </div>
+                <!-- Second row -->
+                <div class="row">
+                    <div class="form-group col-lg">
+                        <label for="consultationFirstName">Vorname</label>
+                        <input
+                            class="form-control"
+                            [(ngModel)]="customer.firstName"
+                            type="text"
+                            name="firstName"
+                            id="consultationFirstName"
+                            placeholder="Maximilian"
+                            required
+                        />
+                    </div>
+                    <div class="form-group col-lg">
+                        <label for="consultationLastName">Nachname</label>
+                        <input
+                            class="form-control"
+                            [(ngModel)]="customer.lastName"
+                            type="text"
+                            name="lastName"
+                            id="consultationLastName"
+                            placeholder="Mustermann"
+                            required
+                        />
+                    </div>
+                </div>
 
-    <!-- Sixth row -->
-    <div class="row justify-content-md-center" id="consultationDropDown">
-        <div ngbDropdown class="d-inline-block col-lg-3">
-            <button
-                class="btn btn-outline-primary"
-                id="roomButtonStart"
-                name="roomButton"
-                ngbDropdownToggle
-            >
-                {{ roomString }}
-            </button>
-            <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-                <button
-                    class="dropdown-item"
-                    id="roomButtonSelected"
-                    name="roomButton"
-                    *ngFor="let room of rooms"
-                    (click)="changeSortOrderRoom(room)"
-                >
-                    {{ room }}
-                </button>
-            </div>
-        </div>
+                <!-- Third row -->
+                <div class="row">
+                    <div class="form-group col-lg">
+                        <label for="consultationPhoneNumber"
+                            >Telefonnummer</label
+                        >
+                        <input
+                            type="text"
+                            class="form-control"
+                            [(ngModel)]="customer.phone"
+                            name="phoneNumber"
+                            id="consultationPhoneNumber"
+                            placeholder="+436641234567"
+                            required
+                        />
+                    </div>
+                    <div class="form-group col-lg">
+                        <label for="consultationEmail">Email</label>
+                        <input
+                            type="email"
+                            class="form-control"
+                            name="email"
+                            [(ngModel)]="customer.email"
+                            id="customerEmail"
+                            placeholder="max.mustermann@email.com"
+                            required
+                        />
+                    </div>
+                </div>
 
-        <div class="col-lg-3" id="consultationDropDown">
-            <div ngbDropdown class="d-inline-block col-lg-3">
-                <button
-                    class="btn btn-outline-primary"
-                    id="trainerButtonStart"
-                    name="trainerButton"
-                    ngbDropdownToggle
-                >
-                    {{ trainerString }}
-                </button>
-                <div ngbDropdownMenu aria-labelledby="dropdownBasic2">
+                <!-- Fourth row -->
+                <div class="row justify-content-md-center">
+                    <div class="form-group col-lg" id="datePicker-dp-start">
+                        <label>Von</label>
+                        <div class="input-group">
+                            <input
+                                [readonly]="true"
+                                class="form-control"
+                                id="startDate"
+                                name="startDate"
+                                [(ngModel)]="startDate"
+                                ngbDatepicker
+                                (click)="dp1.toggle()"
+                                #dp1="ngbDatepicker"
+                                required
+                            />
+                        </div>
+                    </div>
+                    <div class="form-group col-lg">
+                        <ngb-timepicker
+                            readonlyInputs="true"
+                            [(ngModel)]="startTime"
+                            id="startTime"
+                            name="startTime"
+                            [minuteStep]="minuteStep"
+                        >
+                        </ngb-timepicker>
+                    </div>
+                </div>
+
+                <!-- Fifth row -->
+                <div class="row justify-content-md-center">
+                    <div class="form-group col-lg" id="datePicker-dp-end">
+                        <label>Bis</label>
+                        <div class="input-group">
+                            <input
+                                [readonly]="true"
+                                class="form-control"
+                                name="endDate"
+                                [(ngModel)]="endDate"
+                                ngbDatepicker
+                                (click)="dp2.toggle()"
+                                #dp2="ngbDatepicker"
+                                required
+                            />
+                        </div>
+                    </div>
+                    <div class="form-group col-lg">
+                        <ngb-timepicker
+                            readonlyInputs="true"
+                            [(ngModel)]="endTime"
+                            name="endTime"
+                            [minuteStep]="minuteStep"
+                        >
+                        </ngb-timepicker>
+                    </div>
+                </div>
+
+                <!-- Sixth row -->
+                <div class="row" id="consultationDropDown">
+                    <div ngbDropdown class="col-lg">
+                        <button
+                            class="btn btn-outline-primary"
+                            id="roomButtonStart"
+                            name="roomButton"
+                            ngbDropdownToggle
+                        >
+                            {{ roomString }}
+                        </button>
+                        <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                            <button
+                                class="dropdown-item"
+                                id="roomButtonSelected"
+                                name="roomButton"
+                                *ngFor="let room of rooms"
+                                (click)="changeSortOrderRoom(room)"
+                            >
+                                {{ room }}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div ngbDropdown class="col-lg" id="consultationDropDown">
+                        <button
+                            class="btn btn-outline-primary"
+                            id="trainerButtonStart"
+                            name="trainerButton"
+                            ngbDropdownToggle
+                        >
+                            {{ trainerString }}
+                        </button>
+                        <div ngbDropdownMenu aria-labelledby="dropdownBasic2">
+                            <button
+                                class="dropdown-item"
+                                id="trainerButtonSelected"
+                                name="trainerButton"
+                                *ngFor="let trainer of trainers"
+                                (click)="changeSortOrderTrainer(trainer)"
+                            >
+                                {{ trainer.firstName + ' ' + trainer.lastName }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" *ngIf="errorMsg">
+                    <div class="col-sm-12">
+                        <p class="alert alert-danger">
+                            {{ errorMsg }}
+                        </p>
+                    </div>
+                </div>
+                <div class="row" *ngIf="successMsg">
+                    <div class="col-sm-12">
+                        <p class="alert alert-success">
+                            {{ successMsg }}
+                        </p>
+                    </div>
+                </div>
+                <br />
+
+                <!-- Seventh row -->
+                <div class="row justify-content-end" style="padding-right: 15px">
                     <button
-                        class="dropdown-item"
-                        id="trainerButtonSelected"
-                        name="trainerButton"
-                        *ngFor="let trainer of trainers"
-                        (click)="changeSortOrderTrainer(trainer)"
+                        type="submit"
+                        class="btn btn-primary"
+                        [disabled]="!isCompleted()"
+                        (click)="clearInfoMsg()"
+                        (click)="postConsultation(consultationForm)"
+                        id="consultationSave"
                     >
-                        {{ trainer.firstName + ' ' + trainer.lastName }}
+                        Beratungstermin anfordern
                     </button>
                 </div>
-            </div>
+            </form>
         </div>
+        <div class="col-lg-3"></div>
     </div>
-
-    <div class="row" *ngIf="errorMsg">
-        <div class="col-sm-12">
-            <p class="alert alert-danger">
-                {{ errorMsg }}
-            </p>
-        </div>
-    </div>
-    <div class="row" *ngIf="successMsg">
-        <div class="col-sm-12">
-            <p class="alert alert-success">
-                {{ successMsg }}
-            </p>
-        </div>
-    </div>
-    <br />
-
-    <!-- Seventh row -->
-    <div class="row justify-content-center">
-        <button
-            type="submit"
-            class="btn btn-primary col-3"
-            [disabled]="!isCompleted()"
-            (click)="postConsultation(consultationForm)"
-            id="consultationSave"
-        >
-            Beratungstermin anfordern
-        </button>
-        <button type="reset" class="btn btn-danger col-3" id="cancel">
-            Abbrechen
-        </button>
-    </div>
-</form>
+</div>

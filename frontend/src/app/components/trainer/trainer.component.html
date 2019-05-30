@@ -12,7 +12,7 @@
                 (change)="clearInfoMsg()"
                 class="container-fluid"
             >
-                <div class="form-row">
+                <div class="form-row" od="row1">
                     <div class="form-group col-lg-4">
                         <label for="trainerFirstName">Vorname</label>
                         <input
@@ -48,14 +48,18 @@
                             id="trainerBirthday"
                             required
                             ngbDatepicker
+                            [maxDate]="getMaxDateForBirth()"
+                            [minDate]="getMinDateForBirth()"
+                            [startDate]="getSelectionStart()"
                             (click)="varname.toggle()"
                             #varname="ngbDatepicker"
                             placeholder="YYYY-mm-dd"
+                            readonly
                         />
                     </div>
                 </div>
 
-                <div class="form-row">
+                <div class="form-row" id="row2">
                     <div class="col-lg-12">
                         <label>Wählen der betreuten Geburtstage:</label>
                     </div>
@@ -63,77 +67,52 @@
 
                 <div class="form-row">
                     <div class="col-lg-6">
-                        <div class="custom-control custom-checkbox">
+                        <div
+                            class="custom-control custom-checkbox"
+                            *ngFor="let option of getBirthdayColumn1Keys()"
+                            (click)="
+                                birthdayOptionsColumn1[
+                                    option
+                                ] = !birthdayOptionsColumn1[option]
+                            "
+                        >
                             <input
                                 class="custom-control-input"
                                 type="checkbox"
-                                name="cbTrockeneis"
-                                id="cb1"
-                                [(ngModel)]="trainer.birthdayTypes[0]"
-                                value="Trockeneis Geburtstag"
+                                [name]="option"
+                                [(ngModel)]="birthdayOptionsColumn1[option]"
+                                value="{{ option }}"
                             />
-                            <label class="custom-control-label" for="cb1">
-                                Trockeneis Geburtstag
-                            </label>
-                        </div>
-                        <div class="custom-control custom-checkbox">
-                            <input
-                                class="custom-control-input"
-                                type="checkbox"
-                                name="cbRaketen"
-                                id="cb2"
-                                [(ngModel)]="trainer.birthdayTypes[1]"
-                                value="Raketen Geburtstag"
-                            />
-                            <label class="custom-control-label" for="cb2">
-                                Raketen Geburtstag
-                            </label>
-                        </div>
-                        <div class="custom-control custom-checkbox">
-                            <input
-                                class="custom-control-input"
-                                type="checkbox"
-                                name="cbSuperhelden"
-                                id="cb3"
-                                [(ngModel)]="trainer.birthdayTypes[2]"
-                                value="Superhelden Geburtstag"
-                            />
-                            <label class="custom-control-label" for="cb3">
-                                Superhelden Geburtstag
+                            <label class="custom-control-label" for="option">
+                                {{ option }}
                             </label>
                         </div>
                     </div>
                     <div class="col-lg-6">
-                        <div class="custom-control custom-checkbox">
+                        <div
+                            class="custom-control custom-checkbox"
+                            *ngFor="let option of getBirthdayColumn2Keys()"
+                            (click)="
+                                birthdayOptionsColumn2[
+                                    option
+                                ] = !birthdayOptionsColumn2[option]
+                            "
+                        >
                             <input
                                 class="custom-control-input"
                                 type="checkbox"
-                                name="cbPhoto"
-                                id="cb4"
-                                [(ngModel)]="trainer.birthdayTypes[3]"
-                                value="Photo Geburtstag"
+                                [name]="option"
+                                [(ngModel)]="birthdayOptionsColumn2[option]"
+                                value="{{ option }}"
                             />
-                            <label class="custom-control-label" for="cb4">
-                                Photo Geburtstag
-                            </label>
-                        </div>
-                        <div class="custom-control custom-checkbox">
-                            <input
-                                class="custom-control-input"
-                                type="checkbox"
-                                name="cbMalen"
-                                id="cb5"
-                                [(ngModel)]="trainer.birthdayTypes[4]"
-                                value="Malen Geburtstag"
-                            />
-                            <label class="custom-control-label" for="cb5">
-                                Malen Geburtstag
+                            <label class="custom-control-label" for="option">
+                                {{ option }}
                             </label>
                         </div>
                     </div>
                 </div>
 
-                <div class="form-row">
+                <div class="form-row" id="row3">
                     <div class="form-group col-lg-6">
                         <label for="trainerEmail">Email</label>
                         <input
@@ -163,7 +142,7 @@
                 <!-- password is not considered yet - store it within trainer but then it is sent across the network (not so smart) unless https protected -->
 
                 <!-- this inputs for setting ad confirming a new password are only accessible by the admin -->
-                <div class="form-row">
+                <div class="form-row" id="row4">
                     <div class="form-group col-lg-6">
                         <label for="trainerPw">Neues Passwort eingeben</label>
                         <input
@@ -191,7 +170,7 @@
                     </div>
                 </div>
 
-                <div class="form-row">
+                <div class="form-row" id="row5">
                     <div class="col-6">
                         Here goes a container for a profile picture if uploaded,
                         else an icon

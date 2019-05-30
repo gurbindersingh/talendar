@@ -32,11 +32,11 @@ export class ConsultationComponent implements OnInit {
     private successMsg: string;
 
     startDate: NgbDateStruct;
-    startTime: NgbTimeStruct = {hour: 13, minute: 30, second: 0};;
+    startTime: NgbTimeStruct = { hour: 13, minute: 30, second: 0 };
     endDate: NgbDateStruct;
-    endTime: NgbTimeStruct = {hour: 14, minute:30, second: 0};;
+    endTime: NgbTimeStruct = { hour: 14, minute: 30, second: 0 };
 
-    title = 'Beratungstermin buchen';
+    title = 'Beratungstermin eintragen';
     trainerString = 'Trainer auswählen';
     roomString = 'Raum auswählen';
     rooms: string[] = ['Grün', 'Orange', 'Erdgeschoss'];
@@ -77,9 +77,10 @@ export class ConsultationComponent implements OnInit {
                     'Deine Reservierung wurde erfolgreich gespeichert';
             },
             (error) => {
-                console.log(error);
+                console.log(error.message);
                 this.errorMsg =
-                    'Deine Reservierung konnte nicht angelegt werden!';
+                    'Deine Reservierung konnte nicht angelegt werden: ' +
+                    error.message;
             }
         );
     }

@@ -9,7 +9,6 @@ export class HolidayClient extends RestClient {
     constructor(httpClient: HttpClient) {
         super('holiday', httpClient);
     }
-    
     public postNewHoliday(holiday: Holiday): Observable<Holiday> {
         return super.post(
             (error: HttpErrorResponse) => {
