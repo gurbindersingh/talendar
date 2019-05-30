@@ -19,7 +19,7 @@ public class TrainerDto {
     @JsonIgnoreProperties("trainer")
     private List<EventDto>   events;
     private List<String>     birthdayTypes;
-    @JsonIgnoreProperties("trainer")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "trainer"})
     private List<HolidayDto> holidays;
     private LocalDateTime    created;
     private LocalDateTime    updated;
