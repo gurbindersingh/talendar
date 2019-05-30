@@ -1,0 +1,167 @@
+<h1 class="row justify-content-center">{{ title }}</h1>
+<hr />
+
+<div class="row">
+    <div class="col-lg-3"></div>
+    <div class="col-lg-6">
+        <form
+            id="courseForm"
+            #courseForm
+            class="container-fluid"
+            (change)="clearInfoMsg()"
+        >
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div id="labelCourseName" class="col-sm-3">
+                            Kursname:
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-10">
+                            <p name="detail">
+                                {{ event.name }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div id="labelCourseName" class="col-sm-3">
+                            Beschreibung:
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <p name="detail">
+                                {{ event.description }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div id="labelCourseName" class="col-lg-6">
+                            Preis:
+                        </div>
+                        <div class="col">
+                            <p name="detail">{{ event.price }}€</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div id="labelCourseName" class="col-lg-6">
+                            TeilnehmerInnen:
+                        </div>
+                        <div class="col">
+                            <p name="detail">{{ event.customerDtos.length }}/12</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div id="labelCourseName" class="col-lg-6">
+                            Alter:
+                        </div>
+                        <div class="col">
+                            <p name="detail">{{ event.minAge }} - {{ event.maxAge }}</p>
+                        </div>
+                        <div class="col-2"></div>
+                    </div>
+                    <div class="row">
+                        <div id="labelCourseName" class="col-lg-6">
+                            Termine:
+                        </div>
+                    </div>
+
+                    <div class="row" *ngFor="let date of dates">
+                        <div class="col border-top">
+                            <p>{{ date }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <br />
+            <h1>Anmeldedaten</h1>
+            <hr />
+            <br />
+            <div class="row">
+                <div class="form-group col-lg-6">
+                    <label for="meetingFirstName">Vorname</label>
+                    <input
+                        class="form-control"
+                        [(ngModel)]="firstName"
+                        type="text"
+                        name="customer.firstName"
+                        id="meetingFirstName"
+                        placeholder="Maximilian"
+                        required
+                    />
+                </div>
+                <div class="form-group col-lg-6">
+                    <label for="meetingLastName">Nachname</label>
+                    <input
+                        class="form-control"
+                        [(ngModel)]="customer.lastName"
+                        type="text"
+                        name="lastName"
+                        id="meetingLastName"
+                        placeholder="Mustermann"
+                        required
+                    />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-lg-6">
+                    <label for="meetingPhoneNumber">Telefonnummer</label>
+                    <input
+                        class="form-control"
+                        [(ngModel)]="customer.phone"
+                        type="text"
+                        name="phoneNumber"
+                        id="meetingPhoneNumber"
+                        placeholder="0676 433 2222"
+                        required
+                    />
+                </div>
+                <div class="form-group col-lg-6">
+                    <label for="meetingEmail">Email</label>
+                    <input
+                        class="form-control"
+                        [(ngModel)]="customer.email"
+                        type="email"
+                        name="email"
+                        id="meetingEmail"
+                        placeholder="max.mustermann@email.com"
+                        required
+                    />
+                </div>
+            </div>
+            <div class="row" *ngIf="errorMsg">
+                <div class="col-sm-12">
+                    <p class="alert alert-danger">
+                        {{ errorMsg }}
+                    </p>
+                </div>
+            </div>
+            <div class="row" *ngIf="successMsg">
+                <div class="col-sm-12">
+                    <p class="alert alert-success">
+                        {{ successMsg }}
+                    </p>
+                </div>
+            </div>
+            <br />
+            <div class="row justify-content-end">
+                <input
+                    type="submit"
+                    class="btn btn-primary col-lg-3"
+                    [disabled]="!isCompleted()"
+                    id="meetingSave"
+                    value="Anmelden"
+                    (click)="postMeeting(meetingForm)"
+                />
+            </div>
+
+
+        </form>
+    </div>
+    <div class="col-lg-3"></div>
+</div>
+<br />
+<br />
