@@ -1,6 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,8 +16,10 @@ public class TrainerDto {
     private LocalDate        birthday;
     private String           phone;
     private String           email;
+    @JsonIgnoreProperties("trainer")
     private List<EventDto>   events;
     private List<String>     birthdayTypes;
+    @JsonIgnoreProperties("trainer")
     private List<HolidayDto> holidays;
     private LocalDateTime    created;
     private LocalDateTime    updated;

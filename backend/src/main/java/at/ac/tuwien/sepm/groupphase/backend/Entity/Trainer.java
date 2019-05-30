@@ -38,7 +38,6 @@ public class Trainer {
     @Column(nullable = false)
     private String        email;
     @OneToMany(mappedBy = "trainer", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JsonIgnoreProperties("trainer")
     private List<Event>   events;
     @ElementCollection
     @CollectionTable(name = "birthday_types", joinColumns = { @JoinColumn(name = "trainer_id") })
