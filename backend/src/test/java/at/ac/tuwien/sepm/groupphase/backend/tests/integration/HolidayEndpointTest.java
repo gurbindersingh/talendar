@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.tests.integration;
 
+import at.ac.tuwien.sepm.groupphase.backend.rest.dto.HolidaysDto;
 import at.ac.tuwien.sepm.groupphase.backend.testDataCreation.FakeData;
 import at.ac.tuwien.sepm.groupphase.backend.testObjects.HolidayDto;
 import at.ac.tuwien.sepm.groupphase.backend.testObjects.TrainerDto;
@@ -177,5 +178,86 @@ public class HolidayEndpointTest {
         });
     }
 
+    @Test
+    @ResponseStatus(HttpStatus.CREATED)
+    public void postHolidaysResponse() {
+        FakeData fakeData = new FakeData();
+        TrainerDto trainer = fakeData.fakeTrainerDto();
+        trainer.setId(null);
+        trainer.setUpdated(null);
+        trainer.setCreated(null);
+        HttpEntity<TrainerDto> trequest = new HttpEntity<>(trainer);
+        ResponseEntity<TrainerDto> tresponse =
+            REST_TEMPLATE.exchange(URL.BASE + port + URL.TRAINER, HttpMethod.POST, trequest,
+                                   TrainerDto.class
+            );
+        TrainerDto trainerResponse = tresponse.getBody();
+        String cronExpression = "30/30 13/15 30/30 5/5 2019/2019 true O2 4 Nach 3 ";
+
+        HolidaysDto holiday = new HolidaysDto(
+            trainerResponse.getId(),
+            cronExpression
+        );
+        HttpEntity<HolidaysDto> request = new HttpEntity<>(holiday);
+        ResponseEntity<HolidayDto[]> response =
+            REST_TEMPLATE.exchange(URL.BASE + port + URL.HOLIDAYS, HttpMethod.POST, request,
+                                   HolidayDto[].class
+            );
+        HolidayDto[] holidayResponse = response.getBody();
+        assertNotNull(holidayResponse);
+        System.out.println(holidayResponse);
+        assertNotNull(holidayResponse[0].getId());
+    }
+
+    @Test
+    @ResponseStatus(HttpStatus.CREATED)
+    public void postHolidaysTwiceResponse() {
+        FakeData fakeData = new FakeData();
+        TrainerDto trainer = fakeData.fakeTrainerDto();
+        trainer.setId(null);
+        trainer.setUpdated(null);
+        trainer.setCreated(null);
+        HttpEntity<TrainerDto> trequest = new HttpEntity<>(trainer);
+        ResponseEntity<TrainerDto> tresponse =
+            REST_TEMPLATE.exchange(URL.BASE + port + URL.TRAINER, HttpMethod.POST, trequest,
+                                   TrainerDto.class
+            );
+        TrainerDto trainerResponse = tresponse.getBody();
+        String cronExpression = "30/30 13/15 30/30 5/5 2019/2019 true O2 4 Nach 3 ";
+
+        HolidaysDto holidays = new HolidaysDto(
+            trainerResponse.getId(),
+            cronExpression
+        );
+        HttpEntity<HolidaysDto> request = new HttpEntity<>(holidays);
+        ResponseEntity<HolidayDto[]> response =
+            REST_TEMPLATE.exchange(URL.BASE + port + URL.HOLIDAYS, HttpMethod.POST, request,
+                                   HolidayDto[].class
+            );
+        HolidayDto[] holidayResponse = response.getBody();
+        assertNotNull(holidayResponse);
+        System.out.println(holidayResponse);
+        assertNotNull(holidayResponse[0].getId());
+
+
+        cronExpression = "30/30 13/15 30/30 5/5 2019/2019 true O3 1 Nach 2 ";
+
+        holidays = new HolidaysDto(
+            trainerResponse.getId(),
+            cronExpression
+        );
+        request = new HttpEntity<>(holidays);
+        ResponseEntity<HolidayDto[]> responseTwo =
+            REST_TEMPLATE.exchange(URL.BASE + port + URL.HOLIDAYS, HttpMethod.POST, request,
+                                   HolidayDto[].class
+            );
+        HolidayDto[] holidayResponseTwo = responseTwo.getBody();
+        assertNotNull(holidayResponseTwo);
+        System.out.println(holidayResponseTwo);
+        assertNotNull(holidayResponseTwo[0].getId());
+    }
+
+
+    //30/30 13/15 30/30 5/5 2019/2019 true O2 4 Nach 3
 
 }
