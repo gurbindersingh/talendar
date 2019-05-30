@@ -96,7 +96,9 @@ public class Holiday {
     public String toString () {
         return "Holiday{" +
             "id=" + id +
-            ", trainerid=" + trainer+
+            ", trainerid=" + trainer.getId()+
+            ", trainerfirstname=" + trainer.getFirstName()+
+            ", trainerlastname=" + trainer.getLastName()+
             ", holidayStart=" + holidayStart +
             ", holidayEnd=" + holidayEnd +
             '}';

@@ -166,6 +166,16 @@ public class Validator {
             if(event.getCustomers() != null && !event.getCustomers().isEmpty()) {
                 throw new InvalidEntityException("Kundenliste ist nicht leer");
             }
+
+            try {
+                for(RoomUse r : event.getRoomUses()
+                ) {
+                    validateRoomUse(r);
+                }
+            }
+            catch(InvalidEntityException e) {
+                throw e;
+            }
         }
 
         // Validator for Rent
@@ -238,9 +248,9 @@ public class Validator {
 
         if(entity.getBirthday() == null || entity.getBirthday().isAfter(LocalDate.now())) {
             throw new InvalidEntityException("Geburtstag liegt in der Zukunft");
-        } else if(( ( LocalDate.now().getYear() - entity.getBirthday().getYear() ) <= 15 ) ||
-                  ( ( LocalDate.now().getYear() - entity.getBirthday().getYear() ) > 120 )) {
-            throw new InvalidEntityException("age must be a reasonable value");
+        } else if(( ( LocalDate.now().getYear() - entity.getBirthday().getYear() ) < 14 ) ||
+                  ( ( LocalDate.now().getYear() - entity.getBirthday().getYear() ) > 100 )) {
+            throw new InvalidEntityException("Invalides Alter gesetzt (Wertebereich 14 - 100)");
         }
 
         if(entity.getPhone() == null || !phonePattern.matcher(entity.getPhone()).find()) {

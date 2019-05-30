@@ -48,6 +48,9 @@
                             id="trainerBirthday"
                             required
                             ngbDatepicker
+                            [maxDate]="getMaxDateForBirth()"
+                            [minDate]="getMinDateForBirth()"
+                            [startDate]="getSelectionStart()"
                             (click)="varname.toggle()"
                             #varname="ngbDatepicker"
                             placeholder="YYYY-mm-dd"
@@ -81,7 +84,7 @@
                                 value="{{ option }}"
                             />
                             <label class="custom-control-label" for="option">
-                                {{ option }} Geburtstag
+                                {{ option }}
                             </label>
                         </div>
                     </div>
@@ -103,7 +106,7 @@
                                 value="{{ option }}"
                             />
                             <label class="custom-control-label" for="option">
-                                {{ option }} Geburtstag
+                                {{ option }}
                             </label>
                         </div>
                     </div>

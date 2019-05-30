@@ -37,7 +37,7 @@ public class EventEndpoint {
     }
 
 
-    @PostMapping
+    @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public EventDto createNewEvent (@RequestBody EventDto eventDto) throws BackendException {
         LOGGER.info("Incoming POST Request for an Event with type: " + eventDto.toString());
@@ -47,6 +47,24 @@ public class EventEndpoint {
             LOGGER.error(e.getMessage(), e);
             throw new BackendException(e.getMessage(), e);
         }catch(ServiceException e){
+            LOGGER.error(e.getMessage(), e);
+            throw new BackendException(e.getMessage(), e);
+        }
+    }
+
+    @RequestMapping(method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.OK)
+    public EventDto updateEvent(@RequestBody EventDto eventDto) throws BackendException {
+        LOGGER.info("Incoming PUT Request for an Event with type: " + eventDto.toString());
+        try {
+            return eventMapper.entityToEventDto(eventService.update(eventMapper.dtoToEventEntity(eventDto)));
+        } catch(ValidationException e){
+            LOGGER.error(e.getMessage(), e);
+            throw new BackendException(e.getMessage(), e);
+        } catch(ServiceException e){
+            LOGGER.error(e.getMessage(), e);
+            throw new BackendException(e.getMessage(), e);
+        } catch(NotFoundException e){
             LOGGER.error(e.getMessage(), e);
             throw new BackendException(e.getMessage(), e);
         }

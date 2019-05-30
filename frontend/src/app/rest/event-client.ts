@@ -52,4 +52,19 @@ export class EventClient extends RestClient {
             );
         }, '/' + id);
     }
+
+    public update(event: Event): Observable<Event> {
+        return super.put(
+            (error: HttpErrorResponse) => {
+                console.log(
+                    'HTTP PATCH To Update Event With ID' +
+                        event.id +
+                        ' Failed: ' +
+                        error.message
+                );
+            },
+            '',
+            event
+        );
+    }
 }

@@ -8,6 +8,7 @@ import { EventType } from 'src/app/models/enum/eventType';
 import { NgbDateStruct, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { RoomUse } from 'src/app/models/roomUse';
 import { Trainer } from 'src/app/models/trainer';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-course',
@@ -24,10 +25,14 @@ export class CourseComponent implements OnInit {
     maxAge: number;
     startDate: NgbDateStruct;
     startTime: NgbTimeStruct;
-    endDate: NgbDateStruct;
     endTime: NgbTimeStruct;
     endOfApplicationDate: NgbDateStruct;
     endOfApplicationTime: NgbTimeStruct;
+    isCreate: boolean;
+
+    btnText: string;
+    saveMode: boolean;
+    valueEndOfApplication: NgbDateStruct;
 
     greenRadioButton: RadioNodeList;
     radioButtonSelected = '';
@@ -42,7 +47,8 @@ export class CourseComponent implements OnInit {
 
     constructor(
         private eventClient: EventClient,
-        dateTimeParser: DateTimeParserService
+        dateTimeParser: DateTimeParserService,
+        private route: ActivatedRoute
     ) {
         this.dateTimeParser = dateTimeParser;
         this.startTime = { hour: 13, minute: 0, second: 0 };
@@ -50,69 +56,115 @@ export class CourseComponent implements OnInit {
         this.endOfApplicationTime = { hour: 13, minute: 0, second: 0 };
     }
 
-    ngOnInit() {}
+    ngOnInit() {
+        const id: number = this.route.snapshot.queryParams.id;
+
+        if (id === undefined) {
+            this.title = 'Kurs erstellen';
+            this.btnText = 'Erstellen';
+            this.saveMode = true;
+            this.isCreate = true;
+        } else {
+            this.title = 'Kurs bearbeiten';
+            this.btnText = 'Bearbeiten';
+            this.saveMode = false;
+            this.isCreate = false;
+            this.eventClient.getEventById(id).subscribe(
+                (data: Event) => {
+                    console.log(data);
+                    this.event = data;
+                },
+                (error: Error) => {
+                    this.errorMsg =
+                        'Der ausgewählte Trainer konnte leider nicht geladen werden.';
+                }
+            );
+        }
+    }
 
     public postMeeting(form: NgForm): void {
-        this.event.description = this.description;
-        this.event.price = this.price;
-        this.event.maxParticipants = this.maxParticipants;
-        this.event.minAge = this.minAge;
-        this.event.maxAge = this.maxAge;
         this.trainer.id = 1;
-        this.event.eventType = EventType.Course;
-        this.event.trainer = this.trainer;
+        if (this.isCreate) {
+            this.event.eventType = EventType.Course;
+            this.event.trainer = this.trainer;
 
-        this.roomUse.begin = this.dateTimeParser.dateTimeToString(
-            this.startDate,
-            this.startTime
-        );
-        this.roomUse.end = this.dateTimeParser.dateTimeToString(
-            this.endDate,
-            this.endTime
-        );
-        this.roomUse.room = this.getSelectedRadioButtonRoom();
+            this.roomUse.begin = this.dateTimeParser.dateTimeToString(
+                this.startDate,
+                this.startTime
+            );
+            this.roomUse.end = this.dateTimeParser.dateTimeToString(
+                this.startDate,
+                this.endTime
+            );
+            this.roomUse.room = this.getSelectedRadioButtonRoom();
 
-        this.event.endOfApplication = this.dateTimeParser.dateTimeToString(
-            this.endOfApplicationDate,
-            this.endOfApplicationTime
-        );
+            this.event.endOfApplication = this.dateTimeParser.dateTimeToString(
+                this.endOfApplicationDate,
+                this.endOfApplicationTime
+            );
 
-        this.event.roomUses = [this.roomUse];
+            this.event.roomUses = [this.roomUse];
 
-        this.eventClient.postNewEvent(this.event).subscribe(
-            (data: Event) => {
-                console.log(data);
-                this.successMsg =
-                    'Deine Reservierung wurde erfolgreich gespeichert';
-            },
-            (error: Error) => {
-                console.log(error);
-                this.errorMsg = error.message;
-            }
-        );
+            this.eventClient.postNewEvent(this.event).subscribe(
+                (data: Event) => {
+                    console.log(data);
+                    this.successMsg =
+                        'Deine Reservierung wurde erfolgreich gespeichert';
+                },
+                (error: Error) => {
+                    console.log(error);
+                    this.errorMsg = error.message;
+                }
+            );
+        } else {
+            // TODO
+            this.eventClient.update(this.event).subscribe(
+                (data: Event) => {
+                    console.log(data);
+                    this.successMsg = 'Der Kurs wurde erfolgreich aktualisiert';
+                },
+                (error: Error) => {
+                    console.log(error.message);
+                    this.errorMsg =
+                        'Der Kurs konnte nicht erfolgreich aktualisiert werden: ' +
+                        error.message;
+                }
+            );
+        }
     }
 
     public isCompleted(): boolean {
         if (this.event.name === undefined || this.event.name === '') {
             return false;
         }
-        if (this.description === undefined || this.description === '') {
+        if (
+            this.event.description === undefined ||
+            this.event.description === ''
+        ) {
             return false;
         }
-        if (this.price === undefined) {
+        if (this.event.price === undefined || this.event.price === null) {
             return false;
         }
-        if (this.maxParticipants === undefined) {
+        if (this.event.maxParticipants === undefined || this.event.maxParticipants === null) {
             return false;
         }
-        if (this.minAge === undefined) {
+        if (this.event.minAge === undefined || this.event.minAge === null) {
             return false;
         }
-        if (this.maxAge === undefined) {
+        if (this.event.maxAge === undefined || this.event.maxAge === null) {
             return false;
         }
-        if (this.radioButtonSelected === ''){
-            return false;
+        if (this.isCreate) {
+            if (this.startDate === undefined) {
+                return false;
+            }
+            if (this.endTime === undefined) {
+                return false;
+            }
+            if (this.radioButtonSelected === '') {
+                return false;
+            }
         }
         return true;
     }

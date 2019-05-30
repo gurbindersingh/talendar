@@ -18,11 +18,14 @@ import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationExcepti
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.Validator;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidEntityException;
 import org.apache.tomcat.jni.Local;
+import org.aspectj.weaver.ast.Not;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import org.slf4j.Logger;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -94,7 +97,7 @@ public class EventService implements IEventService {
                       }
                       catch(TimeNotAvailableException e) {
                           throw new ValidationException(
-                              "The event is attempting to be booked during a different event: " + e.getMessage(),
+                              e.getMessage(),
                               e
                           );
                       }
@@ -127,7 +130,7 @@ public class EventService implements IEventService {
                     }
                     catch(TimeNotAvailableException e) {
                         throw new ValidationException(
-                            "The event is attempting to be booked during a different event: " + e.getMessage(),
+                            e.getMessage(),
                             e
                         );
                     }
@@ -147,7 +150,7 @@ public class EventService implements IEventService {
                     }
                     catch(TimeNotAvailableException e) {
                         throw new ValidationException(
-                            "The event is attempting to be booked during a different event: " + e.getMessage(),
+                            e.getMessage(),
                             e
                         );
                     }
@@ -175,7 +178,7 @@ public class EventService implements IEventService {
                     }
                     catch(TimeNotAvailableException e) {
                         throw new ValidationException(
-                            "The event is attempting to be booked during a different event: " + e.getMessage(),
+                            e.getMessage(),
                             e
                         );
                     }
@@ -215,13 +218,80 @@ public class EventService implements IEventService {
         return null;
     }
 
+    @Transactional
+    @Override
+    public Event update(Event event) throws ValidationException, NotFoundException, ServiceException{
+        LocalDateTime timeOfUpdate = LocalDateTime.now();
+
+        Optional<Event> queryResult;
+        Event currentEvent;
+
+        switch(event.getEventType()) {
+            case Course:
+                try {
+                   this.validator.validateEvent(event);
+                } catch(InvalidEntityException ve) {
+                   throw new ValidationException(ve.getMessage(), ve);
+                }
+
+                try {
+
+                    Event eventFromDb = this.eventRepository.findByIdAndDeletedFalse(event.getId());
+                    if(eventFromDb == null){
+                        LOGGER.error("Event with id " + event.getId() + " not found, maybe deleted");
+                        throw new NotFoundException("");
+                    }
+                    if(eventFromDb.getCustomers().size() > event.getMaxParticipants()){
+                        throw new ValidationException("Es sind schon mehr angemeldet als Ihrer Eingabe bei maximale Teilnehmerzahl", null);
+                    }
+
+
+                   queryResult = this.eventRepository.findById(event.getId());
+                   if(queryResult.isPresent()){
+                       LOGGER.debug("Course with id found");
+                       currentEvent = queryResult.get();
+                       event.setUpdated(timeOfUpdate);
+                       return mergeEvent(currentEvent, event);
+                   } else{
+                       LOGGER.error("Event with id " + event.getId() + " not found");
+                       throw new NotFoundException("");
+                   }
+
+                } catch(DataAccessException dae){
+                    LOGGER.error("Error: " + dae);
+                    throw new ServiceException("", dae);
+                }
+        }
+
+        throw new ServiceException("", null);
+    }
+
+    private Event mergeEvent(Event persisted, Event newVersion) {
+        // all values can be updated except id (obviously), timestamps, and related events
+        LOGGER.info("Event will be merged now");
+        persisted.setName(newVersion.getName());
+
+        //COURSE
+        persisted.setDescription(newVersion.getDescription());
+        persisted.setMaxParticipants(newVersion.getMaxParticipants());
+        persisted.setMinAge(newVersion.getMinAge());
+        persisted.setMaxAge(newVersion.getMaxAge());
+        persisted.setPrice(newVersion.getPrice());
+        persisted.setUpdated(newVersion.getUpdated());
+        return persisted;
+    }
+
+
     @Override
     public List<Event> getAllFutureCourses(){
         return eventRepository.findByEventTypeEqualsAndDeletedFalse(EventType.Course);
     }
 
+
     private void setAutoGeneratedName (Event event) {
-        if(event.getEventType() == EventType.Rent) {
+        if(event.getCustomers() == null || event.getRoomUses() == null) {
+        }
+        else if(event.getEventType() == EventType.Rent) {
             for(Customer customer : event.getCustomers()) {
                 for(RoomUse roomUse : event.getRoomUses()) {
                     event.setName(EventType.Rent +
@@ -241,6 +311,7 @@ public class EventService implements IEventService {
     public void deleteEvent(Long id){
         eventRepository.deleteThisEvent(id);
     }
+
 
     @Override
     public void cancelEvent(Long id) throws ValidationException {
@@ -285,6 +356,7 @@ public class EventService implements IEventService {
         return event;
     }
 
+
     public Event synchCustomers(Event event){
         Set<Event> events = new HashSet<>();
         events.add(event);
@@ -293,6 +365,7 @@ public class EventService implements IEventService {
         }
         return event;
     }
+
 
     public void trainerAvailable(Trainer trainer, List<RoomUse> roomUses)throws TrainerNotAvailableException{
         List<RoomUse> trainersEvents = roomUseRepository.findByEvent_Trainer_IdAndBeginGreaterThanEqualAndEvent_DeletedFalse(trainer.getId(), LocalDateTime.now());
@@ -328,11 +401,14 @@ public class EventService implements IEventService {
         }
     }
 
+
     public void isAvailable (List<RoomUse> roomUseList) throws TimeNotAvailableException {
+        LOGGER.info("Check if Roomuses are available");
         LocalDateTime now = LocalDateTime.now();
-        List<RoomUse> dbRooms = roomUseRepository.findByBeginGreaterThanEqualAndEvent_DeletedFalse(now);
+        List<RoomUse> dbRooms = roomUseRepository.findByBeginGreaterThanEqualAndDeletedFalse(now);
         for(RoomUse x : roomUseList) {
             for(RoomUse db : dbRooms) {
+                LOGGER.info("Database row begin: " + db.getBegin() +  " vs to insert begin: " + x.getBegin());
                 if(x.getRoom() == db.getRoom()) {
                     if(x.getBegin().isAfter(db.getBegin()) &&
                        x.getBegin().isBefore(db.getEnd()) ||
@@ -340,16 +416,20 @@ public class EventService implements IEventService {
                        x.getEnd().isAfter(db.getBegin()) ||
                        x.getBegin().isBefore(db.getBegin()) &&
                        x.getEnd().isAfter(db.getEnd()) ||
+                       x.getEnd().isEqual(db.getEnd()) && x.getBegin().isEqual(db.getBegin()) ||
                        x.getEnd().isEqual(db.getEnd()) ||
                        x.getBegin().isEqual(db.getBegin())) {
                         throw new TimeNotAvailableException(
-                            "The Timeslot attempting to be booked is invalid. Attempted Booking: " +
-                            x.toString());
+                            "Von " + x.getBegin() + " bis " + x.getEnd() + " ist der Raum " + x.getRoom() + " belegt");
                     }
                 }
+
+
             }
         }
+        LOGGER.info("All roomuses are available");
     }
+
 
     public void sendCancelationMail(String email, Event event, Customer customer) throws EmailException {
         String to = email;
@@ -382,6 +462,7 @@ public class EventService implements IEventService {
         }
     }
 
+
     private String createCancelationMessage(Event event, Customer customer) throws MessagingException{
         String url = "http://localhost:4200/cancelEvent?id=" + event.getId();
         URL urll = null;
@@ -399,6 +480,7 @@ public class EventService implements IEventService {
 
         return msg;
     }
+
 
     public String translateEnumWithArtikel(EventType eventType){
         switch (eventType){

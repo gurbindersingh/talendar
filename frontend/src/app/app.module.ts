@@ -30,6 +30,7 @@ import { DateTimeParserService } from './services/date-time-parser.service';
 import { HolidayClient } from 'src/app/rest/holiday-client';
 import { CancelEventComponent } from './components/cancel-event/cancel-event.component';
 import { CourseViewComponent } from './components/course-view/course-view.component';
+import { HolidaysClient } from 'src/app/rest/holidays-client';
 
 @NgModule({
     declarations: [
@@ -66,6 +67,7 @@ import { CourseViewComponent } from './components/course-view/course-view.compon
         EventClient,
         DateTimeParserService,
         HolidayClient,
+        HolidaysClient,
     ],
     bootstrap: [AppComponent],
 })

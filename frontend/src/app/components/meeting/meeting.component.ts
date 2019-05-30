@@ -34,7 +34,6 @@ export class MeetingComponent implements OnInit {
 
     startDate: NgbDateStruct;
     startTime: NgbTimeStruct;
-    endDate: NgbDateStruct;
     endTime: NgbTimeStruct;
 
     title = 'Raum mieten';
@@ -53,7 +52,7 @@ export class MeetingComponent implements OnInit {
 
     public postMeeting(form: NgForm): void {
         this.roomUse.begin = this.dateTimeParser.dateTimeToString(this.startDate, this.startTime);
-        this.roomUse.end = this.dateTimeParser.dateTimeToString(this.endDate, this.endTime);
+        this.roomUse.end = this.dateTimeParser.dateTimeToString(this.startDate, this.endTime);
         this.roomUse.room = this.getSelectedRadioButtonRoom();
 
         this.event.customerDtos = [ this.customer ];
@@ -119,10 +118,13 @@ export class MeetingComponent implements OnInit {
         if (this.startTime === undefined) {
             return false;
         }
-        if (this.endDate === undefined) {
+        if (this.startDate === undefined) {
             return false;
         }
         if (this.endTime === undefined) {
+            return false;
+        }
+        if (this.radioButtonSelected === '') {
             return false;
         }
         return true;

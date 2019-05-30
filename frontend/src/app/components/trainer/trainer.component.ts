@@ -7,6 +7,7 @@ import { Location } from '@angular/common';
 import {
     NgbDateNativeAdapter,
     NgbDateStruct,
+    NgbDate,
 } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -16,33 +17,30 @@ import {
     providers: [NgbDateNativeAdapter],
 })
 export class TrainerComponent implements OnInit {
-    //  Variables accessed in the template should not be private!
-    private title: string;
-    private trainer: Trainer = new Trainer();
-    private birthday: NgbDateStruct;
-    private isSaveMode: boolean;
-    private btnContextDescription: string;
-    private errorMsg: string;
-    private successMsg: string;
+    // these vars are accessed in the template
+    title: string;
+    trainer: Trainer = new Trainer();
+    birthday: NgbDateStruct;
+    btnContextDescription: string;
+    errorMsg: string;
+    successMsg: string;
     birthdayOptionsColumn1: any = {
-        Trockeneis: false,
-        Raketen: false,
-        Superhelden: false,
+        'Trockeneis Geburstag': false,
+        'Raketen Geburstag': false,
+        'Superhelden Geburstag': false,
     };
     birthdayOptionsColumn2: any = {
-        Photo: false,
-        Malen: false,
+        'Photo Geburstag': false,
+        'Malen Geburstag': false,
     };
 
-    /**
-     * values of checkboxes
-     */
-    private birthdayTypes: string[] = [];
+    // only used within component
+    private isSaveMode: boolean;
+    private currentDate: Date = new Date();
 
     constructor(
         private trainerClient: TrainerClient,
         private route: ActivatedRoute,
-        private router: Router,
         private location: Location,
         private adapter: NgbDateNativeAdapter
     ) {}
@@ -55,6 +53,37 @@ export class TrainerComponent implements OnInit {
         return Object.keys(this.birthdayOptionsColumn2);
     }
 
+    getMinDateForBirth() {
+        return { year: this.currentDate.getFullYear() - 80, month: 0, day: 0 };
+    }
+
+    getMaxDateForBirth() {
+        return {
+            year: this.currentDate.getFullYear(),
+            month: this.currentDate.getMonth(),
+            day: this.currentDate.getDay(),
+        };
+    }
+
+    getSelectionStart() {
+        if (this.isSaveMode) {
+            return {
+                year: this.currentDate.getFullYear() - 20,
+                month: 1,
+                day: 1,
+            };
+        } else {
+            const date: Date = new Date(this.trainer.birthday);
+            return {
+                year: date.getFullYear(),
+                // month january mapped to 0, ngbdatepcicker starts at 1
+                // strange enough selecting day 1 of a month doesn't cause problems
+                month: date.getUTCMonth() + 1,
+                day: date.getUTCDate(),
+            };
+        }
+    }
+
     /**
      * Upon loading this component, we will either save a new trainer (no id query param)
      * -> .../trainer
@@ -62,8 +91,6 @@ export class TrainerComponent implements OnInit {
      * -> .../trainer?id=xyz
      */
     ngOnInit() {
-        console.log('Initialize trainer component');
-
         // check whether this site was loaded with a query param (edit) else
         // we are in save mode
         const id: number = this.route.snapshot.queryParams.id;
@@ -79,15 +106,28 @@ export class TrainerComponent implements OnInit {
             this.trainerClient.getById(id).subscribe(
                 (data: Trainer) => {
                     console.log(data);
+                    // create ngb data model from trainer data and set bday in form
+                    const loadedDate: Date = new Date(data.birthday);
+                    console.log(loadedDate);
+                    const ngbDate: NgbDate = new NgbDate(
+                        loadedDate.getFullYear(),
+                        loadedDate.getUTCMonth() + 1,
+                        loadedDate.getUTCDate()
+                    );
+                    console.log(ngbDate);
+                    this.birthday = ngbDate;
+
+                    // mark active checkboxes of a trainer as selected
+                    this.fillCheckboxes(data.birthdayTypes);
+
                     this.trainer = data;
-                    this.birthday = this.transformToNgbDate(data.birthday);
                 },
                 (error: Error) => {
                     /**
                      * Even though this error situation should be very rare,
                      * this is not the smoothest solution.
                      * But what to do?!?
-                     * just stay here and continue with save made (imo not sensible too) 
+                     * just stay here and continue with save made (imo not sensible too)
                      */
                     this.errorMsg =
                         'Der ausgewählte Trainer konnte leider nicht geladen werden.';
@@ -98,8 +138,7 @@ export class TrainerComponent implements OnInit {
     }
 
     public postTrainer(form: NgForm): void {
-        console.log('Pass Form Data To Rest Client');
-        const supervisesBirthdays: string[] = [];
+        const supervisedBirthdays: string[] = [];
         const allBirthdayOptions = Object.assign(
             {},
             this.birthdayOptionsColumn1,
@@ -108,12 +147,11 @@ export class TrainerComponent implements OnInit {
 
         for (const option of Object.keys(allBirthdayOptions)) {
             if (allBirthdayOptions[option]) {
-                supervisesBirthdays.push(option + ' Geburtstag');
+                supervisedBirthdays.push(option);
             }
         }
+        this.trainer.birthdayTypes = supervisedBirthdays;
         this.trainer.birthday = this.transformToDate(this.birthday);
-        this.trainer.birthdayTypes = supervisesBirthdays;
-        console.log(this.trainer);
 
         if (this.isSaveMode) {
             this.trainerClient.postNewTrainer(this.trainer).subscribe(
@@ -121,9 +159,9 @@ export class TrainerComponent implements OnInit {
                     console.log(data);
                     this.successMsg =
                         'Der Betreuer wurde erfolgreich gespeichert';
+                    form.reset();
                 },
                 (error: Error) => {
-                    console.log(error.message);
                     this.errorMsg =
                         'Der Betreuer konnte nicht angelegt werden: ' +
                         error.message;
@@ -137,7 +175,6 @@ export class TrainerComponent implements OnInit {
                         'Der Betreuer wurde erfolgreich aktualisiert';
                 },
                 (error: Error) => {
-                    console.log(error.message);
                     this.errorMsg =
                         'Der Betreuer konnte nicht erfolgreich aktualisiert werden: ' +
                         error.message;
@@ -168,6 +205,7 @@ export class TrainerComponent implements OnInit {
         if (this.trainer.phone === undefined || this.trainer.phone === '') {
             return false;
         }
+        // todo add check for password as soon as there is a mechanism that supports passwords
         return true;
     }
 
@@ -180,11 +218,21 @@ export class TrainerComponent implements OnInit {
         this.location.back();
     }
 
-    private transformToDate(date: NgbDateStruct): Date {
-        return this.adapter.toModel(date);
+    private fillCheckboxes(supervisedBirthdays: string[]): void {
+        for (const type of this.getBirthdayColumn1Keys()) {
+            if (supervisedBirthdays.includes(type)) {
+                this.birthdayOptionsColumn1[type] = true;
+            }
+        }
+
+        for (const type of this.getBirthdayColumn2Keys()) {
+            if (supervisedBirthdays.includes(type)) {
+                this.birthdayOptionsColumn2[type] = true;
+            }
+        }
     }
 
-    private transformToNgbDate(date: Date): NgbDateStruct {
-        return this.adapter.fromModel(date);
+    private transformToDate(date: NgbDateStruct): Date {
+        return this.adapter.toModel(date);
     }
 }

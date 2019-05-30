@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface RoomUseRepository extends JpaRepository<RoomUse, Long> {
 
-    List<RoomUse> findByBeginGreaterThanEqualAndEvent_DeletedFalse(LocalDateTime begin);
+    List<RoomUse> findByBeginGreaterThanEqualAndDeletedFalse(LocalDateTime begin);
 
     List<RoomUse> findByEvent_IdAndEvent_DeletedFalse(Long id);
 
