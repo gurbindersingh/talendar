@@ -110,4 +110,21 @@ public class TrainerEndpoint {
             throw new BackendException("Etwas ist leider am Server schiefgelaufen", e);
         }
     }
+
+    @CrossOrigin(origins = "http://localhost:4200")
+    @RequestMapping(method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.OK)
+    public TrainerDto deleteTrainer(@RequestBody TrainerDto trainerDto) throws BackendException {
+        LOGGER.info("Incoming DELETE Trainer Request");
+
+        try {
+            return mapper.entityToTrainerDto(trainerService.delete(mapper.dtoToTrainerEntity(trainerDto)));
+        } catch (NotFoundException e) {
+            LOGGER.error("DELETE Request unsuccessful: " + e.getMessage(), e);
+            throw new BackendException("Es konnte nicht gelöscht werden. Der Trainer existiert nicht", e);
+        } catch (ServiceException e) {
+            LOGGER.error("DELETE Request unsuccessful: " + e.getMessage());
+            throw new BackendException("Etwas ist leider am Server schiefgelaufen", e);
+        }
+    }
 }

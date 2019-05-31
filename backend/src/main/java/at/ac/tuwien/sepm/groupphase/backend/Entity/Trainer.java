@@ -55,6 +55,10 @@ public class Trainer {
     @Column(nullable = false)
     private LocalDateTime updated;
 
+    @Null
+    @Column(nullable = false)
+    private boolean deleted;
+
 
     public Trainer () {
 
@@ -84,6 +88,7 @@ public class Trainer {
         this.birthdayTypes = birthdayTypes;
         this.created = created;
         this.updated = updated;
+        this.deleted = false;
     }
 
 
@@ -197,44 +202,46 @@ public class Trainer {
     }
 
 
-    @Override
-    public boolean equals (Object o) {
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
-        Trainer trainer = (Trainer) o;
-        return Objects.equals(id, trainer.id) &&
-               Objects.equals(firstName, trainer.firstName) &&
-               Objects.equals(lastName, trainer.lastName) &&
-               Objects.equals(birthday, trainer.birthday) &&
-               Objects.equals(phone, trainer.phone) &&
-               Objects.equals(email, trainer.email) &&
-               Objects.equals(events, trainer.events) &&
-               Objects.equals(birthdayTypes, trainer.birthdayTypes) &&
-               Objects.equals(holidays, trainer.holidays) &&
-               Objects.equals(created, trainer.created) &&
-               Objects.equals(updated, trainer.updated);
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
 
     @Override
-    public int hashCode () {
-        return Objects.hash(id,
-                            firstName,
-                            lastName,
-                            birthday,
-                            phone,
-                            email,
-                            events,
-                            birthdayTypes,
-                            holidays,
-                            created,
-                            updated
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        Trainer trainer = (Trainer) o;
+        return deleted == trainer.deleted &&
+               id.equals(trainer.id) &&
+               firstName.equals(trainer.firstName) &&
+               lastName.equals(trainer.lastName) &&
+               birthday.equals(trainer.birthday) &&
+               phone.equals(trainer.phone) &&
+               email.equals(trainer.email) &&
+               Objects.equals(events, trainer.events) &&
+               Objects.equals(birthdayTypes, trainer.birthdayTypes) &&
+               Objects.equals(holidays, trainer.holidays) &&
+               created.equals(trainer.created) &&
+               updated.equals(trainer.updated);
+    }
+
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, firstName, lastName, birthday, phone, email, events, birthdayTypes,
+                            holidays, created, updated, deleted
         );
     }
 
 
     @Override
-    public String toString () {
+    public String toString() {
         return "Trainer{" +
                "id=" + id +
                ", firstName='" + firstName + '\'' +
@@ -244,9 +251,10 @@ public class Trainer {
                ", email='" + email + '\'' +
                ", events=" + events +
                ", birthdayTypes=" + birthdayTypes +
-               ", holidays" + holidays +
+               ", holidays=" + holidays +
                ", created=" + created +
                ", updated=" + updated +
+               ", deleted=" + deleted +
                '}';
     }
 }

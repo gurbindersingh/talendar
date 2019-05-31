@@ -8,6 +8,7 @@ import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.Validator;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidEntityException;
+import org.aspectj.weaver.ast.Not;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,9 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -98,6 +101,29 @@ public class TrainerService implements ITrainerService {
         }
     }
 
+    @Override
+    public void delete (Trainer trainer) throws ServiceException, NotFoundException {
+        LOGGER.info("Try to delete trainer with id {}.\nEntity to delete: {}", trainer.getId(), trainer);
+        LocalDateTime timeOfUpdate = LocalDateTime.now();
+
+        Optional<Trainer> queryResult;
+        Trainer currentVersion;
+        trainer.setUpdated(timeOfUpdate);
+
+        try {
+            queryResult = trainerRepository.findById(trainer.getId());
+
+            if (queryResult.isPresent()) {
+                currentVersion = queryResult.get();
+            } else {
+                throw new NotFoundException("Trainer with id " + trainer.getId() + " does not exist. Delete not possible");
+            }
+
+            setDeletedTrainer(currentVersion, trainer);
+        } catch (DataAccessException e) {
+            throw new ServiceException("Error while setting new values and persisting the deleted trainer", e);
+        }
+    }
 
     @Override
     public Trainer getById (Long id) throws ServiceException, NotFoundException {
@@ -149,6 +175,25 @@ public class TrainerService implements ITrainerService {
         persisted.setEmail(newVersion.getEmail());
         persisted.setPhone(newVersion.getPhone());
         persisted.setUpdated(newVersion.getUpdated());
+        return persisted;
+    }
+
+
+    /**
+     * This function sets the parameters for the new persisted version.
+     * @param persisted the JPA tracked entity
+     * @param newVersion the new version
+     * @return the new updated version
+     */
+    private Trainer setDeletedTrainer(Trainer persisted, Trainer newVersion) {
+        persisted.setFirstName(newVersion.getFirstName());
+        persisted.setLastName(newVersion.getLastName());
+        persisted.setBirthday(LocalDate.MIN);
+        persisted.setBirthdayTypes(new ArrayList<>());
+        persisted.setEmail("");
+        persisted.setPhone("");
+        persisted.setUpdated(newVersion.getUpdated());
+        persisted.setDeleted(true);
         return persisted;
     }
 }
