@@ -27,7 +27,7 @@ private event: Event = new Event();
 private room: RoomUse = new RoomUse();
 private customer: Customer = new Customer();
 private date: Date = new Date();
-private startDate:NgbDateStruct = {day: this.date.getUTCDay(), month: this.date.getUTCMonth() + 1, year: this.date.getUTCFullYear()};
+private startDate:NgbDateStruct = {year: this.date.getUTCFullYear(), month: this.date.getUTCMonth() + 1, day: this.date.getUTCDay()};
 private startTime:NgbTimeStruct = {hour: 13, minute: 30, second: 0};
 private parserFormatter: NgbDateParserFormatterImplementation = new NgbDateParserFormatterImplementation();
 
