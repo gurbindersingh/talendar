@@ -47,11 +47,22 @@ export class CalendarComponent implements OnInit {
     weekStartsOn = 1;
     navButtonLabel: { prev: string; next: string };
 
+    // toggle between collapsed and open filter menu
+    isCollapsed = true;
+
     // filter specific content
 
     // filterable
     rooms: string[] = ['Grün', 'Orange', 'Erdgeschoss', 'Reset'];
-    eventTypes: string[] = ['Kurs', 'Beratung', 'Geburstag', 'Miete', 'Reset'];
+    eventTypes: string[] = ['Kurs', 'Beratung', 'Geburtstag', 'Miete', 'Reset'];
+    bdTypes: string[] = [
+        'Trockeneis Geburtstag',
+        'Raketen Geburtstag',
+        'Superhelden Geburtstag',
+        'Photo Geburtstag',
+        'Malen Geburtstag',
+        'Reset',
+    ];
     trainerList: string[] = [];
     trainers: Trainer[] = [];
 
@@ -59,6 +70,7 @@ export class CalendarComponent implements OnInit {
     roomSelection: string;
     eventTypeSelection: string;
     trainerSelection: string;
+    bdTypeSelection: string;
     minAgeFilter: number;
     maxAgeFilter: number;
 
@@ -137,6 +149,17 @@ export class CalendarComponent implements OnInit {
         this.updateView();
     }
 
+    setBirthdayTypeFilter(filter: string): void {
+        if (filter === 'Reset') {
+            console.log(filter);
+            this.bdTypeSelection = undefined;
+        } else {
+            console.log(filter);
+            this.bdTypeSelection = filter;
+        }
+        this.updateView();
+    }
+
     public updateView(): void {
         console.log('ASAS');
         this.filteredEvents = this.allEvents;
@@ -148,6 +171,7 @@ export class CalendarComponent implements OnInit {
                 this.trainerSelection !== undefined;
             const hasTypeFilter: boolean =
                 this.eventTypeSelection !== undefined;
+            const hasBirthdayTypeSelection = this.bdTypeSelection !== undefined;
 
             // check if given filters satisfy given event properties
             // iff filter doesnt match (ret false) remove this elem from array
@@ -210,6 +234,17 @@ export class CalendarComponent implements OnInit {
                 }
             }
 
+            // only possible if hasTypeSelection is set to 'Geburtstag'
+            if (hasBirthdayTypeSelection) {
+                const transformedQuery: string = this.mapToEnumValue(
+                    this.bdTypeSelection
+                );
+
+                if (transformedQuery !== event.event.birthdayType) {
+                    return false;
+                }
+            }
+
             return true;
         });
     }
@@ -230,26 +265,34 @@ export class CalendarComponent implements OnInit {
     private mapToEnumValue(name: string): string {
         if (name === 'Grün') {
             return 'Green';
-        }
-        if (name === 'Orange') {
+        } else if (name === 'Orange') {
             return 'Orange';
-        }
-        if (name === 'Erdgeschoss') {
+        } else if (name === 'Erdgeschoss') {
             return 'GroundFloor';
-        }
-        if (name === 'Kurs') {
+        } else if (name === 'Kurs') {
             return 'Course';
-        }
-        if (name === 'Beratung') {
+        } else if (name === 'Beratung') {
             return 'Consultation';
-        }
-        if (name === 'Geburstag') {
+        } else if (name === 'Geburtstag') {
             return 'Birthday';
-        }
-        if (name === 'Miete') {
+        } else if (name === 'Miete') {
             return 'Rent';
+        } else if (name === 'Trockeneis Geburtstag') {
+            return 'DryIce';
+        } else if (name === 'Raketen Geburtstag') {
+            return 'Rocket';
+        } else if (name === 'Superhelden Geburtstag') {
+            return 'Superhero';
+        } else if (name === 'Photo Geburtstag') {
+            return 'Photo';
+        } else if (name === 'Malen Geburtstag') {
+            return 'Painting';
+        } else {
+            throw new Error(
+                'Input constant ' +
+                    name +
+                    ' can not be mapped to any known enum constant'
+            );
         }
-
-        return null;
     }
 }
