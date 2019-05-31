@@ -15,6 +15,17 @@ public interface IEventService {
 
     List<Event> getAllEvents() throws ServiceException;
 
+
+    /**
+     * (!!!the whole customer list will be replaced!!!)
+     *
+     * @param event the given event with the new customer list to replace
+     * @return the persistently saved instance is returned
+     * @throws ServiceException will be thrown if any error occurs during data processing that leads to an unsuccessful operation and if
+     *                  customer list is null or empty
+     * @throws ValidationException will be thrown if the given instance has invalid properties. The cause will be reported.
+     * @throws NotFoundException will be thrown if the given instance was not found
+     */
     Event updateCustomers(Event event) throws ValidationException, NotFoundException, ServiceException;
 
     void deleteEvent(Long id);
