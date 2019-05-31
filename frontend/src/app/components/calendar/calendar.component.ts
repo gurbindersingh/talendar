@@ -151,17 +151,14 @@ export class CalendarComponent implements OnInit {
 
     setBirthdayTypeFilter(filter: string): void {
         if (filter === 'Reset') {
-            console.log(filter);
             this.bdTypeSelection = undefined;
         } else {
-            console.log(filter);
             this.bdTypeSelection = filter;
         }
         this.updateView();
     }
 
     public updateView(): void {
-        console.log('ASAS');
         this.filteredEvents = this.allEvents;
 
         this.filteredEvents = this.filteredEvents.filter((event: MetaEvent) => {
