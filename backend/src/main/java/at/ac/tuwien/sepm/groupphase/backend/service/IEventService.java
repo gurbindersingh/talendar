@@ -15,6 +15,8 @@ public interface IEventService {
 
     List<Event> getAllEvents() throws ServiceException;
 
+    Event updateCustomers(Event event) throws ValidationException, NotFoundException, ServiceException;
+
     void deleteEvent(Long id);
 
     void cancelEvent(Long id) throws ValidationException;

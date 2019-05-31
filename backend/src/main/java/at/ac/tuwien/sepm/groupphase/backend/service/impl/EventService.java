@@ -77,8 +77,10 @@ public class EventService implements IEventService {
          * RoomUses will be automatically inserted event without this statement
          * but obviously (or not) jpa is not able to determine the fk key on his own
          */
-        for (RoomUse roomUse: event.getRoomUses()) {
-            roomUse.setEvent(event);
+        if(event.getRoomUses() != null) {
+            for(RoomUse roomUse : event.getRoomUses()) {
+                roomUse.setEvent(event);
+            }
         }
 
         try {
@@ -228,6 +230,49 @@ public class EventService implements IEventService {
         return null;
     }
 
+    @Transactional
+    @Override
+    public Event updateCustomers(Event event) throws ValidationException, NotFoundException,
+                                                     ServiceException {
+        LocalDateTime timeOfUpdate = LocalDateTime.now();
+        Optional<Event> queryResult;
+        Event currentEvent;
+        try {
+            Set<Customer> newCustomers = new HashSet<>();
+            for(Customer x : event.getCustomers()) {
+                x.setId(null);                      //id must be null
+                this.validator.validateCustomer(x);
+                if(x.getEvents() != null){
+                    x.getEvents().add(event);    //no duplicate, so add event of old customers will be ignored
+                } else {
+                    Set<Event> events = new HashSet<>();
+                    events.add(event);
+                    x.setEvents(events);
+                }
+                newCustomers.add(x);
+            }
+
+            event.setCustomers(newCustomers);
+
+
+            queryResult = this.eventRepository.findById(event.getId());
+            if(queryResult.isPresent()){
+                currentEvent = queryResult.get();
+                event.setUpdated(timeOfUpdate);
+                return mergeEvent(currentEvent, event);
+            } else{
+                LOGGER.error("Event with id " + event.getId() + " not found");
+                throw new NotFoundException("");
+            }
+
+        } catch(DataAccessException dae){
+            LOGGER.error("Error: " + dae);
+            throw new ServiceException("", dae);
+        } catch(InvalidEntityException ve) {
+            throw new ValidationException(ve.getMessage(), ve);
+        }
+    }
+
 
     @Override
     public List<Event> getAllEvents() throws ServiceException {
@@ -241,7 +286,8 @@ public class EventService implements IEventService {
                 "Error while performing a data access operation to retrieve all events", e);
         }
     }
-    
+
+
     @Transactional
     @Override
     public Event update(Event event) throws ValidationException, NotFoundException, ServiceException{
@@ -253,7 +299,7 @@ public class EventService implements IEventService {
         switch(event.getEventType()) {
             case Course:
                 try {
-                   this.validator.validateEvent(event);
+                   this.validator.validateCourseForUpdate(event);
                 } catch(InvalidEntityException ve) {
                    throw new ValidationException(ve.getMessage(), ve);
                 }
@@ -269,6 +315,16 @@ public class EventService implements IEventService {
                         throw new ValidationException("Es sind schon mehr angemeldet als Ihrer Eingabe bei maximale Teilnehmerzahl", null);
                     }
 
+
+
+                    if(event.getCustomers() != null){
+                        Set<Customer> customers = new HashSet<>();
+                        for(Customer x : event.getCustomers()){
+                            x.setId(null);
+                            customers.add(x);
+                        }
+                        event.setCustomers(customers);
+                    }
 
                    queryResult = this.eventRepository.findById(event.getId());
                    if(queryResult.isPresent()){
@@ -290,10 +346,11 @@ public class EventService implements IEventService {
         throw new ServiceException("", null);
     }
 
+
     private Event mergeEvent(Event persisted, Event newVersion) {
-        // all values can be updated except id (obviously), timestamps, and related events
         LOGGER.info("Event will be merged now");
         persisted.setName(newVersion.getName());
+        persisted.setCustomers(newVersion.getCustomers());
 
         //COURSE
         persisted.setDescription(newVersion.getDescription());
