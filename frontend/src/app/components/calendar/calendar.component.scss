@@ -1,0 +1,22 @@
+#ageFilter {
+    display: flex;
+    align-items: baseline;
+}
+
+#ageFilter label {
+    width: 120px;
+}
+
+#ageFilter > div {
+    margin-bottom: 0;
+}
+
+#minFilter {
+    display: flex;
+    align-items: baseline;
+}
+
+#maxFilter {
+    display: flex;
+    align-items: baseline;
+}

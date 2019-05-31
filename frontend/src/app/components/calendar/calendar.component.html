@@ -65,6 +65,116 @@
             </button>
         </div>
     </div>
+
+    <div class="row mb-1 align-items-center">
+        <h5 class="mr-2" id="filterHeader">Filtern nach:</h5>
+        <div class="btn-group btn-group-toggle">
+            <div ngbDropdown class="mr-1">
+                <button
+                    class="btn btn-outline-primary"
+                    id="roomFilterBtn"
+                    name="roomFilter"
+                    ngbDropdownToggle
+                >
+                    {{
+                        roomSelection === undefined
+                            ? 'Raum auswählen'
+                            : roomSelection
+                    }}
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownRoomFilter">
+                    <button
+                        class="dropdown-item"
+                        id="selectedRoomBtn"
+                        name="selectedRoomFilter"
+                        *ngFor="let room of rooms"
+                        (click)="setRoomFilter(room)"
+                        active
+                    >
+                        {{ room }}
+                    </button>
+                </div>
+            </div>
+            <div ngbDropdown class="mr-1">
+                <button
+                    class="btn btn-outline-primary"
+                    id="trainerFilterBtn"
+                    name="trainerFilter"
+                    ngbDropdownToggle
+                >
+                    {{
+                        trainerSelection === undefined
+                            ? 'Trainer auswählen'
+                            : trainerSelection
+                    }}
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownTrainerFilter">
+                    <button
+                        class="dropdown-item"
+                        id="selectedTrainerBtn"
+                        name="selectedTrainerFilter"
+                        *ngFor="let trainer of trainerList"
+                        (click)="setTrainerFilter(trainer)"
+                    >
+                        {{ trainer }}
+                    </button>
+                </div>
+            </div>
+            <div ngbDropdown class="mr-1">
+                <button
+                    class="btn btn-outline-primary"
+                    id="eventtypeFilterBtn"
+                    name="eventtypeFilter"
+                    ngbDropdownToggle
+                >
+                    {{
+                        eventTypeSelection === undefined
+                            ? 'Eventtyp auswählen'
+                            : eventTypeSelection
+                    }}
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownEventtypeFilter">
+                    <button
+                        class="dropdown-item"
+                        id="selectedEventtypeBtn"
+                        name="selectedEventtypeFilter"
+                        *ngFor="let type of eventTypes"
+                        (click)="setEventTypeFilter(type)"
+                    >
+                        {{ type }}
+                    </button>
+                </div>
+            </div>
+            <div *ngIf="eventTypeSelection === 'Kurs'" id="ageFilter">
+                <div class="form-group flex-row ml-1 mr-1" id="minFilter">
+                    <label for="minAgeFilter">Min Alter</label>
+                    <input
+                        type="number"
+                        min="5"
+                        max="20"
+                        class="form-control"
+                        id="minAgeFilter"
+                        name="minAgeFilter"
+                        [(ngModel)]="minAgeFilter"
+                        (input)="updateView()"
+                    />
+                </div>
+                <div class="form-group" id="maxFilter">
+                    <label for="maxAgeFilter">Max Alter</label>
+                    <input
+                        type="number"
+                        min="5"
+                        max="20"
+                        class="form-control"
+                        id="maxAgeFilter"
+                        name="maxAgeFilter"
+                        [(ngModel)]="maxAgeFilter"
+                        (input)="updateView()"
+                    />
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <h3 *ngIf="view === calendarView.Month">
@@ -73,7 +183,7 @@
 
 <ng-container *ngIf="view === calendarView.Month; else weekView">
     <mwl-calendar-month-view
-        [events]="events"
+        [events]="filteredEvents"
         [locale]="locale"
         [viewDate]="viewDate"
         [weekStartsOn]="weekStartsOn"
@@ -93,7 +203,7 @@
         [daysInWeek]="daysInWeek"
         [dayStartHour]="dayStartHour"
         [dayStartMinute]="dayStartMinute"
-        [events]="events"
+        [events]="filteredEvents"
         [hourSegments]="hourSegments"
         [locale]="locale"
         [viewDate]="viewDate"
