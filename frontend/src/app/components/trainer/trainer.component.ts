@@ -96,7 +96,7 @@ export class TrainerComponent implements OnInit {
         const id: number = this.route.snapshot.queryParams.id;
 
         if (id === undefined) {
-            this.title = 'Trainer Erstellen';
+            this.title = 'Trainer erstellen';
             this.btnContextDescription = 'Neuen Trainer erstellen';
             this.isSaveMode = true;
         } else {
