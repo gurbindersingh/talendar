@@ -297,7 +297,7 @@ public class EventService implements IEventService {
         switch(event.getEventType()) {
             case Course:
                 try {
-                   this.validator.validateEvent(event);
+                   this.validator.validateCourseForUpdate(event);
                 } catch(InvalidEntityException ve) {
                    throw new ValidationException(ve.getMessage(), ve);
                 }
@@ -313,6 +313,16 @@ public class EventService implements IEventService {
                         throw new ValidationException("Es sind schon mehr angemeldet als Ihrer Eingabe bei maximale Teilnehmerzahl", null);
                     }
 
+
+
+                    if(event.getCustomers() != null){
+                        Set<Customer> customers = new HashSet<>();
+                        for(Customer x : event.getCustomers()){
+                            x.setId(null);
+                            customers.add(x);
+                        }
+                        event.setCustomers(customers);
+                    }
 
                    queryResult = this.eventRepository.findById(event.getId());
                    if(queryResult.isPresent()){

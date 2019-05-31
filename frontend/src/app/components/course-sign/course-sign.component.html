@@ -49,7 +49,9 @@
                             TeilnehmerInnen:
                         </div>
                         <div class="col">
-                            <p name="detail">{{ event.customerDtos.length }}/12</p>
+                            <p name="detail">
+                                {{ countCustomer }}/{{ event.maxParticipants }}
+                            </p>
                         </div>
                     </div>
                     <div class="row">
@@ -57,7 +59,9 @@
                             Alter:
                         </div>
                         <div class="col">
-                            <p name="detail">{{ event.minAge }} - {{ event.maxAge }}</p>
+                            <p name="detail">
+                                {{ event.minAge }} - {{ event.maxAge }}
+                            </p>
                         </div>
                         <div class="col-2"></div>
                     </div>
@@ -75,90 +79,93 @@
                 </div>
             </div>
             <br />
-            <br />
-            <h1>Anmeldedaten</h1>
-            <hr />
-            <br />
-            <div class="row">
-                <div class="form-group col-lg-6">
-                    <label for="meetingFirstName">Vorname</label>
-                    <input
-                        class="form-control"
-                        [(ngModel)]="customer.firstName"
-                        type="text"
-                        name="firstName"
-                        id="meetingFirstName"
-                        placeholder="Maximilian"
-                        required
-                    />
+            <div *ngIf="countCustomer !== event.maxParticipants">
+                <br />
+                <h1>Anmeldedaten</h1>
+                <hr />
+                <br />
+                <div class="row">
+                    <div class="form-group col-lg-6">
+                        <label for="meetingFirstName">Vorname</label>
+                        <input
+                            class="form-control"
+                            [(ngModel)]="customer.firstName"
+                            type="text"
+                            name="firstName"
+                            id="meetingFirstName"
+                            placeholder="Maximilian"
+                            required
+                        />
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <label for="meetingLastName">Nachname</label>
+                        <input
+                            class="form-control"
+                            [(ngModel)]="customer.lastName"
+                            type="text"
+                            name="lastName"
+                            id="meetingLastName"
+                            placeholder="Mustermann"
+                            required
+                        />
+                    </div>
                 </div>
-                <div class="form-group col-lg-6">
-                    <label for="meetingLastName">Nachname</label>
-                    <input
-                        class="form-control"
-                        [(ngModel)]="customer.lastName"
-                        type="text"
-                        name="lastName"
-                        id="meetingLastName"
-                        placeholder="Mustermann"
-                        required
-                    />
-                </div>
-            </div>
 
-            <div class="row">
-                <div class="form-group col-lg-6">
-                    <label for="meetingPhoneNumber">Telefonnummer</label>
+                <div class="row">
+                    <div class="form-group col-lg-6">
+                        <label for="meetingPhoneNumber">Telefonnummer</label>
+                        <input
+                            class="form-control"
+                            [(ngModel)]="customer.phone"
+                            type="text"
+                            name="phoneNumber"
+                            id="meetingPhoneNumber"
+                            placeholder="0676 433 2222"
+                            required
+                        />
+                    </div>
+                    <div class="form-group col-lg-6">
+                        <label for="meetingEmail">Email</label>
+                        <input
+                            class="form-control"
+                            [(ngModel)]="customer.email"
+                            type="email"
+                            name="email"
+                            id="meetingEmail"
+                            placeholder="max.mustermann@email.com"
+                            required
+                        />
+                    </div>
+                </div>
+                <div class="row" *ngIf="errorMsg">
+                    <div class="col-sm-12">
+                        <p class="alert alert-danger">
+                            {{ errorMsg }}
+                        </p>
+                    </div>
+                </div>
+                <div class="row" *ngIf="successMsg">
+                    <div class="col-sm-12">
+                        <p class="alert alert-success">
+                            {{ successMsg }}
+                        </p>
+                    </div>
+                </div>
+                <br />
+                <div class="row justify-content-end">
                     <input
-                        class="form-control"
-                        [(ngModel)]="customer.phone"
-                        type="text"
-                        name="phoneNumber"
-                        id="meetingPhoneNumber"
-                        placeholder="0676 433 2222"
-                        required
+                        type="submit"
+                        class="btn btn-primary col-lg-3"
+                        [disabled]="!isCompleted()"
+                        id="courseSignSave"
+                        value="Anmelden"
+                        (click)="updateCourseCustomers(courseSignForm)"
                     />
                 </div>
-                <div class="form-group col-lg-6">
-                    <label for="meetingEmail">Email</label>
-                    <input
-                        class="form-control"
-                        [(ngModel)]="customer.email"
-                        type="email"
-                        name="email"
-                        id="meetingEmail"
-                        placeholder="max.mustermann@email.com"
-                        required
-                    />
-                </div>
             </div>
-            <div class="row" *ngIf="errorMsg">
-                <div class="col-sm-12">
-                    <p class="alert alert-danger">
-                        {{ errorMsg }}
-                    </p>
-                </div>
+            <div *ngIf="countCustomer === event.maxParticipants">
+                <p>Keine freien Plätze mehr!</p>
             </div>
-            <div class="row" *ngIf="successMsg">
-                <div class="col-sm-12">
-                    <p class="alert alert-success">
-                        {{ successMsg }}
-                    </p>
-                </div>
-            </div>
-            <br />
-            <div class="row justify-content-end">
-                <input
-                    type="submit"
-                    class="btn btn-primary col-lg-3"
-                    [disabled]="!isCompleted()"
-                    id="courseSignSave"
-                    value="Anmelden"
-                    (click)="updateCourseCustomers(courseSignForm)"
-                />
-            </div>
-
-
         </form>
     </div>
     <div class="col-lg-3"></div>

@@ -104,7 +104,7 @@ public class Event {
     @Column
     private Integer maxParticipants;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @Column

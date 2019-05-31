@@ -20,6 +20,8 @@ export class CourseSignComponent implements OnInit {
     private errorMsg: string;
     private successMsg: string;
 
+    countCustomer: number;
+
     title = 'Kurs anmelden';
 
     dates: string[];
@@ -43,6 +45,7 @@ export class CourseSignComponent implements OnInit {
             (data: Event) => {
                 console.log(data);
                 this.event = data;
+                this.countCustomer = this.event.customerDtos.length;
                 for (const roomUse of this.event.roomUses) {
                     this.pushStringToArray(
                         roomUse.begin,
@@ -62,25 +65,37 @@ export class CourseSignComponent implements OnInit {
         this.event.customerDtos.push(this.customer);
         this.eventClient.updateCustomer(this.event).subscribe(
             (data: Event) => {
-                console.log(data);
-                this.successMsg =
-                    'Sie sind jetzt angemeldet!';
+                if (data.customerDtos.length < this.event.customerDtos.length) {
+                    this.errorMsg = 'Sie sind schon angemeldet';
+                    this.event.customerDtos = data.customerDtos;
+                    this.countCustomer = data.customerDtos.length;
+                } else {
+                    this.countCustomer = data.customerDtos.length;
+                    console.log(data);
+                    this.successMsg = 'Sie sind jetzt angemeldet!';
+                }
             },
             (error: Error) => {
                 console.log(error);
                 this.errorMsg = error.message;
             }
-        )
+        );
     }
 
     public isCompleted(): boolean {
         if (this.customer.phone === undefined || this.customer.phone === '') {
             return false;
         }
-        if (this.customer.firstName === undefined || this.customer.firstName === '') {
+        if (
+            this.customer.firstName === undefined ||
+            this.customer.firstName === ''
+        ) {
             return false;
         }
-        if (this.customer.lastName === undefined || this.customer.lastName === '') {
+        if (
+            this.customer.lastName === undefined ||
+            this.customer.lastName === ''
+        ) {
             return false;
         }
         if (this.customer.email === undefined || this.customer.email === '') {
@@ -91,13 +106,13 @@ export class CourseSignComponent implements OnInit {
 
     public pushStringToArray(begin: string, end: string, room: Room): void {
         this.dates.push(
-            (this.extractDate(begin) +
+            this.extractDate(begin) +
                 ' | ' +
                 this.extractTime(begin) +
                 '-' +
                 this.extractTime(end) +
-                ' im ' +
-                this.roomToString(room))
+                ' im Raum ' +
+                room
         );
     }
 
@@ -109,15 +124,5 @@ export class CourseSignComponent implements OnInit {
     public extractTime(date: string): string {
         const splitted = date.split('T')[1].split(':');
         return splitted[0] + ':' + splitted[1];
-    }
-
-    public roomToString(room: Room): string {
-        if (room === Room.Green) {
-            return 'Grün';
-        }
-        if (room === Room.Orange) {
-            return 'Orange';
-        }
-        return 'Erdgeschoss';
     }
 }
