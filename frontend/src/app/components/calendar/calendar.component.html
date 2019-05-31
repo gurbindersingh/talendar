@@ -66,8 +66,25 @@
         </div>
     </div>
 
-    <div class="row mb-1 align-items-center">
-        <h5 class="mr-2" id="filterHeader">Filtern nach:</h5>
+    <div class="row mb-2 ml-0" id="applyFilterRow">
+        <button
+            type="button"
+            class="btn btn-primary"
+            (click)="isCollapsed = !isCollapsed"
+            [attr.aria-expanded]="!isCollapsed"
+            aria-controls="collapsedFilterMenu"
+        >
+            Filter anwenden
+        </button>
+        <!-- show 'Filter nach' wenn das Filter Menue aufgeht -->
+        <h5 class="ml-2" *ngIf="!isCollapsed">Filtern nach:</h5>
+    </div>
+
+    <div
+        class="row mb-1 ml-0 align-items-center"
+        id="collapsedFilterMenu"
+        [ngbCollapse]="isCollapsed"
+    >
         <div class="btn-group btn-group-toggle">
             <div ngbDropdown class="mr-1">
                 <button
@@ -171,6 +188,34 @@
                         [(ngModel)]="maxAgeFilter"
                         (input)="updateView()"
                     />
+                </div>
+            </div>
+
+            <div *ngIf="eventTypeSelection === 'Geburtstag'" id="bdTypeFilter">
+                <div ngbDropdown class="mr-1">
+                    <button
+                        class="btn btn-outline-primary"
+                        id="bdTypeFilterBtn"
+                        name="bdTypeFilter"
+                        ngbDropdownToggle
+                    >
+                        {{
+                            bdTypeSelection === undefined
+                                ? 'Geburtstagsart auswählen'
+                                : bdTypeSelection
+                        }}
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownBdTypeFilter">
+                        <button
+                            class="dropdown-item"
+                            id="selectedBdTypeBtn"
+                            name="selectedBdTypeFilter"
+                            *ngFor="let type of bdTypes"
+                            (click)="setBirthdayTypeFilter(type)"
+                        >
+                            {{ type }}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
