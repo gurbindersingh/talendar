@@ -77,8 +77,10 @@ public class EventService implements IEventService {
          * RoomUses will be automatically inserted event without this statement
          * but obviously (or not) jpa is not able to determine the fk key on his own
          */
-        for (RoomUse roomUse: event.getRoomUses()) {
-            roomUse.setEvent(event);
+        if(event.getRoomUses() != null) {
+            for(RoomUse roomUse : event.getRoomUses()) {
+                roomUse.setEvent(event);
+            }
         }
 
         try {
