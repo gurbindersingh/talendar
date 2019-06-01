@@ -90,7 +90,7 @@ export class MeetingComponent implements OnInit {
         if (this.radioButtonSelected === 'Orange') {
             return Room.Orange;
         }
-        return Room.Groundfloor;
+        return Room.GroundFloor;
     }
 
     public isCompleted(): boolean {

@@ -15,6 +15,8 @@ public class CustomerDto {
     @JsonIgnoreProperties("customerDtos")
     private List<EventDto> eventDtos;
 
+    private Integer emailId;
+
 
     public CustomerDto(){
 
@@ -85,6 +87,16 @@ public class CustomerDto {
 
     public void setEventDtos (List<EventDto> eventDtos) {
         this.eventDtos = eventDtos;
+    }
+
+
+    public Integer getEmailId() {
+        return emailId;
+    }
+
+
+    public void setEmailId(Integer emailId) {
+        this.emailId = emailId;
     }
 
 
