@@ -56,15 +56,16 @@ export class CancelEventComponent implements OnInit {
 
                     if (lel === EventType.Course) {
                         this.btnText = 'Abmelden';
-                        const customerId = Number(this.route.snapshot
-                            .queryParams.customerId);
+                        const emailId = Number(
+                            this.route.snapshot.queryParams.emailId
+                        );
                         console.log(data.customerDtos);
-                        
+
                         this.signOff = true;
                         this.preCountOfCustomers = data.customerDtos.length;
                         for (const customer of data.customerDtos) {
-                            console.log(customerId + ' und ' + customer.id);
-                            if (customer.id === customerId) {
+                            console.log(emailId + ' und ' + customer.emailId);
+                            if (customer.emailId === emailId) {
                                 this.title =
                                     'Hallo ' +
                                     customer.firstName +

@@ -270,12 +270,14 @@ public class EventService implements IEventService {
 
                     int sizeOfPersistedList = currentEvent.getCustomers().size();
 
+                    Integer lastEmailId = null;
+
                     Set<Customer> newCustomers = new HashSet<>();
                     Customer newCustomer = null;
                     for(Customer x : event.getCustomers()) {
                         x.setId(null);                      //id must be null
                         this.validator.validateCustomer(x);
-                        if(x.getEvents() != null) {
+                        if(x.getEvents() != null) {         // TODO: Maybe not needed.
                             x.getEvents()
                              .add(
                                  event);    //no duplicate, so add event of old customers will be ignored
@@ -284,9 +286,27 @@ public class EventService implements IEventService {
                             events.add(event);
                             x.setEvents(events);
                         }
+
+                        if(x.getEmailId() != null){             //setup emailId for new Customer...
+                            lastEmailId = x.getEmailId();
+                        } else {
+
+                            //Customer to insert
+
+                            if(lastEmailId == null){
+                                lastEmailId = 1;
+                            } else {
+                                lastEmailId++;
+                            }
+                            x.setEmailId(lastEmailId);
+                            LOGGER.info("x.getEmailId: " + x.getEmailId());
+                        }
+
                         newCustomers.add(x);
                         newCustomer = x;
                     }
+
+
 
                     event.setCustomers(newCustomers);
 
@@ -297,6 +317,8 @@ public class EventService implements IEventService {
 
                     Event persistedEvent = mergeEvent(currentEvent, event);
 
+
+
                     eventRepository.flush();
 
                     LOGGER.info(sizeOfNewEventList + " und " + sizeOfPersistedList);
@@ -304,15 +326,25 @@ public class EventService implements IEventService {
                     if(sizeOfPersistedList < sizeOfNewEventList){
                         // A SIGN IN IS HAPPENING
                         //DO EMAIL WITH CUSTOMER ID:::::::
+
+
+
                         for(Customer x : persistedEvent.getCustomers()) {   // Get newest customer again because we need the id
+
                             newCustomer = x;
+
+                            LOGGER.info("EMAIL ID: " + x.getEmailId());
                         }
+
+
+
+
 
                         LOGGER.info(persistedEvent.toString());
 
                         LOGGER.info("Prepare Email for sign off");
                         sendCancelationMail(newCustomer.getEmail(), persistedEvent,
-                                            newCustomer
+                                         newCustomer
                         );   //create a sign off email and send it to customer
                         LOGGER.info("Email sent");
                     }
@@ -335,7 +367,7 @@ public class EventService implements IEventService {
             catch(InvalidEntityException ve) {
                 throw new ValidationException(ve.getMessage(), ve);
             }
-            catch(EmailException m) {
+            catch(Exception m) {
                 throw new ServiceException(m);
             }
         }
@@ -618,7 +650,7 @@ public class EventService implements IEventService {
 
         String url;
         if(event.getEventType() == EventType.Course){
-            url = "http://localhost:4200/cancelEvent?id=" + event.getId() + "&customerId=" + customer.getId();
+            url = "http://localhost:4200/cancelEvent?id=" + event.getId() + "&emailId=" + customer.getEmailId();
         } else {
             url = "http://localhost:4200/cancelEvent?id=" + event.getId();
         }

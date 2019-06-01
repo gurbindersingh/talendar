@@ -1,4 +1,4 @@
-import {Event} from '../models/event';
+import { Event } from '../models/event';
 
 export class Customer {
     public id: number;
@@ -7,5 +7,5 @@ export class Customer {
     public firstName: string;
     public lastName: string;
     public events: Event[];
+    public emailId: number;
 }
-

@@ -31,6 +31,9 @@ public class Customer {
     @JsonIgnoreProperties("customers")
     private Set<Event> events;
 
+    @Column
+    private Integer emailId;
+
 
     public Customer (){
 
@@ -102,6 +105,16 @@ public class Customer {
 
     public void setEvents (Set<Event> events) {
         this.events = events;
+    }
+
+
+    public Integer getEmailId() {
+        return emailId;
+    }
+
+
+    public void setEmailId(Integer emailId) {
+        this.emailId = emailId;
     }
 
 
