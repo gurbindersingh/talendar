@@ -32,7 +32,7 @@ public interface IEventService {
 
     void cancelEvent(Long id) throws ValidationException;
 
-    Event getEventById(Long id);
+    Event getEventById(Long id) throws ServiceException, NotFoundException;;
 
     List<Event> getAllFutureCourses();
 

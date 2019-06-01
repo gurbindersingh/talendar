@@ -105,9 +105,15 @@ public class EventEndpoint {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public EventDto getEventById(@PathVariable("id") Long id){
+    public EventDto getEventById(@PathVariable("id") Long id) throws BackendException{
         LOGGER.info("Incoming GET Request for an Event with id " + id);
-        return eventMapper.entityToEventDto(eventService.getEventById(id));
+        try {
+            return eventMapper.entityToEventDto(eventService.getEventById(id));
+        } catch(NotFoundException ne) {
+            throw new BackendException(ne.getMessage(), ne);
+        } catch(ServiceException se) {
+            throw new BackendException(se.getMessage(), se);
+        }
     }
 
     @GetMapping(value = "/all")
