@@ -16,7 +16,7 @@ import { ActivatedRoute } from '@angular/router';
     styleUrls: ['./course.component.scss'],
 })
 export class CourseComponent implements OnInit {
-    title = 'Kurs erstellen';
+    title = 'Kurs eintragen';
     minuteStep = 15;
     description = '';
     maxParticipants: number;
@@ -60,7 +60,7 @@ export class CourseComponent implements OnInit {
         const id: number = this.route.snapshot.queryParams.id;
 
         if (id === undefined) {
-            this.title = 'Kurs erstellen';
+            this.title = 'Kurs eintragen';
             this.btnText = 'Erstellen';
             this.saveMode = true;
             this.isCreate = true;
