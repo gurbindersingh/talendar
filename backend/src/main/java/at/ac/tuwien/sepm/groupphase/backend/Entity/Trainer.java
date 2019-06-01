@@ -55,7 +55,7 @@ public class Trainer {
     @Column(nullable = false)
     private LocalDateTime updated;
 
-    @Null
+    @NotNull
     @Column(nullable = false)
     private boolean deleted;
 

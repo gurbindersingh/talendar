@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -31,14 +32,16 @@ public class TrainerService implements ITrainerService {
     private final TrainerRepository trainerRepository;
     private final Validator validator;
 
+
     @Autowired
     public TrainerService(TrainerRepository trainerRepository, Validator validator) {
         this.trainerRepository = trainerRepository;
         this.validator = validator;
     }
 
+
     @Override
-    public Trainer save (Trainer trainer) throws ServiceException, ValidationException {
+    public Trainer save(Trainer trainer) throws ServiceException, ValidationException {
         LOGGER.info("Prepare save of new trainer: {}", trainer);
         LocalDateTime timeOfCreation = LocalDateTime.now();
 
@@ -47,19 +50,22 @@ public class TrainerService implements ITrainerService {
 
         try {
             TimeUnit.MILLISECONDS.sleep(1);
-        }catch(InterruptedException e){
+        }
+        catch(InterruptedException e) {
             throw new ServiceException("Internal Server error", e);
         }
 
         try {
             validator.validateTrainer(trainer);
-        } catch(InvalidEntityException e) {
+        }
+        catch(InvalidEntityException e) {
             throw new ValidationException(e.getMessage(), e);
         }
 
         try {
             return trainerRepository.save(trainer);
-        } catch(DataAccessException e) { //catch specific exceptions
+        }
+        catch(DataAccessException e) { //catch specific exceptions
             throw new ServiceException("Error while performing a data access operation", e);
         }
     }
@@ -67,8 +73,11 @@ public class TrainerService implements ITrainerService {
 
     @Transactional
     @Override
-    public Trainer update (Trainer trainer) throws ServiceException, ValidationException, NotFoundException {
-        LOGGER.info("Prepare update for trainer with id {}.\nProposed updated entity: {}", trainer.getId(), trainer);
+    public Trainer update(Trainer trainer) throws ServiceException, ValidationException,
+                                                  NotFoundException {
+        LOGGER.info("Prepare update for trainer with id {}.\nProposed updated entity: {}",
+                    trainer.getId(), trainer
+        );
         LocalDateTime timeOfUpdate = LocalDateTime.now();
 
         Optional<Trainer> queryResult;
@@ -77,7 +86,8 @@ public class TrainerService implements ITrainerService {
 
         try {
             validator.validateTrainer(trainer);
-        } catch(InvalidEntityException e) {
+        }
+        catch(InvalidEntityException e) {
             throw new ValidationException(e.getMessage(), e);
         }
 
@@ -87,57 +97,76 @@ public class TrainerService implements ITrainerService {
             queryResult = trainerRepository.findById(trainer.getId());
 
             // retrieve query result
-            if (queryResult.isPresent()) {
+            if(queryResult.isPresent()) {
                 currentVersion = queryResult.get();
             } else {
                 // if not found, no update is possible
-                throw new NotFoundException("Trainer with id " + trainer.getId() + " does not exist. Update not possible");
+                throw new NotFoundException(
+                    "Trainer with id " + trainer.getId() + " does not exist. Update not possible");
             }
 
             // merge the new values from trainer (as received from frontend) to the stored entity (which is managed by JPA)
             return mergeTrainers(currentVersion, trainer);
-        } catch(DataAccessException e) {
+        }
+        catch(DataAccessException e) {
             throw new ServiceException("Error while performing merge and update operation", e);
         }
     }
 
+
     @Override
-    public void delete (Trainer trainer) throws ServiceException, NotFoundException {
-        LOGGER.info("Try to delete trainer with id {}.\nEntity to delete: {}", trainer.getId(), trainer);
+    public void delete(Long id) throws ServiceException, NotFoundException {
+        LOGGER.info("Try to delete trainer with id {}", id);
         LocalDateTime timeOfUpdate = LocalDateTime.now();
 
         Optional<Trainer> queryResult;
         Trainer currentVersion;
-        trainer.setUpdated(timeOfUpdate);
 
         try {
-            queryResult = trainerRepository.findById(trainer.getId());
+            queryResult = trainerRepository.findByIdAndDeletedFalse(id);
 
-            if (queryResult.isPresent()) {
+            if(queryResult.isPresent()) {
                 currentVersion = queryResult.get();
             } else {
-                throw new NotFoundException("Trainer with id " + trainer.getId() + " does not exist. Delete not possible");
+                throw new NotFoundException(
+                    "Trainer with id " + id + " does not exist. Delete not possible");
             }
 
-            setDeletedTrainer(currentVersion, trainer);
-        } catch (DataAccessException e) {
-            throw new ServiceException("Error while setting new values and persisting the deleted trainer", e);
+            currentVersion.setBirthday(LocalDate.MIN);
+            currentVersion.setBirthdayTypes(Collections.emptyList());
+            currentVersion.setEmail("");
+            currentVersion.setPhone("");
+            currentVersion.setUpdated(timeOfUpdate);
+
+            trainerRepository.deleteThisTrainer(currentVersion.getId(),
+                                                currentVersion.getBirthday(),
+                                                currentVersion.getBirthdayTypes(),
+                                                currentVersion.getEmail(),
+                                                currentVersion.getPhone(),
+                                                currentVersion.getUpdated()
+            );
+        }
+        catch(DataAccessException e) {
+            throw new ServiceException(
+                "Error while setting new values and persisting the deleted trainer", e);
         }
     }
 
+
     @Override
-    public Trainer getById (Long id) throws ServiceException, NotFoundException {
+    public Trainer getById(Long id) throws ServiceException, NotFoundException {
         LOGGER.info("Try to retrieve trainer with id {}", id);
 
         Optional<Trainer> result;
 
         try {
-            result = trainerRepository.findById(id);
-        } catch(DataAccessException e) {
+            result = trainerRepository.findByIdAndDeletedFalse(id);
+        }
+        catch(DataAccessException e) {
             throw new ServiceException("Error while performing a data access operation", e);
         }
 
-        if (result.isPresent()) {
+        if(result.isPresent()) {
             return result.get();
         } else {
             throw new NotFoundException("The trainer with id " + id + " does not exist");
@@ -146,24 +175,25 @@ public class TrainerService implements ITrainerService {
 
 
     @Override
-    public List<Trainer> getAll () throws ServiceException {
+    public List<Trainer> getAll() throws ServiceException {
         LOGGER.info("Try to retrieve a list of all trainers");
 
         try {
             return trainerRepository.findAll();
-        } catch(DataAccessException e) {
+        }
+        catch(DataAccessException e) {
             throw new ServiceException("Error while performing a data access operation", e);
         }
     }
 
 
     /**
-     *  This Will surprisingly persist the changes.
+     * This Will surprisingly persist the changes.
      *
-     *  NOTE: JPA will keep track of each entity that has been retrieved.
-     *  If this entities' values are reset, this changes are reflected to the database
+     * NOTE: JPA will keep track of each entity that has been retrieved.
+     * If this entities' values are reset, this changes are reflected to the database
      *
-     * @param persisted the JPA tracked entity
+     * @param persisted  the JPA tracked entity
      * @param newVersion the new version
      */
     private Trainer mergeTrainers(Trainer persisted, Trainer newVersion) {
@@ -175,25 +205,6 @@ public class TrainerService implements ITrainerService {
         persisted.setEmail(newVersion.getEmail());
         persisted.setPhone(newVersion.getPhone());
         persisted.setUpdated(newVersion.getUpdated());
-        return persisted;
-    }
-
-
-    /**
-     * This function sets the parameters for the new persisted version.
-     * @param persisted the JPA tracked entity
-     * @param newVersion the new version
-     * @return the new updated version
-     */
-    private Trainer setDeletedTrainer(Trainer persisted, Trainer newVersion) {
-        persisted.setFirstName(newVersion.getFirstName());
-        persisted.setLastName(newVersion.getLastName());
-        persisted.setBirthday(LocalDate.MIN);
-        persisted.setBirthdayTypes(new ArrayList<>());
-        persisted.setEmail("");
-        persisted.setPhone("");
-        persisted.setUpdated(newVersion.getUpdated());
-        persisted.setDeleted(true);
         return persisted;
     }
 }

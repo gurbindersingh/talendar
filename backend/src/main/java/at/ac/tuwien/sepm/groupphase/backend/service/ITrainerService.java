@@ -34,12 +34,12 @@ public interface ITrainerService {
     /**
      * This method sets the trainer's deleted flag and identifying information to REDACTED or dummy values
      *
-     * @param trainer the given trainer to delete
+     * @param id the id of the trainer to delete
      * @return this method has no return value
      * @throws ServiceException will be thrown if any error occurs during data processing that leads to an unsuccessful operation.
      * @throws NotFoundException will be thrown if no entity exists which is referenced by the id of the submitted instance.
      */
-    void delete(Trainer trainer) throws ServiceException, NotFoundException;
+    void delete(Long id) throws ServiceException, NotFoundException;
 
     /**
      * This method returns an entity referenced by the given ID
