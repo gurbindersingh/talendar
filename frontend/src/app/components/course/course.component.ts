@@ -146,7 +146,10 @@ export class CourseComponent implements OnInit {
         if (this.event.price === undefined || this.event.price === null) {
             return false;
         }
-        if (this.event.maxParticipants === undefined || this.event.maxParticipants === null) {
+        if (
+            this.event.maxParticipants === undefined ||
+            this.event.maxParticipants === null
+        ) {
             return false;
         }
         if (this.event.minAge === undefined || this.event.minAge === null) {
@@ -188,7 +191,7 @@ export class CourseComponent implements OnInit {
         if (this.radioButtonSelected === 'Orange') {
             return Room.Orange;
         }
-        return Room.Groundfloor;
+        return Room.GroundFloor;
     }
 
     public clearInfoMsg(): void {
