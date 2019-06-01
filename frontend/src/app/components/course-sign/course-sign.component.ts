@@ -112,7 +112,7 @@ export class CourseSignComponent implements OnInit {
                 '-' +
                 this.extractTime(end) +
                 ' im Raum ' +
-                room
+                this.extractRoomToString(room)
         );
     }
 
@@ -124,5 +124,18 @@ export class CourseSignComponent implements OnInit {
     public extractTime(date: string): string {
         const splitted = date.split('T')[1].split(':');
         return splitted[0] + ':' + splitted[1];
+    }
+
+    public extractRoomToString(room: Room): string {
+        if (room === 'Green') {
+            return 'Grün';
+        }
+        if (room === 'Orange') {
+            return 'Orange';
+        }
+        if (room === 'GroundFloor') {
+            return 'Erdgeschoss';
+        }
+        return '';
     }
 }
