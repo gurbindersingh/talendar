@@ -1,6 +1,6 @@
 export enum EventType {
-    Birthday,
-    Consultation,
-    Course,
-    Rent,
+    Birthday = 'Birthday',
+    Consultation = 'Consulation',
+    Course = 'Course',
+    Rent = 'Rent',
 }
