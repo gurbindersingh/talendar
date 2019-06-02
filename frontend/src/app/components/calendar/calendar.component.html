@@ -97,9 +97,10 @@
                     ngbDropdownToggle
                 >
                     {{
-                        roomSelection === undefined
+                        roomSelection === undefined ||
+                        roomSelection.value === undefined
                             ? 'Raum auswählen'
-                            : roomSelection
+                            : roomSelection.name
                     }}
                 </button>
                 <div ngbDropdownMenu aria-labelledby="dropdownRoomFilter">
@@ -108,10 +109,10 @@
                         id="selectedRoomBtn"
                         name="selectedRoomFilter"
                         *ngFor="let room of rooms"
-                        (click)="setRoomFilter(room)"
+                        (click)="roomSelection = room; updateView()"
                         active
                     >
-                        {{ room }}
+                        {{ room.name }}
                     </button>
                 </div>
             </div>
@@ -134,9 +135,9 @@
                         id="selectedTrainerBtn"
                         name="selectedTrainerFilter"
                         *ngFor="let trainer of trainerList"
-                        (click)="setTrainerFilter(trainer)"
+                        (click)="trainerSelection = trainer; updateView()"
                     >
-                        {{ trainer }}
+                        {{ trainer !== undefined ? trainer : 'Reset' }}
                     </button>
                 </div>
             </div>
@@ -148,9 +149,10 @@
                     ngbDropdownToggle
                 >
                     {{
-                        eventTypeSelection === undefined
+                        eventTypeSelection === undefined ||
+                        eventTypeSelection.value === undefined
                             ? 'Eventtyp auswählen'
-                            : eventTypeSelection
+                            : eventTypeSelection.name
                     }}
                 </button>
                 <div ngbDropdownMenu aria-labelledby="dropdownEventtypeFilter">
@@ -159,9 +161,9 @@
                         id="selectedEventtypeBtn"
                         name="selectedEventtypeFilter"
                         *ngFor="let type of eventTypes"
-                        (click)="setEventTypeFilter(type)"
+                        (click)="eventTypeSelection = type; updateView()"
                     >
-                        {{ type }}
+                        {{ type.name }}
                     </button>
                 </div>
             </div>
@@ -172,7 +174,13 @@
                 on small screens shall be in next row
         -->
         <div id="additionalContextFilter" class="mb-1">
-            <div *ngIf="eventTypeSelection === 'Kurs'" id="ageFilter">
+            <div
+                *ngIf="
+                    eventTypeSelection !== undefined &&
+                    eventTypeSelection.name === 'Kurs'
+                "
+                id="ageFilter"
+            >
                 <div class="form-group ml-1 mr-1" id="minFilter">
                     <label for="minAgeFilter">Min Alter</label>
                     <input
@@ -201,7 +209,13 @@
                 </div>
             </div>
 
-            <div *ngIf="eventTypeSelection === 'Geburtstag'" id="bdTypeFilter">
+            <div
+                *ngIf="
+                    eventTypeSelection !== undefined &&
+                    eventTypeSelection.name === 'Geburtstag'
+                "
+                id="bdTypeFilter"
+            >
                 <div ngbDropdown class="mr-1">
                     <button
                         class="btn btn-outline-primary"
@@ -210,9 +224,10 @@
                         ngbDropdownToggle
                     >
                         {{
-                            bdTypeSelection === undefined
+                            bdTypeSelection === undefined ||
+                            bdTypeSelection.value === undefined
                                 ? 'Geburtstagsart auswählen'
-                                : bdTypeSelection
+                                : bdTypeSelection.name
                         }}
                     </button>
                     <div ngbDropdownMenu aria-labelledby="dropdownBdTypeFilter">
@@ -221,9 +236,9 @@
                             id="selectedBdTypeBtn"
                             name="selectedBdTypeFilter"
                             *ngFor="let type of bdTypes"
-                            (click)="setBirthdayTypeFilter(type)"
+                            (click)="bdTypeSelection = type; updateView()"
                         >
-                            {{ type }}
+                            {{ type.name }}
                         </button>
                     </div>
                 </div>

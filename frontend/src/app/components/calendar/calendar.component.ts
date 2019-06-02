@@ -52,25 +52,36 @@ export class CalendarComponent implements OnInit {
 
     // filter specific content
 
-    // filterable
-    rooms: string[] = ['Grün', 'Orange', 'Erdgeschoss', 'Reset'];
-    eventTypes: string[] = ['Kurs', 'Beratung', 'Geburtstag', 'Miete', 'Reset'];
-    bdTypes: string[] = [
-        'Trockeneis Geburtstag',
-        'Raketen Geburtstag',
-        'Superhelden Geburtstag',
-        'Photo Geburtstag',
-        'Malen Geburtstag',
-        'Reset',
+    // filterable values
+    rooms: any[] = [
+        { name: 'Grün', value: 'Green' },
+        { name: 'Orange', value: 'Orange' },
+        { name: 'Erdgeschoss', value: 'GroundFloor' },
+        { name: 'Reset', value: undefined },
+    ];
+    eventTypes: any[] = [
+        { name: 'Kurs', value: 'Course' },
+        { name: 'Beratung', value: 'Consultation' },
+        { name: 'Geburtstag', value: 'Birthday' },
+        { name: 'Miete', value: 'Rent' },
+        { name: 'Reset', value: undefined },
+    ];
+    bdTypes: any[] = [
+        { name: 'Trockeneis Geburtstag', value: 'DryIce' },
+        { name: 'Raketen Geburtstag', value: 'Rocket' },
+        { name: 'Superhelden Geburtstag', value: 'Superhero' },
+        { name: 'Photo Geburtstag', value: 'Photo' },
+        { name: 'Malen Geburtstag', value: 'Painting' },
+        { name: 'Reset', value: undefined },
     ];
     trainerList: string[] = [];
     trainers: Trainer[] = [];
 
-    // filter selections
-    roomSelection: string;
-    eventTypeSelection: string;
+    // selected value for filtering (empty initialization for ngModel Binding)
+    roomSelection: { name: string; value: string };
+    eventTypeSelection: { name: string; value: string };
+    bdTypeSelection: { name: string; value: string };
     trainerSelection: string;
-    bdTypeSelection: string;
     minAgeFilter: number;
     maxAgeFilter: number;
 
@@ -101,7 +112,8 @@ export class CalendarComponent implements OnInit {
                 this.trainerList.push(name);
             }
 
-            this.trainerList.push('Reset');
+            // explicit undefined value matches option 'reset' (if clicked selection is resetted)
+            this.trainerList.push(undefined);
         });
     }
 
@@ -122,64 +134,33 @@ export class CalendarComponent implements OnInit {
         this.updateNavButtonLabel();
     }
 
-    setRoomFilter(filter: string): void {
-        if (filter === 'Reset') {
-            this.roomSelection = undefined;
-        } else {
-            this.roomSelection = filter;
-        }
-        this.updateView();
-    }
-
-    setTrainerFilter(filter: string): void {
-        if (filter === 'Reset') {
-            this.trainerSelection = undefined;
-        } else {
-            this.trainerSelection = filter;
-        }
-        this.updateView();
-    }
-
-    setEventTypeFilter(filter: string): void {
-        if (filter === 'Reset') {
-            this.eventTypeSelection = undefined;
-        } else {
-            this.eventTypeSelection = filter;
-        }
-        this.updateView();
-    }
-
-    setBirthdayTypeFilter(filter: string): void {
-        if (filter === 'Reset') {
-            this.bdTypeSelection = undefined;
-        } else {
-            this.bdTypeSelection = filter;
-        }
-        this.updateView();
-    }
-
     public updateView(): void {
         this.filteredEvents = this.allEvents;
 
         this.filteredEvents = this.filteredEvents.filter((event: MetaEvent) => {
             // vars are true if filter for this context was set in GUI
-            const hasRoomFilter: boolean = this.roomSelection !== undefined;
+            const hasRoomFilter: boolean =
+                this.roomSelection !== undefined &&
+                this.roomSelection.value !== undefined;
             const hasTrainerFilter: boolean =
                 this.trainerSelection !== undefined;
             const hasTypeFilter: boolean =
-                this.eventTypeSelection !== undefined;
-            const hasBirthdayTypeSelection = hasTypeFilter && this.bdTypeSelection !== undefined;
+                this.eventTypeSelection !== undefined &&
+                this.eventTypeSelection.value !== undefined;
+            const hasCourseFilter =
+                hasTypeFilter && this.eventTypeSelection.name === 'Kurs';
+            const hasBirthdayTypeSelection =
+                hasTypeFilter &&
+                this.bdTypeSelection !== undefined &&
+                this.bdTypeSelection.value !== undefined;
 
             // check if given filters satisfy given event properties
             // iff filter doesnt match (ret false) remove this elem from array
 
             if (hasRoomFilter) {
-                const transformedQuery: string = this.mapToEnumValue(
-                    this.roomSelection
-                );
-
                 if (
-                    transformedQuery !== event.event.roomUses[0].room.toString()
+                    this.roomSelection.value !==
+                    event.event.roomUses[0].room.toString()
                 ) {
                     return false;
                 }
@@ -188,6 +169,7 @@ export class CalendarComponent implements OnInit {
             // this filter is not apllicable to events of type 'rent'
             // as rents have no assigned trainer (null)
             if (hasTrainerFilter) {
+                // if event without trainer then it is a rent, filter it
                 if (
                     event.event.trainer === null ||
                     event.event.trainer === undefined
@@ -206,16 +188,15 @@ export class CalendarComponent implements OnInit {
             }
 
             if (hasTypeFilter) {
-                const transformedQuery: string = this.mapToEnumValue(
-                    this.eventTypeSelection
-                );
-
-                if (transformedQuery !== event.event.eventType.toString()) {
+                if (
+                    this.eventTypeSelection.value !==
+                    event.event.eventType.toString()
+                ) {
                     return false;
                 }
             }
 
-            if (hasTypeFilter && this.eventTypeSelection === 'Kurs') {
+            if (hasCourseFilter) {
                 if (
                     this.minAgeFilter !== null &&
                     event.event.minAge < this.minAgeFilter
@@ -233,63 +214,12 @@ export class CalendarComponent implements OnInit {
 
             // only possible if hasTypeSelection is set to 'Geburtstag'
             if (hasBirthdayTypeSelection) {
-                const transformedQuery: string = this.mapToEnumValue(
-                    this.bdTypeSelection
-                );
-
-                if (transformedQuery !== event.event.birthdayType) {
+                if (this.bdTypeSelection.value !== event.event.birthdayType) {
                     return false;
                 }
             }
 
             return true;
         });
-    }
-
-    /**
-     * This method maps the german search params that can be selceted (e.g. 'Erdgeschoss' when
-     * searching for a room, or 'Beratung' wehn searching for a specific event type) to the
-     * english based enum strings. This is done in order to comapare the given params
-     * programatically with these fixed values.
-     *
-     * Note that this is not the smoothest solution (i know): changing the enums to german
-     * can be considered too (among other possible solutions)
-     *
-     *
-     * @param name the given query string (german) that should be mapped to the equivalent
-     * englisch enum string
-     */
-    private mapToEnumValue(name: string): string {
-        if (name === 'Grün') {
-            return 'Green';
-        } else if (name === 'Orange') {
-            return 'Orange';
-        } else if (name === 'Erdgeschoss') {
-            return 'GroundFloor';
-        } else if (name === 'Kurs') {
-            return 'Course';
-        } else if (name === 'Beratung') {
-            return 'Consultation';
-        } else if (name === 'Geburtstag') {
-            return 'Birthday';
-        } else if (name === 'Miete') {
-            return 'Rent';
-        } else if (name === 'Trockeneis Geburtstag') {
-            return 'DryIce';
-        } else if (name === 'Raketen Geburtstag') {
-            return 'Rocket';
-        } else if (name === 'Superhelden Geburtstag') {
-            return 'Superhero';
-        } else if (name === 'Photo Geburtstag') {
-            return 'Photo';
-        } else if (name === 'Malen Geburtstag') {
-            return 'Painting';
-        } else {
-            throw new Error(
-                'Input constant ' +
-                    name +
-                    ' can not be mapped to any known enum constant'
-            );
-        }
     }
 }
