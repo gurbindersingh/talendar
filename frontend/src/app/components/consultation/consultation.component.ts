@@ -102,7 +102,7 @@ export class ConsultationComponent implements OnInit {
             return Room.Orange;
         }
         if (this.roomString === 'Erdgeschoss') {
-            return Room.Groundfloor;
+            return Room.GroundFloor;
         }
         return undefined;
     }

@@ -16,6 +16,7 @@ public class Customer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
     private Long id;
     @NotBlank
     @Email
@@ -29,6 +30,9 @@ public class Customer {
     @ManyToMany(mappedBy = "customers" )
     @JsonIgnoreProperties("customers")
     private Set<Event> events;
+
+    @Column
+    private Integer emailId;
 
 
     public Customer (){
@@ -101,6 +105,16 @@ public class Customer {
 
     public void setEvents (Set<Event> events) {
         this.events = events;
+    }
+
+
+    public Integer getEmailId() {
+        return emailId;
+    }
+
+
+    public void setEmailId(Integer emailId) {
+        this.emailId = emailId;
     }
 
 
