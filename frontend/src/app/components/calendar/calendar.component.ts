@@ -168,7 +168,7 @@ export class CalendarComponent implements OnInit {
                 this.trainerSelection !== undefined;
             const hasTypeFilter: boolean =
                 this.eventTypeSelection !== undefined;
-            const hasBirthdayTypeSelection = this.bdTypeSelection !== undefined;
+            const hasBirthdayTypeSelection = hasTypeFilter && this.bdTypeSelection !== undefined;
 
             // check if given filters satisfy given event properties
             // iff filter doesnt match (ret false) remove this elem from array

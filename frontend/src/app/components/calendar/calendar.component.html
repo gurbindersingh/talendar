@@ -33,59 +33,62 @@
                 Tag
             </button>
         </div>
+        <div class="col pb-3">
+            <div id="calendar-navigation" class="btn-group col-10 pl-0">
+                <button
+                    class="btn btn-primary"
+                    mwlCalendarPreviousView
+                    [(viewDate)]="viewDate"
+                    [view]="view"
+                    [daysInWeek]="daysInWeek"
+                >
+                    <i class="fas fa-chevron-circle-left"></i>
+                    {{ navButtonLabel.prev }}
+                </button>
 
-        <div id="calendar-navigation" class="btn-group col pb-3">
-            <button
-                class="btn btn-primary"
-                mwlCalendarPreviousView
-                [(viewDate)]="viewDate"
-                [view]="view"
-                [daysInWeek]="daysInWeek"
-            >
-                <i class="fas fa-chevron-circle-left"></i>
-                {{ navButtonLabel.prev }}
-            </button>
+                <button
+                    class="btn btn-primary"
+                    mwlCalendarToday
+                    [(viewDate)]="viewDate"
+                >
+                    <i class="fas fa-calendar-day"></i> Heute
+                </button>
+                <button
+                    class="btn btn-primary"
+                    mwlCalendarNextView
+                    [(viewDate)]="viewDate"
+                    [view]="view"
+                    [daysInWeek]="daysInWeek"
+                >
+                    <i class="fas fa-chevron-circle-right"></i>
+                    {{ navButtonLabel.next }}
+                </button>
+            </div>
 
-            <button
-                class="btn btn-primary"
-                mwlCalendarToday
-                [(viewDate)]="viewDate"
-            >
-                <i class="fas fa-calendar-day"></i> Heute
-            </button>
-            <button
-                class="btn btn-primary"
-                mwlCalendarNextView
-                [(viewDate)]="viewDate"
-                [view]="view"
-                [daysInWeek]="daysInWeek"
-            >
-                <i class="fas fa-chevron-circle-right"></i>
-                {{ navButtonLabel.next }}
-            </button>
+            <!-- Toggle to open collapsed filter menu -->
+            <div class="btn-group col-2 pr-0">
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    (click)="isCollapsed = !isCollapsed"
+                    [attr.aria-expanded]="!isCollapsed"
+                    aria-controls="collapsedFilterMenu"
+                >
+                    Filter
+                </button>
+            </div>
         </div>
     </div>
 
-    <div class="row mb-2 ml-0" id="applyFilterRow">
-        <button
-            type="button"
-            class="btn btn-primary"
-            (click)="isCollapsed = !isCollapsed"
-            [attr.aria-expanded]="!isCollapsed"
-            aria-controls="collapsedFilterMenu"
-        >
-            Filter anwenden
-        </button>
-        <!-- show 'Filter nach' wenn das Filter Menue aufgeht -->
-        <h5 class="ml-2" *ngIf="!isCollapsed">Filtern nach:</h5>
-    </div>
-
+    <!-- Filter menu -->
     <div
-        class="row mb-1 ml-0 align-items-center"
+        class="row ml-0 align-items-center"
         id="collapsedFilterMenu"
         [ngbCollapse]="isCollapsed"
     >
-        <div class="btn-group btn-group-toggle">
+        <!-- Basis Filter Options (Room, Trainer, Eventtype) -->
+
+        <div class="btn-group btn-group-toggle mb-1">
             <div ngbDropdown class="mr-1">
                 <button
                     class="btn btn-outline-primary"
@@ -162,8 +165,15 @@
                     </button>
                 </div>
             </div>
+        </div>
+
+        <!--    dependant on eventtype selection (above) some subfilter appear
+                on md+ screens: same row
+                on small screens shall be in next row
+        -->
+        <div id="additionalContextFilter" class="mb-1">
             <div *ngIf="eventTypeSelection === 'Kurs'" id="ageFilter">
-                <div class="form-group flex-row ml-1 mr-1" id="minFilter">
+                <div class="form-group ml-1 mr-1" id="minFilter">
                     <label for="minAgeFilter">Min Alter</label>
                     <input
                         type="number"
@@ -220,38 +230,38 @@
             </div>
         </div>
     </div>
-</div>
 
-<h3 *ngIf="view === calendarView.Month">
-    {{ viewDate | calendarDate: view + 'ViewTitle':'de-AT' }}
-</h3>
+    <h3 *ngIf="view === calendarView.Month">
+        {{ viewDate | calendarDate: view + 'ViewTitle':'de-AT' }}
+    </h3>
 
-<ng-container *ngIf="view === calendarView.Month; else weekView">
-    <mwl-calendar-month-view
-        [events]="filteredEvents"
-        [locale]="locale"
-        [viewDate]="viewDate"
-        [weekStartsOn]="weekStartsOn"
-    ></mwl-calendar-month-view>
-</ng-container>
+    <ng-container *ngIf="view === calendarView.Month; else weekView">
+        <mwl-calendar-month-view
+            [events]="filteredEvents"
+            [locale]="locale"
+            [viewDate]="viewDate"
+            [weekStartsOn]="weekStartsOn"
+        ></mwl-calendar-month-view>
+    </ng-container>
 
-<ng-template #weekView>
-    <!-- 
+    <ng-template #weekView>
+        <!-- 
         If the daysInWeek property is set to a number, 
         viewDate will be the first day of the week, to 
         prevent this from happening in the week view set
         daysInWeek to NULL.
     -->
-    <mwl-calendar-week-view
-        [dayEndHour]="dayEndHour"
-        [dayEndMinute]="dayEndMinute"
-        [daysInWeek]="daysInWeek"
-        [dayStartHour]="dayStartHour"
-        [dayStartMinute]="dayStartMinute"
-        [events]="filteredEvents"
-        [hourSegments]="hourSegments"
-        [locale]="locale"
-        [viewDate]="viewDate"
-        [weekStartsOn]="weekStartsOn"
-    ></mwl-calendar-week-view>
-</ng-template>
+        <mwl-calendar-week-view
+            [dayEndHour]="dayEndHour"
+            [dayEndMinute]="dayEndMinute"
+            [daysInWeek]="daysInWeek"
+            [dayStartHour]="dayStartHour"
+            [dayStartMinute]="dayStartMinute"
+            [events]="filteredEvents"
+            [hourSegments]="hourSegments"
+            [locale]="locale"
+            [viewDate]="viewDate"
+            [weekStartsOn]="weekStartsOn"
+        ></mwl-calendar-week-view>
+    </ng-template>
+</div>
