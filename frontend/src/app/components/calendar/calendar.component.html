@@ -33,70 +33,250 @@
                 Tag
             </button>
         </div>
+        <div class="col pb-3">
+            <div id="calendar-navigation" class="btn-group col-10 pl-0">
+                <button
+                    class="btn btn-primary"
+                    mwlCalendarPreviousView
+                    [(viewDate)]="viewDate"
+                    [view]="view"
+                    [daysInWeek]="daysInWeek"
+                >
+                    <i class="fas fa-chevron-circle-left"></i>
+                    {{ navButtonLabel.prev }}
+                </button>
 
-        <div id="calendar-navigation" class="btn-group col pb-3">
-            <button
-                class="btn btn-primary"
-                mwlCalendarPreviousView
-                [(viewDate)]="viewDate"
-                [view]="view"
-                [daysInWeek]="daysInWeek"
-            >
-                <i class="fas fa-chevron-circle-left"></i>
-                {{ navButtonLabel.prev }}
-            </button>
+                <button
+                    class="btn btn-primary"
+                    mwlCalendarToday
+                    [(viewDate)]="viewDate"
+                >
+                    <i class="fas fa-calendar-day"></i> Heute
+                </button>
+                <button
+                    class="btn btn-primary"
+                    mwlCalendarNextView
+                    [(viewDate)]="viewDate"
+                    [view]="view"
+                    [daysInWeek]="daysInWeek"
+                >
+                    <i class="fas fa-chevron-circle-right"></i>
+                    {{ navButtonLabel.next }}
+                </button>
+            </div>
 
-            <button
-                class="btn btn-primary"
-                mwlCalendarToday
-                [(viewDate)]="viewDate"
-            >
-                <i class="fas fa-calendar-day"></i> Heute
-            </button>
-            <button
-                class="btn btn-primary"
-                mwlCalendarNextView
-                [(viewDate)]="viewDate"
-                [view]="view"
-                [daysInWeek]="daysInWeek"
-            >
-                <i class="fas fa-chevron-circle-right"></i>
-                {{ navButtonLabel.next }}
-            </button>
+            <!-- Toggle to open collapsed filter menu -->
+            <div class="btn-group col-2 pr-0">
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    (click)="isCollapsed = !isCollapsed"
+                    [attr.aria-expanded]="!isCollapsed"
+                    aria-controls="collapsedFilterMenu"
+                >
+                    Filter
+                </button>
+            </div>
         </div>
     </div>
-</div>
 
-<h3 *ngIf="view === calendarView.Month">
-    {{ viewDate | calendarDate: view + 'ViewTitle':'de-AT' }}
-</h3>
+    <!-- Filter menu -->
+    <div
+        class="row ml-0 align-items-center"
+        id="collapsedFilterMenu"
+        [ngbCollapse]="isCollapsed"
+    >
+        <!-- Basis Filter Options (Room, Trainer, Eventtype) -->
 
-<ng-container *ngIf="view === calendarView.Month; else weekView">
-    <mwl-calendar-month-view
-        [events]="events"
-        [locale]="locale"
-        [viewDate]="viewDate"
-        [weekStartsOn]="weekStartsOn"
-    ></mwl-calendar-month-view>
-</ng-container>
+        <div class="btn-group btn-group-toggle mb-1">
+            <div ngbDropdown class="mr-1">
+                <button
+                    class="btn btn-outline-primary"
+                    id="roomFilterBtn"
+                    name="roomFilter"
+                    ngbDropdownToggle
+                >
+                    {{
+                        roomSelection === undefined ||
+                        roomSelection.value === undefined
+                            ? 'Raum auswählen'
+                            : roomSelection.name
+                    }}
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownRoomFilter">
+                    <button
+                        class="dropdown-item"
+                        id="selectedRoomBtn"
+                        name="selectedRoomFilter"
+                        *ngFor="let room of rooms"
+                        (click)="roomSelection = room; updateView()"
+                        active
+                    >
+                        {{ room.name }}
+                    </button>
+                </div>
+            </div>
+            <div ngbDropdown class="mr-1">
+                <button
+                    class="btn btn-outline-primary"
+                    id="trainerFilterBtn"
+                    name="trainerFilter"
+                    ngbDropdownToggle
+                >
+                    {{
+                        trainerSelection === undefined
+                            ? 'Trainer auswählen'
+                            : trainerSelection
+                    }}
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownTrainerFilter">
+                    <button
+                        class="dropdown-item"
+                        id="selectedTrainerBtn"
+                        name="selectedTrainerFilter"
+                        *ngFor="let trainer of trainerList"
+                        (click)="trainerSelection = trainer; updateView()"
+                    >
+                        {{ trainer !== undefined ? trainer : 'Reset' }}
+                    </button>
+                </div>
+            </div>
+            <div ngbDropdown class="mr-1">
+                <button
+                    class="btn btn-outline-primary"
+                    id="eventtypeFilterBtn"
+                    name="eventtypeFilter"
+                    ngbDropdownToggle
+                >
+                    {{
+                        eventTypeSelection === undefined ||
+                        eventTypeSelection.value === undefined
+                            ? 'Eventtyp auswählen'
+                            : eventTypeSelection.name
+                    }}
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownEventtypeFilter">
+                    <button
+                        class="dropdown-item"
+                        id="selectedEventtypeBtn"
+                        name="selectedEventtypeFilter"
+                        *ngFor="let type of eventTypes"
+                        (click)="eventTypeSelection = type; updateView()"
+                    >
+                        {{ type.name }}
+                    </button>
+                </div>
+            </div>
+        </div>
 
-<ng-template #weekView>
-    <!-- 
+        <!--    dependant on eventtype selection (above) some subfilter appear
+                on md+ screens: same row
+                on small screens shall be in next row
+        -->
+        <div id="additionalContextFilter" class="mb-1">
+            <div
+                *ngIf="
+                    eventTypeSelection !== undefined &&
+                    eventTypeSelection.name === 'Kurs'
+                "
+                id="ageFilter"
+            >
+                <div class="form-group ml-1 mr-1" id="minFilter">
+                    <label for="minAgeFilter">Min Alter</label>
+                    <input
+                        type="number"
+                        min="5"
+                        max="20"
+                        class="form-control"
+                        id="minAgeFilter"
+                        name="minAgeFilter"
+                        [(ngModel)]="minAgeFilter"
+                        (input)="updateView()"
+                    />
+                </div>
+                <div class="form-group" id="maxFilter">
+                    <label for="maxAgeFilter">Max Alter</label>
+                    <input
+                        type="number"
+                        min="5"
+                        max="20"
+                        class="form-control"
+                        id="maxAgeFilter"
+                        name="maxAgeFilter"
+                        [(ngModel)]="maxAgeFilter"
+                        (input)="updateView()"
+                    />
+                </div>
+            </div>
+
+            <div
+                *ngIf="
+                    eventTypeSelection !== undefined &&
+                    eventTypeSelection.name === 'Geburtstag'
+                "
+                id="bdTypeFilter"
+            >
+                <div ngbDropdown class="mr-1">
+                    <button
+                        class="btn btn-outline-primary"
+                        id="bdTypeFilterBtn"
+                        name="bdTypeFilter"
+                        ngbDropdownToggle
+                    >
+                        {{
+                            bdTypeSelection === undefined ||
+                            bdTypeSelection.value === undefined
+                                ? 'Geburtstagsart auswählen'
+                                : bdTypeSelection.name
+                        }}
+                    </button>
+                    <div ngbDropdownMenu aria-labelledby="dropdownBdTypeFilter">
+                        <button
+                            class="dropdown-item"
+                            id="selectedBdTypeBtn"
+                            name="selectedBdTypeFilter"
+                            *ngFor="let type of bdTypes"
+                            (click)="bdTypeSelection = type; updateView()"
+                        >
+                            {{ type.name }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3 *ngIf="view === calendarView.Month">
+        {{ viewDate | calendarDate: view + 'ViewTitle':'de-AT' }}
+    </h3>
+
+    <ng-container *ngIf="view === calendarView.Month; else weekView">
+        <mwl-calendar-month-view
+            [events]="filteredEvents"
+            [locale]="locale"
+            [viewDate]="viewDate"
+            [weekStartsOn]="weekStartsOn"
+        ></mwl-calendar-month-view>
+    </ng-container>
+
+    <ng-template #weekView>
+        <!-- 
         If the daysInWeek property is set to a number, 
         viewDate will be the first day of the week, to 
         prevent this from happening in the week view set
         daysInWeek to NULL.
     -->
-    <mwl-calendar-week-view
-        [dayEndHour]="dayEndHour"
-        [dayEndMinute]="dayEndMinute"
-        [daysInWeek]="daysInWeek"
-        [dayStartHour]="dayStartHour"
-        [dayStartMinute]="dayStartMinute"
-        [events]="events"
-        [hourSegments]="hourSegments"
-        [locale]="locale"
-        [viewDate]="viewDate"
-        [weekStartsOn]="weekStartsOn"
-    ></mwl-calendar-week-view>
-</ng-template>
+        <mwl-calendar-week-view
+            [dayEndHour]="dayEndHour"
+            [dayEndMinute]="dayEndMinute"
+            [daysInWeek]="daysInWeek"
+            [dayStartHour]="dayStartHour"
+            [dayStartMinute]="dayStartMinute"
+            [events]="filteredEvents"
+            [hourSegments]="hourSegments"
+            [locale]="locale"
+            [viewDate]="viewDate"
+            [weekStartsOn]="weekStartsOn"
+        ></mwl-calendar-week-view>
+    </ng-template>
+</div>
