@@ -14,6 +14,7 @@ import {
     TrainerComponent,
     TrainerListComponent,
 } from './components';
+import { CourseSignComponent } from './components/course-sign/course-sign.component';
 
 const routes: Routes = [
     {
@@ -59,6 +60,10 @@ const routes: Routes = [
     {
         path: 'login',
         component: LoginComponent,
+    },
+    {
+        path: 'courseSign',
+        component: CourseSignComponent,
     },
     {
         // This catch-all route should always be the LAST!

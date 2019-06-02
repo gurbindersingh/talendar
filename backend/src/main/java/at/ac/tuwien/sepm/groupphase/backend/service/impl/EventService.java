@@ -39,6 +39,7 @@ import javax.validation.Validation;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -49,6 +50,8 @@ public class EventService implements IEventService {
     private final Validator validator;
     private final TrainerRepository trainerRepository;
     private final HolidayRepository holidayRepository;
+
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 
     @Autowired
@@ -77,8 +80,10 @@ public class EventService implements IEventService {
          * RoomUses will be automatically inserted event without this statement
          * but obviously (or not) jpa is not able to determine the fk key on his own
          */
-        for (RoomUse roomUse: event.getRoomUses()) {
-            roomUse.setEvent(event);
+        if(event.getRoomUses() != null) {
+            for(RoomUse roomUse : event.getRoomUses()) {
+                roomUse.setEvent(event);
+            }
         }
 
         try {
@@ -217,15 +222,157 @@ public class EventService implements IEventService {
         return event;
     }
 
+
     @Override
-    public Event getEventById(Long id){
-        return eventRepository.findByIdAndDeletedFalse(id);
+    public Event getEventById(Long id) throws NotFoundException, ServiceException {
+        LOGGER.info("Try to retrieve event with id " + id);
+
+        Optional<Event> result;
+
+        try {
+            result = eventRepository.findById(id);
+
+        } catch(DataAccessException dae){
+            throw new ServiceException("Error while performing a data access operation", dae);
+        }
+
+        if(result.isPresent() && !result.get().isDeleted()){  //if event exists and not deleted the return
+            return result.get();
+        } else {
+            throw new NotFoundException("The event with id " + id + " does not exist");
+        }
     }
 
 
     @Override
     public List<Event> getAllEvents (Long trainerId) throws ValidationException, ServiceException {
         return null;
+    }
+
+    @Transactional
+    @Override
+    public Event updateCustomers(Event event) throws ValidationException, NotFoundException,
+                                                     ServiceException {
+        if(event.getCustomers() != null) {
+            LocalDateTime timeOfUpdate = LocalDateTime.now();
+            Optional<Event> queryResult;
+            Event currentEvent;
+
+            int sizeOfNewEventList = event.getCustomers().size();
+
+            try {
+                queryResult = this.eventRepository.findById(event.getId());
+                if(queryResult.isPresent()) {
+
+
+
+                    currentEvent = queryResult.get();
+
+                    int sizeOfPersistedList = currentEvent.getCustomers().size();
+
+                    Integer lastEmailId = null;
+
+                    Set<Customer> newCustomers = new HashSet<>();
+                    Customer newCustomer = null;
+                    for(Customer x : event.getCustomers()) {
+                        x.setId(null);                      //id must be null
+                        this.validator.validateCustomer(x);
+                        if(x.getEvents() != null) {         // TODO: Maybe not needed.
+                            x.getEvents()
+                             .add(
+                                 event);    //no duplicate, so add event of old customers will be ignored
+                        } else {
+                            Set<Event> events = new HashSet<>();
+                            events.add(event);
+                            x.setEvents(events);
+                        }
+
+                        if(x.getEmailId() != null){             //setup emailId for new Customer...
+                            lastEmailId = x.getEmailId();
+                        } else {
+
+                            //Customer to insert
+
+                            if(lastEmailId == null){
+                                lastEmailId = 1;
+                            } else {
+                                lastEmailId++;
+                            }
+                            x.setEmailId(lastEmailId);
+                            LOGGER.info("x.getEmailId: " + x.getEmailId());
+                        }
+
+                        newCustomers.add(x);
+                        newCustomer = x;
+                    }
+
+
+
+                    event.setCustomers(newCustomers);
+
+                    event.setUpdated(timeOfUpdate);
+
+
+
+
+                    Event persistedEvent = mergeEvent(currentEvent, event);
+
+
+
+                    eventRepository.flush();
+
+                    LOGGER.info(sizeOfNewEventList + " und " + sizeOfPersistedList);
+
+                    if(sizeOfPersistedList < sizeOfNewEventList){
+                        // A SIGN IN IS HAPPENING
+                        //DO EMAIL WITH CUSTOMER ID:::::::
+
+
+
+                        for(Customer x : persistedEvent.getCustomers()) {   // Get newest customer again because we need the id
+
+                            newCustomer = x;
+
+                            LOGGER.info("EMAIL ID: " + x.getEmailId());
+                        }
+
+
+
+
+
+                        LOGGER.info(persistedEvent.toString());
+
+                        LOGGER.info("Prepare Email for sign off");
+                        sendCancelationMail(newCustomer.getEmail(), persistedEvent,
+                                         newCustomer
+                        );   //create a sign off email and send it to customer
+                        LOGGER.info("Email sent");
+                    }
+
+
+                    ////////////////////////////////////////////////////////
+
+                    return persistedEvent;
+
+
+                } else {
+                    LOGGER.error("Event with id " + event.getId() + " not found");
+                    throw new NotFoundException("");
+                }
+            }
+            catch(DataAccessException dae) {
+                LOGGER.error("Error: " + dae);
+                throw new ServiceException("", dae);
+            }
+            catch(InvalidEntityException ve) {
+                throw new ValidationException(ve.getMessage(), ve);
+            }
+            catch(Exception m) {
+                throw new ServiceException(m);
+            }
+        }
+        LOGGER.error("No Customer to add");
+        throw new ServiceException("", null);
     }
 
 
@@ -241,7 +388,8 @@ public class EventService implements IEventService {
                 "Error while performing a data access operation to retrieve all events", e);
         }
     }
-    
+
+
     @Transactional
     @Override
     public Event update(Event event) throws ValidationException, NotFoundException, ServiceException{
@@ -253,7 +401,7 @@ public class EventService implements IEventService {
         switch(event.getEventType()) {
             case Course:
                 try {
-                   this.validator.validateEvent(event);
+                   this.validator.validateCourseForUpdate(event);
                 } catch(InvalidEntityException ve) {
                    throw new ValidationException(ve.getMessage(), ve);
                 }
@@ -269,6 +417,16 @@ public class EventService implements IEventService {
                         throw new ValidationException("Es sind schon mehr angemeldet als Ihrer Eingabe bei maximale Teilnehmerzahl", null);
                     }
 
+
+
+                    if(event.getCustomers() != null){
+                        Set<Customer> customers = new HashSet<>();
+                        for(Customer x : event.getCustomers()){
+                            x.setId(null);
+                            customers.add(x);
+                        }
+                        event.setCustomers(customers);
+                    }
 
                    queryResult = this.eventRepository.findById(event.getId());
                    if(queryResult.isPresent()){
@@ -290,10 +448,11 @@ public class EventService implements IEventService {
         throw new ServiceException("", null);
     }
 
+
     private Event mergeEvent(Event persisted, Event newVersion) {
-        // all values can be updated except id (obviously), timestamps, and related events
         LOGGER.info("Event will be merged now");
         persisted.setName(newVersion.getName());
+        persisted.setCustomers(newVersion.getCustomers());
 
         //COURSE
         persisted.setDescription(newVersion.getDescription());
@@ -456,51 +615,68 @@ public class EventService implements IEventService {
 
 
     public void sendCancelationMail(String email, Event event, Customer customer) throws EmailException {
-        String to = email;
-        String from = "testingsepmstuffqse25@gmail.com";
-        String password = "This!is!a!password!";
-        String host = "smtp.gmail.com";
-        Properties props = System.getProperties();
-        props.put("mail.smtp.user", from);
-        props.put("mail.smtp.pwd", password);
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
-        props.put("mail.smtp.starttls.enable","true");
-        props.put("mail.smtp.auth", "true");
-        Session session = Session.getDefaultInstance(props);
+            String to = email;
+            String from = "testingsepmstuffqse25@gmail.com";
+            String password = "This!is!a!password!";
+            String host = "smtp.gmail.com";
+            Properties props = System.getProperties();
+            props.put("mail.smtp.user", from);
+            props.put("mail.smtp.pwd", password);
+            props.put("mail.smtp.host", "smtp.gmail.com");
+            props.put("mail.smtp.port", "587");
+            props.put("mail.smtp.starttls.enable","true");
+            props.put("mail.smtp.auth", "true");
+            Session session = Session.getDefaultInstance(props);
 
-        try{
-            MimeMessage mimeMessage = new MimeMessage(session);
-            mimeMessage.setFrom(new InternetAddress(from));
-            mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
-            mimeMessage.setSubject("Stornierungslink fur den Event am " + event.getRoomUses().get(0).getBegin());
-            mimeMessage.setText(createCancelationMessage(event, customer));
-            Transport transport = session.getTransport("smtp");
-            transport.connect(host, 587, from, password);
-            transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
-            transport.close();
+            try{
+                MimeMessage mimeMessage = new MimeMessage(session);
+                mimeMessage.setFrom(new InternetAddress(from));
+                mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
+                mimeMessage.setSubject("Stornierungslink fur den Event am " + event.getRoomUses().get(0).getBegin().format(formatter));
+                mimeMessage.setText(createCancelationMessage(event, customer));
+                Transport transport = session.getTransport("smtp");
+                transport.connect(host, 587, from, password);
+                transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
+                transport.close();
 
 
-        }catch(MessagingException e){
-            throw new EmailException(" " + e.getMessage());
-        }
+            }catch(MessagingException e){
+                throw new EmailException(" " + e.getMessage());
+            }
     }
 
 
-    private String createCancelationMessage(Event event, Customer customer) throws MessagingException{
-        String url = "http://localhost:4200/cancelEvent?id=" + event.getId();
+    private String createCancelationMessage(Event event, Customer customer) throws MessagingException {
+
+        String url;
+        if(event.getEventType() == EventType.Course){
+            url = "http://localhost:4200/cancelEvent?id=" + event.getId() + "&emailId=" + customer.getEmailId();
+        } else {
+            url = "http://localhost:4200/cancelEvent?id=" + event.getId();
+        }
         URL urll = null;
         try {
-             urll = new URL(url);
-        }catch(MalformedURLException e){
+            urll = new URL(url);
+        }
+        catch(MalformedURLException e) {
             throw new MessagingException("Malformed Url exception: " + e.getMessage(), e);
         }
-        String msg = "";
-        msg += "Hallo " +customer.getFirstName() + " " + customer.getLastName() + "!";
-        msg += "\n\n Danke, dass Sie sich bei uns für " + translateEnumWithArtikel(event.getEventType()) + " angemeldet haben.";
-        msg += "\n Falls sie diesen Event stornieren wollen, clicken sie bitte einfach auf diesen link: \n";
-        msg += urll;
 
+        String msg = "";
+
+        msg += "Hallo " + customer.getFirstName() + " " + customer.getLastName() + "!";
+        msg += "\n\n Danke, dass Sie sich bei uns für " +
+               translateEnumWithArtikel(event.getEventType()) +
+               " angemeldet haben.";
+        if(event.getEventType() == EventType.Course){
+            msg += "\n Ende der Abmeldefrist: ";
+            msg += event.getEndOfApplication().format(formatter) + "\n";
+            msg += "\n Falls Sie sich abmelden wollen, klicken Sie auf diesen Link: \n";
+        } else {
+            msg +=
+                "\n Falls Sie diesen Event stornieren wollen, clicken Sie bitte einfach auf diesen link: \n";
+        }
+        msg += urll;
 
         return msg;
     }

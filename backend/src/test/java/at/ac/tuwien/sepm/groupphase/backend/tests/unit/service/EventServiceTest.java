@@ -92,6 +92,124 @@ public class EventServiceTest {
         assertFalse(VALID_INCOMING_BIRTHDAY.getCreated().isAfter(VALID_INCOMING_BIRTHDAY.getUpdated()));
     }
 
+
+    @Test
+    public void updateCustomerInEvent() throws NotFoundException, ServiceException, ValidationException {
+
+        Event event = eventService.save(VALID_INCOMING_COURSE);
+
+        Customer newCustomer = faker.fakeCustomerEntity();
+        newCustomer.setId(null);
+        Set<Customer> customers = new HashSet<>();
+        customers.add(newCustomer);
+        event.setCustomers(customers);
+        eventService.updateCustomers(event);
+
+        Event updatedEvent = eventService.getEventById(VALID_INCOMING_COURSE.getId());
+
+        assertEquals(updatedEvent.getName(), event.getName());
+        assertEquals(updatedEvent.getCustomers().size(), 1);
+
+        Customer newCustomer2 = faker.fakeCustomerEntity();
+        newCustomer2.setId(null);
+        customers.add(newCustomer);
+        customers.add(newCustomer2);
+        updatedEvent.setCustomers(customers);
+
+        eventService.updateCustomers(updatedEvent);
+        updatedEvent = eventService.getEventById(VALID_INCOMING_COURSE.getId());
+        assertEquals(updatedEvent.getCustomers().size(), 2);
+
+        Customer newCustomer3 = faker.fakeCustomerEntity();
+        newCustomer3.setId(null);
+        customers.add(newCustomer);
+        customers.add(newCustomer2);
+        customers.add(newCustomer3);
+        updatedEvent.setCustomers(customers);
+
+        eventService.updateCustomers(updatedEvent);
+        updatedEvent = eventService.getEventById(VALID_INCOMING_COURSE.getId());
+        assertEquals(updatedEvent.getCustomers().size(), 3);
+    }
+
+
+    @Test
+    public void updateCustomerAndThenSignOff_inEvent() throws NotFoundException, ServiceException, ValidationException {
+
+        Event event = eventService.save(VALID_INCOMING_COURSE);
+
+        Customer newCustomer = faker.fakeCustomerEntity();
+        newCustomer.setId(null);
+        Set<Customer> customers = new HashSet<>();
+        customers.add(newCustomer);
+        event.setCustomers(customers);
+        eventService.updateCustomers(event);
+
+        Event updatedEvent = eventService.getEventById(VALID_INCOMING_COURSE.getId());
+
+        assertEquals(updatedEvent.getName(), event.getName());
+        assertEquals(updatedEvent.getCustomers().size(), 1);
+
+        Set<Customer> emptyCustomerList = new HashSet<>();
+        updatedEvent.setCustomers(emptyCustomerList);
+
+        eventService.updateCustomers(updatedEvent);
+        updatedEvent = eventService.getEventById(VALID_INCOMING_COURSE.getId());
+        assertEquals(updatedEvent.getCustomers().size(), 0);
+    }
+
+
+    @Test
+    public void updateTwoCustomersAndThenSignOffTwo_InEvent() throws NotFoundException, ServiceException, ValidationException {
+
+        Event event = eventService.save(VALID_INCOMING_COURSE);
+
+        Customer newCustomer = faker.fakeCustomerEntity();
+        newCustomer.setId(null);
+        Set<Customer> customers = new HashSet<>();
+        customers.add(newCustomer);
+        event.setCustomers(customers);
+        eventService.updateCustomers(event);
+
+        Event updatedEvent = eventService.getEventById(VALID_INCOMING_COURSE.getId());
+
+        assertEquals(updatedEvent.getName(), event.getName());
+        assertEquals(updatedEvent.getCustomers().size(), 1);
+
+        Customer newCustomer2 = faker.fakeCustomerEntity();
+        newCustomer2.setId(null);
+        customers.add(newCustomer);
+        customers.add(newCustomer2);
+        updatedEvent.setCustomers(customers);
+
+        eventService.updateCustomers(updatedEvent);
+        updatedEvent = eventService.getEventById(VALID_INCOMING_COURSE.getId());
+        assertEquals(updatedEvent.getCustomers().size(), 2);
+
+
+        Set<Customer> oneCustomerInList = new HashSet<>();
+        oneCustomerInList.add(newCustomer);
+
+        updatedEvent.setCustomers(oneCustomerInList);
+        eventService.updateCustomers(updatedEvent);
+
+
+        updatedEvent = eventService.getEventById(VALID_INCOMING_COURSE.getId());
+        assertEquals(updatedEvent.getCustomers().size(), 1);
+
+        Set<Customer> emptyCustomerList = new HashSet<>();
+        updatedEvent.setCustomers(emptyCustomerList);
+
+        eventService.updateCustomers(updatedEvent);
+        updatedEvent = eventService.getEventById(VALID_INCOMING_COURSE.getId());
+        assertEquals(updatedEvent.getCustomers().size(), 0);
+
+    }
+
+
+
+
+
     @Test
     public void postEvent_CheckRoomUseHasEventId() throws Exception{
 

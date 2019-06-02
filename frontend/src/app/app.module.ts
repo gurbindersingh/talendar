@@ -30,6 +30,7 @@ import { DateTimeParserService } from './services/date-time-parser.service';
 import { HolidayClient } from 'src/app/rest/holiday-client';
 import { CancelEventComponent } from './components/cancel-event/cancel-event.component';
 import { CourseViewComponent } from './components/course-view/course-view.component';
+import { CourseSignComponent } from './components/course-sign/course-sign.component';
 import { LoginComponent } from './components/login/login.component';
 import { HolidaysClient } from 'src/app/rest/holidays-client';
 
@@ -47,6 +48,7 @@ import { HolidaysClient } from 'src/app/rest/holidays-client';
         TrainerListComponent,
         CancelEventComponent,
         CourseViewComponent,
+        CourseSignComponent,
         LoginComponent,
     ],
     imports: [

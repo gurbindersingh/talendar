@@ -26,5 +26,4 @@ public interface CustomerMapper {
     @Mapping(target = "eventDtos", source = "events")
     CustomerDto entityToCustomerDto(Customer customer);
 
-
 }
