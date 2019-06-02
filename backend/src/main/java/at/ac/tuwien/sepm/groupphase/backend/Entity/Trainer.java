@@ -2,6 +2,8 @@ package at.ac.tuwien.sepm.groupphase.backend.Entity;
 
 import at.ac.tuwien.sepm.groupphase.backend.enums.BirthdayType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -12,6 +14,8 @@ import java.util.Objects;
 
 
 @Entity
+@SQLDelete(sql = "update Trainer t set t.deleted = true where t.id = ?")
+@Where(clause = "deleted <> true")
 public class Trainer {
 
     @Id
@@ -27,7 +31,7 @@ public class Trainer {
     private String        lastName;
     @NotNull
     @Past
-    @Column(nullable = false)
+    @Column(nullable = true)
     private LocalDate     birthday;
     @NotBlank
     @Pattern(regexp = "^[+]*[(]{0,1}[0-9]{1,5}[)]{0,1}[-\\s\\./0-9]*$")
@@ -209,6 +213,11 @@ public class Trainer {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    @PreRemove
+    public void deleteUser() {
+        this.deleted = true;
     }
 
 

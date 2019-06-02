@@ -23,15 +23,4 @@ public interface TrainerRepository extends JpaRepository<Trainer, Long> {
     List<Trainer> findAll();
 
     Trainer findByEvents_Id(Long id);
-
-    @Transactional
-    @Modifying
-    @Query(value = "update Trainer t set t.deleted = true, t.birthday = :birthday, t.birthdayTypes = :birthdayTypes, t.email = :email, t.phone = :phone, t.updated = :updated where t.id = :id")
-    void deleteThisTrainer(@Param("id") Long id,
-                           @Param("birthday") LocalDate birthday,
-                           @Param("birthdayTypes") List<String> birthdayTypes,
-                           @Param("email") String email,
-                           @Param("phone") String phone,
-                           @Param("updated") LocalDateTime updated
-    );
 }

@@ -133,18 +133,12 @@ public class TrainerService implements ITrainerService {
             }
 
             currentVersion.setBirthday(LocalDate.MIN);
-            currentVersion.setBirthdayTypes(Collections.emptyList());
-            currentVersion.setEmail("");
-            currentVersion.setPhone("");
+//            currentVersion.setBirthdayTypes(null);
+            currentVersion.setEmail("example@example.com");
+            currentVersion.setPhone("06641234567");
             currentVersion.setUpdated(timeOfUpdate);
 
-            trainerRepository.deleteThisTrainer(currentVersion.getId(),
-                                                currentVersion.getBirthday(),
-                                                currentVersion.getBirthdayTypes(),
-                                                currentVersion.getEmail(),
-                                                currentVersion.getPhone(),
-                                                currentVersion.getUpdated()
-            );
+            trainerRepository.delete(currentVersion);
         }
         catch(DataAccessException e) {
             throw new ServiceException(
