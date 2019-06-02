@@ -615,34 +615,34 @@ public class EventService implements IEventService {
 
 
     public void sendCancelationMail(String email, Event event, Customer customer) throws EmailException {
-        String to = email;
-        String from = "testingsepmstuffqse25@gmail.com";
-        String password = "This!is!a!password!";
-        String host = "smtp.gmail.com";
-        Properties props = System.getProperties();
-        props.put("mail.smtp.user", from);
-        props.put("mail.smtp.pwd", password);
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
-        props.put("mail.smtp.starttls.enable","true");
-        props.put("mail.smtp.auth", "true");
-        Session session = Session.getDefaultInstance(props);
+            String to = email;
+            String from = "testingsepmstuffqse25@gmail.com";
+            String password = "This!is!a!password!";
+            String host = "smtp.gmail.com";
+            Properties props = System.getProperties();
+            props.put("mail.smtp.user", from);
+            props.put("mail.smtp.pwd", password);
+            props.put("mail.smtp.host", "smtp.gmail.com");
+            props.put("mail.smtp.port", "587");
+            props.put("mail.smtp.starttls.enable","true");
+            props.put("mail.smtp.auth", "true");
+            Session session = Session.getDefaultInstance(props);
 
-        try{
-            MimeMessage mimeMessage = new MimeMessage(session);
-            mimeMessage.setFrom(new InternetAddress(from));
-            mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
-            mimeMessage.setSubject("Stornierungslink fur den Event am " + event.getRoomUses().get(0).getBegin().format(formatter));
-            mimeMessage.setText(createCancelationMessage(event, customer));
-            Transport transport = session.getTransport("smtp");
-            transport.connect(host, 587, from, password);
-            transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
-            transport.close();
+            try{
+                MimeMessage mimeMessage = new MimeMessage(session);
+                mimeMessage.setFrom(new InternetAddress(from));
+                mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
+                mimeMessage.setSubject("Stornierungslink fur den Event am " + event.getRoomUses().get(0).getBegin().format(formatter));
+                mimeMessage.setText(createCancelationMessage(event, customer));
+                Transport transport = session.getTransport("smtp");
+                transport.connect(host, 587, from, password);
+                transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
+                transport.close();
 
 
-        }catch(MessagingException e){
-            throw new EmailException(" " + e.getMessage());
-        }
+            }catch(MessagingException e){
+                throw new EmailException(" " + e.getMessage());
+            }
     }
 
 
