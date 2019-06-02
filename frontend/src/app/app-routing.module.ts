@@ -2,19 +2,18 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import {
-    CalendarComponent,
-    ConsultationComponent,
     BirthdayComponent,
+    CalendarComponent,
+    CancelEventComponent,
+    ConsultationComponent,
     CourseComponent,
+    CourseViewComponent,
     HolidayComponent,
     MeetingComponent,
     TrainerComponent,
     TrainerListComponent,
 } from './components';
-import { CancelEventComponent } from './components/cancel-event/cancel-event.component';
-import { CourseViewComponent } from './components/course-view/course-view.component';
 import { CourseSignComponent } from './components/course-sign/course-sign.component';
-
 
 const routes: Routes = [
     {
@@ -50,22 +49,22 @@ const routes: Routes = [
         component: TrainerListComponent,
     },
     {
-        path: '*',
-        component: CalendarComponent,
-    },
-    {
         path: 'cancelEvent',
-        component: CancelEventComponent
+        component: CancelEventComponent,
     },
     {
         path: 'courseView',
-        component: CourseViewComponent
+        component: CourseViewComponent,
     },
     {
         path: 'courseSign',
-        component: CourseSignComponent
-    }
-
+        component: CourseSignComponent,
+    },
+    {
+        // This catch-all route should always be the LAST!
+        path: '**',
+        redirectTo: '',
+    },
 ];
 
 @NgModule({
