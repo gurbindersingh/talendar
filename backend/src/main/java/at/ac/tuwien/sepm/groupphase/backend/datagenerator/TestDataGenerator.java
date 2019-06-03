@@ -68,8 +68,8 @@ public class TestDataGenerator implements ApplicationRunner {
                 if (args.containsOption("bdays")) {
                     NO_BIRTHDAYS = Integer.parseInt(args.getOptionValues("bdays").get(0));
                 }
-                if (args.containsOption("consultation")) {
-                    NO_CONSULTATION = Integer.parseInt(args.getOptionValues("consultation").get(0));
+                if (args.containsOption("consultations")) {
+                    NO_CONSULTATION = Integer.parseInt(args.getOptionValues("consultations").get(0));
                 }
 
                 startSimulation();
