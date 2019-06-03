@@ -10,15 +10,15 @@ export class NavigationComponent implements OnInit {
     showMenu = false;
 
     navLinks = [
-        { name: 'Kalender anzeigen', path: '' },
+        { name: 'Kalender anzeigen', path: 'calendar' },
         { name: 'Urlaub eintragen', path: 'holiday' },
         { name: 'Beratung eintragen', path: 'consultation' },
         { name: 'Geburtstag eintragen', path: 'birthday' },
         { name: 'Kurs eintragen', path: 'course' },
-        { name: 'Raum Mieten', path: 'meeting' },
+        { name: 'Raum Mieten', path: 'rent' },
         { name: 'Neuen Trainer anlegen', path: 'trainer' },
-        { name: 'Alle Trainer anzeigen', path: 'trainerList' },
-        { name: 'Alle Kurse anzeigen', path: 'courseView' },
+        { name: 'Alle Trainer anzeigen', path: 'trainer/list' },
+        { name: 'Alle Kurse anzeigen', path: 'course/view' },
     ];
 
     constructor() {}
