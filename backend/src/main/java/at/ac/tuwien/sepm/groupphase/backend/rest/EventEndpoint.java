@@ -73,6 +73,25 @@ public class EventEndpoint {
         }
     }
 
+    @RequestMapping(value = "/customers", method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.OK)
+    public EventDto updateEventCustomers(@RequestBody EventDto eventDto) throws BackendException {
+        LOGGER.info("Incoming PUT Request (update customers) for an Event with type: " + eventDto.toString());
+        try {
+            return eventMapper.entityToEventDto(eventService.updateCustomers(eventMapper.dtoToEventEntity(eventDto)));
+        } catch(ValidationException e){
+            LOGGER.error(e.getMessage(), e);
+            throw new BackendException(e.getMessage(), e);
+        } catch(ServiceException e){
+            LOGGER.error(e.getMessage(), e);
+            throw new BackendException(e.getMessage(), e);
+        } catch(NotFoundException e){
+            LOGGER.error(e.getMessage(), e);
+            throw new BackendException(e.getMessage(), e);
+        }
+    }
+
+
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public void cancelEvent(@PathVariable("id") Long id) throws BackendException{
         LOGGER.info("Incoming DELETE Request for an Event with id " + id);
@@ -86,9 +105,15 @@ public class EventEndpoint {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public EventDto getEventById(@PathVariable("id") Long id){
+    public EventDto getEventById(@PathVariable("id") Long id) throws BackendException{
         LOGGER.info("Incoming GET Request for an Event with id " + id);
-        return eventMapper.entityToEventDto(eventService.getEventById(id));
+        try {
+            return eventMapper.entityToEventDto(eventService.getEventById(id));
+        } catch(NotFoundException ne) {
+            throw new BackendException(ne.getMessage(), ne);
+        } catch(ServiceException se) {
+            throw new BackendException(se.getMessage(), se);
+        }
     }
 
     @GetMapping(value = "/all")

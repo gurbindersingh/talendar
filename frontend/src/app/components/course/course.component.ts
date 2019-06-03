@@ -16,7 +16,7 @@ import { ActivatedRoute } from '@angular/router';
     styleUrls: ['./course.component.scss'],
 })
 export class CourseComponent implements OnInit {
-    title = 'Kurs erstellen';
+    title = 'Kurs eintragen';
     minuteStep = 15;
     description = '';
     maxParticipants: number;
@@ -60,7 +60,7 @@ export class CourseComponent implements OnInit {
         const id: number = this.route.snapshot.queryParams.id;
 
         if (id === undefined) {
-            this.title = 'Kurs erstellen';
+            this.title = 'Kurs eintragen';
             this.btnText = 'Erstellen';
             this.saveMode = true;
             this.isCreate = true;
@@ -146,7 +146,10 @@ export class CourseComponent implements OnInit {
         if (this.event.price === undefined || this.event.price === null) {
             return false;
         }
-        if (this.event.maxParticipants === undefined || this.event.maxParticipants === null) {
+        if (
+            this.event.maxParticipants === undefined ||
+            this.event.maxParticipants === null
+        ) {
             return false;
         }
         if (this.event.minAge === undefined || this.event.minAge === null) {
@@ -188,7 +191,7 @@ export class CourseComponent implements OnInit {
         if (this.radioButtonSelected === 'Orange') {
             return Room.Orange;
         }
-        return Room.Groundfloor;
+        return Room.GroundFloor;
     }
 
     public clearInfoMsg(): void {
