@@ -94,8 +94,9 @@ export class CalendarComponent implements OnInit {
             this.daysInWeek = 3;
         } else if (screen.width < BREAKPOINTS.small) {
             this.daysInWeek = 1;
+        } else {
+            this.daysInWeek = 7;
         }
-        this.updateNavButtonLabel();
     }
 
     ngOnInit() {
@@ -117,21 +118,9 @@ export class CalendarComponent implements OnInit {
         });
     }
 
-    updateNavButtonLabel() {
-        console.log('label getter');
-        const label = { prev: 'Vorherige', next: 'Nächste' };
-
-        if (this.view === this.calendarView.Month || this.daysInWeek === 1) {
-            label.prev = 'Vorheriger';
-            label.next = 'Nächster';
-        }
-        this.navButtonLabel = label;
-    }
-
-    toggleView(view: CalendarView, daysInWeek: null | number) {
+    toggleView(view: CalendarView, daysInWeek: number) {
         this.view = view;
         this.daysInWeek = daysInWeek;
-        this.updateNavButtonLabel();
     }
 
     public updateView(): void {
