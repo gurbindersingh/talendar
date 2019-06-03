@@ -3,6 +3,7 @@
         <span id="image">
             <img
                 src="https://u.jimcdn.com/cms/o/s346571bc7945c6e1/img/favicon.png?t=1517309910"
+                style="margin:7px 0"
             />
         </span>
         <span id="text">Talentegarten</span>
@@ -26,7 +27,9 @@
                 *ngFor="let nav of navLinks"
                 (click)="toggleMenu()"
             >
-                <a [routerLink]="nav.path"> {{ nav.name }} </a>
+                <a [routerLink]="nav.path" routerLinkActive="active-link">
+                    {{ nav.name }}
+                </a>
             </li>
         </ul>
     </div>
