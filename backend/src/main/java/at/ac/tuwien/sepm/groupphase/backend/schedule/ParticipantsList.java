@@ -1,13 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend.schedule;
 
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.BackendException;
 import at.ac.tuwien.sepm.groupphase.backend.rest.EventEndpoint;
-import at.ac.tuwien.sepm.groupphase.backend.rest.HolidaysEndpoint;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.EventDto;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
-import com.google.common.collect.Multimap;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -18,14 +14,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.activation.FileDataSource;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import javax.mail.util.ByteArrayDataSource;
-import javax.sql.DataSource;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -38,21 +31,20 @@ import java.util.Locale;
 import java.util.Properties;
 
 @Component
-public class participantsList {
+public class ParticipantsList {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HolidaysEndpoint.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ParticipantsList.class);
 
     private final EventEndpoint eventEndpoint;
     @Autowired
 
-    public participantsList (EventEndpoint eventEndpoint) {
+    public ParticipantsList (EventEndpoint eventEndpoint) {
         this.eventEndpoint = eventEndpoint;
     }
 
     //Cron needs to be changed for everyday at 23:00
-    @Scheduled(cron = "0,30 * * * * *")
     @Transactional
-    public void greeting() throws BackendException, FileNotFoundException, DocumentException, EmailException, IOException {
+    public void createParticipantsList() throws BackendException, DocumentException, EmailException, IOException {
         LOGGER.info("Initiating Spring Scheduled Task: participants lists");
         try {
 
@@ -107,12 +99,8 @@ public class participantsList {
                 document.close();
 
                 sendParticipationListEmail(sendList.get(i).getTrainer().getEmail(), document, docname);
-
-
-
-
             }
-
+            LOGGER.info("Participation Lists sent out successfully.");
         } catch(BackendException e) {
             LOGGER.error(e.getMessage(), e);
             throw new BackendException(e.getMessage(), e);
