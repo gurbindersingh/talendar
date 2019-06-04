@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest.dto;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -10,6 +11,7 @@ public class HolidayDto {
 
 
     private Long id;
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "holidays"})
     private Trainer trainer;
     private LocalDateTime holidayStart;
     private LocalDateTime holidayEnd;

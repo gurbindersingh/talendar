@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.Entity;
 
 import at.ac.tuwien.sepm.groupphase.backend.enums.BirthdayType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -38,13 +39,11 @@ public class Trainer {
     @Column(nullable = false)
     private String        email;
     @OneToMany(mappedBy = "trainer", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JsonIgnoreProperties("trainer")
     private List<Event>   events;
     @ElementCollection
     @CollectionTable(name = "birthday_types", joinColumns = { @JoinColumn(name = "trainer_id") })
     private List<String>  birthdayTypes;
     @OneToMany(mappedBy = "trainer",
-               fetch = FetchType.LAZY,
                cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private List<Holiday> holidays;
 

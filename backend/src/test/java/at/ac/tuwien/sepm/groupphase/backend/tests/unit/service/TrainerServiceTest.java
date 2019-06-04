@@ -7,7 +7,6 @@ import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
-//import at.ac.tuwien.sepm.groupphase.backend.testObjects.exceptions.TestJpaException;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.Validator;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidEntityException;
 import org.junit.jupiter.api.BeforeAll;
@@ -86,7 +85,7 @@ public class TrainerServiceTest {
         INVALID_TRAINER_MISSING_MAIL.setEmail("");
         INVALID_TRAINER_MISSING_CREATED.setCreated(null);
         INVALID_TRAINER_MISSING_UPDATE.setUpdated(null);
-        INVALID_TRAINER_TOO_LOW_AGE.setBirthday(LocalDate.now().minusYears(15));
+        INVALID_TRAINER_TOO_LOW_AGE.setBirthday(LocalDate.now().minusYears(10));
         INVALID_TRAINER_NO_REAL_PHONE.setPhone("123abc456");
         INVALID_TRAINER_NO_REAL_EMAIL.setEmail("testFn.testLn");
         INVALID_TRAINER_FUTURE_CREATION_TIME.setCreated(LocalDateTime.now().plusDays(1));
@@ -99,18 +98,6 @@ public class TrainerServiceTest {
      * After The Service Handles This Request, The Trainer's Created And Updated Stamps Have
      * To Be Set
      */
-
-    /*
-    @Test
-    public void test_persistenceLayerThrowsException_serviceLayerWrapsToServiceException() {
-        when(trainerRepository.save(any())).thenThrow(TestJpaException.class);
-
-        // we dont care why JPA throws an exception,
-        // just in case if an exception would be thrown, service has to react
-        // therefore INVALID_TRAINER_MISSING_CREATED is passed but could by any other entity too
-        assertThrows(ServiceException.class, () -> trainerService.save(DUMMY));
-    }
-    */
 
 
     @Test

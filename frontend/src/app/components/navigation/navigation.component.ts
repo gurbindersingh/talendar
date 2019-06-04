@@ -26,6 +26,8 @@ export class NavigationComponent implements OnInit {
     ngOnInit() {}
 
     toggleMenu() {
-        this.showMenu = !this.showMenu;
+        if (screen.width < BREAKPOINTS.xl) {
+            this.showMenu = !this.showMenu;
+        }
     }
 }
