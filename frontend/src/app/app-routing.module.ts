@@ -2,70 +2,36 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import {
-    CalendarComponent,
-    ConsultationComponent,
     BirthdayComponent,
+    CalendarComponent,
+    CancelEventComponent,
+    ConsultationComponent,
     CourseComponent,
+    CourseViewComponent,
     HolidayComponent,
     MeetingComponent,
     TrainerComponent,
     TrainerListComponent,
 } from './components';
-import { CancelEventComponent } from './components/cancel-event/cancel-event.component';
-import { CourseViewComponent } from './components/course-view/course-view.component';
 import { CourseSignComponent } from './components/course-sign/course-sign.component';
 
-
 const routes: Routes = [
+    { path: 'calendar', component: CalendarComponent },
+    { path: 'birthday/book', component: BirthdayComponent },
+    { path: 'consultation/add', component: ConsultationComponent },
+    { path: 'course/add', component: CourseComponent },
+    { path: 'course/sign', component: CourseSignComponent },
+    { path: 'course/view', component: CourseViewComponent },
+    { path: 'event/cancel', component: CancelEventComponent },
+    { path: 'holiday/add', component: HolidayComponent },
+    { path: 'rent', component: MeetingComponent },
+    { path: 'trainer/add', component: TrainerComponent },
+    { path: 'trainer/list', component: TrainerListComponent },
     {
-        path: '',
-        component: CalendarComponent,
+        // This catch-all route should always be the LAST!
+        path: '**',
+        redirectTo: 'calendar',
     },
-    {
-        path: 'holiday',
-        component: HolidayComponent,
-    },
-    {
-        path: 'consultation',
-        component: ConsultationComponent,
-    },
-    {
-        path: 'birthday',
-        component: BirthdayComponent,
-    },
-    {
-        path: 'course',
-        component: CourseComponent,
-    },
-    {
-        path: 'meeting',
-        component: MeetingComponent,
-    },
-    {
-        path: 'trainer',
-        component: TrainerComponent,
-    },
-    {
-        path: 'trainerList',
-        component: TrainerListComponent,
-    },
-    {
-        path: '*',
-        component: CalendarComponent,
-    },
-    {
-        path: 'cancelEvent',
-        component: CancelEventComponent
-    },
-    {
-        path: 'courseView',
-        component: CourseViewComponent
-    },
-    {
-        path: 'courseSign',
-        component: CourseSignComponent
-    }
-
 ];
 
 @NgModule({
