@@ -7,8 +7,15 @@
     width: 100vw;
 }
 
+#nav {
+    color: hsl(84, 48, 49);
+    background: hsl(120, 5, 13);
+}
+
 #content {
-    max-height: calc(100vh - 47px); // 47px is the height of the navbar on mobile
+    max-height: calc(
+        100vh - 64px /* 64px is the height of the navbar on mobile */
+    );
     overflow-x: hidden;
     overflow-y: auto;
 }

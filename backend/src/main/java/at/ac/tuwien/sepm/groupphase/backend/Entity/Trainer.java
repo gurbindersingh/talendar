@@ -4,6 +4,7 @@ import at.ac.tuwien.sepm.groupphase.backend.enums.BirthdayType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -31,7 +32,7 @@ public class Trainer {
     private String        lastName;
     @NotNull
     @Past
-    @Column(nullable = true)
+    @Column(nullable = false)
     private LocalDate     birthday;
     @NotBlank
     @Pattern(regexp = "^[+]*[(]{0,1}[0-9]{1,5}[)]{0,1}[-\\s\\./0-9]*$")

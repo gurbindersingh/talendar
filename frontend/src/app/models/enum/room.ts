@@ -1,5 +1,5 @@
 export enum Room {
-    Green = 1,
-    Orange,
-    Groundfloor,
+    Green = 'Green',
+    Orange = 'Orange',
+    GroundFloor = 'GroundFloor',
 }
