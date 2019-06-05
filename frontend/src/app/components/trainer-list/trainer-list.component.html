@@ -1,6 +1,6 @@
 <header id="trainerListHeader">
     <h1 class="row justify-content-center">{{ title }}</h1>
-    <button type="button" class="btn" [routerLink]="['/trainer']">
+    <button type="button" class="btn" [routerLink]="['/trainer/add']">
         <i class="fas fa-user-plus fa-3x"></i>
     </button>
 
@@ -44,7 +44,10 @@
                 </button>
             </div>
             <!-- -->
-            <div [routerLink]="['/trainer']" [queryParams]="{ id: trainer.id }">
+            <div
+                [routerLink]="['/trainer/add']"
+                [queryParams]="{ id: trainer.id }"
+            >
                 <button type="button" class="btn">
                     <i class="fas fa-pencil-alt fa-3x"></i>
                 </button>
