@@ -1,13 +1,11 @@
 package at.ac.tuwien.sepm.groupphase.backend.schedule;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.BackendException;
 import at.ac.tuwien.sepm.groupphase.backend.rest.EventEndpoint;
-import at.ac.tuwien.sepm.groupphase.backend.rest.HolidaysEndpoint;
+import at.ac.tuwien.sepm.groupphase.backend.rest.dto.CustomerDto;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.EventDto;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
-import com.google.common.collect.Multimap;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -18,14 +16,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.activation.FileDataSource;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import javax.mail.util.ByteArrayDataSource;
-import javax.sql.DataSource;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -38,21 +33,20 @@ import java.util.Locale;
 import java.util.Properties;
 
 @Component
-public class participantsList {
+public class ParticipantsList {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HolidaysEndpoint.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ParticipantsList.class);
 
     private final EventEndpoint eventEndpoint;
     @Autowired
 
-    public participantsList (EventEndpoint eventEndpoint) {
+    public ParticipantsList (EventEndpoint eventEndpoint) {
         this.eventEndpoint = eventEndpoint;
     }
 
     //Cron needs to be changed for everyday at 23:00
-    @Scheduled(cron = "0,30 * * * * *")
     @Transactional
-    public void greeting() throws BackendException, FileNotFoundException, DocumentException, EmailException, IOException {
+    public void createParticipantsList() throws BackendException, DocumentException, EmailException, IOException {
         LOGGER.info("Initiating Spring Scheduled Task: participants lists");
         try {
 
@@ -106,13 +100,9 @@ public class participantsList {
                 document.add(table);
                 document.close();
 
-                sendParticipationListEmail(sendList.get(i).getTrainer().getEmail(), document, docname);
-
-
-
-
+                sendParticipationListEmail(sendList.get(i).getTrainer().getEmail(), document, docname, sendList.get(i));
             }
-
+            LOGGER.info("Participation Lists sent out successfully.");
         } catch(BackendException e) {
             LOGGER.error(e.getMessage(), e);
             throw new BackendException(e.getMessage(), e);
@@ -120,7 +110,7 @@ public class participantsList {
     }
 
 
-    public void sendParticipationListEmail(String emailTo, Document document, String filename) throws EmailException, IOException {
+    public void sendParticipationListEmail(String emailTo, Document document, String filename, EventDto event) throws EmailException, IOException {
         LOGGER.info("Creating Email with participationList");
         String from = "testingsepmstuffqse25@gmail.com";
         String password = "This!is!a!password!";
@@ -152,6 +142,13 @@ public class participantsList {
             MimeBodyPart attachment = new MimeBodyPart();
             attachment.attachFile(new File(filename), "application/pdf", null);
             multipart.addBodyPart(attachment);
+
+            //Adding all the rechnungens to the multipart
+            for(int i = 0; i < event.getCustomerDtos().size(); i++){
+                MimeBodyPart bill = new MimeBodyPart();
+                bill.attachFile(new File(createBill(event.getCustomerDtos().get(i))), "application/pdf", null);
+                multipart.addBodyPart(bill);
+            }
             //Adding multipart to the mail
             mimeMessage.setContent(multipart);
             Transport transport = session.getTransport("smtp");
@@ -160,10 +157,14 @@ public class participantsList {
             transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
             LOGGER.debug("Sending Email successful!");
             transport.close();
-
-
         }catch(MessagingException e){
             throw new EmailException(" " + e.getMessage());
         }
+    }
+
+    public String createBill (CustomerDto customer) {
+        //TODO: Code schreiben um aus dem customer die Rechnung zu generieren, der generierte Filename wird zurückgegeben (+ Ort)
+        //TODO: Wir müssen dann ebenfalls dafür sorgen, dass die generierten PDFs in Unterordnern erstellt werden, nicht so wie momentan einfach in /backend/
+        return null;
     }
 }
