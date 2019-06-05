@@ -1,7 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend.schedule;
 
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.BackendException;
 import at.ac.tuwien.sepm.groupphase.backend.rest.EventEndpoint;
+import at.ac.tuwien.sepm.groupphase.backend.rest.dto.CustomerDto;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.EventDto;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
 import com.itextpdf.text.*;
@@ -98,7 +100,7 @@ public class ParticipantsList {
                 document.add(table);
                 document.close();
 
-                sendParticipationListEmail(sendList.get(i).getTrainer().getEmail(), document, docname);
+                sendParticipationListEmail(sendList.get(i).getTrainer().getEmail(), document, docname, sendList.get(i));
             }
             LOGGER.info("Participation Lists sent out successfully.");
         } catch(BackendException e) {
@@ -108,7 +110,7 @@ public class ParticipantsList {
     }
 
 
-    public void sendParticipationListEmail(String emailTo, Document document, String filename) throws EmailException, IOException {
+    public void sendParticipationListEmail(String emailTo, Document document, String filename, EventDto event) throws EmailException, IOException {
         LOGGER.info("Creating Email with participationList");
         String from = "testingsepmstuffqse25@gmail.com";
         String password = "This!is!a!password!";
@@ -140,6 +142,13 @@ public class ParticipantsList {
             MimeBodyPart attachment = new MimeBodyPart();
             attachment.attachFile(new File(filename), "application/pdf", null);
             multipart.addBodyPart(attachment);
+
+            //Adding all the rechnungens to the multipart
+            for(int i = 0; i < event.getCustomerDtos().size(); i++){
+                MimeBodyPart bill = new MimeBodyPart();
+                bill.attachFile(new File(createBill(event.getCustomerDtos().get(i))), "application/pdf", null);
+                multipart.addBodyPart(bill);
+            }
             //Adding multipart to the mail
             mimeMessage.setContent(multipart);
             Transport transport = session.getTransport("smtp");
@@ -148,10 +157,14 @@ public class ParticipantsList {
             transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
             LOGGER.debug("Sending Email successful!");
             transport.close();
-
-
         }catch(MessagingException e){
             throw new EmailException(" " + e.getMessage());
         }
+    }
+
+    public String createBill (CustomerDto customer) {
+        //TODO: Code schreiben um aus dem customer die Rechnung zu generieren, der generierte Filename wird zurückgegeben (+ Ort)
+        //TODO: Wir müssen dann ebenfalls dafür sorgen, dass die generierten PDFs in Unterordnern erstellt werden, nicht so wie momentan einfach in /backend/
+        return null;
     }
 }

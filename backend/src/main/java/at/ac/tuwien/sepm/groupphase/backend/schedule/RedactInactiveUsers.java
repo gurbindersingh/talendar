@@ -26,8 +26,8 @@ public class RedactInactiveUsers {
 
     @Autowired
     public RedactInactiveUsers (CustomerRepository customerRepository, EventEndpoint eventEndpoint) {
-        this. customerRepository = customerRepository;
-        this. eventEndpoint = eventEndpoint;
+        this.customerRepository = customerRepository;
+        this.eventEndpoint = eventEndpoint;
     }
 
 
