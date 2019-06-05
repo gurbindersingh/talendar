@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm.groupphase.backend.service.implementation;
+package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.authentication.AuthenticationToken;
 import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.authentication.AuthenticationTokenInfo;
@@ -62,9 +62,9 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
     }
 
     @Override
-    public AuthenticationToken authenticate(String username, CharSequence password) {
+    public AuthenticationToken authenticate(String email, CharSequence password) {
         Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(username, password));
+            new UsernamePasswordAuthenticationToken(email, password));
         Instant now = Instant.now();
         String authorities = "";
         try {
@@ -152,6 +152,7 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
                 .setSigningKey(signingKey)
                 .parseClaimsJws(headerToken)
                 .getBody();
+
             List<String> authoritiesWrapper = readJwtAuthorityClaims(claims);
             List<SimpleGrantedAuthority> authorities = authoritiesWrapper.stream()
                 .map(roleName -> roleName.startsWith(AuthenticationConstants.ROLE_PREFIX) ?

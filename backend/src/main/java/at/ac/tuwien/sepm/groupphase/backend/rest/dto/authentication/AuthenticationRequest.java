@@ -8,19 +8,19 @@ import io.swagger.annotations.ApiModelProperty;
 public class AuthenticationRequest {
 
     @ApiModelProperty(required = true, name = "The unique name of the user", example = "admin")
-    private String username;
+    private String email;
 
     @ApiModelProperty(required = true, name = "The password of the user", example = "password")
     private String password;
 
 
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
 
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
 
@@ -37,7 +37,7 @@ public class AuthenticationRequest {
     @Override
     public String toString() {
         return "AuthenticationRequest{" +
-               "username='" + username + '\'' +
+               "email='" + email + '\'' +
                ", password='" + password + '\'' +
                '}';
     }
@@ -50,14 +50,14 @@ public class AuthenticationRequest {
 
         AuthenticationRequest that = (AuthenticationRequest) o;
 
-        if(username != null ? !username.equals(that.username) : that.username != null) return false;
+        if(email != null ? !email.equals(that.email) : that.email != null) return false;
         return password != null ? password.equals(that.password) : that.password == null;
     }
 
 
     @Override
     public int hashCode() {
-        int result = username != null ? username.hashCode() : 0;
+        int result = email != null ? email.hashCode() : 0;
         result = 31 * result + ( password != null ? password.hashCode() : 0 );
         return result;
     }
@@ -88,7 +88,7 @@ public class AuthenticationRequest {
 
         public AuthenticationRequest build() {
             AuthenticationRequest authenticationRequest = new AuthenticationRequest();
-            authenticationRequest.setUsername(username);
+            authenticationRequest.setEmail(username);
             authenticationRequest.setPassword(password);
             return authenticationRequest;
         }

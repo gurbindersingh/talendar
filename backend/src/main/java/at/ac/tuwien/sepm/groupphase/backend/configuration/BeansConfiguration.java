@@ -1,13 +1,22 @@
 package at.ac.tuwien.sepm.groupphase.backend.configuration;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
+import at.ac.tuwien.sepm.groupphase.backend.configuration.properties.UserAccountConfigurationProperties;
+import at.ac.tuwien.sepm.groupphase.backend.persistence.UserRepository;
+import at.ac.tuwien.sepm.groupphase.backend.service.IUserService;
+import at.ac.tuwien.sepm.groupphase.backend.service.impl.UserService;
 import at.ac.tuwien.sepm.groupphase.backend.util.mapper.CustomerMapper;
 import at.ac.tuwien.sepm.groupphase.backend.util.mapper.EventMapper;
 import at.ac.tuwien.sepm.groupphase.backend.util.mapper.RoomUseMapper;
 import at.ac.tuwien.sepm.groupphase.backend.util.mapper.HolidayMapper;
 import at.ac.tuwien.sepm.groupphase.backend.util.mapper.TrainerMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * This class can be used to make any class available as a injectable bean for spring.
@@ -19,6 +28,7 @@ import org.springframework.context.annotation.Configuration;
 
 
 @Configuration
+@ComponentScan
 public class BeansConfiguration {
 
     @Bean
@@ -50,6 +60,5 @@ public class BeansConfiguration {
         RoomUseMapper roomUseMapper = RoomUseMapper.INSTANCE;
         return roomUseMapper;
     }
-
 
 }

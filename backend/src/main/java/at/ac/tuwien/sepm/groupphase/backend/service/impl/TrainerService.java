@@ -1,9 +1,12 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
+import at.ac.tuwien.sepm.groupphase.backend.Entity.User;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;
+import at.ac.tuwien.sepm.groupphase.backend.service.IUserService;
+import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.AccountCreationException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.Validator;
@@ -11,6 +14,7 @@ import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidEnt
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,18 +29,22 @@ public class TrainerService implements ITrainerService {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(TrainerService.class);
 
+    private final IUserService userService;
     private final TrainerRepository trainerRepository;
     private final Validator validator;
 
     @Autowired
-    public TrainerService(TrainerRepository trainerRepository, Validator validator) {
+    public TrainerService(IUserService userService, TrainerRepository trainerRepository, Validator validator) {
+        this.userService = userService;
         this.trainerRepository = trainerRepository;
         this.validator = validator;
     }
 
+    @Transactional
     @Override
-    public Trainer save (Trainer trainer) throws ServiceException, ValidationException {
+    public Trainer save (Trainer trainer, String password) throws ServiceException, ValidationException {
         LOGGER.info("Prepare save of new trainer: {}", trainer);
+        User account;
         LocalDateTime timeOfCreation = LocalDateTime.now();
 
         trainer.setCreated(timeOfCreation);
@@ -55,10 +63,27 @@ public class TrainerService implements ITrainerService {
         }
 
         try {
-            return trainerRepository.save(trainer);
+            trainer = trainerRepository.save(trainer);
         } catch(DataAccessException e) { //catch specific exceptions
             throw new ServiceException("Error while performing a data access operation", e);
         }
+
+        // create user profile
+        account = new User();
+        account.setEmail(trainer.getEmail());
+        account.setPassword(password);
+        account.setDeleted(false);
+        account.setAdmin(false);
+        account.setTrainer(trainer);
+
+        try {
+            userService.createUser(account);
+        }
+        catch(AccountCreationException e) {
+            throw new ServiceException(e.getMessage(), e);
+        }
+
+        return trainer;
     }
 
 

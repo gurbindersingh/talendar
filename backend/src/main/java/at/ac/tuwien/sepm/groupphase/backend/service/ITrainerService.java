@@ -18,7 +18,7 @@ public interface ITrainerService {
      * @throws ServiceException will be thrown if any error occurs during data processing that leads to an unsuccessful operation
      * @throws ValidationException will be thrown if the given instance has invalid properties. The cause will be reported.
      */
-    Trainer save (Trainer trainer) throws ServiceException, ValidationException;
+    Trainer save (Trainer trainer, String password) throws ServiceException, ValidationException;
 
     /**
      * This method will update the trainer entity which is referenced by the given parameter (reference by ID:long)

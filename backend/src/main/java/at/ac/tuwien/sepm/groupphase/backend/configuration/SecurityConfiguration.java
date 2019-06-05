@@ -1,7 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend.configuration;
 
 import at.ac.tuwien.sepm.groupphase.backend.configuration.properties.H2ConsoleConfigurationProperties;
-import at.ac.tuwien.sepm.groupphase.backend.security.HeaderTokenAuthenticationFilter;
+import at.ac.tuwien.sepm.groupphase.backend.security.CustomHeaderTokenAuthenticationFilter;
+import at.ac.tuwien.sepm.groupphase.backend.security.HeaderTokenAuthenticationProvider;
+import at.ac.tuwien.sepm.groupphase.backend.service.impl.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
@@ -11,9 +13,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configurers.provisioning.InMemoryUserDetailsManagerConfigurer;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -26,10 +27,8 @@ import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
 import java.util.Map;
 
 @Configuration
@@ -37,16 +36,6 @@ import java.util.Map;
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfiguration {
 
-    private final PasswordEncoder passwordEncoder;
-
-    public SecurityConfiguration(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    @Bean
-    public static PasswordEncoder configureDefaultPasswordEncoder() {
-        return new BCryptPasswordEncoder(10);
-    }
 
     @Bean
     public ErrorAttributes errorAttributes() {
@@ -59,16 +48,6 @@ public class SecurityConfiguration {
         };
     }
 
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth, List<AuthenticationProvider> providerList) throws Exception {
-        new InMemoryUserDetailsManagerConfigurer<AuthenticationManagerBuilder>()
-            .withUser("user").password(passwordEncoder.encode("password")).authorities("USER").and()
-            .withUser("admin").password(passwordEncoder.encode("password")).authorities("ADMIN", "USER").and()
-            .passwordEncoder(passwordEncoder)
-            .configure(auth);
-        providerList.forEach(auth::authenticationProvider);
-    }
-
     @Configuration
     @Order(SecurityProperties.BASIC_AUTH_ORDER)
     private static class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
@@ -76,14 +55,22 @@ public class SecurityConfiguration {
         private final String h2ConsolePath;
         private final String h2AccessMatcher;
 
+
         @Autowired
-        private AuthenticationManager authenticationManager;
+        private CustomUserDetailsService userDetailsService;
+        @Autowired
+        private HeaderTokenAuthenticationProvider authenticationProvider;
+
+        private final PasswordEncoder passwordEncoder;
+
 
         public WebSecurityConfiguration(
-            H2ConsoleConfigurationProperties h2ConsoleConfigurationProperties
+            H2ConsoleConfigurationProperties h2ConsoleConfigurationProperties,
+            PasswordEncoder passwordEncoder
         ) {
             h2ConsolePath = h2ConsoleConfigurationProperties.getPath();
             h2AccessMatcher = h2ConsoleConfigurationProperties.getAccessMatcher();
+            this.passwordEncoder = passwordEncoder;
         }
 
         @Override
@@ -94,14 +81,32 @@ public class SecurityConfiguration {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .exceptionHandling().authenticationEntryPoint((req, res, aE) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED)).and()
                 .authorizeRequests()
+                // any delete op is only accesible for the admin
+                .antMatchers(HttpMethod.DELETE, "/**").hasRole("ADMIN")
+                // next two has to be allowed in order to have a free accessible authentication endpoint
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
-                .antMatchers(HttpMethod.POST, "/authentication").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/v1/talendar/authentication").permitAll()
+                // now disable a couple of manipulating ops for normal users
+                .antMatchers(HttpMethod.POST, "/api/v1/talendar/events").hasAnyRole("ADMIN", "TRAINER")
+                .antMatchers(HttpMethod.PUT, "/api/v1/talendar/events").hasAnyRole("ADMIN", "TRAINER")
+                .antMatchers(HttpMethod.POST, "/api/v1/talendar/holiday").hasRole("TRAINER")
+                .antMatchers(HttpMethod.POST, "/api/v1/talendar/holidays").hasRole("TRAINER")
+                .antMatchers(HttpMethod.PUT, "/api/v1/talendar/trainers").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST, "/api/v1/talendar/trainers").hasRole("ADMIN")
+                /**
+                 * TODO:    consider securing the get Trainers/Events Access Point.
+                 *          even if we disallow showAllTrainer/Events page in frontend
+                 *          data is still exposable over the REST API...!!!
+                 */
+                // explicitly allow SWAGGER
                 .antMatchers(HttpMethod.GET,
-                    "/v2/api-docs",
+                    //"/v2/api-docs",
                     "/swagger-resources/**",
                     "/webjars/springfox-swagger-ui/**",
                     "/swagger-ui.html")
                 .permitAll()
+                // allow anything that has not been disabled by a more specific rule
+                .antMatchers(HttpMethod.GET, "/**").permitAll()
             ;
             if (h2ConsolePath != null && h2AccessMatcher != null) {
                 http
@@ -110,30 +115,48 @@ public class SecurityConfiguration {
             }
             http
                 .authorizeRequests()
-                .anyRequest().fullyAuthenticated()
+                .anyRequest().authenticated() //fullyAuthenticated()
                 .and()
-                .addFilterBefore(new HeaderTokenAuthenticationFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class);
+                //.addFilterBefore(new HeaderTokenAuthenticationFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new CustomHeaderTokenAuthenticationFilter(authenticationProvider), UsernamePasswordAuthenticationFilter.class);
         }
 
-           @Bean
-          @Override
-            public AuthenticationManager authenticationManagerBean() throws Exception {
-              return super.authenticationManagerBean();
-          }
+
+       @Override
+       protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+            auth.authenticationProvider(authenticationProvider());
+       }
+
+        @Bean
+        @Override
+        public AuthenticationManager authenticationManagerBean() throws Exception {
+             return super.authenticationManagerBean();
+        }
+
+        @Bean
+        public DaoAuthenticationProvider authenticationProvider() {
+            DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+            authenticationProvider.setUserDetailsService(userDetailsService);
+            authenticationProvider.setPasswordEncoder(passwordEncoder);
+            return authenticationProvider;
+        }
+
+        @Bean
+        public static PasswordEncoder configureDefaultPasswordEncoder() {
+            return new BCryptPasswordEncoder(10);
+        }
 
     }
-/*
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurerAdapter() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry
-                    .addMapping("/**")
-                    .allowedOrigins("*")
-                    .allowedMethods("PUT","POST","OPTION","GET");
-            }
-        };
-    }*/
+
+    @Configuration
+    public class WebConfig implements WebMvcConfigurer {
+        @Override
+        public void addCorsMappings(CorsRegistry registry) {
+            registry
+                .addMapping("/**")
+                .allowedOrigins("*")
+                .allowedMethods("PUT","POST","OPTION","GET");
+        }
+    }
 
 }

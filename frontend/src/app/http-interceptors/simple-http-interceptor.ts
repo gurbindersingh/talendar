@@ -23,6 +23,8 @@ export class SimpleHttpInterceptor implements HttpInterceptor {
                 headers: req.headers.set('Authorization', 'Bearer ' + token),
             });
 
+            console.log('Interceptor: Token = ' + token);
+
             return next.handle(authReq).pipe(
                 catchError((error, caught) => {
                     /**

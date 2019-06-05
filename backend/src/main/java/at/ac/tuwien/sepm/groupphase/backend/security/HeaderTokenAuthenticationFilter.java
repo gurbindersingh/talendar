@@ -16,6 +16,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/*
+    THIS IS LEGACY CODE
+    ACTUAL IMPLEMENTATION IS BACKED BY CustomHeaderTokenAuthenticationFilter
+
+    This Class Will be Eventually Deleted, But For The Moment Keep It As It Has Been
+    The Motivation For The Newer Class
+ */
+
 public class HeaderTokenAuthenticationFilter extends OncePerRequestFilter {
 
     private final AuthenticationManager authenticationManager;

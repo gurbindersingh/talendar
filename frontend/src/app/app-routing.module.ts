@@ -28,6 +28,7 @@ const routes: Routes = [
     { path: 'rent', component: MeetingComponent },
     { path: 'trainer/add', component: TrainerComponent },
     { path: 'trainer/list', component: TrainerListComponent },
+    { path: 'login', component: LoginComponent },
     {
         // This catch-all route should always be the LAST!
         path: '**',

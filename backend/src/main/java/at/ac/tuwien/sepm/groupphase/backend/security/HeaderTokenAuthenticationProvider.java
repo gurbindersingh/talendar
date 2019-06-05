@@ -23,6 +23,7 @@ public class HeaderTokenAuthenticationProvider implements AuthenticationProvider
         User user = headerTokenAuthenticationService.authenticate(headerToken);
         AuthenticationHeaderToken authenticationResult = new AuthenticationHeaderToken(user, headerToken, user.getAuthorities());
         authenticationResult.setDetails(authentication.getDetails());
+
         return authenticationResult;
     }
 

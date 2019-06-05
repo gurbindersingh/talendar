@@ -21,6 +21,10 @@ public class TrainerDto {
     private List<String>     birthdayTypes;
     @JsonIgnoreProperties({"hibernateLazyInitializer", "trainer"})
     private List<HolidayDto> holidays;
+
+    // this property is not reflected by the trainer entity (at least not in the current version 04-06-2019)
+    private String password;
+
     private LocalDateTime    created;
     private LocalDateTime    updated;
 
@@ -39,6 +43,7 @@ public class TrainerDto {
                        List<EventDto> events,
                        List<String> birthdayTypes,
                        List<HolidayDto> holidays,
+                       String password,
                        LocalDateTime created,
                        LocalDateTime updated
     ) {
@@ -51,6 +56,7 @@ public class TrainerDto {
         this.events = events;
         this.birthdayTypes = birthdayTypes;
         this.holidays = holidays;
+        this.password = password;
         this.created = created;
         this.updated = updated;
     }
@@ -147,6 +153,16 @@ public class TrainerDto {
     }
 
 
+    public String getPassword() {
+        return password;
+    }
+
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+
     public LocalDateTime getCreated () {
         return created;
     }
@@ -181,6 +197,7 @@ public class TrainerDto {
                Objects.equals(events, that.events) &&
                Objects.equals(birthdayTypes, that.birthdayTypes) &&
                Objects.equals(holidays, that.holidays) &&
+               Objects.equals(password, that.password) &&
                Objects.equals(created, that.created) &&
                Objects.equals(updated, that.updated);
     }
@@ -197,6 +214,7 @@ public class TrainerDto {
                             events,
                             birthdayTypes,
                             holidays,
+                            password,
                             created,
                             updated
         );
@@ -215,6 +233,7 @@ public class TrainerDto {
                ", events=" + events +
                ", birthdayTypes=" + birthdayTypes +
                ", holidays=" + holidays +
+               // currently password is not displayed!
                ", created=" + created +
                ", updated=" + updated +
                '}';

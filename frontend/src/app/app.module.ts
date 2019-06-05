@@ -33,6 +33,7 @@ import { CourseViewComponent } from './components/course-view/course-view.compon
 import { CourseSignComponent } from './components/course-sign/course-sign.component';
 import { LoginComponent } from './components/login/login.component';
 import { HolidaysClient } from 'src/app/rest/holidays-client';
+import { AuthenticationClient } from './rest/authentication-client';
 
 @NgModule({
     declarations: [
@@ -72,6 +73,7 @@ import { HolidaysClient } from 'src/app/rest/holidays-client';
         DateTimeParserService,
         HolidayClient,
         HolidaysClient,
+        AuthenticationClient,
     ],
     bootstrap: [AppComponent],
 })
