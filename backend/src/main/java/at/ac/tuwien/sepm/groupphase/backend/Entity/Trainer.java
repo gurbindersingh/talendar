@@ -4,6 +4,7 @@ import at.ac.tuwien.sepm.groupphase.backend.enums.BirthdayType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
@@ -15,7 +16,7 @@ import java.util.Objects;
 
 
 @Entity
-@SQLDelete(sql = "update Trainer t set t.deleted = true where t.id = ?")
+@SQLDelete(sql = "update Trainer t set t.deleted = true, t.updated = NOW() where t.id = ?")
 @Where(clause = "deleted <> true")
 public class Trainer {
 

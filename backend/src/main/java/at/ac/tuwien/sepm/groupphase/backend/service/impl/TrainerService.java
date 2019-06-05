@@ -1,6 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.persistence.EventRepository;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;
@@ -13,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,12 +33,16 @@ public class TrainerService implements ITrainerService {
     private final static Logger LOGGER = LoggerFactory.getLogger(TrainerService.class);
 
     private final TrainerRepository trainerRepository;
+    private final EventService eventService;
     private final Validator validator;
 
 
     @Autowired
-    public TrainerService(TrainerRepository trainerRepository, Validator validator) {
+    public TrainerService(TrainerRepository trainerRepository, Validator validator,
+                          EventService eventService
+    ) {
         this.trainerRepository = trainerRepository;
+        this.eventService = eventService;
         this.validator = validator;
     }
 
@@ -133,7 +140,7 @@ public class TrainerService implements ITrainerService {
             }
 
             currentVersion.setBirthday(LocalDate.MIN);
-//            currentVersion.setBirthdayTypes(null);
+            //            currentVersion.setBirthdayTypes(null);
             currentVersion.setEmail("example@example.com");
             currentVersion.setPhone("06641234567");
             currentVersion.setUpdated(timeOfUpdate);
