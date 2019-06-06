@@ -19,6 +19,7 @@ import {
     TrainerComponent,
     ConsultationComponent,
     TrainerListComponent,
+    NgbdModalConfirm,
 } from 'src/app/components';
 
 import { httpInterceptorProviders } from './http-interceptors';
@@ -30,6 +31,8 @@ import { DateTimeParserService } from './services/date-time-parser.service';
 import { HolidayClient } from 'src/app/rest/holiday-client';
 import { CancelEventComponent } from './components/cancel-event/cancel-event.component';
 import { CourseViewComponent } from './components/course-view/course-view.component';
+import { CourseSignComponent } from './components/course-sign/course-sign.component';
+import { HolidaysClient } from 'src/app/rest/holidays-client';
 
 @NgModule({
     declarations: [
@@ -45,6 +48,8 @@ import { CourseViewComponent } from './components/course-view/course-view.compon
         TrainerListComponent,
         CancelEventComponent,
         CourseViewComponent,
+        CourseSignComponent,
+        NgbdModalConfirm,
     ],
     imports: [
         AppRoutingModule,
@@ -66,7 +71,9 @@ import { CourseViewComponent } from './components/course-view/course-view.compon
         EventClient,
         DateTimeParserService,
         HolidayClient,
+        HolidaysClient,
     ],
     bootstrap: [AppComponent],
+    entryComponents: [NgbdModalConfirm],
 })
 export class AppModule {}

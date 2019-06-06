@@ -166,6 +166,16 @@ public class Validator {
             if(event.getCustomers() != null && !event.getCustomers().isEmpty()) {
                 throw new InvalidEntityException("Kundenliste ist nicht leer");
             }
+
+            try {
+                for(RoomUse r : event.getRoomUses()
+                ) {
+                    validateRoomUse(r);
+                }
+            }
+            catch(InvalidEntityException e) {
+                throw e;
+            }
         }
 
         // Validator for Rent
@@ -185,6 +195,47 @@ public class Validator {
             catch(InvalidEntityException ie) {
                 throw ie;
             }
+        }
+    }
+
+    public void validateCourseForUpdate(Event event) throws  InvalidEntityException{
+        if(event.getName() == null || event.getName().isBlank()) {
+            throw new InvalidEntityException("Name nicht gesetzt");
+        }
+        if(event.getPrice() == null) {
+            throw new InvalidEntityException("Preis ist nicht gesetzt");
+        } else if(event.getPrice() < 0) {
+            throw new InvalidEntityException("Preis ist negativ");
+        }
+
+        if(event.getMaxParticipants() == null) {
+            throw new InvalidEntityException("Maximale Teilnehmeranzahl ist nicht gesetzt");
+        } else if(event.getMaxParticipants() < 5) {
+            throw new InvalidEntityException("Maximale Teilnehmeranzahl ist kleiner als 5");
+        }
+
+        if(event.getMaxParticipants() > 30) {
+            throw new InvalidEntityException("Maximale Teilnehmeranzahl ist größer als 30");
+        }
+
+        if(event.getMinAge() == null) {
+            throw new InvalidEntityException("Minimum Alter ist nicht gesetzt");
+        }
+
+        if(event.getMaxAge() == null) {
+            throw new InvalidEntityException("Maximum Alter ist nicht gesetzt");
+        }
+
+        if(event.getMinAge() > event.getMaxAge()) {
+            throw new InvalidEntityException("Minimum Alter ist größer als maximum Alter");
+        }
+
+        if(event.getMinAge() < 5) {
+            throw new InvalidEntityException("Minimum Alter ist kleiner als 5");
+        }
+
+        if(event.getMaxAge() > 100) {
+            throw new InvalidEntityException("Maximum Alter ist größer als 100");
         }
     }
 
@@ -238,9 +289,9 @@ public class Validator {
 
         if(entity.getBirthday() == null || entity.getBirthday().isAfter(LocalDate.now())) {
             throw new InvalidEntityException("Geburtstag liegt in der Zukunft");
-        } else if(( ( LocalDate.now().getYear() - entity.getBirthday().getYear() ) <= 15 ) ||
-                  ( ( LocalDate.now().getYear() - entity.getBirthday().getYear() ) > 120 )) {
-            throw new InvalidEntityException("age must be a reasonable value");
+        } else if(( ( LocalDate.now().getYear() - entity.getBirthday().getYear() ) < 14 ) ||
+                  ( ( LocalDate.now().getYear() - entity.getBirthday().getYear() ) > 100 )) {
+            throw new InvalidEntityException("Invalides Alter gesetzt (Wertebereich 14 - 100)");
         }
 
         if(entity.getPhone() == null || !phonePattern.matcher(entity.getPhone()).find()) {

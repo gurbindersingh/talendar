@@ -3,6 +3,7 @@ package at.ac.tuwien.sepm.groupphase.backend.persistence;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
+import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -17,9 +18,8 @@ import java.util.List;
 public interface EventRepository extends JpaRepository<Event, Long> {
 
 
-    Event findByIdAndDeletedFalse(Long id);
+    Event findByIdAndDeletedFalse(Long id) throws NotFoundException;
 
-    List<Event> findByTrainer_IdAndDeletedFalse (Long id);
 
     List<Event> findByEventTypeEqualsAndDeletedFalse(EventType eventType);
 

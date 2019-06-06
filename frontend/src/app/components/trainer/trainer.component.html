@@ -41,16 +41,19 @@
                         <label for="trainerBirthday">Geburtstag</label>
                         <input
                             class="datepicker"
-                            data-date-format="mm/dd/yyyy"
+                            data-date-format="YYYY-MM-DD"
                             [(ngModel)]="birthday"
                             class="form-control"
                             name="birthday"
                             id="trainerBirthday"
                             required
                             ngbDatepicker
+                            [maxDate]="getMaxDateForBirth()"
+                            [minDate]="getMinDateForBirth()"
+                            [startDate]="getSelectionStart()"
                             (click)="varname.toggle()"
                             #varname="ngbDatepicker"
-                            placeholder="YYYY-mm-dd"
+                            placeholder="YYYY-MM-DD"
                             readonly
                         />
                     </div>
@@ -70,15 +73,18 @@
                             (click)="
                                 birthdayOptionsColumn1[
                                     option
-                                ] = !birthdayOptionsColumn1[option]
+                                ].selected = !birthdayOptionsColumn1[option]
+                                    .selected
                             "
                         >
                             <input
                                 class="custom-control-input"
                                 type="checkbox"
                                 [name]="option"
-                                [(ngModel)]="birthdayOptionsColumn1[option]"
-                                value="{{ option }}"
+                                [(ngModel)]="
+                                    birthdayOptionsColumn1[option].selected
+                                "
+                                value="{{ option.value }}"
                             />
                             <label class="custom-control-label" for="option">
                                 {{ option }} Geburtstag
@@ -92,15 +98,18 @@
                             (click)="
                                 birthdayOptionsColumn2[
                                     option
-                                ] = !birthdayOptionsColumn2[option]
+                                ].selected = !birthdayOptionsColumn2[option]
+                                    .selected
                             "
                         >
                             <input
                                 class="custom-control-input"
                                 type="checkbox"
                                 [name]="option"
-                                [(ngModel)]="birthdayOptionsColumn2[option]"
-                                value="{{ option }}"
+                                [(ngModel)]="
+                                    birthdayOptionsColumn2[option].selected
+                                "
+                                value="{{ option.value }}"
                             />
                             <label class="custom-control-label" for="option">
                                 {{ option }} Geburtstag

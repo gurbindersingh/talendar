@@ -55,7 +55,7 @@ public class EventEndpointTest {
         birthday.setTrainer(null);
         for(CustomerDto x : birthday.getCustomerDtos()) {
             x.setId(null);
-            x.setEmail("nikita2kholodnyi@gmail.com");
+            x.setEmail(fakeData.fakeEmail());
         }
         HttpEntity<EventDto> request = new HttpEntity<>(birthday);
         System.out.println(request.toString());

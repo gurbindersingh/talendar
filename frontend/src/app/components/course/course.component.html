@@ -4,7 +4,12 @@
 <div class="row">
     <div class="col-lg-3"></div>
     <div class="col-lg-6">
-        <form id="courseForm" #courseForm class="container-fluid" (change)="clearInfoMsg()">
+        <form
+            id="courseForm"
+            #courseForm
+            class="container-fluid"
+            (change)="clearInfoMsg()"
+        >
             <div class="row">
                 <div class="form-group col-lg-12">
                     <label for="name">Kursname</label>
@@ -27,7 +32,7 @@
                         class="form-control"
                         rows="4"
                         name="descriptionTextarea"
-                        [(ngModel)]="description"
+                        [(ngModel)]="event.description"
                         id="courseDescription"
                         ng-trim="false"
                         maxlength="1024"
@@ -38,16 +43,21 @@
             </div>
             <div class="row justify-content-end">
                 <div class="col-lg-2">
-                    <span>{{ description.length }}/1024</span>
+                    <span
+                        >{{
+                            event.description == undefined
+                                ? 0
+                                : event.description.length
+                        }}/1024</span
+                    >
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-2"></div>
-                <div class="form-group col-lg-4">
+                <div class="form-group col-lg-6">
                     <label for="courseMaxParticipant">Max. Teilnehmer</label>
                     <input
                         type="number"
-                        [(ngModel)]="maxParticipants"
+                        [(ngModel)]="event.maxParticipants"
                         class="form-control"
                         id="courseMaxParticipant"
                         name="maxParticipants"
@@ -58,29 +68,27 @@
                         required
                     />
                 </div>
-                <div class="form-group col-lg-4">
+                <div class="form-group col-lg-6">
                     <label for="coursePrice">Preis</label>
                     <input
                         type="number"
                         lang="en-US"
                         placeholder="0.5"
-                        [(ngModel)]="price"
+                        [(ngModel)]="event.price"
                         class="form-control"
                         id="coursePrice"
                         name="coursePrice"
                         required
                     />
                 </div>
-                <div class="col-lg-2"></div>
             </div>
             <div class="row">
-                <div class="col-lg-2"></div>
-                <div class="form-group col-lg-4">
-                    <label for="courseMinAge">Minimum Alter</label>
+                <div class="form-group col-lg-6">
+                    <label for="courseMinAge">Mindestalter</label>
                     <input
                         type="number"
                         class="form-control"
-                        [(ngModel)]="minAge"
+                        [(ngModel)]="event.minAge"
                         name="minAge"
                         id="courseMinAge"
                         step="1"
@@ -89,12 +97,12 @@
                         required
                     />
                 </div>
-                <div class="form-group col-lg-4">
-                    <label for="courseMaxAge">Maximal Alter</label>
+                <div class="form-group col-lg-6">
+                    <label for="courseMaxAge">Höchstalter</label>
                     <input
                         type="number"
                         class="form-control"
-                        [(ngModel)]="maxAge"
+                        [(ngModel)]="event.maxAge"
                         name="maxAge"
                         id="courseMaxAge"
                         step="1"
@@ -103,140 +111,135 @@
                         required
                     />
                 </div>
-                <div class="col-lg-2"></div>
             </div>
             <br />
-            <div class="row">
-                <div
-                    class="form-group col-lg-6"
-                    id="datePicker-dp-endOfApplication"
-                >
-                    <label class="col-sm-2" for="dp1">Anmeldefrist</label>
-                    <div class="input-group">
-                        <input
-                            class="form-control"
-                            placeholder="yyyy-mm-dd"
-                            name="dp1"
-                            [readOnly] = "true"
-                            [(ngModel)]="endOfApplicationDate"
-                            ngbDatepicker
-                            #d="ngbDatepicker"
-                            (click)="d.toggle()"
-                            required
-                        />
+            <div *ngIf="isCreate">
+                <div class="row">
+                    <div
+                        class="form-group col-lg-6"
+                        id="datePicker-dp-endOfApplication"
+                    >
+                        <label for="dp1">Ende der Anmeldefrist</label>
+                        <div class="input-group">
+                            <input
+                                class="form-control"
+                                placeholder="YYYY-MM-DD"
+                                name="dp1"
+                                [readOnly]="true"
+                                [(ngModel)]="endOfApplicationDate"
+                                ngbDatepicker
+                                #d="ngbDatepicker"
+                                (click)="d.toggle()"
+                                required
+                            />
+                        </div>
+                    </div>
+                    <div class="form-group col-lg-4">
+                        <ngb-timepicker
+                            [(ngModel)]="endOfApplicationTime"
+                            name="endOfApplicationTime"
+                            [minuteStep]="minuteStep"
+                            readonlyInputs="true"
+                        >
+                        </ngb-timepicker>
                     </div>
                 </div>
-                <div class="form-group col-lg-6">
-                    <ngb-timepicker
-                        [(ngModel)]="endOfApplicationTime"
-                        name="endOfApplicationTime"
-                        [minuteStep]="minuteStep"
-                        readonlyInputs="true"
-                    >
-                    </ngb-timepicker>
-                </div>
-            </div>
-            <div class="row">
-                <div class="form-group col-lg-6" id="datePicker-dp-start">
-                    <label class="col-sm-2" for="dp2">Von</label>
-                    <div class="input-group">
-                        <input
-                            class="form-control"
-                            placeholder="yyyy-mm-dd"
-                            name="dp2"
-                            [(ngModel)]="startDate"
-                            ngbDatepicker
-                            #d1="ngbDatepicker"
-                            (click)="d1.toggle()"
-                            required
-                            readonly
-                        />
+                <div class="row">
+                    <div class="form-group col-lg-6" id="datePicker-dp-start">
+                        <label for="dp2">Findet statt am</label>
+                        <div class="input-group">
+                            <input
+                                class="form-control"
+                                placeholder="YYYY-MM-DD"
+                                name="dp2"
+                                [(ngModel)]="startDate"
+                                ngbDatepicker
+                                #d1="ngbDatepicker"
+                                (click)="d1.toggle()"
+                                required
+                                readonly
+                            />
+                        </div>
                     </div>
                 </div>
-                <div class="form-group col-lg-6">
-                    <ngb-timepicker
-                        [(ngModel)]="startTime"
-                        name="startTime"
-                        [minuteStep]="minuteStep"
-                        readonlyInputs="true"
+                <div class="row">
+                    <label class="col-lg-1" id="beginLabel" for="startTime"
+                        >Von</label
                     >
-                    </ngb-timepicker>
-                </div>
-            </div>
-            <div class="row">
-                <div class="form-group col-lg-6" id="datePicker-dp-end">
-                    <label class="col-sm-2" for="dp3">Bis</label>
-                    <div class="input-group">
-                        <input
-                            class="form-control"
-                            placeholder="yyyy-mm-dd"
-                            name="dp3"
-                            [(ngModel)]="endDate"
-                            ngbDatepicker
-                            #d2="ngbDatepicker"
-                            (click)="d2.toggle()"
-                            required
-                            readonly
-                        />
+                    <div class="form-group col-lg-4">
+                        <ngb-timepicker
+                            [(ngModel)]="startTime"
+                            name="startTime"
+                            [minuteStep]="minuteStep"
+                            readonlyInputs="true"
+                        >
+                        </ngb-timepicker>
+                    </div>
+                    <label class="col-lg-1" id="endLabel" for="endTime"
+                        >Bis</label
+                    >
+                    <div class="form-group col-lg-4">
+                        <ngb-timepicker
+                            [(ngModel)]="endTime"
+                            name="endTime"
+                            [minuteStep]="minuteStep"
+                            readonlyInputs="true"
+                        >
+                        </ngb-timepicker>
                     </div>
                 </div>
-                <div class="form-group col-lg-6">
-                    <ngb-timepicker
-                        [(ngModel)]="endTime"
-                        name="endTime"
-                        [minuteStep]="minuteStep"
-                        readonlyInputs="true"
-                    >
-                    </ngb-timepicker>
+                <div class="row">
+                    <label class="col-lg-1">Raum</label>
                 </div>
-            </div>
-            <div class="row">
-                <label class="col-lg-1">Raum</label>
-            </div>
-            <div class="row" id="radioButtonRow">
-                <div
-                    class="custom-control custom-radio custom-control-inline col-lg-3"
-                >
-                    <input
-                        type="radio"
-                        id="greenRadioButton"
-                        name="customRadioInline1"
-                        class="custom-control-input"
-                        (click)="greenSelected()"
-                    />
-                    <label class="custom-control-label" for="greenRadioButton"
-                        >Grün</label
+                <div class="row" id="radioButtonRow">
+                    <div
+                        class="custom-control custom-radio custom-control-inline col-lg-3"
                     >
-                </div>
-                <div
-                    class="custom-control custom-radio custom-control-inline col-lg-3"
-                >
-                    <input
-                        type="radio"
-                        id="orangeRadioButton"
-                        name="customRadioInline1"
-                        class="custom-control-input"
-                        (click)="orangeSelected()"
-                    />
-                    <label class="custom-control-label" for="orangeRadioButton"
-                        >Orange</label
+                        <input
+                            type="radio"
+                            id="greenRadioButton"
+                            name="customRadioInline1"
+                            class="custom-control-input"
+                            (click)="greenSelected()"
+                        />
+                        <label
+                            class="custom-control-label"
+                            for="greenRadioButton"
+                            >Grün</label
+                        >
+                    </div>
+                    <div
+                        class="custom-control custom-radio custom-control-inline col-lg-3"
                     >
-                </div>
-                <div
-                    class="custom-control custom-radio custom-control-inline col-lg-3"
-                >
-                    <input
-                        type="radio"
-                        id="groundFloorRadioButton"
-                        name="customRadioInline1"
-                        class="custom-control-input"
-                        (click)="groundFloorSelected()"
-                    />
-                    <label
-                        class="custom-control-label"
-                        for="groundFloorRadioButton"
-                        >Erdgeschoss</label
+                        <input
+                            type="radio"
+                            id="orangeRadioButton"
+                            name="customRadioInline1"
+                            class="custom-control-input"
+                            (click)="orangeSelected()"
+                        />
+                        <label
+                            class="custom-control-label"
+                            for="orangeRadioButton"
+                            >Orange</label
+                        >
+                    </div>
+                    <div
+                        class="custom-control custom-radio custom-control-inline col-lg-3"
                     >
+                        <input
+                            type="radio"
+                            id="groundFloorRadioButton"
+                            name="customRadioInline1"
+                            class="custom-control-input"
+                            (click)="groundFloorSelected()"
+                        />
+                        <label
+                            class="custom-control-label"
+                            for="groundFloorRadioButton"
+                            >Erdgeschoss</label
+                        >
+                    </div>
                 </div>
             </div>
             <div class="row" *ngIf="errorMsg">
@@ -259,7 +262,7 @@
                     type="submit"
                     class="btn btn-primary col-lg-3"
                     id="couseSave"
-                    value="Erstellen"
+                    [(value)]="btnText"
                     [disabled]="!isCompleted()"
                     (click)="postMeeting(courseForm)"
                 />
