@@ -61,4 +61,8 @@ public class BeansConfiguration {
         return roomUseMapper;
     }
 
+    @Bean
+    public static PasswordEncoder configureDefaultPasswordEncoder() {
+        return new BCryptPasswordEncoder(10);
+    }
 }

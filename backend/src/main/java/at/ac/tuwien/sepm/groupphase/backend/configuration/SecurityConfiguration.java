@@ -10,6 +10,7 @@ import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -34,6 +35,7 @@ import java.util.Map;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
+@Profile({"production", "development"})
 public class SecurityConfiguration {
 
 
@@ -49,6 +51,7 @@ public class SecurityConfiguration {
     }
 
     @Configuration
+    @Profile({"production", "development"})
     @Order(SecurityProperties.BASIC_AUTH_ORDER)
     private static class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
@@ -140,12 +143,6 @@ public class SecurityConfiguration {
             authenticationProvider.setPasswordEncoder(passwordEncoder);
             return authenticationProvider;
         }
-
-        @Bean
-        public static PasswordEncoder configureDefaultPasswordEncoder() {
-            return new BCryptPasswordEncoder(10);
-        }
-
     }
 
     @Configuration
