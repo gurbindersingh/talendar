@@ -22,6 +22,7 @@ import org.aspectj.weaver.ast.Not;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
 
 import org.slf4j.Logger;
@@ -50,6 +51,7 @@ public class EventService implements IEventService {
     private final Validator validator;
     private final TrainerRepository trainerRepository;
     private final HolidayRepository holidayRepository;
+    private final InfoMail infoMail;
 
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -57,13 +59,14 @@ public class EventService implements IEventService {
     @Autowired
     public EventService (EventRepository eventRepository, Validator validator,
                          RoomUseRepository roomUseRepository, TrainerRepository trainerRepository,
-                         HolidayRepository holidayRepository
+                         HolidayRepository holidayRepository, InfoMail infoMail
     ) {
         this.eventRepository = eventRepository;
         this.validator = validator;
         this.roomUseRepository = roomUseRepository;
         this.trainerRepository = trainerRepository;
         this.holidayRepository = holidayRepository;
+        this.infoMail = infoMail;
     }
 
 
@@ -124,7 +127,7 @@ public class EventService implements IEventService {
                           sendCancelationMail(c.getEmail(), event, c);
                       }
                       LOGGER.info("Sending information mail to admin");
-                      sendAdminInfoMail(event, "Neuer Geburtstag");
+                      infoMail.sendAdminEventInfoMail(event, "Neuer Geburtstag", "newEvent");
                       return event;
                   }
                   catch(InvalidEntityException e) {
@@ -152,7 +155,7 @@ public class EventService implements IEventService {
                     }
                     try{
                         LOGGER.info("Sending information mail to admin");
-                        sendAdminInfoMail(event, "Neuer Kurs");
+                        infoMail.sendAdminEventInfoMail(event, "Neuer Kurs", "newEvent");
                     }catch(EmailException e){
 
                     }
@@ -184,7 +187,7 @@ public class EventService implements IEventService {
                         sendCancelationMail(c.getEmail(), event, c);
                     }
                     LOGGER.info("Sending information mail to admin");
-                    sendAdminInfoMail(event, "Neue Raummiete");
+                    infoMail.sendAdminEventInfoMail(event, "Neue Raummiete", "newEvent");
                     return event;
 
                 }
@@ -214,7 +217,7 @@ public class EventService implements IEventService {
                         sendCancelationMail(c.getEmail(), event, c);
                     }
                     LOGGER.info("Sending information mail to admin");
-                    sendAdminInfoMail(event, "Neuer Beratungstermin");
+                    infoMail.sendAdminEventInfoMail(event, "Neuer Beratungstermin", "newEvent");
                     return event;
                 }
                 catch(InvalidEntityException e) {
@@ -503,8 +506,16 @@ public class EventService implements IEventService {
 
 
     @Override
-    public void deleteEvent(Long id){
+    public void deleteEvent(Long id) {
+        Event event = eventRepository.getOne(id);
         eventRepository.deleteThisEvent(id);
+        if(event!=null){
+            try {
+                infoMail.sendAdminEventInfoMail(event, "Event storniert", "deleteEvent");
+            }catch(EmailException e){
+                LOGGER.error("Unable to send InfoMail to admin about deleted event");
+            }
+        }
     }
 
 
@@ -706,43 +717,5 @@ public class EventService implements IEventService {
                 return "einen Kurs";
         }
         return "";
-    }
-
-    public void sendAdminInfoMail(Event event, String subject) throws EmailException{
-        //TODO: Edit adminadresse to be the actual adminadresse.
-        String to = "admin@admin.admin";
-
-        String from = "testingsepmstuffqse25@gmail.com";
-        String password = "This!is!a!password!";
-        String host = "smtp.gmail.com";
-        Properties props = System.getProperties();
-        props.put("mail.smtp.user", from);
-        props.put("mail.smtp.pwd", password);
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
-        props.put("mail.smtp.starttls.enable","true");
-        props.put("mail.smtp.auth", "true");
-        Session session = Session.getDefaultInstance(props);
-
-        try{
-            MimeMessage mimeMessage = new MimeMessage(session);
-            mimeMessage.setFrom(new InternetAddress(from));
-            mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
-
-            mimeMessage.setSubject("Änderung im System: " + subject);
-            mimeMessage.setText("Hallo!\n\nEs wurde ein neues Event erstellt!\n Das Event: "
-                + event.getName() + ", das am " + event.getRoomUses().get(0).getBegin().format(formatter) +
-                                " stattfinded, befinded sich ab jetzt im Talender!\n\n Mit freundlichen Grüßen,\nIhr Talenderteam!");
-
-            Transport transport = session.getTransport("smtp");
-            transport.connect(host, 587, from, password);
-            transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
-            transport.close();
-
-
-        }catch(MessagingException e){
-            throw new EmailException(" " + e.getMessage());
-        }
-
     }
 }
