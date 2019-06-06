@@ -16,7 +16,6 @@ import java.util.Objects;
 
 
 @Entity
-@SQLDelete(sql = "update Trainer t set t.deleted = true, t.updated = NOW() where t.id = ?")
 @Where(clause = "deleted <> true")
 public class Trainer {
 
@@ -27,27 +26,27 @@ public class Trainer {
 
     @NotBlank
     @Column(nullable = false)
-    private String        firstName;
+    private String firstName;
     @NotBlank
     @Column(nullable = false)
-    private String        lastName;
+    private String lastName;
     @NotNull
     @Past
     @Column(nullable = false)
-    private LocalDate     birthday;
+    private LocalDate birthday;
     @NotBlank
     @Pattern(regexp = "^[+]*[(]{0,1}[0-9]{1,5}[)]{0,1}[-\\s\\./0-9]*$")
     @Column(nullable = false)
-    private String        phone;
+    private String phone;
     @NotBlank
     @Email
     @Column(nullable = false)
-    private String        email;
+    private String email;
     @OneToMany(mappedBy = "trainer", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    private List<Event>   events;
+    private List<Event> events;
     @ElementCollection
     @CollectionTable(name = "birthday_types", joinColumns = { @JoinColumn(name = "trainer_id") })
-    private List<String>  birthdayTypes;
+    private List<String> birthdayTypes;
     @OneToMany(mappedBy = "trainer",
                cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private List<Holiday> holidays;
@@ -66,22 +65,22 @@ public class Trainer {
     private boolean deleted;
 
 
-    public Trainer () {
+    public Trainer() {
 
     }
 
 
-    public Trainer (Long id,
-                    @NotBlank String firstName,
-                    @NotBlank String lastName,
-                    @NotNull @Past LocalDate birthday,
-                    @NotBlank @Pattern(regexp = "^[+]*[(]{0,1}[0-9]{1,5}[)]{0,1}[-\\s\\./0-9]*$") String phone,
-                    @NotBlank @Email String email,
-                    List<Event> events,
-                    List<Holiday> holidays,
-                    @NotNull List<String> birthdayTypes,
-                    @NotNull @Past LocalDateTime created,
-                    @NotNull @Past LocalDateTime updated
+    public Trainer(Long id,
+                   @NotBlank String firstName,
+                   @NotBlank String lastName,
+                   @NotNull @Past LocalDate birthday,
+                   @NotBlank @Pattern(regexp = "^[+]*[(]{0,1}[0-9]{1,5}[)]{0,1}[-\\s\\./0-9]*$") String phone,
+                   @NotBlank @Email String email,
+                   List<Event> events,
+                   List<Holiday> holidays,
+                   @NotNull List<String> birthdayTypes,
+                   @NotNull @Past LocalDateTime created,
+                   @NotNull @Past LocalDateTime updated
     ) {
         this.id = id;
         this.firstName = firstName;
@@ -98,112 +97,112 @@ public class Trainer {
     }
 
 
-    public Long getId () {
+    public Long getId() {
         return id;
     }
 
 
-    public void setId (Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
 
-    public String getFirstName () {
+    public String getFirstName() {
         return firstName;
     }
 
 
-    public void setFirstName (String firstName) {
+    public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
 
-    public String getLastName () {
+    public String getLastName() {
         return lastName;
     }
 
 
-    public void setLastName (String lastName) {
+    public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
 
-    public LocalDate getBirthday () {
+    public LocalDate getBirthday() {
         return birthday;
     }
 
 
-    public void setBirthday (LocalDate birthday) {
+    public void setBirthday(LocalDate birthday) {
         this.birthday = birthday;
     }
 
 
-    public String getPhone () {
+    public String getPhone() {
         return phone;
     }
 
 
-    public void setPhone (String phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 
 
-    public String getEmail () {
+    public String getEmail() {
         return email;
     }
 
 
-    public void setEmail (String email) {
+    public void setEmail(String email) {
         this.email = email;
     }
 
 
-    public List<Event> getEvents () {
+    public List<Event> getEvents() {
         return events;
     }
 
 
-    public void setEvents (List<Event> events) {
+    public void setEvents(List<Event> events) {
         this.events = events;
     }
 
 
-    public List<String> getBirthdayTypes () {
+    public List<String> getBirthdayTypes() {
         return birthdayTypes;
     }
 
 
-    public List<Holiday> getHolidays () {
+    public List<Holiday> getHolidays() {
         return holidays;
     }
 
 
-    public void setHolidays (List<Holiday> holidays) {
+    public void setHolidays(List<Holiday> holidays) {
         this.holidays = holidays;
     }
 
 
-    public void setBirthdayTypes (List<String> birthdayTypes) {
+    public void setBirthdayTypes(List<String> birthdayTypes) {
         this.birthdayTypes = birthdayTypes;
     }
 
 
-    public LocalDateTime getCreated () {
+    public LocalDateTime getCreated() {
         return created;
     }
 
 
-    public void setCreated (LocalDateTime created) {
+    public void setCreated(LocalDateTime created) {
         this.created = created;
     }
 
 
-    public LocalDateTime getUpdated () {
+    public LocalDateTime getUpdated() {
         return updated;
     }
 
 
-    public void setUpdated (LocalDateTime updated) {
+    public void setUpdated(LocalDateTime updated) {
         this.updated = updated;
     }
 
@@ -216,6 +215,7 @@ public class Trainer {
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
+
 
     @PreRemove
     public void deleteUser() {
