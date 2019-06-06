@@ -6,6 +6,7 @@ import at.ac.tuwien.sepm.groupphase.backend.persistence.EventRepository;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;
+import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.Validator;
@@ -35,15 +36,17 @@ public class TrainerService implements ITrainerService {
     private final TrainerRepository trainerRepository;
     private final EventService eventService;
     private final Validator validator;
+    private final InfoMail infoMail;
 
 
     @Autowired
     public TrainerService(TrainerRepository trainerRepository, Validator validator,
-                          EventService eventService
+                          EventService eventService, InfoMail infoMail
     ) {
         this.trainerRepository = trainerRepository;
         this.eventService = eventService;
         this.validator = validator;
+        this.infoMail = infoMail;
     }
 
 
@@ -70,7 +73,13 @@ public class TrainerService implements ITrainerService {
         }
 
         try {
-            return trainerRepository.save(trainer);
+            Trainer t = trainerRepository.save(trainer);
+            try {
+                infoMail.sendAdminTrainerInfoMail(t, "Neuer Trainer erstellt", "newTrainer");
+            } catch(EmailException e){
+                LOGGER.error("Error trying to send new trainer info mail to admin");
+            }
+            return t;
         }
         catch(DataAccessException e) { //catch specific exceptions
             throw new ServiceException("Error while performing a data access operation", e);
@@ -151,6 +160,11 @@ public class TrainerService implements ITrainerService {
                 }
             }
             trainerRepository.deleteThisTrainer(currentVersion.getId(), timeOfUpdate);
+            try{
+                infoMail.sendAdminTrainerInfoMail(currentVersion, "Trainer gelöscht", "deleteTrainer");
+            } catch(EmailException e){
+                LOGGER.error("Error trying to send delete trainer info mail to admin");
+            }
         }
         catch(DataAccessException e) {
             throw new ServiceException(
