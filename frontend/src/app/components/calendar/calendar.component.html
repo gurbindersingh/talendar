@@ -87,7 +87,15 @@
 
         <div ngbDropdown class="pb-3 mx-2">
             <button
-                class="btn btn-outline-primary"
+                class="btn"
+                [class.btn-outline-primary]="
+                    roomSelection === undefined ||
+                    roomSelection.value === undefined
+                "
+                [class.btn-primary]="
+                    roomSelection !== undefined &&
+                    roomSelection.value !== undefined
+                "
                 id="roomFilterBtn"
                 name="roomFilter"
                 ngbDropdownToggle
@@ -114,7 +122,9 @@
         </div>
         <div ngbDropdown class="pb-3 mx-2">
             <button
-                class="col-auto btn btn-outline-primary"
+                class="col-auto btn"
+                [class.btn-outline-primary]="trainerSelection === undefined"
+                [class.btn-primary]="trainerSelection !== undefined"
                 id="trainerFilterBtn"
                 name="trainerFilter"
                 ngbDropdownToggle
@@ -133,13 +143,21 @@
                     *ngFor="let trainer of trainerList"
                     (click)="trainerSelection = trainer; updateView()"
                 >
-                    {{ trainer !== undefined ? trainer : 'Reset' }}
+                    {{ trainer !== undefined ? trainer : 'Kein Filter' }}
                 </button>
             </div>
         </div>
         <div ngbDropdown class="pb-3 mx-2">
             <button
-                class="col-auto btn btn-outline-primary"
+                class="col-auto btn"
+                [class.btn-outline-primary]="
+                    eventTypeSelection === undefined ||
+                    eventTypeSelection.value === undefined
+                "
+                [class.btn-primary]="
+                    eventTypeSelection !== undefined &&
+                    eventTypeSelection.value !== undefined
+                "
                 id="eventtypeFilterBtn"
                 name="eventtypeFilter"
                 ngbDropdownToggle
@@ -213,7 +231,15 @@
             >
                 <div ngbDropdown class="mr-1">
                     <button
-                        class="btn btn-outline-primary"
+                        class="btn"
+                        [class.btn-outline-primary]="
+                            bdTypeSelection === undefined ||
+                            bdTypeSelection.value === undefined
+                        "
+                        [class.btn-primary]="
+                            bdTypeSelection !== undefined &&
+                            bdTypeSelection.value !== undefined
+                        "
                         id="bdTypeFilterBtn"
                         name="bdTypeFilter"
                         ngbDropdownToggle
