@@ -145,7 +145,12 @@ public class TrainerService implements ITrainerService {
             currentVersion.setPhone("06641234567");
             currentVersion.setUpdated(timeOfUpdate);
 
-            trainerRepository.delete(currentVersion);
+            if (!(currentVersion.getEvents() == null || currentVersion.getEvents().isEmpty())) {
+                for(Event e : currentVersion.getEvents()) {
+                    eventService.deleteEvent(e.getId());
+                }
+            }
+            trainerRepository.deleteThisTrainer(currentVersion.getId(), timeOfUpdate);
         }
         catch(DataAccessException e) {
             throw new ServiceException(
