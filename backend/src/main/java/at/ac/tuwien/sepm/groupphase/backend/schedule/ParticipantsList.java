@@ -1,16 +1,15 @@
 package at.ac.tuwien.sepm.groupphase.backend.schedule;
 
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.BackendException;
 import at.ac.tuwien.sepm.groupphase.backend.rest.EventEndpoint;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.CustomerDto;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.EventDto;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
-import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
+import com.lowagie.text.*;
+import com.lowagie.text.Font;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +20,8 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import java.awt.*;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -63,8 +62,8 @@ public class ParticipantsList {
                 }
             }
 
-            Font headlineFont = FontFactory.getFont(FontFactory.COURIER, 20, BaseColor.BLACK);
-            Font listFont = FontFactory.getFont(FontFactory.COURIER, 14, BaseColor.BLACK);
+            Font headlineFont = FontFactory.getFont(FontFactory.COURIER, 20, Color.BLACK);
+            Font listFont = FontFactory.getFont(FontFactory.COURIER, 14, Color.BLACK);
             Paragraph chunkHead;
             PdfPTable table = new PdfPTable(4);
             table.setSpacingAfter(11f);
