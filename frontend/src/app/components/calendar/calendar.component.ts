@@ -57,14 +57,14 @@ export class CalendarComponent implements OnInit {
         { name: 'Grün', value: 'Green' },
         { name: 'Orange', value: 'Orange' },
         { name: 'Erdgeschoss', value: 'GroundFloor' },
-        { name: 'Reset', value: undefined },
+        { name: 'Kein Filter', value: undefined },
     ];
     eventTypes: any[] = [
         { name: 'Kurs', value: 'Course' },
         { name: 'Beratung', value: 'Consultation' },
         { name: 'Geburtstag', value: 'Birthday' },
         { name: 'Miete', value: 'Rent' },
-        { name: 'Reset', value: undefined },
+        { name: 'Kein Filter', value: undefined },
     ];
     bdTypes: any[] = [
         { name: 'Trockeneis Geburtstag', value: 'DryIce' },
@@ -72,7 +72,7 @@ export class CalendarComponent implements OnInit {
         { name: 'Superhelden Geburtstag', value: 'Superhero' },
         { name: 'Photo Geburtstag', value: 'Photo' },
         { name: 'Malen Geburtstag', value: 'Painting' },
-        { name: 'Reset', value: undefined },
+        { name: 'Kein Filter', value: undefined },
     ];
     trainerList: string[] = [];
     trainers: Trainer[] = [];
