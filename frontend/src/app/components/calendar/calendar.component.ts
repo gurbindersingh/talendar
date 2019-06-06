@@ -32,7 +32,7 @@ export class CalendarComponent implements OnInit {
     calendarView = CalendarView;
     dayEndHour = 20;
     dayEndMinute = 0;
-    daysInWeek: number | null = null;
+    daysInWeek: 1 | 3 | null = null;
     dayStartHour = 8;
     dayStartMinute = 0;
     // list of all loaded events
@@ -94,8 +94,6 @@ export class CalendarComponent implements OnInit {
             this.daysInWeek = 3;
         } else if (screen.width < BREAKPOINTS.small) {
             this.daysInWeek = 1;
-        } else {
-            this.daysInWeek = 7;
         }
     }
 
@@ -118,7 +116,10 @@ export class CalendarComponent implements OnInit {
         });
     }
 
-    toggleView(view: CalendarView, daysInWeek: number) {
+    /**
+     *
+     */
+    toggleView(view: CalendarView, daysInWeek: 1 | 3 | null = null) {
         this.view = view;
         this.daysInWeek = daysInWeek;
     }

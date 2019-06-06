@@ -11,8 +11,10 @@
             </button>
             <button
                 class="btn btn-primary px-4"
-                (click)="toggleView(calendarView.Week, 7)"
-                [class.active]="view === calendarView.Week && daysInWeek === 7"
+                (click)="toggleView(calendarView.Week)"
+                [class.active]="
+                    view === calendarView.Week && daysInWeek === null
+                "
             >
                 Woche
             </button>
