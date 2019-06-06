@@ -123,6 +123,8 @@ public class EventService implements IEventService {
                       ) {
                           sendCancelationMail(c.getEmail(), event, c);
                       }
+                      LOGGER.info("Sending information mail to admin");
+                      sendAdminInfoMail(event, "Neuer Geburtstag");
                       return event;
                   }
                   catch(InvalidEntityException e) {
@@ -147,6 +149,12 @@ public class EventService implements IEventService {
                             e.getMessage(),
                             e
                         );
+                    }
+                    try{
+                        LOGGER.info("Sending information mail to admin");
+                        sendAdminInfoMail(event, "Neuer Kurs");
+                    }catch(EmailException e){
+
                     }
                     return eventRepository.save(event);
 
@@ -175,6 +183,8 @@ public class EventService implements IEventService {
                     ) {
                         sendCancelationMail(c.getEmail(), event, c);
                     }
+                    LOGGER.info("Sending information mail to admin");
+                    sendAdminInfoMail(event, "Neue Raummiete");
                     return event;
 
                 }
@@ -203,6 +213,8 @@ public class EventService implements IEventService {
                     ) {
                         sendCancelationMail(c.getEmail(), event, c);
                     }
+                    LOGGER.info("Sending information mail to admin");
+                    sendAdminInfoMail(event, "Neuer Beratungstermin");
                     return event;
                 }
                 catch(InvalidEntityException e) {
@@ -694,5 +706,43 @@ public class EventService implements IEventService {
                 return "einen Kurs";
         }
         return "";
+    }
+
+    public void sendAdminInfoMail(Event event, String subject) throws EmailException{
+        //TODO: Edit adminadresse to be the actual adminadresse.
+        String to = "admin@admin.admin";
+
+        String from = "testingsepmstuffqse25@gmail.com";
+        String password = "This!is!a!password!";
+        String host = "smtp.gmail.com";
+        Properties props = System.getProperties();
+        props.put("mail.smtp.user", from);
+        props.put("mail.smtp.pwd", password);
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+        props.put("mail.smtp.starttls.enable","true");
+        props.put("mail.smtp.auth", "true");
+        Session session = Session.getDefaultInstance(props);
+
+        try{
+            MimeMessage mimeMessage = new MimeMessage(session);
+            mimeMessage.setFrom(new InternetAddress(from));
+            mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
+
+            mimeMessage.setSubject("Änderung im System: " + subject);
+            mimeMessage.setText("Hallo!\n\nEs wurde ein neues Event erstellt!\n Das Event: "
+                + event.getName() + ", das am " + event.getRoomUses().get(0).getBegin().format(formatter) +
+                                " stattfinded, befinded sich ab jetzt im Talender!\n\n Mit freundlichen Grüßen,\nIhr Talenderteam!");
+
+            Transport transport = session.getTransport("smtp");
+            transport.connect(host, 587, from, password);
+            transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
+            transport.close();
+
+
+        }catch(MessagingException e){
+            throw new EmailException(" " + e.getMessage());
+        }
+
     }
 }
