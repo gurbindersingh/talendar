@@ -46,7 +46,7 @@ public class RedactInactiveTrainers {
         for(int i = 0; i < redactThese.size(); i++) {
             redactThese.get(i).setPhone("redacted");
             redactThese.get(i).setBirthday(LocalDate.of(0, 0, 0));
-            redactThese.get(i).setEmail("redacted");
+            redactThese.get(i).setEmail("redacted@redacted.at");
             redactThese.get(i).setLastName("redacted");
             redactThese.get(i).setFirstName("redacted");
         }
