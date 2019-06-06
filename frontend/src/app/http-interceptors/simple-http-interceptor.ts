@@ -3,6 +3,7 @@ import {
     HttpInterceptor,
     HttpHandler,
     HttpEvent,
+    HttpErrorResponse,
 } from '@angular/common/http';
 import { Observable, EMPTY, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -26,11 +27,10 @@ export class SimpleHttpInterceptor implements HttpInterceptor {
             console.log('Interceptor: Token = ' + token);
 
             return next.handle(authReq).pipe(
-                catchError((error, caught) => {
-                    /**
-                     * What to do in error case actually?
-                     */
-                    console.log('Intercepting HTTP request caused exception');
+                catchError((error: HttpErrorResponse, caught) => {
+                    if (error.status === 401) {
+                        location.pathname = '/login';
+                    }
                     throw error;
                 })
             );
