@@ -16,12 +16,7 @@ export class NavigationComponent implements OnInit {
         {
             name: 'Login',
             path: 'login',
-            restriction: Authorities.NONE,
-        },
-        {
-            name: 'Logout',
-            path: 'calendar?logout',
-            restriction: Authorities.AUTHENTICATED,
+            restriction: Authorities.UNAUTHENTICATED,
         },
         {
             name: 'Kalender anzeigen',
@@ -68,11 +63,19 @@ export class NavigationComponent implements OnInit {
             path: 'course/view',
             restriction: Authorities.ADMIN,
         },
+        {
+            name: 'Logout',
+            path: 'calendar?logout',
+            restriction: Authorities.AUTHENTICATED,
+        },
     ];
 
     contextNavLinks: { name: string; path: string; restriction: Authorities }[];
 
     showMenu = false;
+
+    // template properties
+    authority: string;
 
     // status of user who visits this page
     user: UserDetails;
@@ -84,10 +87,11 @@ export class NavigationComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.contextNavLinks = this.navLinks;
+        /* this.contextNavLinks = this.navLinks;
         this.contextNavLinks = this.contextNavLinks.filter((elem) =>
             this.isAccessible(elem)
-        );
+        );*/
+        this.updateNavigation();
 
         this.internalUpdateService.loginStatusChanges$.subscribe((update) => {
             this.updateNavigation();
@@ -108,6 +112,11 @@ export class NavigationComponent implements OnInit {
         if (navLink.restriction === Authorities.NONE) {
             return true;
         }
+
+        if (navLink.restriction === Authorities.UNAUTHENTICATED) {
+            return !this.authenticationService.isLoggedIn;
+        }
+
         if (navLink.restriction === Authorities.ADMIN) {
             if (this.user == null) {
                 return false;
@@ -163,6 +172,11 @@ export class NavigationComponent implements OnInit {
                     this.contextNavLinks = this.contextNavLinks.filter((elem) =>
                         this.isAccessible(elem)
                     );
+                    if (this.user.roles.includes(Authorities.ADMIN)) {
+                        this.authority = 'Admin';
+                    } else {
+                        this.authority = 'Betreuer';
+                    }
                 },
                 (error: Error) => {
                     console.log(error.message);
@@ -173,6 +187,7 @@ export class NavigationComponent implements OnInit {
             this.contextNavLinks = this.contextNavLinks.filter((elem) =>
                 this.isAccessible(elem)
             );
+            this.authority = 'Gast';
         }
     }
 }

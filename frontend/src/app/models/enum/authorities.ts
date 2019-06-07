@@ -3,5 +3,6 @@ export enum Authorities {
     ADMIN = 'ADMIN',
     // simply autentication needed, no matter which specific role
     AUTHENTICATED = 'AUTHENTICATED',
+    UNAUTHENTICATED = 'UNAUTHENTICATED',
     NONE = 'NONE',
 }

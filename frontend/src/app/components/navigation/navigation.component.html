@@ -13,6 +13,19 @@
         <i class="fas fa-bars"></i>
     </div>
 
+    <div id="loggedInInfo">
+        <div id="icon">
+            <i class="fas fa-user fa-3x"></i>
+        </div>
+        <div id="userLabels">
+            <span>Rolle: {{ authority }}</span>
+            <br />
+            <span>
+                <span *ngIf="user != null">{{ user.email }}</span>
+            </span>
+        </div>
+    </div>
+
     <div
         id="nav-items"
         class="navbar-nav overlay"

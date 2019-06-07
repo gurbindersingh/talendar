@@ -1,4 +1,4 @@
 export class UserDetails {
-    public username: string;
+    public email: string;
     public roles: string[];
 }
