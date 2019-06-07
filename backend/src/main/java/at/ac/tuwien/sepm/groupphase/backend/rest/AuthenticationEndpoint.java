@@ -1,8 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest;
 
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.authentication.AuthenticationRequest;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.authentication.AuthenticationToken;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.authentication.AuthenticationTokenInfo;
+import at.ac.tuwien.sepm.groupphase.backend.rest.dto.authentication.AuthenticationRequest;
+import at.ac.tuwien.sepm.groupphase.backend.rest.dto.authentication.AuthenticationToken;
+import at.ac.tuwien.sepm.groupphase.backend.rest.dto.authentication.AuthenticationTokenInfo;
 import at.ac.tuwien.sepm.groupphase.backend.security.AuthenticationConstants;
 import at.ac.tuwien.sepm.groupphase.backend.service.HeaderTokenAuthenticationService;
 import at.ac.tuwien.sepm.groupphase.backend.service.impl.SimpleHeaderTokenAuthenticationService;

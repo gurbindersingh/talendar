@@ -1,7 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.authentication.AuthenticationToken;
-import at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.authentication.AuthenticationTokenInfo;
+import at.ac.tuwien.sepm.groupphase.backend.rest.dto.authentication.AuthenticationToken;
+import at.ac.tuwien.sepm.groupphase.backend.rest.dto.authentication.AuthenticationTokenInfo;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 

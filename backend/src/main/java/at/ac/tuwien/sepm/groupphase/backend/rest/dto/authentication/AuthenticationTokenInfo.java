@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm.groupphase.backend.endpoint.dto.authentication;
+package at.ac.tuwien.sepm.groupphase.backend.rest.dto.authentication;
 
 import io.swagger.annotations.ApiModel;
 
