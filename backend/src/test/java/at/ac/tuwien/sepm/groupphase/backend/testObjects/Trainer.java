@@ -19,6 +19,7 @@ public class Trainer extends at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer
     List<Event> events;
     private LocalDateTime created;
     private LocalDateTime updated;
+    private Boolean deleted;
 
     public Trainer() {
 
@@ -35,6 +36,7 @@ public class Trainer extends at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer
         this.updated = updated;
         this.birthdayTypes = birthdayTypes;
         this.events = events;
+        this.deleted = false;
     }
 
 
@@ -142,39 +144,58 @@ public class Trainer extends at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer
     }
 
 
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
+
+
     @Override
-    public boolean equals (Object o) {
+    public boolean equals(Object o) {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
+        if(!super.equals(o)) return false;
         Trainer trainer = (Trainer) o;
         return Objects.equals(id, trainer.id) &&
-            Objects.equals(firstName, trainer.firstName) &&
-            Objects.equals(lastName, trainer.lastName) &&
-            Objects.equals(birthday, trainer.birthday) &&
-            Objects.equals(phone, trainer.phone) &&
-            Objects.equals(email, trainer.email) &&
-            Objects.equals(created, trainer.created) &&
-            Objects.equals(updated, trainer.updated);
+               Objects.equals(firstName, trainer.firstName) &&
+               Objects.equals(lastName, trainer.lastName) &&
+               Objects.equals(birthday, trainer.birthday) &&
+               Objects.equals(phone, trainer.phone) &&
+               Objects.equals(email, trainer.email) &&
+               Objects.equals(birthdayTypes, trainer.birthdayTypes) &&
+               Objects.equals(events, trainer.events) &&
+               Objects.equals(created, trainer.created) &&
+               Objects.equals(updated, trainer.updated) &&
+               Objects.equals(deleted, trainer.deleted);
     }
 
 
     @Override
-    public int hashCode () {
-        return Objects.hash(id, firstName, lastName, birthday, phone, email, created, updated);
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), id, firstName, lastName, birthday, phone, email,
+                            birthdayTypes, events, created, updated, deleted
+        );
     }
 
 
     @Override
-    public String toString () {
+    public String toString() {
         return "Trainer{" +
-            "id=" + id +
-            ", firstName='" + firstName + '\'' +
-            ", lastName='" + lastName + '\'' +
-            ", birthday=" + birthday +
-            ", phone='" + phone + '\'' +
-            ", email='" + email + '\'' +
-            ", created=" + created +
-            ", updated=" + updated +
-            '}';
+               "id=" + id +
+               ", firstName='" + firstName + '\'' +
+               ", lastName='" + lastName + '\'' +
+               ", birthday=" + birthday +
+               ", phone='" + phone + '\'' +
+               ", email='" + email + '\'' +
+               ", birthdayTypes=" + birthdayTypes +
+               ", events=" + events +
+               ", created=" + created +
+               ", updated=" + updated +
+               ", deleted=" + deleted +
+               '}';
     }
 }

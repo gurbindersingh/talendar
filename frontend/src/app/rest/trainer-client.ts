@@ -49,4 +49,10 @@ export class TrainerClient extends RestClient {
             trainer
         );
     }
+
+    public deleteTrainer(id: number): Observable<Trainer> {
+        return super.delete((error: HttpErrorResponse) => {
+            console.log('HTTP DELETE Trainer Failed: ' + error.message);
+        }, '/' + id);
+    }
 }

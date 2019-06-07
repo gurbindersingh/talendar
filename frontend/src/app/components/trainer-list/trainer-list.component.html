@@ -40,13 +40,22 @@
             <!-- for more details admin can go to profile site of trainer (same infos, plus trainer related content like hosted events) -->
             <div class="mb-4 mt-2">
                 <button type="button" class="btn">
-                    <i class="fas fa-user fa-3x"></i>
+                    <i class="fas fa-user fa-2x"></i>
                 </button>
             </div>
             <!-- -->
-            <div [routerLink]="['/trainer']" [queryParams]="{ id: trainer.id }">
+            <div
+                class="mb-4 mt-2"
+                [routerLink]="['/trainer']"
+                [queryParams]="{ id: trainer.id }"
+            >
                 <button type="button" class="btn">
-                    <i class="fas fa-pencil-alt fa-3x"></i>
+                    <i class="fas fa-pencil-alt fa-2x"></i>
+                </button>
+            </div>
+            <div>
+                <button type="button" class="btn" (click)="open(trainer)">
+                    <i class="fas fa-trash fa-2x"></i>
                 </button>
             </div>
         </div>

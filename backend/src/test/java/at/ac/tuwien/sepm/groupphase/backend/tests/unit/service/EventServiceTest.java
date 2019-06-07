@@ -111,8 +111,8 @@ public class EventServiceTest {
         assertEquals(updatedEvent.getCustomers().size(), 1);
 
         Customer newCustomer2 = faker.fakeCustomerEntity();
+        customers = new HashSet<>();
         newCustomer2.setId(null);
-        customers.add(newCustomer);
         customers.add(newCustomer2);
         updatedEvent.setCustomers(customers);
 
@@ -121,9 +121,8 @@ public class EventServiceTest {
         assertEquals(updatedEvent.getCustomers().size(), 2);
 
         Customer newCustomer3 = faker.fakeCustomerEntity();
+        customers = new HashSet<>();
         newCustomer3.setId(null);
-        customers.add(newCustomer);
-        customers.add(newCustomer2);
         customers.add(newCustomer3);
         updatedEvent.setCustomers(customers);
 
@@ -150,9 +149,6 @@ public class EventServiceTest {
         assertEquals(updatedEvent.getName(), event.getName());
         assertEquals(updatedEvent.getCustomers().size(), 1);
 
-        Set<Customer> emptyCustomerList = new HashSet<>();
-        updatedEvent.setCustomers(emptyCustomerList);
-
         eventService.updateCustomers(updatedEvent);
         updatedEvent = eventService.getEventById(VALID_INCOMING_COURSE.getId());
         assertEquals(updatedEvent.getCustomers().size(), 0);
@@ -176,9 +172,9 @@ public class EventServiceTest {
         assertEquals(updatedEvent.getName(), event.getName());
         assertEquals(updatedEvent.getCustomers().size(), 1);
 
+        customers = new HashSet<>();
         Customer newCustomer2 = faker.fakeCustomerEntity();
         newCustomer2.setId(null);
-        customers.add(newCustomer);
         customers.add(newCustomer2);
         updatedEvent.setCustomers(customers);
 
@@ -187,18 +183,23 @@ public class EventServiceTest {
         assertEquals(updatedEvent.getCustomers().size(), 2);
 
 
-        Set<Customer> oneCustomerInList = new HashSet<>();
-        oneCustomerInList.add(newCustomer);
+        customers = new HashSet<>();
+        int i = 0;
+        for(Customer x : updatedEvent.getCustomers()){
+            if(i == 1){
+                break;
+            }
+            customers.add(x);
+            i++;
+        }
 
-        updatedEvent.setCustomers(oneCustomerInList);
+        updatedEvent.setCustomers(customers);
         eventService.updateCustomers(updatedEvent);
 
 
         updatedEvent = eventService.getEventById(VALID_INCOMING_COURSE.getId());
         assertEquals(updatedEvent.getCustomers().size(), 1);
 
-        Set<Customer> emptyCustomerList = new HashSet<>();
-        updatedEvent.setCustomers(emptyCustomerList);
 
         eventService.updateCustomers(updatedEvent);
         updatedEvent = eventService.getEventById(VALID_INCOMING_COURSE.getId());

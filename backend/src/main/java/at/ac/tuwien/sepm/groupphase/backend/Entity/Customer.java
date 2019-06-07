@@ -123,8 +123,7 @@ public class Customer {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
         Customer customer = (Customer) o;
-        return Objects.equals(id, customer.id) &&
-            Objects.equals(email, customer.email) &&
+        return Objects.equals(email, customer.email) &&
             Objects.equals(phone, customer.phone) &&
             Objects.equals(firstName, customer.firstName) &&
             Objects.equals(lastName, customer.lastName);
@@ -133,18 +132,19 @@ public class Customer {
 
     @Override
     public int hashCode () {
-        return Objects.hash(id, email, phone, firstName, lastName);
+        return Objects.hash(email, phone, firstName, lastName);
     }
 
 
     @Override
-    public String toString () {
+    public String toString() {
         return "Customer{" +
-            "id=" + id +
-            ", email='" + email + '\'' +
-            ", phone='" + phone + '\'' +
-            ", firstName='" + firstName + '\'' +
-            ", lastName='" + lastName + '\'' +
-            '}';
+               "id=" + id +
+               ", email='" + email + '\'' +
+               ", phone='" + phone + '\'' +
+               ", firstName='" + firstName + '\'' +
+               ", lastName='" + lastName + '\'' +
+               ", emailId=" + emailId +
+               '}';
     }
 }

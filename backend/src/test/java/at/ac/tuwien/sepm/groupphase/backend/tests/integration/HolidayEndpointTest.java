@@ -192,7 +192,7 @@ public class HolidayEndpointTest {
                                    TrainerDto.class
             );
         TrainerDto trainerResponse = tresponse.getBody();
-        String cronExpression = "30/30 13/15 30/30 5/5 2019/2019 true O2 4 Nach 3 ";
+        String cronExpression = "30/30 13/15 30/30 5/5 2020/2020 true O2 4 Nach 3 ";
 
         HolidaysDto holiday = new HolidaysDto(
             trainerResponse.getId(),
@@ -223,7 +223,7 @@ public class HolidayEndpointTest {
                                    TrainerDto.class
             );
         TrainerDto trainerResponse = tresponse.getBody();
-        String cronExpression = "30/30 13/15 30/30 5/5 2019/2019 true O2 4 Nach 3 ";
+        String cronExpression = "30/30 13/15 30/30 5/5 2020/2020 true O2 4 Nach 3 ";
 
         HolidaysDto holidays = new HolidaysDto(
             trainerResponse.getId(),
@@ -240,7 +240,7 @@ public class HolidayEndpointTest {
         assertNotNull(holidayResponse[0].getId());
 
 
-        cronExpression = "30/30 13/15 30/30 5/5 2019/2019 true O3 1 Nach 2 ";
+        cronExpression = "30/30 13/15 30/30 5/5 2020/2020 true O3 1 Nach 2 ";
 
         holidays = new HolidaysDto(
             trainerResponse.getId(),
