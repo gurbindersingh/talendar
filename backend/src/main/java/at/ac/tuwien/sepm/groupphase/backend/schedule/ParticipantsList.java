@@ -8,11 +8,9 @@ import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
 import com.lowagie.text.*;
 import com.lowagie.text.Font;
 import com.lowagie.text.Image;
-import com.lowagie.text.pdf.BaseFont;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.datetime.DateFormatter;
 import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +26,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedList;
@@ -183,7 +183,7 @@ public class ParticipantsList {
             //Adding all the rechnungens to the multipart
             for(int i = 0; i < event.getCustomerDtos().size(); i++) {
                 MimeBodyPart bill = new MimeBodyPart();
-                bill.attachFile(new File(createBill(event.getCustomerDtos().get(i))),
+                bill.attachFile(new File(createBill(event.getCustomerDtos().get(i), event)),
                                 "application/pdf", null
                 );
                 multipart.addBodyPart(bill);
@@ -203,15 +203,11 @@ public class ParticipantsList {
     }
 
 
-    public String createBill(CustomerDto customer) {
+    public String createBill(CustomerDto customer, EventDto event) {
         //TODO: Code schreiben um aus dem customer die Rechnung zu generieren, der generierte Filename wird zurückgegeben (+ Ort)
         //TODO: Wir müssen dann ebenfalls dafür sorgen, dass die generierten PDFs in Unterordnern erstellt werden, nicht so wie momentan einfach in /backend/
-        Font headlineFont = FontFactory.getFont(FontFactory.COURIER, 20, Color.BLACK);
+        Font headlineFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 18, Color.BLACK);
         Font listFont = FontFactory.getFont(FontFactory.HELVETICA, 10, Color.BLACK);
-        Paragraph chunkHead;
-        PdfPTable table = new PdfPTable(4);
-        table.setSpacingAfter(11f);
-        table.setSpacingBefore(11f);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy_MMMM_dd-hh_mm");
         String docname = LocalDateTime.now().format(formatter) +
                          "_Rechnung_" +
@@ -219,6 +215,7 @@ public class ParticipantsList {
                          ".pdf";
         LOGGER.info("Docname: " + docname);
         Document document = new Document();
+        document.setMargins(60f, 60f, 60f, 60f);
         PdfWriter writer;
         try {
             writer = PdfWriter.getInstance(document, new FileOutputStream(docname));
@@ -250,9 +247,12 @@ public class ParticipantsList {
 
         cb.showTextAligned(PdfContentByte.ALIGN_LEFT,
                            "Abs.: Begabungsexpertin | Steinfeldergasse 24 | 2340 Mödling",
-                           50, 715, 0
+                           60, 715, 0
         );
         cb.endText();
+
+        LocalDate today = LocalDate.now();
+        String formattedDate = today.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
 
         cb.beginText();
         try {
@@ -264,7 +264,15 @@ public class ParticipantsList {
 
         cb.showTextAligned(PdfContentByte.ALIGN_LEFT,
                            customer.getFirstName() + " " + customer.getLastName(),
-                           50, 670, 0
+                           60, 670, 0
+        );
+        cb.showTextAligned(PdfContentByte.ALIGN_LEFT,
+                           "Musterstraße",
+                           60, 655, 0
+        );
+        cb.showTextAligned(PdfContentByte.ALIGN_LEFT,
+                           "2500 Musterort",
+                           60, 640, 0
         );
 
 
@@ -288,13 +296,83 @@ public class ParticipantsList {
                            "office@begabungs-expertin.at",
                            370, 680, 0
         );
+
+        cb.showTextAligned(PdfContentByte.ALIGN_LEFT,
+                           "Steuer Nr. 16 / 111 1182",
+                           370, 655, 0
+        );
+        cb.showTextAligned(PdfContentByte.ALIGN_LEFT,
+                           "UST-IdNr. ATU 711 89 135",
+                           370, 640, 0
+        );
+
+        cb.showTextAligned(PdfContentByte.ALIGN_RIGHT,
+                           "Rechnung: Re-113/2019",
+                           530, 600, 0
+        );
+        cb.showTextAligned(PdfContentByte.ALIGN_RIGHT,
+                           "Datum: " + formattedDate,
+                           530, 585, 0
+        );
         cb.endText();
 
+        Paragraph headline = new Paragraph("Rechnung", headlineFont);
+        headline.setSpacingBefore(190);
+        headline.setAlignment(Element.ALIGN_CENTER);
+        document.add(headline);
 
-        Paragraph address = new Paragraph(
-            "Begabungsexpertin\nSteinfeldergasse 24\n2340 Mödling, Österreich\nTel.:+43 - 699 / 181 699 83\noffice@begabungs-expertin.at",
-            listFont
-        );
+        Chunk billLeft =
+            new Chunk("Rechnung Re-113/2019", FontFactory.getFont(FontFactory.HELVETICA_BOLD, 11));
+        document.add(billLeft);
+
+        Paragraph thankYou = new Paragraph(
+            "Vielen Dank für Ihr Vertrauen. Ich hoffe Sie sind zufrieden.\nIch freue mich wieder von Ihnen zu hören!", FontFactory.getFont(FontFactory.HELVETICA, 11));
+        document.add(thankYou);
+
+        PdfPTable table = new PdfPTable(5);
+        table.setWidthPercentage(100);
+        table.setSpacingAfter(11f);
+        table.setSpacingBefore(11f);
+
+        PdfPCell defaultCell = table.getDefaultCell();
+        defaultCell.setPadding(20);
+        defaultCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        defaultCell.setVerticalAlignment(Element.ALIGN_CENTER);
+
+        PdfPCell cell1 = new PdfPCell(new Paragraph("Pos."));
+        cell1.setBorderWidthBottom(2f);
+        PdfPCell cell2 = new PdfPCell(new Paragraph("Bezeichnung"));
+        cell2.setBorderWidthBottom(2f);
+        PdfPCell cell3 = new PdfPCell(new Paragraph("Menge"));
+        cell3.setBorderWidthBottom(2f);
+        PdfPCell cell4 = new PdfPCell(new Paragraph("Einzelpreis"));
+        cell4.setBorderWidthBottom(2f);
+        PdfPCell cell5 = new PdfPCell(new Paragraph("Gesamtpreis"));
+        cell5.setBorderWidthBottom(2f);
+
+        cell1.setUseBorderPadding(true);
+        cell1.setHorizontalAlignment(Element.ALIGN_LEFT);
+        cell1.setVerticalAlignment(Element.ALIGN_CENTER);
+        cell2.setUseBorderPadding(true);
+        cell2.setHorizontalAlignment(Element.ALIGN_LEFT);
+        cell2.setVerticalAlignment(Element.ALIGN_CENTER);
+        cell3.setUseBorderPadding(true);
+        cell3.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        cell3.setVerticalAlignment(Element.ALIGN_CENTER);
+        cell4.setUseBorderPadding(true);
+        cell4.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        cell4.setVerticalAlignment(Element.ALIGN_CENTER);
+        cell5.setUseBorderPadding(true);
+        cell5.setHorizontalAlignment(Element.ALIGN_RIGHT);
+        cell5.setVerticalAlignment(Element.ALIGN_CENTER);
+
+        table.addCell(cell1);
+        table.addCell(cell2);
+        table.addCell(cell3);
+        table.addCell(cell4);
+        table.addCell(cell5);
+
+        document.add(table);
 
         document.close();
 
