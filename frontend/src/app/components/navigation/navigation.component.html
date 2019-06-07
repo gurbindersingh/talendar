@@ -24,7 +24,7 @@
         <ul class="list-unstyled text-align-center">
             <li
                 class="nav-link"
-                *ngFor="let nav of navLinks"
+                *ngFor="let nav of contextNavLinks"
                 (click)="toggleMenu()"
             >
                 <a [routerLink]="nav.path" routerLinkActive="active-link">

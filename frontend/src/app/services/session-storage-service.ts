@@ -1,28 +1,17 @@
 import { Injectable } from '@angular/core';
+import { parseSelectorToR3Selector } from '@angular/compiler/src/core';
 
 @Injectable()
 export class SessionStorageService {
-    private isLoggedIn: any;
+    private isLoggedIn: boolean;
 
     constructor() {
         const retrieved = localStorage.getItem('futureToken');
-        console.log(
-            '===============================\n' +
-                'Retrieved from local storage: \n' +
-                retrieved +
-                '\n===============================\n'
-        );
 
         if (retrieved == null || retrieved === undefined) {
             this.isLoggedIn = false;
         } else {
             const token = JSON.parse(atob(retrieved.split('.')[1]));
-            console.log(
-                '===============================\n' +
-                    'ONE TOKEN TO RULE THEM ALL: \n' +
-                    token +
-                    '\n===============================\n'
-            );
 
             // Date.now() returns miliseconds since 01.01.1970 (UNIX time)
             // JWT expiration is definded in seconds (also UNIX time)
@@ -48,12 +37,13 @@ export class SessionStorageService {
         const futureToken = localStorage.getItem('futureToken');
 
         // most likely currentToken will be null too in this case  but is is not important
-        // return whatever is stores (if token cool else null is expected as deafult anyways)
+        // return whatever is stores (if token is set for current we have  something to work with
+        // else if it is null (probably) returning this is also ok (default)
         if (futureToken == null) {
             return currentToken;
         }
 
-        const parsed = JSON.parse(atob(futureToken.split('.')[1]));
+        const parsed = this.getParsedJwtToken(futureToken);
 
         // if current date is less than NotBefore stamp then future is not ready
         if (Date.now() / 1000 < parsed.nbf) {
@@ -64,9 +54,6 @@ export class SessionStorageService {
     }
 
     setLoggedIn(loggedIn: any): void {
-        console.log('SessionStorage Service: ');
-        console.log('CurrentToken: ' + loggedIn.currentToken);
-        console.log('FutureToken: ' + loggedIn.futureToken);
         if (loggedIn === false) {
             this.isLoggedIn = false;
             localStorage.removeItem('currentToken');
@@ -76,5 +63,10 @@ export class SessionStorageService {
             localStorage.setItem('currentToken', loggedIn.currentToken);
             localStorage.setItem('futureToken', loggedIn.futureToken);
         }
+    }
+
+    private getParsedJwtToken(token: string): any {
+        const parsed = JSON.parse(atob(token.split('.')[1]));
+        return parsed;
     }
 }
