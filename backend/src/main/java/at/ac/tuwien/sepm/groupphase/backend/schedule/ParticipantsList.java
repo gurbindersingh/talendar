@@ -1,7 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend.schedule;
 
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.BackendException;
 import at.ac.tuwien.sepm.groupphase.backend.rest.EventEndpoint;
+import at.ac.tuwien.sepm.groupphase.backend.rest.dto.CustomerDto;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.EventDto;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
 import com.itextpdf.text.*;
@@ -34,6 +36,8 @@ import java.util.Properties;
 public class ParticipantsList {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ParticipantsList.class);
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy_MMMM_dd-hh_mm");
+    private DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("dd MMMM yyyy - hh:mm").withLocale(Locale.forLanguageTag("German"));
 
     private final EventEndpoint eventEndpoint;
     @Autowired
@@ -70,8 +74,6 @@ public class ParticipantsList {
 
             LOGGER.info("For every Event create participants Document and send it to the corresponding trainer");
             for(int i = 0; i < sendList.size(); i++){
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy_MMMM_dd-hh_mm");
-                DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("dd MMMM yyyy - hh:mm").withLocale(Locale.forLanguageTag("German"));
                 String docname = LocalDateTime.now().format(formatter) + "_" + sendList.get(i).getName() + ".pdf";
                 LOGGER.info("Docname: " + docname);
                 Document document = new Document();
@@ -98,7 +100,7 @@ public class ParticipantsList {
                 document.add(table);
                 document.close();
 
-                sendParticipationListEmail(sendList.get(i).getTrainer().getEmail(), document, docname);
+                sendParticipationListEmail(sendList.get(i).getTrainer().getEmail(), docname, sendList.get(i));
             }
             LOGGER.info("Participation Lists sent out successfully.");
         } catch(BackendException e) {
@@ -108,7 +110,7 @@ public class ParticipantsList {
     }
 
 
-    public void sendParticipationListEmail(String emailTo, Document document, String filename) throws EmailException, IOException {
+    public void sendParticipationListEmail(String emailTo, String filename, EventDto event) throws EmailException, IOException {
         LOGGER.info("Creating Email with participationList");
         String from = "testingsepmstuffqse25@gmail.com";
         String password = "This!is!a!password!";
@@ -132,7 +134,7 @@ public class ParticipantsList {
             Multipart multipart = new MimeMultipart();
             MimeBodyPart message = new MimeBodyPart();
             message.setText("Hallo!\n\nAnbei finden Sie die Teilnehmer-Liste für das bald stattfindende Event.\n" +
-                            "Wir wünschen Ihnen viel Erfolg und Spaß!\n\nLiebe Grüße,\nDas Talender Team!");
+                            "Wir wünschen Ihnen viel Erfolg und Spaß!\n\nLiebe Grüße,\nDas Talenderteam!");
             multipart.addBodyPart(message);
             //Attaching Pdf
             LOGGER.debug("Attatching Pdf");
@@ -140,6 +142,13 @@ public class ParticipantsList {
             MimeBodyPart attachment = new MimeBodyPart();
             attachment.attachFile(new File(filename), "application/pdf", null);
             multipart.addBodyPart(attachment);
+
+            //Adding all the rechnungens to the multipart
+            for(int i = 0; i < event.getCustomerDtos().size(); i++){
+                MimeBodyPart bill = new MimeBodyPart();
+                bill.attachFile(new File(createBill(event.getCustomerDtos().get(i), event)), "application/pdf", null);
+                multipart.addBodyPart(bill);
+            }
             //Adding multipart to the mail
             mimeMessage.setContent(multipart);
             Transport transport = session.getTransport("smtp");
@@ -148,10 +157,70 @@ public class ParticipantsList {
             transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
             LOGGER.debug("Sending Email successful!");
             transport.close();
-
-
         }catch(MessagingException e){
             throw new EmailException(" " + e.getMessage());
         }
+    }
+
+    public String createBill (CustomerDto customer, EventDto event) throws IOException, EmailException {
+        String billPdfName = "";
+        //TODO: Code schreiben um aus dem customer die Rechnung zu generieren, der generierte Filename wird zurückgegeben (+ Ort)
+        //TODO: Wir müssen dann ebenfalls dafür sorgen, dass die generierten PDFs in Unterordnern erstellt werden, nicht so wie momentan einfach in /backend/
+
+        //TODO: END
+
+
+        sendCustomerConfirmationMail(customer, billPdfName, event);
+        return billPdfName;
+    }
+
+    public void sendCustomerConfirmationMail (CustomerDto customer, String filename, EventDto event) throws IOException, EmailException {
+
+        LOGGER.info("Creating Email with participationList");
+        String from = "testingsepmstuffqse25@gmail.com";
+        String password = "This!is!a!password!";
+        String host = "smtp.gmail.com";
+        Properties props = System.getProperties();
+        props.put("mail.smtp.user", from);
+        props.put("mail.smtp.pwd", password);
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+        props.put("mail.smtp.starttls.enable","true");
+        props.put("mail.smtp.auth", "true");
+        Session session = Session.getDefaultInstance(props);
+
+        try{
+            MimeMessage mimeMessage = new MimeMessage(session);
+            mimeMessage.setFrom(new InternetAddress(from));
+            mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(customer.getEmail()));
+            mimeMessage.setSubject("Teilnehmerliste: " + filename);
+
+            //Creating multipart
+            Multipart multipart = new MimeMultipart();
+            MimeBodyPart message = new MimeBodyPart();
+            message.setText("Hallo " + customer. getFirstName() + " " + customer.getLastName()+"!\n\nWir wollten Sie daran erinnern, " +
+                            "dass Sie zu dem Event: " + event.getName() + " angemeldet sind.\n" +
+                            "Das Event findet am " + event.getRoomUses().get(0).getBegin().format(formatter2) +
+                            " statt." +
+                            "Anbei finden Sie außerdem Ihre Rechnung!\n\nMit freundlichen Grüßen,\nDas Talenderteam!");
+            multipart.addBodyPart(message);
+            //Attaching Pdf
+            LOGGER.debug("Attatching Pdf");
+            MimeBodyPart attachment = new MimeBodyPart();
+            attachment.attachFile(new File(filename), "application/pdf", null);
+            multipart.addBodyPart(attachment);
+
+            //Adding multipart to the mail
+            mimeMessage.setContent(multipart);
+            Transport transport = session.getTransport("smtp");
+            transport.connect(host, 587, from, password);
+            LOGGER.debug("Attempting to send an Email...");
+            transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
+            LOGGER.debug("Sending Email successful!");
+            transport.close();
+        }catch(MessagingException e){
+            throw new EmailException(" " + e.getMessage());
+        }
+
     }
 }
