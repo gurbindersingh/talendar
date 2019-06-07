@@ -4,12 +4,7 @@
 <div class="row">
     <div class="col-lg-3"></div>
     <div class="col-lg-6">
-        <form
-            id="courseSignForm"
-            #courseSignForm
-            class="container-fluid"
-            (change)="clearInfoMsg()"
-        >
+        <form id="courseSignForm" #courseSignForm class="container-fluid">
             <div class="card">
                 <div class="card-body">
                     <div class="row">
@@ -50,7 +45,9 @@
                         </div>
                         <div class="col">
                             <p name="detail">
-                                {{ countCustomer }}/{{ event.maxParticipants }}
+                                {{ event.customerDtos.length }}/{{
+                                    event.maxParticipants
+                                }}
                             </p>
                         </div>
                     </div>
@@ -79,7 +76,7 @@
                 </div>
             </div>
             <br />
-            <div *ngIf="countCustomer !== event.maxParticipants">
+            <div>
                 <br />
                 <h1>Anmeldedaten</h1>
                 <hr />
@@ -152,15 +149,29 @@
                     </div>
                 </div>
                 <br />
-                <div class="row justify-content-end">
+                <div class="row justify-content-end" *ngIf="!btnClicked">
                     <input
                         type="submit"
                         class="btn btn-primary col-lg-3"
                         [disabled]="!isCompleted()"
                         id="courseSignSave"
                         value="Anmelden"
-                        (click)="updateCourseCustomers(courseSignForm)"
+                        (click)="updateCourseCustomers()"
+                        *ngIf="!loading"
                     />
+                    <button
+                        class="btn btn-primary col-lg-3"
+                        type="button"
+                        *ngIf="loading"
+                        disabled
+                    >
+                        <span
+                            class="spinner-border spinner-border-sm"
+                            role="status"
+                            aria-hidden="true"
+                        ></span>
+                        Loading...
+                    </button>
                 </div>
             </div>
             <div *ngIf="countCustomer === event.maxParticipants">

@@ -366,24 +366,24 @@ public class EventService implements IEventService {
             events.add(event);
             customerToAddOrRemove.setEvents(events);
 
+            if(customerListWithNewCustomer.add(customerToAddOrRemove)) { //if new customer to add dont exist in persisted customer list then update
+                event.setCustomers(customerListWithNewCustomer);
 
-            customerListWithNewCustomer.add(customerToAddOrRemove);
-            event.setCustomers(customerListWithNewCustomer);
+                mergeEvent(persistedEvent, event);
+                this.eventRepository.flush();
 
-            mergeEvent(persistedEvent, event);
-            this.eventRepository.flush();
-
-            // send a sign off email to customer
-            try {
-                LOGGER.info("Prepare Email for sign off");
-                sendCancelationMail(customerToAddOrRemove.getEmail(), event,
-                                    customerToAddOrRemove
-                );   //create a sign off email and send it to customer
-                LOGGER.info("Email sent");
-            }
-            catch(EmailException e) {
-                LOGGER.error("Email error: " + e.getMessage());
-                throw new ServiceException("", null);
+                // send a sign off email to customer
+                try {
+                    LOGGER.info("Prepare Email for sign off");
+                    sendCancelationMail(customerToAddOrRemove.getEmail(), event,
+                                        customerToAddOrRemove
+                    );   //create a sign off email and send it to customer
+                    LOGGER.info("Email sent");
+                }
+                catch(EmailException e) {
+                    LOGGER.error("Email error: " + e.getMessage());
+                    throw new ServiceException("", null);
+                }
             }
         } else {
             // here is happening a sign off
