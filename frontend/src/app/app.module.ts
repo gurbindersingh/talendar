@@ -19,6 +19,7 @@ import {
     TrainerComponent,
     ConsultationComponent,
     TrainerListComponent,
+    NgbdModalConfirm,
 } from 'src/app/components';
 
 import { httpInterceptorProviders } from './http-interceptors';
@@ -48,6 +49,7 @@ import { HolidaysClient } from 'src/app/rest/holidays-client';
         CancelEventComponent,
         CourseViewComponent,
         CourseSignComponent,
+        NgbdModalConfirm,
     ],
     imports: [
         AppRoutingModule,
@@ -72,5 +74,6 @@ import { HolidaysClient } from 'src/app/rest/holidays-client';
         HolidaysClient,
     ],
     bootstrap: [AppComponent],
+    entryComponents: [NgbdModalConfirm],
 })
 export class AppModule {}
