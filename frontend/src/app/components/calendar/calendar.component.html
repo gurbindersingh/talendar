@@ -277,6 +277,8 @@
             [locale]="locale"
             [viewDate]="viewDate"
             [weekStartsOn]="weekStartsOn"
+            (eventClicked)="showDetails($event)"
+            (dayClicked)="addEvent($event.day.date)"
         ></mwl-calendar-month-view>
     </ng-container>
 
@@ -298,6 +300,8 @@
             [locale]="locale"
             [viewDate]="viewDate"
             [weekStartsOn]="weekStartsOn"
+            (eventClicked)="showDetails($event)"
+            (hourSegmentClicked)="addEvent($event.date)"
         ></mwl-calendar-week-view>
     </ng-template>
 </div>

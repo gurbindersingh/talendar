@@ -4,12 +4,12 @@ import localeDe from '@angular/common/locales/de-AT';
 
 import { CalendarDateFormatter, CalendarView } from 'angular-calendar';
 
-import { CustomDateFormatter } from './CustomDateFormatter';
-import { MetaEvent } from './MetaEvent';
-import { Event } from '../../models/event';
 import { BREAKPOINTS } from 'src/app/utils/Breakpoints';
+import { CustomDateFormatter } from './CustomDateFormatter';
+import { Event } from '../../models/event';
 import { EventClient } from 'src/app/rest/event-client';
 import { EventImportService } from 'src/app/services/event-import.service';
+import { MetaEvent } from './MetaEvent';
 import { Trainer } from 'src/app/models/trainer';
 import { TrainerClient } from 'src/app/rest/trainer-client';
 
@@ -45,7 +45,6 @@ export class CalendarComponent implements OnInit {
     view = CalendarView.Week;
     viewDate = new Date();
     weekStartsOn = 1;
-    navButtonLabel: { prev: string; next: string };
 
     // toggle between collapsed and open filter menu
     isCollapsed = true;
@@ -114,6 +113,16 @@ export class CalendarComponent implements OnInit {
             // explicit undefined value matches option 'reset' (if clicked selection is resetted)
             this.trainerList.push(undefined);
         });
+    }
+
+    showDetails(event: any) {
+        console.warn(event);
+        alert('Implement showDetails()');
+    }
+
+    addEvent(date: Date) {
+        console.warn(date);
+        alert('Implement addEvent()');
     }
 
     /**
