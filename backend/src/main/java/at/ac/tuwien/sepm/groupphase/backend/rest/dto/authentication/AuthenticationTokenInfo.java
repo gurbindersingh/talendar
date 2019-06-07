@@ -10,7 +10,7 @@ import java.util.List;
           description = "Informations about the current authentication token")
 public class AuthenticationTokenInfo {
 
-    private String username;
+    private String email;
 
     private List<String> roles;
 
@@ -25,13 +25,13 @@ public class AuthenticationTokenInfo {
     private Duration overlapDuration;
 
 
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
 
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
 
@@ -98,7 +98,7 @@ public class AuthenticationTokenInfo {
     @Override
     public String toString() {
         return "AuthenticationTokenInfo{" +
-               "username='" + username + '\'' +
+               "email='" + email + '\'' +
                ", roles=" + roles +
                ", issuedAt=" + issuedAt +
                ", notBefore=" + notBefore +
@@ -116,7 +116,7 @@ public class AuthenticationTokenInfo {
 
         AuthenticationTokenInfo that = (AuthenticationTokenInfo) o;
 
-        if(username != null ? !username.equals(that.username) : that.username != null) return false;
+        if(email != null ? !email.equals(that.email) : that.email != null) return false;
         if(roles != null ? !roles.equals(that.roles) : that.roles != null) return false;
         if(issuedAt != null ? !issuedAt.equals(that.issuedAt) : that.issuedAt != null) return false;
         if(notBefore != null ? !notBefore.equals(that.notBefore) : that.notBefore != null)
@@ -134,7 +134,7 @@ public class AuthenticationTokenInfo {
 
     @Override
     public int hashCode() {
-        int result = username != null ? username.hashCode() : 0;
+        int result = email != null ? email.hashCode() : 0;
         result = 31 * result + ( roles != null ? roles.hashCode() : 0 );
         result = 31 * result + ( issuedAt != null ? issuedAt.hashCode() : 0 );
         result = 31 * result + ( notBefore != null ? notBefore.hashCode() : 0 );
@@ -205,7 +205,7 @@ public class AuthenticationTokenInfo {
 
         public AuthenticationTokenInfo build() {
             AuthenticationTokenInfo authenticationTokenInfo = new AuthenticationTokenInfo();
-            authenticationTokenInfo.setUsername(username);
+            authenticationTokenInfo.setEmail(username);
             authenticationTokenInfo.setRoles(roles);
             authenticationTokenInfo.setIssuedAt(issuedAt);
             authenticationTokenInfo.setNotBefore(notBefore);
