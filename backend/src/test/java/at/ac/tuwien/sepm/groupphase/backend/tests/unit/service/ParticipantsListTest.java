@@ -4,6 +4,7 @@ import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.CustomerDto;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.EventDto;
 import at.ac.tuwien.sepm.groupphase.backend.schedule.ParticipantsList;
+import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
 import at.ac.tuwien.sepm.groupphase.backend.testDataCreation.FakeData;
 import at.ac.tuwien.sepm.groupphase.backend.util.mapper.CustomerMapper;
 import at.ac.tuwien.sepm.groupphase.backend.util.mapper.CustomerMapperImpl;
@@ -14,6 +15,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.io.IOException;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -34,6 +37,14 @@ public class ParticipantsListTest {
 
         EventMapper mapper2 = new EventMapperImpl();
         EventDto newEventDto = mapper2.entityToEventDto(faker.fakeNewCourseEntity());
-        participantsList.createBill(newCustomerDto, newEventDto);
+        try {
+            participantsList.createBill(newCustomerDto, newEventDto);
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
+        catch(EmailException e) {
+            e.printStackTrace();
+        }
     }
 }
