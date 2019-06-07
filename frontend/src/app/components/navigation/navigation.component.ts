@@ -1,6 +1,6 @@
-import { Component, OnInit, AfterContentInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { BREAKPOINTS } from 'src/app/utils/Breakpoints';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { UserDetails } from 'src/app/models/user-details';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Authorities } from 'src/app/models/enum/authorities';
@@ -12,11 +12,6 @@ import { InternalUpdateService } from 'src/app/services/internal-update.service'
     styleUrls: ['./navigation.component.scss'],
 })
 export class NavigationComponent implements OnInit {
-    constructor(
-        private authenticationService: AuthenticationService,
-        private internalUpdateService: InternalUpdateService,
-        private router: Router
-    ) {}
     navLinks = [
         {
             name: 'Login',
@@ -25,7 +20,7 @@ export class NavigationComponent implements OnInit {
         },
         {
             name: 'Logout',
-            path: '/calendar',
+            path: 'calendar?logout',
             restriction: Authorities.AUTHENTICATED,
         },
         {
@@ -53,7 +48,11 @@ export class NavigationComponent implements OnInit {
             path: 'course/add',
             restriction: Authorities.AUTHENTICATED,
         },
-        { name: 'Raum Mieten', path: 'rent', restriction: Authorities.NONE },
+        {
+            name: 'Raum Mieten',
+            path: 'rent',
+            restriction: Authorities.NONE,
+        },
         {
             name: 'Neuen Trainer anlegen',
             path: 'trainer/add',
@@ -74,10 +73,15 @@ export class NavigationComponent implements OnInit {
     contextNavLinks: { name: string; path: string; restriction: Authorities }[];
 
     showMenu = false;
-    route: ActivatedRoute;
 
     // status of user who visits this page
     user: UserDetails;
+
+    constructor(
+        private authenticationService: AuthenticationService,
+        private internalUpdateService: InternalUpdateService,
+        private router: Router
+    ) {}
 
     ngOnInit() {
         this.contextNavLinks = this.navLinks;
