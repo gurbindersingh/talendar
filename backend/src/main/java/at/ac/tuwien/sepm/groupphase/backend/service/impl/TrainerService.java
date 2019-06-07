@@ -80,13 +80,12 @@ public class TrainerService implements ITrainerService {
         }
 
         try {
-            Trainer t = trainerRepository.save(trainer);
+            trainer = trainerRepository.save(trainer);
             try {
-                infoMail.sendAdminTrainerInfoMail(t, "Neuer Trainer erstellt", "newTrainer");
+                infoMail.sendAdminTrainerInfoMail(trainer, "Neuer Trainer erstellt", "newTrainer");
             } catch(EmailException e){
                 LOGGER.error("Error trying to send new trainer info mail to admin");
             }
-            return t;
         }
         catch(DataAccessException e) { //catch specific exceptions
             throw new ServiceException("Error while performing a data access operation", e);
