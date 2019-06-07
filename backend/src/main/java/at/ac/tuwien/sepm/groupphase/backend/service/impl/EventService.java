@@ -250,19 +250,18 @@ public class EventService implements IEventService {
     public Event getEventById(Long id) throws NotFoundException, ServiceException {
         LOGGER.info("Try to retrieve event with id " + id);
 
-        Optional<Event> result;
+        Event result;
 
         try {
-            result = eventRepository.findById(id);
+            result = eventRepository.findByIdAndDeletedFalse(id);
         }
         catch(DataAccessException dae) {
             throw new ServiceException("Error while performing a data access operation", dae);
         }
 
-        if(result.isPresent() &&
-           !result.get().isDeleted()) {  //if event exists and not deleted the return
-            LOGGER.info("Event with id: " + result.get());
-            return result.get();
+        if(result != null){
+            LOGGER.info("Event with id found: " + result);
+            return result;
         } else {
             throw new NotFoundException("The event with id " + id + " does not exist");
         }
@@ -746,7 +745,7 @@ public class EventService implements IEventService {
             msg += "\n Falls Sie sich abmelden wollen, klicken Sie auf diesen Link: \n";
         } else {
             msg +=
-                "\n Falls Sie diesen Event stornieren wollen, clicken Sie bitte einfach auf diesen link: \n";
+                "\n Falls Sie diesen Event stornieren wollen, klicken Sie bitte einfach auf diesen link: \n";
         }
         msg += urll;
 

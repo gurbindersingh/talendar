@@ -98,7 +98,7 @@ public class EventEndpoint {
         try {
             eventService.cancelEvent(id);
         }catch(ValidationException e){
-            throw new BackendException("Die Validierung von dem Ausgewählten Event ist fehlgeschlagen", e);
+            throw new BackendException(e.getMessage(), e);
         }
 
     }
