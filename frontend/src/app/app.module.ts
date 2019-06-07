@@ -19,6 +19,7 @@ import {
     TrainerComponent,
     ConsultationComponent,
     TrainerListComponent,
+    NgbdModalConfirm,
 } from 'src/app/components';
 
 import { httpInterceptorProviders } from './http-interceptors';
@@ -53,6 +54,7 @@ import { AuthenticatedGuard } from './guards/authenticated-guard';
         CancelEventComponent,
         CourseViewComponent,
         CourseSignComponent,
+        NgbdModalConfirm,
         LoginComponent,
     ],
     imports: [
@@ -82,5 +84,6 @@ import { AuthenticatedGuard } from './guards/authenticated-guard';
         AuthenticatedGuard,
     ],
     bootstrap: [AppComponent],
+    entryComponents: [NgbdModalConfirm],
 })
 export class AppModule {}

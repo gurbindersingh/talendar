@@ -25,20 +25,21 @@ public class ScheduleCaller {
 
 
     //Change to daily 23:00
-    @Scheduled(cron = "30 * * * * *")
+    @Scheduled(cron = "0 0 23 * * ?")
     public void callDaily() throws BackendException, DocumentException, EmailException, IOException {
         participantsList.createParticipantsList();
     }
 
 
-    //Change to weekly 02:00
-    @Scheduled(cron = "0 * * * * *")
+    //Change to weekly 02:00 on sunday
+    @Scheduled(cron = "0 0 2 ? * SUN")
     public void callWeekly() throws BackendException {
         redactInactiveUsers.redact();
     }
 
-    //Monthly 00:00, first Sunday of the Month
-    @Scheduled(cron = "0 0 0 1 * *")
+    //Monthly 00:00, on the first day of every month
+    @Scheduled(cron = "0 0 0 1 * ?")
     public void callMonthly() throws BackendException {
+        redactInactiveTrainers.redact();
     }
 }

@@ -22,6 +22,7 @@ import org.aspectj.weaver.ast.Not;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
 
 import org.slf4j.Logger;
@@ -50,6 +51,7 @@ public class EventService implements IEventService {
     private final Validator validator;
     private final TrainerRepository trainerRepository;
     private final HolidayRepository holidayRepository;
+    private final InfoMail infoMail;
 
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -57,13 +59,14 @@ public class EventService implements IEventService {
     @Autowired
     public EventService (EventRepository eventRepository, Validator validator,
                          RoomUseRepository roomUseRepository, TrainerRepository trainerRepository,
-                         HolidayRepository holidayRepository
+                         HolidayRepository holidayRepository, InfoMail infoMail
     ) {
         this.eventRepository = eventRepository;
         this.validator = validator;
         this.roomUseRepository = roomUseRepository;
         this.trainerRepository = trainerRepository;
         this.holidayRepository = holidayRepository;
+        this.infoMail = infoMail;
     }
 
 
@@ -123,6 +126,8 @@ public class EventService implements IEventService {
                       ) {
                           sendCancelationMail(c.getEmail(), event, c);
                       }
+                      LOGGER.info("Sending information mail to admin");
+                      infoMail.sendAdminEventInfoMail(event, "Neuer Geburtstag", "newEvent");
                       return event;
                   }
                   catch(InvalidEntityException e) {
@@ -147,6 +152,12 @@ public class EventService implements IEventService {
                             e.getMessage(),
                             e
                         );
+                    }
+                    try{
+                        LOGGER.info("Sending information mail to admin");
+                        infoMail.sendAdminEventInfoMail(event, "Neuer Kurs", "newEvent");
+                    }catch(EmailException e){
+
                     }
                     return eventRepository.save(event);
 
@@ -175,6 +186,8 @@ public class EventService implements IEventService {
                     ) {
                         sendCancelationMail(c.getEmail(), event, c);
                     }
+                    LOGGER.info("Sending information mail to admin");
+                    infoMail.sendAdminEventInfoMail(event, "Neue Raummiete", "newEvent");
                     return event;
 
                 }
@@ -203,6 +216,8 @@ public class EventService implements IEventService {
                     ) {
                         sendCancelationMail(c.getEmail(), event, c);
                     }
+                    LOGGER.info("Sending information mail to admin");
+                    infoMail.sendAdminEventInfoMail(event, "Neuer Beratungstermin", "newEvent");
                     return event;
                 }
                 catch(InvalidEntityException e) {
@@ -491,8 +506,16 @@ public class EventService implements IEventService {
 
 
     @Override
-    public void deleteEvent(Long id){
+    public void deleteEvent(Long id) {
+        Event event = eventRepository.getOne(id);
         eventRepository.deleteThisEvent(id);
+        if(event!=null){
+            try {
+                infoMail.sendAdminEventInfoMail(event, "Event storniert", "deleteEvent");
+            }catch(EmailException e){
+                LOGGER.error("Unable to send InfoMail to admin about deleted event");
+            }
+        }
     }
 
 

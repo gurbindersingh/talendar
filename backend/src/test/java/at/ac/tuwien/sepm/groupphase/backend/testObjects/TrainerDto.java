@@ -18,6 +18,7 @@ public class TrainerDto {
     // List<Event> excluded from test Trainer Dummy because List of events that a trainer hosts does not affect his validity
     private LocalDateTime created;
     private LocalDateTime updated;
+    private Boolean deleted;
 
 
     public TrainerDto() {
@@ -34,6 +35,7 @@ public class TrainerDto {
         this.phone = phone;
         this.email = email;
         this.birthdayTypes = birthdayTypes;
+        this.deleted = false;
         this.password = password;
     }
 
@@ -138,6 +140,16 @@ public class TrainerDto {
     }
 
 
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;
@@ -149,16 +161,18 @@ public class TrainerDto {
                Objects.equals(birthday, that.birthday) &&
                Objects.equals(phone, that.phone) &&
                Objects.equals(email, that.email) &&
-               Objects.equals(password, that.password) &&
+               Objects.equals(birthdayTypes, that.birthdayTypes) &&
                Objects.equals(created, that.created) &&
-               Objects.equals(updated, that.updated);
+               Objects.equals(updated, that.updated) &&
+               Objects.equals(deleted, that.deleted) &&
+               Objects.equals(password, that.password);
     }
 
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, birthday, phone, email, password, created,
-                            updated
+        return Objects.hash(id, firstName, lastName, birthday, phone, email, birthdayTypes, created,
+                            updated, deleted, password
         );
     }
 
@@ -169,13 +183,13 @@ public class TrainerDto {
                "id=" + id +
                ", firstName='" + firstName + '\'' +
                ", lastName='" + lastName + '\'' +
-               ", age=" + birthday +
+               ", birthday=" + birthday +
                ", phone='" + phone + '\'' +
                ", email='" + email + '\'' +
-               ", password='" + password + '\'' +
+               ", birthdayTypes=" + birthdayTypes +
                ", created=" + created +
                ", updated=" + updated +
-               ", birthdayTypes=" + birthdayTypes +
+               ", deleted=" + deleted +
                '}';
     }
 }
