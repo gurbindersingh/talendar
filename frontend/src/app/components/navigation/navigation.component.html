@@ -25,7 +25,7 @@
             <li
                 class="nav-link"
                 *ngFor="let nav of contextNavLinks"
-                (click)="toggleMenu()"
+                (click)="toggleMenu(); checkForLogout(nav)"
             >
                 <a [routerLink]="nav.path" routerLinkActive="active-link">
                     {{ nav.name }}

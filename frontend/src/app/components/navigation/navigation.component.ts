@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterContentInit } from '@angular/core';
 import { BREAKPOINTS } from 'src/app/utils/Breakpoints';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UserDetails } from 'src/app/models/user-details';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Authorities } from 'src/app/models/enum/authorities';
@@ -14,7 +14,8 @@ import { InternalUpdateService } from 'src/app/services/internal-update.service'
 export class NavigationComponent implements OnInit {
     constructor(
         private authenticationService: AuthenticationService,
-        private internalUpdateService: InternalUpdateService
+        private internalUpdateService: InternalUpdateService,
+        private router: Router
     ) {}
     navLinks = [
         {
@@ -84,7 +85,7 @@ export class NavigationComponent implements OnInit {
             this.isAccessible(elem)
         );
 
-        this.internalUpdateService.loginStatusChanges.subscribe((update) => {
+        this.internalUpdateService.loginStatusChanges$.subscribe((update) => {
             this.updateNavigation();
         });
     }
@@ -137,6 +138,18 @@ export class NavigationComponent implements OnInit {
         return true;
     }
 
+    checkForLogout(navLink: {
+        name: string;
+        path: string;
+        restriction: Authorities;
+    }): void {
+        if (navLink.name === 'Logout') {
+            this.authenticationService.logout();
+            this.internalUpdateService.notifyLogout();
+            this.router.navigate(['/calendar']);
+        }
+    }
+
     private updateNavigation(): void {
         this.contextNavLinks = this.navLinks;
         if (this.authenticationService.isLoggedIn) {
@@ -153,6 +166,9 @@ export class NavigationComponent implements OnInit {
             );
         } else {
             this.user = null;
+            this.contextNavLinks = this.contextNavLinks.filter((elem) =>
+                this.isAccessible(elem)
+            );
         }
     }
 }

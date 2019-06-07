@@ -17,4 +17,8 @@ export class InternalUpdateService {
     notifyLogin(): void {
         this.loginStatusChanges.next(true);
     }
+
+    notifyLogout(): void {
+        this.loginStatusChanges.next(true);
+    }
 }
