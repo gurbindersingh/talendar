@@ -41,6 +41,7 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class EventService implements IEventService {
@@ -272,7 +273,7 @@ public class EventService implements IEventService {
     @Override
     public Event updateCustomers(Event event) throws ValidationException, NotFoundException,
                                                      ServiceException {
-        LOGGER.info("Event before validation in updateCustomers: " + event);
+        LOGGER.info("Event to update customers: " + event);
         if(event == null) {
             LOGGER.error("Event is null");
             throw new ServiceException("", null);
@@ -290,6 +291,13 @@ public class EventService implements IEventService {
 
         //get time of now
         LocalDateTime now = LocalDateTime.now();
+
+        //sleep 1 millisecond so update is in past(constraint in event)
+        try {
+            TimeUnit.MILLISECONDS.sleep(1);
+        }catch(InterruptedException e){
+            throw new ServiceException("Internal Server error", e);
+        }
 
 
         // fetch customer to add or remove
@@ -312,6 +320,12 @@ public class EventService implements IEventService {
             throw new ServiceException("", dae);
         }
 
+        if(customerToAddOrRemove == null){
+            LOGGER.error("Customer is null");
+            throw new ServiceException("", null);
+        }
+
+        event.setUpdated(now);
 
 
         if(customerToAddOrRemove.getId() == null) {
@@ -354,8 +368,6 @@ public class EventService implements IEventService {
 
 
             customerListWithNewCustomer.add(customerToAddOrRemove);
-
-            event.setUpdated(now);
             event.setCustomers(customerListWithNewCustomer);
 
             mergeEvent(persistedEvent, event);
@@ -375,13 +387,33 @@ public class EventService implements IEventService {
             }
         } else {
             // here is happening a sign off
-            // TODO SIGN OFF
-
+            LOGGER.info("Sign off is happening");
             if(customerToAddOrRemove.getEmailId() == null) {
-                // error
+                LOGGER.error("Customer to remove has no email id");
+                throw new ServiceException("", null);
             }
-        }
 
+            Set<Customer> customerSet = new HashSet<>();
+            boolean customerToRemoveFound = false;
+
+            for(Customer x : persistedEvent.getCustomers()){
+                if(!(x.getEmailId().intValue() == customerToAddOrRemove.getEmailId().intValue())){
+                    customerSet.add(x);
+                } else{
+                    customerToRemoveFound = true;
+                }
+            }
+
+            if(!customerToRemoveFound){
+                LOGGER.error("Customer with email id " + customerToAddOrRemove.getEmailId() + " not found");
+                throw new ServiceException("", null);
+            }
+
+            event.setCustomers(customerSet);
+
+            mergeEvent(persistedEvent, event);
+            this.eventRepository.flush();
+        }
 
 
         // fetch new persisted event for return
