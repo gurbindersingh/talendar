@@ -34,6 +34,9 @@ import { CourseSignComponent } from './components/course-sign/course-sign.compon
 import { LoginComponent } from './components/login/login.component';
 import { HolidaysClient } from 'src/app/rest/holidays-client';
 import { AuthenticationClient } from './rest/authentication-client';
+import { AdminGuard } from './guards/admin-guard';
+import { TrainerGuard } from './guards/trainer-guard';
+import { AuthenticatedGuard } from './guards/authenticated-guard';
 
 @NgModule({
     declarations: [
@@ -74,6 +77,9 @@ import { AuthenticationClient } from './rest/authentication-client';
         HolidayClient,
         HolidaysClient,
         AuthenticationClient,
+        AdminGuard,
+        TrainerGuard,
+        AuthenticatedGuard,
     ],
     bootstrap: [AppComponent],
 })

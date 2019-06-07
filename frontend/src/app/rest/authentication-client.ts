@@ -4,6 +4,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthenticationRequest } from '../models/authentication-request';
 import { AuthenticationResponse } from '../models/authentication-response';
+import { UserDetails } from '../models/user-details';
 
 @Injectable()
 export class AuthenticationClient extends RestClient {
@@ -21,5 +22,11 @@ export class AuthenticationClient extends RestClient {
             '',
             authenticationData
         );
+    }
+
+    public userDetails(token: string): Observable<UserDetails> {
+        return this.get((error: HttpErrorResponse) => {
+            console.log(error.message);
+        }, '/info/' + token);
     }
 }

@@ -3,7 +3,7 @@ import { AuthenticationClient } from '../rest/authentication-client';
 import { SessionStorageService } from './session-storage-service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-
+import { UserDetails } from '../models/user-details';
 
 @Injectable({
     providedIn: 'root',
@@ -16,6 +16,18 @@ export class AuthenticationService {
 
     get isLoggedIn(): boolean {
         return this.sessionStorageService.loggedIn;
+    }
+
+    getUserDetails(): Observable<UserDetails> {
+        if (this.sessionStorageService.loggedIn === false) {
+            return null;
+        } else {
+            console.log('Get Details:');
+            console.log(this.sessionStorageService.sessionToken);
+            return this.authenticationClient.userDetails(
+                this.sessionStorageService.sessionToken
+            );
+        }
     }
 
     login(email: string, password: string): Observable<void> {
