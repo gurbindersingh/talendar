@@ -17,6 +17,7 @@ import at.ac.tuwien.sepm.groupphase.backend.testDataCreation.FakeData;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.Validator;
+import org.apache.tomcat.jni.Local;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,6 +28,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 
 
+import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -102,8 +105,9 @@ public class EventServiceTest {
 
         Event event = eventService.save(VALID_INCOMING_COURSE);
 
-        Customer newCustomer = faker.fakeCustomerEntity();
+        Customer newCustomer = faker.fakeCustomerForSignInEntity();
         newCustomer.setId(null);
+        newCustomer.setBirthOfChild(getBirthdayBasedOnAge(event.getMinAge(), event.getMaxAge()));
         Set<Customer> customers = new HashSet<>();
         customers.add(newCustomer);
         event.setCustomers(customers);
@@ -114,9 +118,10 @@ public class EventServiceTest {
         assertEquals(updatedEvent.getName(), event.getName());
         assertEquals(updatedEvent.getCustomers().size(), 1);
 
-        Customer newCustomer2 = faker.fakeCustomerEntity();
+        Customer newCustomer2 = faker.fakeCustomerForSignInEntity();
         customers = new HashSet<>();
         newCustomer2.setId(null);
+        newCustomer2.setBirthOfChild(getBirthdayBasedOnAge(event.getMinAge(), event.getMaxAge()));
         customers.add(newCustomer2);
         updatedEvent.setCustomers(customers);
 
@@ -124,9 +129,10 @@ public class EventServiceTest {
         updatedEvent = eventService.getEventById(VALID_INCOMING_COURSE.getId());
         assertEquals(updatedEvent.getCustomers().size(), 2);
 
-        Customer newCustomer3 = faker.fakeCustomerEntity();
+        Customer newCustomer3 = faker.fakeCustomerForSignInEntity();
         customers = new HashSet<>();
         newCustomer3.setId(null);
+        newCustomer3.setBirthOfChild(getBirthdayBasedOnAge(event.getMinAge(), event.getMaxAge()));
         customers.add(newCustomer3);
         updatedEvent.setCustomers(customers);
 
@@ -141,8 +147,10 @@ public class EventServiceTest {
 
         Event event = eventService.save(VALID_INCOMING_COURSE);
 
-        Customer newCustomer = faker.fakeCustomerEntity();
+        Customer newCustomer = faker.fakeCustomerForSignInEntity();
         newCustomer.setId(null);
+        newCustomer.setBirthOfChild(getBirthdayBasedOnAge(event.getMinAge(), event.getMaxAge()));
+
         Set<Customer> customers = new HashSet<>();
         customers.add(newCustomer);
         event.setCustomers(customers);
@@ -164,8 +172,9 @@ public class EventServiceTest {
 
         Event event = eventService.save(VALID_INCOMING_COURSE);
 
-        Customer newCustomer = faker.fakeCustomerEntity();
+        Customer newCustomer = faker.fakeCustomerForSignInEntity();
         newCustomer.setId(null);
+        newCustomer.setBirthOfChild(getBirthdayBasedOnAge(event.getMinAge(), event.getMaxAge()));
         Set<Customer> customers = new HashSet<>();
         customers.add(newCustomer);
         event.setCustomers(customers);
@@ -177,8 +186,9 @@ public class EventServiceTest {
         assertEquals(updatedEvent.getCustomers().size(), 1);
 
         customers = new HashSet<>();
-        Customer newCustomer2 = faker.fakeCustomerEntity();
+        Customer newCustomer2 = faker.fakeCustomerForSignInEntity();
         newCustomer2.setId(null);
+        newCustomer2.setBirthOfChild(getBirthdayBasedOnAge(event.getMinAge(), event.getMaxAge()));
         customers.add(newCustomer2);
         updatedEvent.setCustomers(customers);
 
@@ -187,6 +197,7 @@ public class EventServiceTest {
         assertEquals(updatedEvent.getCustomers().size(), 2);
 
 
+        //remove one customer
         customers = new HashSet<>();
         int i = 0;
         for(Customer x : updatedEvent.getCustomers()){
@@ -449,5 +460,17 @@ public class EventServiceTest {
             System.out.println("System Error Creating Test Trainer");
         }
         return trainer;
+    }
+
+
+
+    private LocalDateTime getBirthdayBasedOnAge(Integer minAge, Integer maxAge){
+        LocalDateTime now = LocalDateTime.now();
+        if(minAge == null || maxAge == null){
+            return now;
+        } else {
+            Long iqr = (long)(maxAge - minAge) / 2;
+            return now.plusYears(-(iqr));
+        }
     }
 }
