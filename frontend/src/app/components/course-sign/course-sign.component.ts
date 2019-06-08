@@ -1,11 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { NgbDateStruct, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
+import {
+    NgbDateStruct,
+    NgbTimeStruct,
+    NgbDate,
+} from '@ng-bootstrap/ng-bootstrap';
 import { RoomUse } from 'src/app/models/roomUse';
 import { Room } from 'src/app/models/enum/room';
 import { EventClient } from 'src/app/rest/event-client';
 import { ActivatedRoute } from '@angular/router';
 import { Event } from 'src/app/models/event';
 import { Customer } from 'src/app/models/customer';
+import { DateTimeParserService } from 'src/app/services/date-time-parser.service';
 import { NgForm } from '@angular/forms';
 
 @Component({
@@ -18,6 +23,9 @@ export class CourseSignComponent implements OnInit {
     private event: Event = new Event();
     private customer: Customer = new Customer();
     private customerLengthBeforeUpdate: number;
+
+    canSignIn: boolean;
+    wantsEmail = false;
 
     private errorMsg: string;
     private successMsg: string;
@@ -33,17 +41,26 @@ export class CourseSignComponent implements OnInit {
 
     date: NgbDateStruct;
     time: NgbTimeStruct;
+    birthOfChild: NgbDateStruct;
+
+    stringOfEofDate: string;
+    stringOfEofTime: string;
+    dateTimeParser: DateTimeParserService;
 
     constructor(
         private eventClient: EventClient,
-        private route: ActivatedRoute
-    ) {}
+        private route: ActivatedRoute,
+        dateTimeParser: DateTimeParserService
+    ) {
+        this.dateTimeParser = dateTimeParser;
+    }
 
     ngOnInit() {
         this.id = this.route.snapshot.queryParams.id;
         this.loading = false;
         this.event.customerDtos = []; // needed
         this.getEventFromBackendById(this.id);
+        this.canSignIn = true;
     }
 
     public getEventFromBackendById(id: number): void {
@@ -55,6 +72,8 @@ export class CourseSignComponent implements OnInit {
                 this.event = data;
                 this.event.customerDtos = data.customerDtos;
                 this.event.roomUses = data.roomUses;
+                this.stringOfEofDate = this.extractDate(data.endOfApplication);
+                this.stringOfEofTime = this.extractTime(data.endOfApplication);
                 this.customerLengthBeforeUpdate = data.customerDtos.length;
                 for (const roomUse of this.event.roomUses) {
                     this.pushStringToArray(
@@ -65,7 +84,9 @@ export class CourseSignComponent implements OnInit {
                 }
             },
             (error: Error) => {
-                this.errorMsg = 'Event existiert nicht mehr.';
+                this.errorMsg =
+                    'Etwas ist schief gelaufen. Event existiert nicht.';
+                this.canSignIn = false;
             }
         );
 
@@ -79,6 +100,12 @@ export class CourseSignComponent implements OnInit {
         this.customer.id = null;
         this.event.customerDtos.push(this.customer);
         this.loading = true;
+        const time = { hour: 0, minute: 0, second: 0 };
+        this.customer.wantsEmail = this.wantsEmail;
+        this.customer.birthOfChild = this.dateTimeParser.dateTimeToString(
+            this.birthOfChild,
+            time
+        );
         this.eventClient.updateCustomer(this.event).subscribe(
             (data: Event) => {
                 console.log('Event without error. Data: ', data);
@@ -108,6 +135,10 @@ export class CourseSignComponent implements OnInit {
         console.log('Event after all: ', this.event);
     }
 
+    public checkBoxClicked() {
+        this.wantsEmail = !this.wantsEmail;
+    }
+
     public isCompleted(): boolean {
         if (this.customer.phone === undefined || this.customer.phone === '') {
             return false;
@@ -125,6 +156,21 @@ export class CourseSignComponent implements OnInit {
             return false;
         }
         if (this.customer.email === undefined || this.customer.email === '') {
+            return false;
+        }
+        if (
+            this.customer.childName === undefined ||
+            this.customer.childName === ''
+        ) {
+            return false;
+        }
+        if (
+            this.customer.childLastName === undefined ||
+            this.customer.childLastName === ''
+        ) {
+            return false;
+        }
+        if (this.birthOfChild === undefined) {
             return false;
         }
         return true;

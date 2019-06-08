@@ -250,19 +250,18 @@ public class EventService implements IEventService {
     public Event getEventById(Long id) throws NotFoundException, ServiceException {
         LOGGER.info("Try to retrieve event with id " + id);
 
-        Optional<Event> result;
+        Event result;
 
         try {
-            result = eventRepository.findById(id);
+            result = eventRepository.findByIdAndDeletedFalse(id);
         }
         catch(DataAccessException dae) {
             throw new ServiceException("Error while performing a data access operation", dae);
         }
 
-        if(result.isPresent() &&
-           !result.get().isDeleted()) {  //if event exists and not deleted the return
-            LOGGER.info("Event with id: " + result.get());
-            return result.get();
+        if(result != null){
+            LOGGER.info("Event with id found: " + result);
+            return result;
         } else {
             throw new NotFoundException("The event with id " + id + " does not exist");
         }
@@ -340,7 +339,7 @@ public class EventService implements IEventService {
 
             // validate new customer
             try {
-                this.validator.validateCustomer(customerToAddOrRemove);
+                this.validator.validateCustomerForCourseSign(customerToAddOrRemove, event.getMinAge(), event.getMaxAge(), event.getEndOfApplication());
             }
             catch(InvalidEntityException ve) {
                 LOGGER.error("Invalid Customer to add");
@@ -349,22 +348,27 @@ public class EventService implements IEventService {
 
 
             Set<Customer> customerListWithNewCustomer = new HashSet<>();
-            Integer emailId = null;
+            Integer greatestEmailId = null;
 
             // prepare list of customers
             for(Customer x : persistedEvent.getCustomers()) {
-                emailId = x.getEmailId();
+                if(greatestEmailId == null) {
+                    greatestEmailId = x.getEmailId();
+                }
+                if(x.getEmailId() > greatestEmailId.intValue()){
+                    greatestEmailId = x.getEmailId();
+                }
                 customerListWithNewCustomer.add(x);
             }
 
             // prepare email id for new customer
-            if(emailId == null) {
+            if(greatestEmailId == null) {
                 // first customer to add
-                emailId = 1;
+                greatestEmailId = 1;
             } else {
-                emailId++;
+                greatestEmailId++;
             }
-            customerToAddOrRemove.setEmailId(emailId);
+            customerToAddOrRemove.setEmailId(greatestEmailId);
 
 
             // TODO Events
@@ -561,6 +565,7 @@ public class EventService implements IEventService {
         if(event!=null){
             try {
                 infoMail.sendAdminEventInfoMail(event, "Event storniert", "deleteEvent");
+                infoMail.informCustomers(event);
             }catch(EmailException e){
                 LOGGER.error("Unable to send InfoMail to admin about deleted event");
             }
@@ -746,7 +751,7 @@ public class EventService implements IEventService {
             msg += "\n Falls Sie sich abmelden wollen, klicken Sie auf diesen Link: \n";
         } else {
             msg +=
-                "\n Falls Sie diesen Event stornieren wollen, clicken Sie bitte einfach auf diesen link: \n";
+                "\n Falls Sie diesen Event stornieren wollen, klicken Sie bitte einfach auf diesen link: \n";
         }
         msg += urll;
 

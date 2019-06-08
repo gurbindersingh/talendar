@@ -153,10 +153,12 @@
                         <label for="trainerPw">Neues Passwort eingeben</label>
                         <input
                             type="password"
+                            [(ngModel)]="password"
                             class="form-control"
                             name="password"
                             id="trainerPw"
                             placeholder="Neues Passwort"
+                            minlength="8"
                             required
                         />
                     </div>
@@ -167,10 +169,12 @@
                         >
                         <input
                             type="password"
+                            [(ngModel)]="passwordRepeated"
                             class="form-control"
                             name="passwordRepeat"
                             id="trainerPwRepeat"
                             placeholder="Passwort wiederholen"
+                            minlength="8"
                             required
                         />
                     </div>
