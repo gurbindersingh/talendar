@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Set;
@@ -34,10 +35,23 @@ public class Customer {
     @Column
     private Integer emailId;
 
+    @Column
+    private String childName;
+
+    @Column
+    private String childLastName;
+
+    @Column
+    private LocalDateTime birthOfChild;
+
+    @Column
+    private Boolean wantsEmail;
+
 
     public Customer (){
 
     }
+
     public Customer (Long id, @NotBlank @Email String email, @NotBlank String phone, @NotBlank String firstName, @NotBlank String lastName, Set<Event> events) {
         this.id = id;
         this.email = email;
@@ -45,6 +59,31 @@ public class Customer {
         this.firstName = firstName;
         this.lastName = lastName;
         this.events = events;
+    }
+
+
+    public Customer(
+        @NotBlank @Email String email,
+        @NotBlank String phone,
+        @NotBlank String firstName,
+        @NotBlank String lastName,
+        Set<Event> events,
+        Integer emailId,
+        String childName,
+        String childLastName,
+        LocalDateTime birthOfChild,
+        Boolean wantsEmail
+    ) {
+        this.email = email;
+        this.phone = phone;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.events = events;
+        this.emailId = emailId;
+        this.childName = childName;
+        this.childLastName = childLastName;
+        this.birthOfChild = birthOfChild;
+        this.wantsEmail = wantsEmail;
     }
 
 
@@ -118,21 +157,67 @@ public class Customer {
     }
 
 
-    @Override
-    public boolean equals (Object o) {
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
-        Customer customer = (Customer) o;
-        return Objects.equals(email, customer.email) &&
-            Objects.equals(phone, customer.phone) &&
-            Objects.equals(firstName, customer.firstName) &&
-            Objects.equals(lastName, customer.lastName);
+    public String getChildName() {
+        return childName;
+    }
+
+
+    public void setChildName(String childName) {
+        this.childName = childName;
+    }
+
+
+    public String getChildLastName() {
+        return childLastName;
+    }
+
+
+    public void setChildLastName(String childLastName) {
+        this.childLastName = childLastName;
+    }
+
+
+    public LocalDateTime getBirthOfChild() {
+        return birthOfChild;
+    }
+
+
+    public void setBirthOfChild(LocalDateTime birthOfChild) {
+        this.birthOfChild = birthOfChild;
+    }
+
+
+    public Boolean getWantsEmail() {
+        return wantsEmail;
+    }
+
+
+    public void setWantsEmail(Boolean wantsEmail) {
+        this.wantsEmail = wantsEmail;
     }
 
 
     @Override
-    public int hashCode () {
-        return Objects.hash(email, phone, firstName, lastName);
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        Customer customer = (Customer) o;
+        return Objects.equals(email, customer.email) &&
+               Objects.equals(phone, customer.phone) &&
+               Objects.equals(firstName, customer.firstName) &&
+               Objects.equals(emailId, customer.emailId) &&
+               Objects.equals(childName, customer.childName) &&
+               Objects.equals(childLastName, customer.childLastName) &&
+               Objects.equals(birthOfChild, customer.birthOfChild) &&
+               Objects.equals(wantsEmail, customer.wantsEmail);
+    }
+
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(email, phone, firstName, emailId, childName, childLastName,
+                            birthOfChild, wantsEmail
+        );
     }
 
 
@@ -145,6 +230,10 @@ public class Customer {
                ", firstName='" + firstName + '\'' +
                ", lastName='" + lastName + '\'' +
                ", emailId=" + emailId +
+               ", childName='" + childName + '\'' +
+               ", childLastName='" + childLastName + '\'' +
+               ", birthOfChild=" + birthOfChild +
+               ", wantsEmail=" + wantsEmail +
                '}';
     }
 }
