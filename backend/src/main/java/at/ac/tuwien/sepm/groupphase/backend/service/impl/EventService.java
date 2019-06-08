@@ -348,22 +348,27 @@ public class EventService implements IEventService {
 
 
             Set<Customer> customerListWithNewCustomer = new HashSet<>();
-            Integer emailId = null;
+            Integer greatestEmailId = null;
 
             // prepare list of customers
             for(Customer x : persistedEvent.getCustomers()) {
-                emailId = x.getEmailId();
+                if(greatestEmailId == null) {
+                    greatestEmailId = x.getEmailId();
+                }
+                if(x.getEmailId() > greatestEmailId.intValue()){
+                    greatestEmailId = x.getEmailId();
+                }
                 customerListWithNewCustomer.add(x);
             }
 
             // prepare email id for new customer
-            if(emailId == null) {
+            if(greatestEmailId == null) {
                 // first customer to add
-                emailId = 1;
+                greatestEmailId = 1;
             } else {
-                emailId++;
+                greatestEmailId++;
             }
-            customerToAddOrRemove.setEmailId(emailId);
+            customerToAddOrRemove.setEmailId(greatestEmailId);
 
 
             // TODO Events
