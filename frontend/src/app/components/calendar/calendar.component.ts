@@ -13,6 +13,7 @@ import { MetaEvent } from './MetaEvent';
 import { Trainer } from 'src/app/models/trainer';
 import { TrainerClient } from 'src/app/rest/trainer-client';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Router } from '@angular/router';
 
 /**
  * In order to display week days in German the locale data
@@ -89,7 +90,8 @@ export class CalendarComponent implements OnInit {
         private eventClient: EventClient,
         private trainerClient: TrainerClient,
         private eventImport: EventImportService,
-        private modalService: NgbModal
+        private modalService: NgbModal,
+        private router: Router
     ) {
         if (screen.width < BREAKPOINTS.medium) {
             this.daysInWeek = 3;
@@ -122,10 +124,33 @@ export class CalendarComponent implements OnInit {
         alert('Implement showDetails()');
     }
 
-    addEvent(date: Date, content: any) {
+    dateClicked(date: Date, content: any) {
         console.warn(date);
         this.clickedDateTime = date;
         this.modalService.open(content);
+    }
+
+    addEvent(type: string) {
+        switch (type) {
+            case 'new-course':
+                this.router.navigateByUrl(
+                    '/course/add?date=' + this.clickedDateTime
+                );
+                break;
+
+            case 'new-holiday':
+                this.router.navigateByUrl(
+                    '/holiday/add?date=' + this.clickedDateTime
+                );
+                break;
+            case 'new-consultation':
+                this.router.navigateByUrl(
+                    '/consultation/add?date=' + this.clickedDateTime
+                );
+                break;
+            default:
+                break;
+        }
     }
 
     /**
