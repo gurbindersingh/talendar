@@ -27,6 +27,6 @@ export class AuthenticationClient extends RestClient {
     public userDetails(token: string): Observable<UserDetails> {
         return this.get((error: HttpErrorResponse) => {
             console.log(error.message);
-        }, '/info/' + token);
+        }, '/info');
     }
 }
