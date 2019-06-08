@@ -1,17 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { registerLocaleData, DatePipe } from '@angular/common';
+import { registerLocaleData } from '@angular/common';
 import localeDe from '@angular/common/locales/de-AT';
 
 import { CalendarDateFormatter, CalendarView } from 'angular-calendar';
 
-import { CustomDateFormatter } from './CustomDateFormatter';
-import { MetaEvent } from './MetaEvent';
-import { Event } from '../../models/event';
 import { BREAKPOINTS } from 'src/app/utils/Breakpoints';
+import { CustomDateFormatter } from './CustomDateFormatter';
+import { Event } from '../../models/event';
 import { EventClient } from 'src/app/rest/event-client';
 import { EventImportService } from 'src/app/services/event-import.service';
+import { MetaEvent } from './MetaEvent';
 import { Trainer } from 'src/app/models/trainer';
 import { TrainerClient } from 'src/app/rest/trainer-client';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Router } from '@angular/router';
 
 /**
  * In order to display week days in German the locale data
@@ -45,8 +47,7 @@ export class CalendarComponent implements OnInit {
     view = CalendarView.Week;
     viewDate = new Date();
     weekStartsOn = 1;
-    navButtonLabel: { prev: string; next: string };
-
+    private clickedDateTime: Date;
     // toggle between collapsed and open filter menu
     isCollapsed = true;
 
@@ -88,7 +89,9 @@ export class CalendarComponent implements OnInit {
     constructor(
         private eventClient: EventClient,
         private trainerClient: TrainerClient,
-        private eventImport: EventImportService
+        private eventImport: EventImportService,
+        private modalService: NgbModal,
+        private router: Router
     ) {
         if (screen.width < BREAKPOINTS.medium) {
             this.daysInWeek = 3;
@@ -114,6 +117,40 @@ export class CalendarComponent implements OnInit {
             // explicit undefined value matches option 'reset' (if clicked selection is resetted)
             this.trainerList.push(undefined);
         });
+    }
+
+    showDetails(event: any) {
+        console.warn(event);
+        alert('Implement showDetails()');
+    }
+
+    dateClicked(date: Date, content: any) {
+        console.warn(date);
+        this.clickedDateTime = date;
+        this.modalService.open(content);
+    }
+
+    addEvent(type: string) {
+        switch (type) {
+            case 'new-course':
+                this.router.navigateByUrl(
+                    '/course/add?date=' + this.clickedDateTime
+                );
+                break;
+
+            case 'new-holiday':
+                this.router.navigateByUrl(
+                    '/holiday/add?date=' + this.clickedDateTime
+                );
+                break;
+            case 'new-consultation':
+                this.router.navigateByUrl(
+                    '/consultation/add?date=' + this.clickedDateTime
+                );
+                break;
+            default:
+                break;
+        }
     }
 
     /**
