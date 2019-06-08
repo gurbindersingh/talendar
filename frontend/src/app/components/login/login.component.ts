@@ -20,6 +20,11 @@ export class LoginComponent implements OnInit {
 
     ngOnInit() {}
 
+    /**
+     * Login user to system (request with credentials)
+     *
+     * Notify event to InternalUpdateService (which will notify navigation component)
+     */
     login(): void {
         this.authenticationService.login(this.email, this.password).subscribe(
             (data) => {

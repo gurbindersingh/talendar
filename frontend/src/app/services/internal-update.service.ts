@@ -6,7 +6,16 @@ import { shareReplay } from 'rxjs/operators';
     providedIn: 'root',
 })
 export class InternalUpdateService {
-    public loginStatusChanges: Subject<boolean>;
+    /**
+     * Subjects can eiter emit and receive events.
+     * We will only use it to emit events that notify about login/logout updates
+     */
+    private loginStatusChanges: Subject<boolean>;
+    /**
+     * Observable will be linked to prior subject.
+     * Anyone can subscribe to it, in order to be notified about the subjects
+     * events.
+     */
     public loginStatusChanges$: Observable<boolean>;
 
     constructor() {

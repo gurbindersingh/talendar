@@ -17,6 +17,14 @@ export class AdminGuard implements CanActivate {
         route: ActivatedRouteSnapshot,
         state: RouterStateSnapshot
     ): Promise<boolean> {
+        /**
+         * Transformed to promise simply because obvioulsy it is not allowed
+         * to handle a subscription within an Guars (caused error).
+         *
+         * Returning an Observable<boolean> would have been possible too, but as
+         * I had to map anyway (because Observable<UserDetails> does not fit) I
+         * have chosen to go with promises which I am more fmailiar with
+         */
         return new Promise<boolean>((resolve) => {
             const details: Observable<
                 UserDetails

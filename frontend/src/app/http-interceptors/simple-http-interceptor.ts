@@ -34,9 +34,6 @@ export class SimpleHttpInterceptor implements HttpInterceptor {
                     throw error;
                 })
             );
-            /*catch((error, caught) => {
-                return Observable.throw(error);
-            }) as any; */
         }
     }
 }

@@ -87,10 +87,6 @@ export class NavigationComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        /* this.contextNavLinks = this.navLinks;
-        this.contextNavLinks = this.contextNavLinks.filter((elem) =>
-            this.isAccessible(elem)
-        );*/
         this.updateNavigation();
 
         this.internalUpdateService.loginStatusChanges$.subscribe((update) => {
@@ -104,7 +100,63 @@ export class NavigationComponent implements OnInit {
         }
     }
 
-    isAccessible(navLink: {
+    /**
+     * Check if logout clicked.
+     *
+     * If yes logout (will remove loggedIn Status from SessionStorage)
+     * and notify this event to InternalUpdaeservice which will emit new event
+     * for observables
+     */
+    checkForLogout(navLink: {
+        name: string;
+        path: string;
+        restriction: Authorities;
+    }): void {
+        if (navLink.name === 'Logout') {
+            this.authenticationService.logout();
+            this.internalUpdateService.notifyLogout();
+            this.router.navigate(['/calendar']);
+        }
+    }
+
+    /**
+     * Check if logged in and if yes load status of user (roles)
+     *
+     * After this update filter navigation links based on user type.
+     */
+    private updateNavigation(): void {
+        this.contextNavLinks = this.navLinks;
+        if (this.authenticationService.isLoggedIn) {
+            this.authenticationService.getUserDetails().subscribe(
+                (data: UserDetails) => {
+                    this.user = data;
+                    this.contextNavLinks = this.contextNavLinks.filter((elem) =>
+                        this.isAccessible(elem)
+                    );
+                    if (this.user.roles.includes(Authorities.ADMIN)) {
+                        this.authority = 'Admin';
+                    } else {
+                        this.authority = 'Betreuer';
+                    }
+                },
+                (error: Error) => {
+                    console.log(error.message);
+                }
+            );
+        } else {
+            this.user = null;
+            this.contextNavLinks = this.contextNavLinks.filter((elem) =>
+                this.isAccessible(elem)
+            );
+            this.authority = 'Gast';
+        }
+    }
+
+    /**
+     * Filter out navLinks based on access rights restrictions and the set
+     * user profile (the active user)
+     */
+    private isAccessible(navLink: {
         name: string;
         path: string;
         restriction: Authorities;
@@ -149,45 +201,5 @@ export class NavigationComponent implements OnInit {
         }
 
         return true;
-    }
-
-    checkForLogout(navLink: {
-        name: string;
-        path: string;
-        restriction: Authorities;
-    }): void {
-        if (navLink.name === 'Logout') {
-            this.authenticationService.logout();
-            this.internalUpdateService.notifyLogout();
-            this.router.navigate(['/calendar']);
-        }
-    }
-
-    private updateNavigation(): void {
-        this.contextNavLinks = this.navLinks;
-        if (this.authenticationService.isLoggedIn) {
-            this.authenticationService.getUserDetails().subscribe(
-                (data: UserDetails) => {
-                    this.user = data;
-                    this.contextNavLinks = this.contextNavLinks.filter((elem) =>
-                        this.isAccessible(elem)
-                    );
-                    if (this.user.roles.includes(Authorities.ADMIN)) {
-                        this.authority = 'Admin';
-                    } else {
-                        this.authority = 'Betreuer';
-                    }
-                },
-                (error: Error) => {
-                    console.log(error.message);
-                }
-            );
-        } else {
-            this.user = null;
-            this.contextNavLinks = this.contextNavLinks.filter((elem) =>
-                this.isAccessible(elem)
-            );
-            this.authority = 'Gast';
-        }
     }
 }
