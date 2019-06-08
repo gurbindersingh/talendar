@@ -512,6 +512,7 @@ public class EventService implements IEventService {
         if(event!=null){
             try {
                 infoMail.sendAdminEventInfoMail(event, "Event storniert", "deleteEvent");
+                infoMail.informCustomers(event);
             }catch(EmailException e){
                 LOGGER.error("Unable to send InfoMail to admin about deleted event");
             }
