@@ -32,7 +32,12 @@ import { HolidayClient } from 'src/app/rest/holiday-client';
 import { CancelEventComponent } from './components/cancel-event/cancel-event.component';
 import { CourseViewComponent } from './components/course-view/course-view.component';
 import { CourseSignComponent } from './components/course-sign/course-sign.component';
+import { LoginComponent } from './components/login/login.component';
 import { HolidaysClient } from 'src/app/rest/holidays-client';
+import { AuthenticationClient } from './rest/authentication-client';
+import { AdminGuard } from './guards/admin-guard';
+import { TrainerGuard } from './guards/trainer-guard';
+import { AuthenticatedGuard } from './guards/authenticated-guard';
 
 @NgModule({
     declarations: [
@@ -50,6 +55,7 @@ import { HolidaysClient } from 'src/app/rest/holidays-client';
         CourseViewComponent,
         CourseSignComponent,
         NgbdModalConfirm,
+        LoginComponent,
     ],
     imports: [
         AppRoutingModule,
@@ -72,6 +78,10 @@ import { HolidaysClient } from 'src/app/rest/holidays-client';
         DateTimeParserService,
         HolidayClient,
         HolidaysClient,
+        AuthenticationClient,
+        AdminGuard,
+        TrainerGuard,
+        AuthenticatedGuard,
     ],
     bootstrap: [AppComponent],
     entryComponents: [NgbdModalConfirm],

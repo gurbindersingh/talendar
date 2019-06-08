@@ -71,6 +71,10 @@ public class EventServiceTest {
     private static Trainer trainer = faker.fakeNewTrainerEntity();
 
 
+    // the save method of trainers (which leads to creation of an account) needs an pw
+    // as it is not important for overall logic, just pass 'anything'
+    private final String DUMMY_PW = "PASSWORD";
+
 
     @BeforeEach
     public void init(){
@@ -417,7 +421,7 @@ public class EventServiceTest {
         for(int i = 0; i <= 100; i++){
             Trainer t = faker.fakeNewTrainerEntity();
             try {
-                trainerService.save(t);
+                trainerService.save(t, DUMMY_PW);
                 trainers.add(t);
             }catch(ValidationException e){
                 System.out.println("System Validation Error creating Test Data");
@@ -438,7 +442,7 @@ public class EventServiceTest {
         birthdayTypes.add("Painting");
         trainer.setBirthdayTypes(birthdayTypes);
         try {
-            trainerService.save(trainer);
+            trainerService.save(trainer, DUMMY_PW);
         }catch(ValidationException e){
             System.out.println("System Validation Error Creating Test Trainer");
         }catch(ServiceException e){

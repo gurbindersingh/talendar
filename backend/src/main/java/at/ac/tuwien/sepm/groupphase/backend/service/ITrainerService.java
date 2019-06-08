@@ -11,14 +11,18 @@ import java.util.List;
 public interface ITrainerService {
 
     /**
-     * This method will save the given instance of trainer.
+     * This method will save the given instance of trainer and a user account for authentication will
+     * be created.
+     * Note: This method is handled as one atomic transaction. It can be assumed that after a successful
+     * operation a valid user account is associated with the trainer.
      *
      * @param trainer the given trainer to be saved
+     * @param password the password for the account to be created
      * @return the persistently saved instance is returned
      * @throws ServiceException will be thrown if any error occurs during data processing that leads to an unsuccessful operation
      * @throws ValidationException will be thrown if the given instance has invalid properties. The cause will be reported.
      */
-    Trainer save (Trainer trainer) throws ServiceException, ValidationException;
+    Trainer save (Trainer trainer, String password) throws ServiceException, ValidationException;
 
     /**
      * This method will update the trainer entity which is referenced by the given parameter (reference by ID:long)
