@@ -339,7 +339,7 @@ public class EventService implements IEventService {
 
             // validate new customer
             try {
-                this.validator.validateCustomer(customerToAddOrRemove);
+                this.validator.validateCustomerForCourseSign(customerToAddOrRemove, event.getMinAge(), event.getMaxAge(), event.getEndOfApplication());
             }
             catch(InvalidEntityException ve) {
                 LOGGER.error("Invalid Customer to add");

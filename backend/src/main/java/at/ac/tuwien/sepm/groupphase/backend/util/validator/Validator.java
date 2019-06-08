@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.regex.Pattern;
 
 @Component
@@ -114,11 +115,13 @@ public class Validator {
 
         // Validator for Course
         if(event.getEventType() == EventType.Course) {
+
             if(event.getEndOfApplication() == null) {
                 throw new InvalidEntityException("Anmeldefrist ist nicht gesetzt");
             } else if(event.getEndOfApplication().isBefore(now)) {
                 throw new InvalidEntityException("Anmeldefrist liegt nicht in der Zukunft");
             }
+
 
             if(event.getPrice() == null) {
                 throw new InvalidEntityException("Preis ist nicht gesetzt");
@@ -171,6 +174,9 @@ public class Validator {
                 for(RoomUse r : event.getRoomUses()
                 ) {
                     validateRoomUse(r);
+                    if(event.getEndOfApplication().isAfter(r.getBegin())){
+                        throw new InvalidEntityException("Anmeldefrist ist nach Event Beginn");
+                    }
                 }
             }
             catch(InvalidEntityException e) {
