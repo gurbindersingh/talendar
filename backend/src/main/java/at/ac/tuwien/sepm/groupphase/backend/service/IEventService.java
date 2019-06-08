@@ -17,9 +17,8 @@ public interface IEventService {
 
 
     /**
-     * (!!!the whole customer list will be replaced!!!)
      *
-     * @param event the given event with the new customer list to replace
+     * @param event with the new customer to add. when customer id is null then a sign in is happening, otherwise a sign off
      * @return the persistently saved instance is returned
      * @throws ServiceException will be thrown if any error occurs during data processing that leads to an unsuccessful operation and if
      *                  customer list is null or empty

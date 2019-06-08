@@ -120,10 +120,8 @@ public class EventEndpoint {
         LOGGER.info("Incoming DELETE Request for an Event with id " + id);
         try {
             eventService.cancelEvent(id);
-        }
-        catch(ValidationException e) {
-            throw new BackendException(
-                "Die Validierung von dem Ausgewählten Event ist fehlgeschlagen", e);
+        }catch(ValidationException e){
+            throw new BackendException(e.getMessage(), e);
         }
     }
 

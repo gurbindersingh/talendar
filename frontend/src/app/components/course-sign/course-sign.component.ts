@@ -1,11 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { NgbDateStruct, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
+import {
+    NgbDateStruct,
+    NgbTimeStruct,
+    NgbDate,
+} from '@ng-bootstrap/ng-bootstrap';
 import { RoomUse } from 'src/app/models/roomUse';
 import { Room } from 'src/app/models/enum/room';
 import { EventClient } from 'src/app/rest/event-client';
 import { ActivatedRoute } from '@angular/router';
 import { Event } from 'src/app/models/event';
 import { Customer } from 'src/app/models/customer';
+import { DateTimeParserService } from 'src/app/services/date-time-parser.service';
 import { NgForm } from '@angular/forms';
 
 @Component({
@@ -14,13 +19,20 @@ import { NgForm } from '@angular/forms';
     styleUrls: ['./course-sign.component.scss'],
 })
 export class CourseSignComponent implements OnInit {
+    private id: number;
     private event: Event = new Event();
     private customer: Customer = new Customer();
+    private customerLengthBeforeUpdate: number;
+
+    canSignIn: boolean;
+    wantsEmail = false;
 
     private errorMsg: string;
     private successMsg: string;
 
-    countCustomer: number;
+    loading: boolean;
+
+    btnClicked = false;
 
     title = 'Kurs anmelden';
 
@@ -29,23 +41,40 @@ export class CourseSignComponent implements OnInit {
 
     date: NgbDateStruct;
     time: NgbTimeStruct;
+    birthOfChild: NgbDateStruct;
+
+    stringOfEofDate: string;
+    stringOfEofTime: string;
+    dateTimeParser: DateTimeParserService;
 
     constructor(
         private eventClient: EventClient,
-        private route: ActivatedRoute
-    ) {}
+        private route: ActivatedRoute,
+        dateTimeParser: DateTimeParserService
+    ) {
+        this.dateTimeParser = dateTimeParser;
+    }
 
     ngOnInit() {
-        const id: number = this.route.snapshot.queryParams.id;
+        this.id = this.route.snapshot.queryParams.id;
+        this.loading = false;
+        this.event.customerDtos = []; // needed
+        this.getEventFromBackendById(this.id);
+        this.canSignIn = true;
+    }
 
+    public getEventFromBackendById(id: number): void {
         this.dates = [];
         this.times = [];
-
         this.eventClient.getEventById(id).subscribe(
             (data: Event) => {
-                console.log(data);
+                console.log('Loaded event: ', data);
                 this.event = data;
-                this.countCustomer = this.event.customerDtos.length;
+                this.event.customerDtos = data.customerDtos;
+                this.event.roomUses = data.roomUses;
+                this.stringOfEofDate = this.extractDate(data.endOfApplication);
+                this.stringOfEofTime = this.extractTime(data.endOfApplication);
+                this.customerLengthBeforeUpdate = data.customerDtos.length;
                 for (const roomUse of this.event.roomUses) {
                     this.pushStringToArray(
                         roomUse.begin,
@@ -56,30 +85,58 @@ export class CourseSignComponent implements OnInit {
             },
             (error: Error) => {
                 this.errorMsg =
-                    'Der ausgewählte Trainer konnte leider nicht geladen werden.';
+                    'Etwas ist schief gelaufen. Event existiert nicht.';
+                this.canSignIn = false;
             }
         );
+
+        console.log('this.event: ', this.event);
     }
 
-    public updateCourseCustomers(courseSignForm: NgForm): void {
+    public updateCourseCustomers(): void {
+        this.errorMsg = '';
+        this.successMsg = '';
+        this.event.customerDtos = [];
+        this.customer.id = null;
         this.event.customerDtos.push(this.customer);
+        this.loading = true;
+        const time = { hour: 0, minute: 0, second: 0 };
+        this.customer.wantsEmail = this.wantsEmail;
+        this.customer.birthOfChild = this.dateTimeParser.dateTimeToString(
+            this.birthOfChild,
+            time
+        );
         this.eventClient.updateCustomer(this.event).subscribe(
             (data: Event) => {
-                if (data.customerDtos.length < this.event.customerDtos.length) {
+                console.log('Event without error. Data: ', data);
+                if (
+                    data.customerDtos.length === this.customerLengthBeforeUpdate
+                ) {
+                    this.btnClicked = false;
+                    this.loading = false;
                     this.errorMsg = 'Sie sind schon angemeldet';
-                    this.event.customerDtos = data.customerDtos;
-                    this.countCustomer = data.customerDtos.length;
+                    this.successMsg = '';
                 } else {
-                    this.countCustomer = data.customerDtos.length;
-                    console.log(data);
+                    this.btnClicked = true;
+                    console.log('Successful: ', data);
                     this.successMsg = 'Sie sind jetzt angemeldet!';
+                    this.errorMsg = '';
                 }
             },
             (error: Error) => {
-                console.log(error);
+                this.btnClicked = false;
+                this.loading = false;
+                console.log('Fehler ist:', error);
+                this.successMsg = '';
                 this.errorMsg = error.message;
             }
         );
+        this.getEventFromBackendById(this.id);
+        console.log('Event after all: ', this.event);
+    }
+
+    public checkBoxClicked() {
+        this.wantsEmail = !this.wantsEmail;
     }
 
     public isCompleted(): boolean {
@@ -99,6 +156,21 @@ export class CourseSignComponent implements OnInit {
             return false;
         }
         if (this.customer.email === undefined || this.customer.email === '') {
+            return false;
+        }
+        if (
+            this.customer.childName === undefined ||
+            this.customer.childName === ''
+        ) {
+            return false;
+        }
+        if (
+            this.customer.childLastName === undefined ||
+            this.customer.childLastName === ''
+        ) {
+            return false;
+        }
+        if (this.birthOfChild === undefined) {
             return false;
         }
         return true;
