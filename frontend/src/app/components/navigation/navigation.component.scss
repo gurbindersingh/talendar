@@ -81,4 +81,8 @@
         overflow-x: hidden; /* Disable horizontal scroll */
         transition: width 0.1s; /* 0.5 second transition effect to slide in or slide down the overlay (height or width, depending on reveal) */
     }
+
+    .pop-out-menu {
+        width: 100vw;
+    }
 }

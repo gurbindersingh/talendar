@@ -80,7 +80,7 @@ public class RedactInactiveUsers {
         for(int i = 0; i < redactThese.size(); i++){
             redactThese.get(i).setFirstName("redacted");
             redactThese.get(i).setLastName("redacted");
-            redactThese.get(i).setEmail("redacted");
+            redactThese.get(i).setEmail("redacted@redacted.at");
             redactThese.get(i).setPhone("redacted");
         }
 
