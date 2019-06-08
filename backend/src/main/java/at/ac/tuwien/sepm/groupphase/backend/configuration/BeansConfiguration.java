@@ -1,13 +1,15 @@
 package at.ac.tuwien.sepm.groupphase.backend.configuration;
 
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
 import at.ac.tuwien.sepm.groupphase.backend.util.mapper.CustomerMapper;
 import at.ac.tuwien.sepm.groupphase.backend.util.mapper.EventMapper;
 import at.ac.tuwien.sepm.groupphase.backend.util.mapper.RoomUseMapper;
 import at.ac.tuwien.sepm.groupphase.backend.util.mapper.HolidayMapper;
 import at.ac.tuwien.sepm.groupphase.backend.util.mapper.TrainerMapper;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  * This class can be used to make any class available as a injectable bean for spring.
@@ -19,6 +21,7 @@ import org.springframework.context.annotation.Configuration;
 
 
 @Configuration
+@ComponentScan
 public class BeansConfiguration {
 
     @Bean
@@ -52,4 +55,11 @@ public class BeansConfiguration {
     }
 
 
+    /***
+     *  Encoder used for spring security related process'
+     */
+    @Bean
+    public static PasswordEncoder configureDefaultPasswordEncoder() {
+        return new BCryptPasswordEncoder(10);
+    }
 }

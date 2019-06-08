@@ -21,6 +21,9 @@ export class TrainerComponent implements OnInit {
     title: string;
     trainer: Trainer = new Trainer();
     birthday: NgbDateStruct;
+    password: string;
+    passwordRepeated: string;
+
     btnContextDescription: string;
     errorMsg: string;
     successMsg: string;
@@ -153,6 +156,12 @@ export class TrainerComponent implements OnInit {
         this.trainer.birthdayTypes = supervisedBirthdays;
         this.trainer.birthday = this.transformToDate(this.birthday);
 
+        if (this.password !== this.passwordRepeated) {
+            return;
+        } else {
+            this.trainer.password = this.password;
+        }
+
         if (this.isSaveMode) {
             this.trainerClient.postNewTrainer(this.trainer).subscribe(
                 (data: Trainer) => {
@@ -203,6 +212,18 @@ export class TrainerComponent implements OnInit {
             return false;
         }
         if (this.trainer.phone === undefined || this.trainer.phone === '') {
+            return false;
+        }
+        if (this.password === undefined || this.password === '') {
+            return false;
+        }
+        if (
+            this.passwordRepeated === undefined ||
+            this.passwordRepeated === ''
+        ) {
+            return false;
+        }
+        if (this.password !== this.passwordRepeated) {
             return false;
         }
         // todo add check for password as soon as there is a mechanism that supports passwords

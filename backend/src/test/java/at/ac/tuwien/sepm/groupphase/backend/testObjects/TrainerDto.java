@@ -14,6 +14,7 @@ public class TrainerDto {
     private String phone;
     private String email;
     private List<String> birthdayTypes;
+    private String password;
     // List<Event> excluded from test Trainer Dummy because List of events that a trainer hosts does not affect his validity
     private LocalDateTime created;
     private LocalDateTime updated;
@@ -26,7 +27,7 @@ public class TrainerDto {
 
 
     public TrainerDto(String firstName, String lastName, LocalDate birthday, String phone,
-                      String email, List<String> birthdayTypes
+                      String email, List<String> birthdayTypes, String password
     ) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -35,6 +36,7 @@ public class TrainerDto {
         this.email = email;
         this.birthdayTypes = birthdayTypes;
         this.deleted = false;
+        this.password = password;
     }
 
 
@@ -108,6 +110,16 @@ public class TrainerDto {
     }
 
 
+    public String getPassword() {
+        return password;
+    }
+
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+
     public LocalDateTime getCreated() {
         return created;
     }
@@ -152,14 +164,15 @@ public class TrainerDto {
                Objects.equals(birthdayTypes, that.birthdayTypes) &&
                Objects.equals(created, that.created) &&
                Objects.equals(updated, that.updated) &&
-               Objects.equals(deleted, that.deleted);
+               Objects.equals(deleted, that.deleted) &&
+               Objects.equals(password, that.password);
     }
 
 
     @Override
     public int hashCode() {
         return Objects.hash(id, firstName, lastName, birthday, phone, email, birthdayTypes, created,
-                            updated, deleted
+                            updated, deleted, password
         );
     }
 
