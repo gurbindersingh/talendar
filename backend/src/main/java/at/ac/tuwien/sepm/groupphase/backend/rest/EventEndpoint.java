@@ -40,23 +40,32 @@ public class EventEndpoint {
     }
 
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = "/course", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public EventDto createNewEvent(@RequestBody EventDto eventDto) throws BackendException {
-        LOGGER.info("Incoming POST Request for an Event with type: " + eventDto.toString());
-        try {
-            return eventMapper.entityToEventDto(
-                eventService.save(eventMapper.dtoToEventEntity(eventDto)));
-        }
-        catch(ValidationException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new BackendException(e.getMessage(), e);
-        }
-        catch(ServiceException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new BackendException(e.getMessage(), e);
-        }
+    public EventDto createNewCourse(@RequestBody EventDto eventDto) throws BackendException {
+        return postEvent(eventDto);
     }
+
+    @RequestMapping(value = "/birthday", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public EventDto createNewBirthday(@RequestBody EventDto eventDto) throws BackendException {
+        return postEvent(eventDto);
+    }
+
+    @RequestMapping(value = "consultation", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public EventDto createNewConsultation(@RequestBody EventDto eventDto) throws BackendException {
+        return postEvent(eventDto);
+    }
+
+    @RequestMapping(value = "/rent" ,method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public EventDto createNewRent(@RequestBody EventDto eventDto) throws BackendException {
+        return postEvent(eventDto);
+    }
+
+
+
 
 
     @RequestMapping(method = RequestMethod.PUT)
@@ -182,4 +191,30 @@ public class EventEndpoint {
         LOGGER.info("Incoming GET Request for all future Courses");
         return eventMapper.entityListToEventDtoList(eventService.getAllFutureCourses());
     }
+
+
+    /**
+     *  A simple wrapper for the post of a event.
+     *  This code hat been 1:1 part of the former 'createNewEvent' method, but we had
+     *  to split this abstract method into several distinct REST endpoints in order to distinguish
+     *  between posting of different kinds of events.
+     *
+     *  To avoid code repetition, the actual logic (which is always the same) had been extracted!
+     */
+    private EventDto postEvent(EventDto eventDto)  throws BackendException {
+        LOGGER.info("Incoming POST Request for an Event with type: " + eventDto.toString());
+        try {
+            return eventMapper.entityToEventDto(
+                eventService.save(eventMapper.dtoToEventEntity(eventDto)));
+        }
+        catch(ValidationException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new BackendException(e.getMessage(), e);
+        }
+        catch(ServiceException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new BackendException(e.getMessage(), e);
+        }
+    }
+
 }

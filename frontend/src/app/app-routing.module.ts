@@ -25,7 +25,6 @@ const routes: Routes = [
     {
         path: 'consultation/add',
         component: ConsultationComponent,
-        canActivate: [AuthenticatedGuard],
     },
     {
         path: 'course/add',

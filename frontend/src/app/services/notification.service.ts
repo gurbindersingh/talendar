@@ -5,7 +5,7 @@ import { shareReplay } from 'rxjs/operators';
 @Injectable({
     providedIn: 'root',
 })
-export class InternalUpdateService {
+export class NotificationService {
     /**
      * Subjects can eiter emit and receive events.
      * We will only use it to emit events that notify about login/logout updates

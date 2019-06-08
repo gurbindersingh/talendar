@@ -11,7 +11,6 @@ import { Router } from '@angular/router';
 export class LoginComponent implements OnInit {
     constructor(
         private authenticationService: AuthenticationService,
-        private internalUpdateService: InternalUpdateService,
         private router: Router
     ) {}
 
@@ -30,7 +29,6 @@ export class LoginComponent implements OnInit {
             (data) => {
                 console.log('Login After Request Success: ' + data);
                 this.router.navigate(['/calendar']);
-                this.internalUpdateService.notifyLogin();
             },
             (error: Error) => {
                 console.log('Login After Request Failure: ' + error.message);

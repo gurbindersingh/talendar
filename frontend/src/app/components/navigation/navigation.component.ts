@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { UserDetails } from 'src/app/models/user-details';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Authorities } from 'src/app/models/enum/authorities';
-import { InternalUpdateService } from 'src/app/services/internal-update.service';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
     selector: 'app-navigation',
@@ -31,7 +31,7 @@ export class NavigationComponent implements OnInit {
         {
             name: 'Beratung eintragen',
             path: 'consultation/add',
-            restriction: Authorities.AUTHENTICATED,
+            restriction: Authorities.NONE,
         },
         {
             name: 'Geburtstag eintragen',
@@ -82,14 +82,14 @@ export class NavigationComponent implements OnInit {
 
     constructor(
         private authenticationService: AuthenticationService,
-        private internalUpdateService: InternalUpdateService,
+        private notificationService: NotificationService,
         private router: Router
     ) {}
 
     ngOnInit() {
         this.updateNavigation();
 
-        this.internalUpdateService.loginStatusChanges$.subscribe((update) => {
+        this.notificationService.loginStatusChanges$.subscribe((update) => {
             this.updateNavigation();
         });
     }
@@ -114,7 +114,6 @@ export class NavigationComponent implements OnInit {
     }): void {
         if (navLink.name === 'Logout') {
             this.authenticationService.logout();
-            this.internalUpdateService.notifyLogout();
             this.router.navigate(['/calendar']);
         }
     }
