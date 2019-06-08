@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { registerLocaleData, DatePipe } from '@angular/common';
+import { registerLocaleData } from '@angular/common';
 import localeDe from '@angular/common/locales/de-AT';
 
 import { CalendarDateFormatter, CalendarView } from 'angular-calendar';
@@ -12,6 +12,7 @@ import { EventImportService } from 'src/app/services/event-import.service';
 import { MetaEvent } from './MetaEvent';
 import { Trainer } from 'src/app/models/trainer';
 import { TrainerClient } from 'src/app/rest/trainer-client';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 /**
  * In order to display week days in German the locale data
@@ -45,7 +46,7 @@ export class CalendarComponent implements OnInit {
     view = CalendarView.Week;
     viewDate = new Date();
     weekStartsOn = 1;
-
+    private clickedDateTime: Date;
     // toggle between collapsed and open filter menu
     isCollapsed = true;
 
@@ -87,7 +88,8 @@ export class CalendarComponent implements OnInit {
     constructor(
         private eventClient: EventClient,
         private trainerClient: TrainerClient,
-        private eventImport: EventImportService
+        private eventImport: EventImportService,
+        private modalService: NgbModal
     ) {
         if (screen.width < BREAKPOINTS.medium) {
             this.daysInWeek = 3;
@@ -120,9 +122,10 @@ export class CalendarComponent implements OnInit {
         alert('Implement showDetails()');
     }
 
-    addEvent(date: Date) {
+    addEvent(date: Date, content: any) {
         console.warn(date);
-        alert('Implement addEvent()');
+        this.clickedDateTime = date;
+        this.modalService.open(content);
     }
 
     /**
