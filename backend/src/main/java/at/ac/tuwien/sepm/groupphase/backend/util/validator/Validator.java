@@ -275,10 +275,54 @@ public class Validator {
         }
     }
 
+    public void validateCustomerForCourseSign(Customer customer, Integer minAge, Integer maxAge, LocalDateTime endOfApplication) throws  InvalidEntityException {
+        LocalDateTime now = LocalDateTime.now();
+        if(now.isAfter(endOfApplication)){
+            throw new InvalidEntityException("Anmeldefrist verpasst");
+        }
+        try {
+            this.validateCustomer(customer);
+        } catch(InvalidEntityException ie){
+            throw ie;
+        }
+
+        if(customer.getChildName() == null || customer.getChildName().isBlank()){
+            throw new InvalidEntityException("Vorname des Kindes nicht gesetzt");
+        }
+        if(customer.getChildLastName() == null || customer.getChildLastName().isBlank()){
+            throw new InvalidEntityException("Nachname des Kindes nicht gesetzt");
+        }
+        if(customer.getBirthOfChild() == null) {
+            throw new InvalidEntityException("Geburtstag des Kindes nicht gesetzt");
+        }
+        Integer ageOfChild = calculateAge(customer.getBirthOfChild());
+        if(ageOfChild < minAge){
+            throw new InvalidEntityException("Ihr Kind ist noch zu jung um diesen Kurs besuchen zu können");
+        }
+        if(ageOfChild > maxAge){
+            throw new InvalidEntityException("Ihr Kind ist schon zu alt um diesen Kurs besuchen zu können");
+        }
+        if(customer.getWantsEmail() == null){
+            throw new InvalidEntityException("Ob Sie Werbung haben wollen wurde nicht gesetzt");
+        }
+
+    }
+
+    private static Integer calculateAge(LocalDateTime birthDate) {
+        LocalDateTime now = LocalDateTime.now();
+        if (birthDate != null) {
+            return Period.between(birthDate.toLocalDate(), now.toLocalDate()).getYears();
+        } else {
+            return 0;
+        }
+    }
+
 
     public void validateTrainer(Trainer entity) throws InvalidEntityException {
         LocalDateTime now = LocalDateTime.now();
-
+        if(entity == null){
+            throw new InvalidEntityException("Es konnte kein Trainer gefunden werden");
+        }
         if(entity.getFirstName() == null || entity.getFirstName().isBlank()) {
             throw new InvalidEntityException("Vorname ist nicht gesetzt");
         }
