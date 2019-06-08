@@ -5,6 +5,14 @@ import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
 
+/**
+ * Class that wraps an authentication which is an object created by spring after a request has been
+ * processed and authenticated!
+ *
+ * This is like an Spring Version of a DTO. It is used to wrap an unparsed token in the beginning.
+ * And it is also used to wrap the result of a parsed token (i.e. extracted roles among others)
+ */
+
 public class AuthenticationHeaderToken extends AbstractAuthenticationToken {
 
     private static final long serialVersionUID = 739L;

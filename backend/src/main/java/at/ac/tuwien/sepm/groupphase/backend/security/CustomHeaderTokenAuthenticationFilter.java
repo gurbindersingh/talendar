@@ -42,6 +42,20 @@ public class CustomHeaderTokenAuthenticationFilter extends OncePerRequestFilter 
             AuthenticationHeaderToken authenticationRequest = new AuthenticationHeaderToken(header.substring(AuthenticationConstants.TOKEN_PREFIX.length()));
 
             Authentication authentication = authenticationProvider.authenticate(authenticationRequest);
+            /*
+             *
+             * MAGIC:
+             * We set the retrieved authentication object for the current context.
+             * After Filtering this context is active when we continue to process an incoming HTTP
+             * request.
+             *
+             * Each restriction (i.e. when we specify hasRole('ADMIN')) is checked against the Spring internal
+             * context. So after this step we can activate all routes that matches the current authentication objects.
+             *
+             * Also Note:   SecurityContextHolder operates on ThreadLevel (and Spring is of course multithreaded)
+             *              so any user that interacts with spring has its own context!
+             *
+             */
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         catch(AuthenticationException failed) {

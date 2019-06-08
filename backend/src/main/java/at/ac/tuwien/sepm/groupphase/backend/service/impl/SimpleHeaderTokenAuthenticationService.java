@@ -39,8 +39,12 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SimpleHeaderTokenAuthenticationService.class);
 
+    // an instance which handles the JWT verification process
     private final AuthenticationManager authenticationManager;
+
     private final ObjectMapper objectMapper;
+
+    // configs of jwt parsing etc
     private final SecretKeySpec signingKey;
     private final SignatureAlgorithm signatureAlgorithm;
     private final Duration validityDuration;
@@ -104,6 +108,10 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
             .build();
     }
 
+
+    /**
+     *  Extract all infos from JWT token.
+     */
     @Override
     public AuthenticationTokenInfo authenticationTokenInfo(String headerToken) {
         final Claims claims = Jwts.parser()
@@ -145,6 +153,11 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
             .build();
     }
 
+
+    /**
+     * Method needed by the HeaderTokenAuthenticationProvider.
+     * Get Meta data of token (principal) and authorities which are encoded in token.
+     */
     @Override
     public User authenticate(String headerToken) {
         try {
@@ -170,6 +183,10 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
         }
     }
 
+
+    /**
+     * Extract authorities from JWT Claim
+     */
     private List<String> readJwtAuthorityClaims(Claims claims) {
         ArrayList<String> authoritiesWrapper = new ArrayList<>();
         try {

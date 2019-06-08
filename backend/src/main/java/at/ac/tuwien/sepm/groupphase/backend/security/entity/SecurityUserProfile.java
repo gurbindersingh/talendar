@@ -9,14 +9,35 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Wrapper for Spring authorization related actions.
+ */
+
 public class SecurityUserProfile implements UserDetails {
 
+    /**
+     * NOTE: why not use directly Trainer as wrapped entity?
+     * theoretically possible,  but a) we would expose a lot more details to spring security than
+     * needed, but most importantly b) if we want to add new types of accounts (lets say customers get an account)
+     * then we dont have to change a single LOC in all security related classes.
+     * We would simply create a User entity somewhere else (including the meta data that we want to have set)
+     * and everything would work the same way as before
+     */
+
+    // we wrap it
     private User user;
 
     public SecurityUserProfile(User user) {
         this.user = user;
     }
 
+
+    /**
+     * Set the authorities dependant of the properties of the user account.
+     *
+     * @return  list of granted authorities is returned.
+     *          Based on this list, spring will encode this roles into the signed JWT token.
+     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         final List<GrantedAuthority> authorities = new LinkedList<>();

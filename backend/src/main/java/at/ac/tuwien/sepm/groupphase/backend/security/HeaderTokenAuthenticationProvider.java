@@ -7,6 +7,10 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+/*
+ *  Delegates to  HeaderTokenAuthenticationService for the real processing!
+ */
+
 @Component
 public class HeaderTokenAuthenticationProvider implements AuthenticationProvider {
 

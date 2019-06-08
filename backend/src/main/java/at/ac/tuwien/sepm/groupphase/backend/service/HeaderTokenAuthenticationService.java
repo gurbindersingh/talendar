@@ -10,11 +10,11 @@ public interface HeaderTokenAuthenticationService {
     /**
      * Authenticate user with username and password.
      *
-     * @param username of the user
+     * @param email of the user
      * @param password of the user
      * @return an authentication token
      */
-    AuthenticationToken authenticate(String username, CharSequence password);
+    AuthenticationToken authenticate(String email, CharSequence password);
 
     /**
      * Get informations about a header token.

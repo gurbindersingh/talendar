@@ -91,7 +91,9 @@ public class TrainerService implements ITrainerService {
             throw new ServiceException("Error while performing a data access operation", e);
         }
 
-        // create user profile
+        /**
+         * Now create the user account (needed for authentication)
+         */
         account = new User();
         account.setEmail(trainer.getEmail());
         account.setPassword(password);

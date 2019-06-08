@@ -10,6 +10,22 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+
+/**
+ * This service simply has to load a given entity by its username.
+ * In our scenario the username is an email!
+ *
+ * Note that all user accounts are set when a trainer is posted (these have their profile set to NonAdmin)
+ * and at least one Admin account exists too (currently it is created in the UserService, see there)
+ *
+ *
+ * Only interesting thing about this class:
+ * Spring and its SecurityProviders (like the DaoAuthorityProvider) can not work with a basic entity
+ * like User.
+ * Therefore user is wrapped in a UserDetails object (SecurityUserProfile). This class provides all the callbacks
+ * that spring needs for the automatic authentication process. (Among others, there is a callback for the
+ * associated roles of a user account, see SecurityUserProfile for details)
+ */
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
