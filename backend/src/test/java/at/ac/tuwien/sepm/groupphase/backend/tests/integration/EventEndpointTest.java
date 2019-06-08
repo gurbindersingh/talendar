@@ -63,7 +63,7 @@ public class EventEndpointTest {
         }
         HttpEntity<EventDto> request = new HttpEntity<>(birthday);
         System.out.println(request.toString());
-        ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.EVENT,
+        ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.POST_BIRTHDAY,
                                                                    HttpMethod.POST,
                                                                    request,
                                                                    EventDto.class
@@ -102,7 +102,7 @@ public class EventEndpointTest {
         course.setCustomerDtos(null);
         HttpEntity<EventDto> request = new HttpEntity<>(course);
         System.out.println(request.toString());
-        ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.EVENT,
+        ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.POST_COURSE,
                                                                    HttpMethod.POST,
                                                                    request,
                                                                    EventDto.class
@@ -130,7 +130,7 @@ public class EventEndpointTest {
         }
         HttpEntity<EventDto> request = new HttpEntity<>(rent);
         System.out.println(request.toString());
-        ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.EVENT,
+        ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.POST_RENT,
                                                                    HttpMethod.POST,
                                                                    request,
                                                                    EventDto.class
@@ -168,7 +168,7 @@ public class EventEndpointTest {
         consultation.setTrainer(trainerResponse);
         HttpEntity<EventDto> request = new HttpEntity<>(consultation);
         System.out.println(request.toString());
-        ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.EVENT,
+        ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.POST_CONSULTATION,
                                                                    HttpMethod.POST,
                                                                    request,
                                                                    EventDto.class

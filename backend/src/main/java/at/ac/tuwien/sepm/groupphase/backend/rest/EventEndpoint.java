@@ -52,7 +52,7 @@ public class EventEndpoint {
         return postEvent(eventDto);
     }
 
-    @RequestMapping(value = "consultation", method = RequestMethod.POST)
+    @RequestMapping(value = "/consultation", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public EventDto createNewConsultation(@RequestBody EventDto eventDto) throws BackendException {
         return postEvent(eventDto);
