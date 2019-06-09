@@ -127,8 +127,10 @@ export class CalendarComponent implements OnInit {
 
     dateClicked(date: Date, content: any) {
         console.warn(date);
+        // if (date.valueOf() >= Date.now()) {
         this.dateService.setDateTime(date);
         this.modalService.open(content);
+        // }
     }
 
     addEvent(type: string) {
@@ -143,6 +145,10 @@ export class CalendarComponent implements OnInit {
 
             case 'new-consultation':
                 this.router.navigateByUrl('/consultation/add');
+                break;
+
+            case 'rent':
+                this.router.navigateByUrl('/rent');
                 break;
 
             default:

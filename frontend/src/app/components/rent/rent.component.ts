@@ -9,6 +9,7 @@ import { EventClient } from 'src/app/rest/event-client';
 import { DateTimeParserService } from 'src/app/services/date-time-parser.service';
 
 import { NgbDateStruct, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
+import { ClickedDateService } from 'src/app/services/clicked-date.service';
 
 @Component({
     selector: 'app-meeting',
@@ -38,11 +39,17 @@ export class RentComponent implements OnInit {
 
     constructor(
         private eventClient: EventClient,
-        dateTimeParser: DateTimeParserService
+        dateTimeParser: DateTimeParserService,
+        private clickedDateService: ClickedDateService
     ) {
+        const date = this.clickedDateService.getDate();
+        const time = this.clickedDateService.getTime();
+
         this.dateTimeParser = dateTimeParser;
-        this.startTime = { hour: 13, minute: 0, second: 0 };
-        this.endTime = { hour: 14, minute: 0, second: 0 };
+        this.startTime = this.clickedDateService.getTime();
+        this.endTime = { hour: this.startTime.hour + 1, minute: 0, second: 0 };
+
+        this.startDate = this.clickedDateService.getDate();
     }
 
     ngOnInit() {}
