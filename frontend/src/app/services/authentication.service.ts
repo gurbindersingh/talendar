@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AuthenticationClient } from '../rest/authentication-client';
-import { SessionStorageService } from './session-storage-service';
+import { SessionStorageService } from './session-storage.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { UserDetails } from '../models/user-details';
