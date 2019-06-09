@@ -1,7 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.*;
+import at.ac.tuwien.sepm.groupphase.backend.enums.BirthdayType;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
+import at.ac.tuwien.sepm.groupphase.backend.enums.Room;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.TimeNotAvailableException;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.TrainerNotAvailableException;
@@ -182,7 +184,6 @@ public class EventService implements IEventService {
                     }
                     event = eventRepository.save(event);
                     eventRepository.flush();
-                    System.out.println(event.getId());
                     for(Customer c : event.getCustomers()
                     ) {
                         sendCancelationMail(c.getEmail(), event, c);
@@ -709,7 +710,21 @@ public class EventService implements IEventService {
                 MimeMessage mimeMessage = new MimeMessage(session);
                 mimeMessage.setFrom(new InternetAddress(from));
                 mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
-                mimeMessage.setSubject("Stornierungslink fur den Event am " + event.getRoomUses().get(0).getBegin().format(formatter));
+
+                switch(event.getEventType()){
+                    case Rent:
+                        mimeMessage.setSubject("Sie haben erfolgreich einen Raum bei uns gemietet");
+                        break;
+                    case Course:
+                        mimeMessage.setSubject("Sie haben sich erfolgreich angemeldet");
+                        break;
+                    case Consultation:
+                        mimeMessage.setSubject("Sie haben erfolgreich einen Beratungstermin erstellt");
+                        break;
+                    default:
+                        mimeMessage.setSubject("Sie haben erfolgreich einen Geburtstag erstellt");
+                        break;
+                }
                 mimeMessage.setText(createCancelationMessage(event, customer));
                 Transport transport = session.getTransport("smtp");
                 transport.connect(host, 587, from, password);
@@ -741,25 +756,75 @@ public class EventService implements IEventService {
 
         String msg = "";
 
-        msg += "Hallo " + customer.getFirstName() + " " + customer.getLastName() + "!";
-        msg += "\n\n Danke, dass Sie sich bei uns für " +
-               translateEnumWithArtikel(event.getEventType()) +
-               " angemeldet haben.";
-        if(event.getEventType() == EventType.Course){
-            msg += "\n Ende der Abmeldefrist: ";
-            msg += event.getEndOfApplication().format(formatter) + "\n";
-            msg += "\n Falls Sie sich abmelden wollen, klicken Sie auf diesen Link: \n";
-        } else {
-            msg +=
-                "\n Falls Sie diesen Event stornieren wollen, klicken Sie bitte einfach auf diesen link: \n";
+        msg += "Hallo " + customer.getFirstName() + " " + customer.getLastName() + "!\n\n";
+        switch(event.getEventType()){
+            case Rent:
+                RoomUse roomForRent = event.getRoomUses().get(0);
+                msg += "Hiermit bestätigen wir das Sie erfolgreich einen Raum gemietet haben.\n\n";
+                msg += "Raum " + translateEnumToGerman(roomForRent.getRoom()) + "\n";
+                msg += "Von " + roomForRent.getBegin().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + " bis " + roomForRent.getEnd().format(DateTimeFormatter.ofPattern("HH:mm")) + "\n\n";
+                msg +=
+                    "\nFalls Sie dieses Event stornieren wollen, klicken Sie bitte einfach auf diesen link: \n";
+                break;
+            case Course:
+                msg += "Hiermit bestätigen wir Ihre Anmeldung zum \"" + event.getName() + "\"";
+                msg += "\nEnde der Abmeldefrist: ";
+                msg += event.getEndOfApplication().format(formatter) + "\n";
+                msg += "\nFalls Sie sich abmelden wollen, klicken Sie auf diesen Link: \n";
+                break;
+            case Consultation:
+                RoomUse roomForConsultation = event.getRoomUses().get(0);
+                msg += "Hiermit bestätigen wir das Sie erfolgreich einen Beratungstermin erstellt haben.\n\n";
+                msg += "Raum " + translateEnumToGerman(roomForConsultation.getRoom()) + "\n";
+                msg += "Von " + roomForConsultation.getBegin().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + " bis " + roomForConsultation.getEnd().format(DateTimeFormatter.ofPattern("HH:mm")) + "\n";
+                msg += "Trainer " + event.getTrainer().getFirstName() + " " + event.getTrainer().getLastName() + "\n";
+                msg +=
+                    "\nFalls Sie dieses Event stornieren wollen, klicken Sie bitte einfach auf diesen link: \n";
+                break;
+            default:
+                msg += "Hiermit bestätigen wir das Sie erfolgreich einen Geburtstag bei uns erstellt haben.\n\n";
+                RoomUse roomForBirthDay = event.getRoomUses().get(0);
+                msg += "Art " + translateBirthDayTypeToGerman(event.getBirthdayType()) + "\n";
+                msg += "Raum " + translateEnumToGerman(roomForBirthDay.getRoom()) + "\n";
+                msg += "Von " + roomForBirthDay.getBegin().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + " bis " + roomForBirthDay.getEnd().format(DateTimeFormatter.ofPattern("HH:mm")) + "\n";
+                msg += "Trainer " + event.getTrainer().getFirstName() + " " + event.getTrainer().getLastName() + "\n";
+                msg +=
+                    "\nFalls Sie dieses Event stornieren wollen, klicken Sie bitte einfach auf diesen link: \n";
+                break;
         }
+
         msg += urll;
+        msg += "\n\nMit freundlichen Grüßen,\nIhr Talenderteam";
 
         return msg;
     }
 
+    private static String translateEnumToGerman(Room room){
+        switch(room){
+            case GroundFloor:
+                return "Erdgeschoss";
+            case Green:
+                return "Grün";
+        }
+        return "Orange";
+    }
 
-    public String translateEnumWithArtikel(EventType eventType){
+    private static String translateBirthDayTypeToGerman(String birthdayType){
+        switch(birthdayType){
+            case "Rocket":
+                return "Raketen Geburtstag";
+            case "Photo":
+                return "Photo Geburtstag";
+            case "DryIce":
+                return "Trockeneis Geburtstag";
+            case "Painting":
+                return "Malen Geburtstag";
+        }
+        return "Superhelden Geburtstag";
+    }
+
+
+    private String translateEnumWithArtikel(EventType eventType){
         switch (eventType){
             case Birthday:
                 return "ein Geburtstag";
