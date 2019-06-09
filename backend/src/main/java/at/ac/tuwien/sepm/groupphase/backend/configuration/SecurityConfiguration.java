@@ -195,6 +195,7 @@ public class SecurityConfiguration {
                 .antMatchers(HttpMethod.POST, "/api/v1/talendar/events/consultation").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1/talendar/events/rent").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1/talendar/events/birthday").permitAll()
+                .antMatchers(HttpMethod.PUT, "/api/v1/talendar/events/customers").permitAll()
                 .antMatchers(HttpMethod.PUT, "/api/v1/talendar/events").hasAnyRole("ADMIN", "TRAINER")
                 .antMatchers(HttpMethod.POST, "/api/v1/talendar/holiday").hasRole("TRAINER")
                 .antMatchers(HttpMethod.POST, "/api/v1/talendar/holidays").hasRole("TRAINER")
