@@ -6,7 +6,7 @@ import {
 } from '@angular/common/http';
 import { Observable, EMPTY, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { SessionStorageService } from '../services/session-storage-service';
+import { SessionStorageService } from '../services/session-storage.service';
 import { Injectable } from '@angular/core';
 
 @Injectable()
