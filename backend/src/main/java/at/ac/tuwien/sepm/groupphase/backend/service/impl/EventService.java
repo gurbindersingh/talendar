@@ -1,7 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.*;
+import at.ac.tuwien.sepm.groupphase.backend.enums.BirthdayType;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
+import at.ac.tuwien.sepm.groupphase.backend.enums.Room;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.TimeNotAvailableException;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.TrainerNotAvailableException;
@@ -42,6 +44,7 @@ import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class EventService implements IEventService {
@@ -140,8 +143,9 @@ public class EventService implements IEventService {
             case Course:
                 try {
                     validator.validateEvent(event);
-                    if(!this.trainerRepository.existsById(event.getTrainer().getId())){
-                        InvalidEntityException e = new InvalidEntityException("Trainer mit Id nicht gefunden");
+                    if(!this.trainerRepository.existsById(event.getTrainer().getId())) {
+                        InvalidEntityException e =
+                            new InvalidEntityException("Trainer mit Id nicht gefunden");
                         throw new ValidationException(e.getMessage(), e);
                     }
                     try {
@@ -160,7 +164,6 @@ public class EventService implements IEventService {
 
                     }
                     return eventRepository.save(event);
-
                 }
                 catch(InvalidEntityException e) {
                     throw new ValidationException(e.getMessage(), e);
@@ -181,20 +184,22 @@ public class EventService implements IEventService {
                     }
                     event = eventRepository.save(event);
                     eventRepository.flush();
-                    System.out.println(event.getId());
-                    for(Customer c: event.getCustomers()
+                    for(Customer c : event.getCustomers()
                     ) {
                         sendCancelationMail(c.getEmail(), event, c);
                     }
                     LOGGER.info("Sending information mail to admin");
                     infoMail.sendAdminEventInfoMail(event, "Neue Raummiete", "newEvent");
                     return event;
-
                 }
                 catch(InvalidEntityException e) {
                     throw new ValidationException(e.getMessage(), e);
-                }catch(EmailException e){
-                    throw new ValidationException("Something went wrong while attempting to send an email: " + e.getMessage(), e);
+                }
+                catch(EmailException e) {
+                    throw new ValidationException(
+                        "Something went wrong while attempting to send an email: " + e.getMessage(),
+                        e
+                    );
                 }
             case Consultation:
                 try {
@@ -212,7 +217,7 @@ public class EventService implements IEventService {
                     event = eventRepository.save(event);
                     eventRepository.flush();
                     System.out.println(event.getId());
-                    for(Customer c: event.getCustomers()
+                    for(Customer c : event.getCustomers()
                     ) {
                         sendCancelationMail(c.getEmail(), event, c);
                     }
@@ -222,8 +227,12 @@ public class EventService implements IEventService {
                 }
                 catch(InvalidEntityException e) {
                     throw new ValidationException(e.getMessage(), e);
-                }catch(EmailException e){
-                    throw new ValidationException("Something went wrong while attempting to send an email: " + e.getMessage(), e);
+                }
+                catch(EmailException e) {
+                    throw new ValidationException(
+                        "Something went wrong while attempting to send an email: " + e.getMessage(),
+                        e
+                    );
                 }
                 catch(TrainerNotAvailableException e) {
                     throw new ValidationException(
@@ -242,17 +251,18 @@ public class EventService implements IEventService {
     public Event getEventById(Long id) throws NotFoundException, ServiceException {
         LOGGER.info("Try to retrieve event with id " + id);
 
-        Optional<Event> result;
+        Event result;
 
         try {
-            result = eventRepository.findById(id);
-
-        } catch(DataAccessException dae){
+            result = eventRepository.findByIdAndDeletedFalse(id);
+        }
+        catch(DataAccessException dae) {
             throw new ServiceException("Error while performing a data access operation", dae);
         }
 
-        if(result.isPresent() && !result.get().isDeleted()){  //if event exists and not deleted the return
-            return result.get();
+        if(result != null){
+            LOGGER.info("Event with id found: " + result);
+            return result;
         } else {
             throw new NotFoundException("The event with id " + id + " does not exist");
         }
@@ -260,135 +270,179 @@ public class EventService implements IEventService {
 
 
     @Override
-    public List<Event> getAllEvents (Long trainerId) throws ValidationException, ServiceException {
+    public List<Event> getAllEvents(Long trainerId) throws ValidationException, ServiceException {
         return null;
     }
+
 
     @Transactional
     @Override
     public Event updateCustomers(Event event) throws ValidationException, NotFoundException,
                                                      ServiceException {
-        if(event.getCustomers() != null) {
-            LocalDateTime timeOfUpdate = LocalDateTime.now();
-            Optional<Event> queryResult;
-            Event currentEvent;
+        LOGGER.info("Event to update customers: " + event);
+        if(event == null) {
+            LOGGER.error("Event is null");
+            throw new ServiceException("", null);
+        }
+        if(event.getCustomers() == null ||
+           event.getCustomers().size() != 1) {  //only one customer can be added or removed
+            LOGGER.error("No Customer to add or customer list size is not one");
+            throw new ServiceException("", null);
+        }
 
-            int sizeOfNewEventList = event.getCustomers().size();
-
-            try {
-                queryResult = this.eventRepository.findById(event.getId());
-                if(queryResult.isPresent()) {
-
-
-
-                    currentEvent = queryResult.get();
-
-                    int sizeOfPersistedList = currentEvent.getCustomers().size();
-
-                    Integer lastEmailId = null;
-
-                    Set<Customer> newCustomers = new HashSet<>();
-                    Customer newCustomer = null;
-                    for(Customer x : event.getCustomers()) {
-                        x.setId(null);                      //id must be null
-                        this.validator.validateCustomer(x);
-                        if(x.getEvents() != null) {         // TODO: Maybe not needed.
-                            x.getEvents()
-                             .add(
-                                 event);    //no duplicate, so add event of old customers will be ignored
-                        } else {
-                            Set<Event> events = new HashSet<>();
-                            events.add(event);
-                            x.setEvents(events);
-                        }
-
-                        if(x.getEmailId() != null){             //setup emailId for new Customer...
-                            lastEmailId = x.getEmailId();
-                        } else {
-
-                            //Customer to insert
-
-                            if(lastEmailId == null){
-                                lastEmailId = 1;
-                            } else {
-                                lastEmailId++;
-                            }
-                            x.setEmailId(lastEmailId);
-                            LOGGER.info("x.getEmailId: " + x.getEmailId());
-                        }
-
-                        newCustomers.add(x);
-                        newCustomer = x;
-                    }
+        Optional<Event> queryResult;
+        Event persistedEvent;
+        Customer customerToAddOrRemove = null;
 
 
+        //get time of now
+        LocalDateTime now = LocalDateTime.now();
 
-                    event.setCustomers(newCustomers);
-
-                    event.setUpdated(timeOfUpdate);
-
-
-
-
-                    Event persistedEvent = mergeEvent(currentEvent, event);
-
-
-
-                    eventRepository.flush();
-
-                    LOGGER.info(sizeOfNewEventList + " und " + sizeOfPersistedList);
-
-                    if(sizeOfPersistedList < sizeOfNewEventList){
-                        // A SIGN IN IS HAPPENING
-                        //DO EMAIL WITH CUSTOMER ID:::::::
+        //sleep 1 millisecond so update is in past(constraint in event)
+        try {
+            TimeUnit.MILLISECONDS.sleep(1);
+        }catch(InterruptedException e){
+            throw new ServiceException("Internal Server error", e);
+        }
 
 
+        // fetch customer to add or remove
+        for(Customer x : event.getCustomers()) {
+            customerToAddOrRemove = x;
+        }
 
-                        for(Customer x : persistedEvent.getCustomers()) {   // Get newest customer again because we need the id
-
-                            newCustomer = x;
-
-                            LOGGER.info("EMAIL ID: " + x.getEmailId());
-                        }
-
-
-
-
-
-                        LOGGER.info(persistedEvent.toString());
-
-                        LOGGER.info("Prepare Email for sign off");
-                        sendCancelationMail(newCustomer.getEmail(), persistedEvent,
-                                         newCustomer
-                        );   //create a sign off email and send it to customer
-                        LOGGER.info("Email sent");
-                    }
-
-
-                    ////////////////////////////////////////////////////////
-
-                    return persistedEvent;
-
-
-                } else {
-                    LOGGER.error("Event with id " + event.getId() + " not found");
-                    throw new NotFoundException("");
-                }
-            }
-            catch(DataAccessException dae) {
-                LOGGER.error("Error: " + dae);
-                throw new ServiceException("", dae);
-            }
-            catch(InvalidEntityException ve) {
-                throw new ValidationException(ve.getMessage(), ve);
-            }
-            catch(Exception m) {
-                throw new ServiceException(m);
+        // fetch persisted event
+        try {
+            queryResult = this.eventRepository.findById(event.getId());
+            if(queryResult.isPresent()) {
+                persistedEvent = queryResult.get();
+            } else {
+                LOGGER.error("Event with id " + event.getId() + " not found");
+                throw new NotFoundException("");
             }
         }
-        LOGGER.error("No Customer to add");
-        throw new ServiceException("", null);
+        catch(DataAccessException dae) {
+            LOGGER.error("Error: " + dae);
+            throw new ServiceException("", dae);
+        }
+
+        if(customerToAddOrRemove == null){
+            LOGGER.error("Customer is null");
+            throw new ServiceException("", null);
+        }
+
+        event.setUpdated(now);
+
+
+        if(customerToAddOrRemove.getId() == null) {
+            // here is happening a sign in
+            LOGGER.info("A sign in is happening");
+
+            // validate new customer
+            try {
+                this.validator.validateCustomerForCourseSign(customerToAddOrRemove, event.getMinAge(), event.getMaxAge(), event.getEndOfApplication());
+            }
+            catch(InvalidEntityException ve) {
+                LOGGER.error("Invalid Customer to add");
+                throw new ValidationException(ve.getMessage(), ve);
+            }
+
+
+            Set<Customer> customerListWithNewCustomer = new HashSet<>();
+            Integer greatestEmailId = null;
+
+            // prepare list of customers
+            for(Customer x : persistedEvent.getCustomers()) {
+                if(greatestEmailId == null) {
+                    greatestEmailId = x.getEmailId();
+                }
+                if(x.getEmailId() > greatestEmailId.intValue()){
+                    greatestEmailId = x.getEmailId();
+                }
+                customerListWithNewCustomer.add(x);
+            }
+
+            // prepare email id for new customer
+            if(greatestEmailId == null) {
+                // first customer to add
+                greatestEmailId = 1;
+            } else {
+                greatestEmailId++;
+            }
+            customerToAddOrRemove.setEmailId(greatestEmailId);
+
+
+            // TODO Events
+            Set<Event> events = new HashSet<>();
+            events.add(event);
+            customerToAddOrRemove.setEvents(events);
+
+            if(customerListWithNewCustomer.add(customerToAddOrRemove)) { //if new customer to add dont exist in persisted customer list then update
+                event.setCustomers(customerListWithNewCustomer);
+
+                mergeEvent(persistedEvent, event);
+                this.eventRepository.flush();
+
+                // send a sign off email to customer
+                try {
+                    LOGGER.info("Prepare Email for sign off");
+                    sendCancelationMail(customerToAddOrRemove.getEmail(), event,
+                                        customerToAddOrRemove
+                    );   //create a sign off email and send it to customer
+                    LOGGER.info("Email sent");
+                }
+                catch(EmailException e) {
+                    LOGGER.error("Email error: " + e.getMessage());
+                    throw new ServiceException("", null);
+                }
+            }
+        } else {
+            // here is happening a sign off
+            LOGGER.info("Sign off is happening");
+            if(customerToAddOrRemove.getEmailId() == null) {
+                LOGGER.error("Customer to remove has no email id");
+                throw new ServiceException("", null);
+            }
+
+            Set<Customer> customerSet = new HashSet<>();
+            boolean customerToRemoveFound = false;
+
+            for(Customer x : persistedEvent.getCustomers()){
+                if(!(x.getEmailId().intValue() == customerToAddOrRemove.getEmailId().intValue())){
+                    customerSet.add(x);
+                } else{
+                    customerToRemoveFound = true;
+                }
+            }
+
+            if(!customerToRemoveFound){
+                LOGGER.error("Customer with email id " + customerToAddOrRemove.getEmailId() + " not found");
+                throw new ServiceException("", null);
+            }
+
+            event.setCustomers(customerSet);
+
+            mergeEvent(persistedEvent, event);
+            this.eventRepository.flush();
+        }
+
+
+        // fetch new persisted event for return
+        try {
+            queryResult = this.eventRepository.findById(event.getId());
+            if(queryResult.isPresent()) {
+                return queryResult.get();
+            } else {
+                LOGGER.error("Event with id " + event.getId() + " not found");
+                throw new NotFoundException("");
+            }
+        }
+        catch(DataAccessException dae) {
+            LOGGER.error("Error: " + dae);
+            throw new ServiceException("", dae);
+        }
     }
+
 
 
     @Override
@@ -656,7 +710,21 @@ public class EventService implements IEventService {
                 MimeMessage mimeMessage = new MimeMessage(session);
                 mimeMessage.setFrom(new InternetAddress(from));
                 mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
-                mimeMessage.setSubject("Stornierungslink fur den Event am " + event.getRoomUses().get(0).getBegin().format(formatter));
+
+                switch(event.getEventType()){
+                    case Rent:
+                        mimeMessage.setSubject("Sie haben erfolgreich einen Raum bei uns gemietet");
+                        break;
+                    case Course:
+                        mimeMessage.setSubject("Sie haben sich erfolgreich angemeldet");
+                        break;
+                    case Consultation:
+                        mimeMessage.setSubject("Sie haben erfolgreich einen Beratungstermin erstellt");
+                        break;
+                    default:
+                        mimeMessage.setSubject("Sie haben erfolgreich einen Geburtstag erstellt");
+                        break;
+                }
                 mimeMessage.setText(createCancelationMessage(event, customer));
                 Transport transport = session.getTransport("smtp");
                 transport.connect(host, 587, from, password);
@@ -674,9 +742,9 @@ public class EventService implements IEventService {
 
         String url;
         if(event.getEventType() == EventType.Course){
-            url = "http://localhost:4200/cancelEvent?id=" + event.getId() + "&emailId=" + customer.getEmailId();
+            url = "http://localhost:4200/event/cancel?id=" + event.getId() + "&emailId=" + customer.getEmailId();
         } else {
-            url = "http://localhost:4200/cancelEvent?id=" + event.getId();
+            url = "http://localhost:4200/event/cancel?id=" + event.getId();
         }
         URL urll = null;
         try {
@@ -688,25 +756,75 @@ public class EventService implements IEventService {
 
         String msg = "";
 
-        msg += "Hallo " + customer.getFirstName() + " " + customer.getLastName() + "!";
-        msg += "\n\n Danke, dass Sie sich bei uns für " +
-               translateEnumWithArtikel(event.getEventType()) +
-               " angemeldet haben.";
-        if(event.getEventType() == EventType.Course){
-            msg += "\n Ende der Abmeldefrist: ";
-            msg += event.getEndOfApplication().format(formatter) + "\n";
-            msg += "\n Falls Sie sich abmelden wollen, klicken Sie auf diesen Link: \n";
-        } else {
-            msg +=
-                "\n Falls Sie diesen Event stornieren wollen, clicken Sie bitte einfach auf diesen link: \n";
+        msg += "Hallo " + customer.getFirstName() + " " + customer.getLastName() + "!\n\n";
+        switch(event.getEventType()){
+            case Rent:
+                RoomUse roomForRent = event.getRoomUses().get(0);
+                msg += "Hiermit bestätigen wir das Sie erfolgreich einen Raum gemietet haben.\n\n";
+                msg += "Raum " + translateEnumToGerman(roomForRent.getRoom()) + "\n";
+                msg += "Von " + roomForRent.getBegin().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + " bis " + roomForRent.getEnd().format(DateTimeFormatter.ofPattern("HH:mm")) + "\n\n";
+                msg +=
+                    "\nFalls Sie dieses Event stornieren wollen, klicken Sie bitte einfach auf diesen link: \n";
+                break;
+            case Course:
+                msg += "Hiermit bestätigen wir Ihre Anmeldung zum \"" + event.getName() + "\"";
+                msg += "\nEnde der Abmeldefrist: ";
+                msg += event.getEndOfApplication().format(formatter) + "\n";
+                msg += "\nFalls Sie sich abmelden wollen, klicken Sie auf diesen Link: \n";
+                break;
+            case Consultation:
+                RoomUse roomForConsultation = event.getRoomUses().get(0);
+                msg += "Hiermit bestätigen wir das Sie erfolgreich einen Beratungstermin erstellt haben.\n\n";
+                msg += "Raum " + translateEnumToGerman(roomForConsultation.getRoom()) + "\n";
+                msg += "Von " + roomForConsultation.getBegin().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + " bis " + roomForConsultation.getEnd().format(DateTimeFormatter.ofPattern("HH:mm")) + "\n";
+                msg += "Trainer " + event.getTrainer().getFirstName() + " " + event.getTrainer().getLastName() + "\n";
+                msg +=
+                    "\nFalls Sie dieses Event stornieren wollen, klicken Sie bitte einfach auf diesen link: \n";
+                break;
+            default:
+                msg += "Hiermit bestätigen wir das Sie erfolgreich einen Geburtstag bei uns erstellt haben.\n\n";
+                RoomUse roomForBirthDay = event.getRoomUses().get(0);
+                msg += "Art " + translateBirthDayTypeToGerman(event.getBirthdayType()) + "\n";
+                msg += "Raum " + translateEnumToGerman(roomForBirthDay.getRoom()) + "\n";
+                msg += "Von " + roomForBirthDay.getBegin().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + " bis " + roomForBirthDay.getEnd().format(DateTimeFormatter.ofPattern("HH:mm")) + "\n";
+                msg += "Trainer " + event.getTrainer().getFirstName() + " " + event.getTrainer().getLastName() + "\n";
+                msg +=
+                    "\nFalls Sie dieses Event stornieren wollen, klicken Sie bitte einfach auf diesen link: \n";
+                break;
         }
+
         msg += urll;
+        msg += "\n\nMit freundlichen Grüßen,\nIhr Talenderteam";
 
         return msg;
     }
 
+    private static String translateEnumToGerman(Room room){
+        switch(room){
+            case GroundFloor:
+                return "Erdgeschoss";
+            case Green:
+                return "Grün";
+        }
+        return "Orange";
+    }
 
-    public String translateEnumWithArtikel(EventType eventType){
+    private static String translateBirthDayTypeToGerman(String birthdayType){
+        switch(birthdayType){
+            case "Rocket":
+                return "Raketen Geburtstag";
+            case "Photo":
+                return "Photo Geburtstag";
+            case "DryIce":
+                return "Trockeneis Geburtstag";
+            case "Painting":
+                return "Malen Geburtstag";
+        }
+        return "Superhelden Geburtstag";
+    }
+
+
+    private String translateEnumWithArtikel(EventType eventType){
         switch (eventType){
             case Birthday:
                 return "ein Geburtstag";

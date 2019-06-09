@@ -195,6 +195,15 @@ public class FakeData {
         return karen;
     }
 
+    // birth not set, we dont know anything about min and maxAge of event
+    public Customer fakeCustomerForSignInEntity(){
+        Customer karen = fakeCustomerEntity();
+        karen.setChildName(fakeFirstName());
+        karen.setChildLastName(fakeLastName());
+        karen.setWantsEmail(true);
+        return karen;
+    }
+
 
     public RoomUse fakeRoomUseDto() {
         RoomUse roomUse = new RoomUse();
