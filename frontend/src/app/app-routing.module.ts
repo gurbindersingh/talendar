@@ -9,8 +9,8 @@ import {
     CourseComponent,
     CourseViewComponent,
     HolidayComponent,
+    RentComponent,
     LoginComponent,
-    MeetingComponent,
     TrainerComponent,
     TrainerListComponent,
 } from './components';
