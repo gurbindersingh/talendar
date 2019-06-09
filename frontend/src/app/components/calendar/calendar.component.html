@@ -278,7 +278,7 @@
             [viewDate]="viewDate"
             [weekStartsOn]="weekStartsOn"
             (eventClicked)="showDetails($event)"
-            (dayClicked)="dateClicked($event.day.date, modal)"
+            (dayClicked)="dateClicked($event.day.date, newEventModal)"
         ></mwl-calendar-month-view>
     </ng-container>
 
@@ -300,14 +300,14 @@
             [locale]="locale"
             [viewDate]="viewDate"
             [weekStartsOn]="weekStartsOn"
-            (eventClicked)="showDetails($event)"
-            (hourSegmentClicked)="dateClicked($event.date, modal)"
+            (eventClicked)="showDetails($event.event.event, detailsModal)"
+            (hourSegmentClicked)="dateClicked($event.date, newEventModal)"
         ></mwl-calendar-week-view>
     </ng-template>
 </div>
 
 <!-- Modal -->
-<ng-template #modal let-modal>
+<ng-template #newEventModal let-modal>
     <div class="modal-body">
         <h4>Welches Event möchten Sie anlegen?</h4>
         <button
@@ -330,6 +330,32 @@
         <button class="btn btn-link" (click)="modal.close(); addEvent('rent')">
             Raum Mieten
         </button>
+        <div class="row justify-content-end">
+            <button
+                type="button"
+                class="btn btn-outline-primary"
+                (click)="modal.close()"
+                style="margin: 16px 16px 0 0"
+            >
+                Schließen
+            </button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #detailsModal let-modal>
+    <div class="modal-body">
+        <h4>{{ clickedEvent.name }}</h4>
+        <p>{{ clickedEvent.description }}</p>
+        <p>
+            Trainer:
+            {{
+                clickedEvent.trainer.firstName +
+                    ' ' +
+                    clickedEvent.trainer.lastName
+            }}
+        </p>
+
         <div class="row justify-content-end">
             <button
                 type="button"
