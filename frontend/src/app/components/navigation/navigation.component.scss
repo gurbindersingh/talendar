@@ -40,6 +40,17 @@
     }
 }
 
+#loggedInInfo {
+    display: flex;
+    flex-direction: row;
+    margin-top: 2rem;
+    color: #bfbfbf;
+}
+
+#loggedInInfo > #icon {
+    margin-right: 1rem;
+}
+
 @include media-breakpoint-up(xl) {
     .close {
         display: none;

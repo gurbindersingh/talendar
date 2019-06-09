@@ -1,12 +1,15 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.User;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.EventRepository;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
+import at.ac.tuwien.sepm.groupphase.backend.service.IUserService;
+import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.AccountCreationException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.Validator;
@@ -15,6 +18,7 @@ import org.aspectj.weaver.ast.Not;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
@@ -33,6 +37,7 @@ public class TrainerService implements ITrainerService {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(TrainerService.class);
 
+    private final IUserService userService;
     private final TrainerRepository trainerRepository;
     private final EventService eventService;
     private final Validator validator;
@@ -41,18 +46,20 @@ public class TrainerService implements ITrainerService {
 
     @Autowired
     public TrainerService(TrainerRepository trainerRepository, Validator validator,
-                          EventService eventService, InfoMail infoMail
+                          EventService eventService, IUserService userService, InfoMail infoMail
     ) {
         this.trainerRepository = trainerRepository;
+        this.userService = userService;
         this.eventService = eventService;
         this.validator = validator;
         this.infoMail = infoMail;
     }
 
-
+    @Transactional
     @Override
-    public Trainer save(Trainer trainer) throws ServiceException, ValidationException {
+    public Trainer save (Trainer trainer, String password) throws ServiceException, ValidationException {
         LOGGER.info("Prepare save of new trainer: {}", trainer);
+        User account;
         LocalDateTime timeOfCreation = LocalDateTime.now();
 
         trainer.setCreated(timeOfCreation);
@@ -73,17 +80,35 @@ public class TrainerService implements ITrainerService {
         }
 
         try {
-            Trainer t = trainerRepository.save(trainer);
+            trainer = trainerRepository.save(trainer);
             try {
-                infoMail.sendAdminTrainerInfoMail(t, "Neuer Trainer erstellt", "newTrainer");
+                infoMail.sendAdminTrainerInfoMail(trainer, "Neuer Trainer erstellt", "newTrainer");
             } catch(EmailException e){
                 LOGGER.error("Error trying to send new trainer info mail to admin");
             }
-            return t;
         }
         catch(DataAccessException e) { //catch specific exceptions
             throw new ServiceException("Error while performing a data access operation", e);
         }
+
+        /**
+         * Now create the user account (needed for authentication)
+         */
+        account = new User();
+        account.setEmail(trainer.getEmail());
+        account.setPassword(password);
+        account.setDeleted(false);
+        account.setAdmin(false);
+        account.setTrainer(trainer);
+
+        try {
+            userService.createUser(account);
+        }
+        catch(AccountCreationException e) {
+            throw new ServiceException(e.getMessage(), e);
+        }
+
+        return trainer;
     }
 
 
