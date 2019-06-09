@@ -19,6 +19,6 @@ bdays=int
 consultations=int
 
 e.g. 
-mvn spring-boot:run -Dspring-boot.run.arguments=--testData=yes,courses=20,rents=2,days=30  ("optionen mit , trennen")
+mvn spring-boot:run -Dspring-boot.run.arguments=--testData=yes,--courses=20,--rents=2,--days=30  ("optionen mit , trennen")
 
 NOTE: Option wird noch erweitert, und enthält derzeit keine eingetragenen Urlaube und keine Buchungen für Kurse

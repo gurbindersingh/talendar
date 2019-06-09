@@ -13,7 +13,6 @@ export class EventImportService {
         const metaEvents: MetaEvent[] = [];
 
         for (const event of events) {
-            console.log(JSON.stringify(event));
             const metaEvent: MetaEvent = new MetaEvent();
             const roomOfEvent: RoomUse[] = event.roomUses;
             const start: Date = new Date(roomOfEvent[0].begin);

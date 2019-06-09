@@ -277,6 +277,8 @@
             [locale]="locale"
             [viewDate]="viewDate"
             [weekStartsOn]="weekStartsOn"
+            (eventClicked)="showDetails($event)"
+            (dayClicked)="dateClicked($event.day.date, modal)"
         ></mwl-calendar-month-view>
     </ng-container>
 
@@ -298,6 +300,42 @@
             [locale]="locale"
             [viewDate]="viewDate"
             [weekStartsOn]="weekStartsOn"
+            (eventClicked)="showDetails($event)"
+            (hourSegmentClicked)="dateClicked($event.date, modal)"
         ></mwl-calendar-week-view>
     </ng-template>
 </div>
+
+<!-- Modal -->
+<ng-template #modal let-modal>
+    <div class="modal-body">
+        <h4>Welches Event möchten Sie anlegen?</h4>
+        <button
+            class="btn btn-link"
+            (click)="modal.close(); addEvent('new-course')"
+        >
+            Neuer Kurs</button
+        ><button
+            class="btn btn-link"
+            (click)="modal.close(); addEvent('new-holiday')"
+        >
+            Urlaub
+        </button>
+        <button
+            class="btn btn-link"
+            (click)="modal.close(); addEvent('new-consultation')"
+        >
+            Beratungstermin
+        </button>
+        <div class="row justify-content-end">
+            <button
+                type="button"
+                class="btn btn-outline-primary"
+                (click)="modal.close()"
+                style="margin: 16px 16px 0 0"
+            >
+                Schließen
+            </button>
+        </div>
+    </div>
+</ng-template>

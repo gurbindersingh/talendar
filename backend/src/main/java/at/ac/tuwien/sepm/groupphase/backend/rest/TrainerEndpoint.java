@@ -114,10 +114,8 @@ public class TrainerEndpoint {
         LOGGER.info("Incoming POST Trainer Request");
 
         try {
-            return mapper.entityToTrainerDto(
-                trainerService.save(mapper.dtoToTrainerEntity(trainerDto)));
-        }
-        catch(ValidationException e) {
+            return mapper.entityToTrainerDto(trainerService.save(mapper.dtoToTrainerEntity(trainerDto), trainerDto.getPassword()));
+        } catch(ValidationException e) {
             LOGGER.error("POST Request unsuccessful: " + e.getMessage(), e);
             throw new BackendException(e.getMessage(), e);
         }

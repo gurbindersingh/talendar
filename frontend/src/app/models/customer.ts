@@ -8,4 +8,8 @@ export class Customer {
     public lastName: string;
     public events: Event[];
     public emailId: number;
+    public childName: string;
+    public childLastName: string;
+    public birthOfChild: string;
+    public wantsEmail: boolean;
 }

@@ -1,0 +1,28 @@
+logging:
+    level.: INFO
+    level.at.ac.tuwien.sepm.groupphase.backend: DEBUG
+
+application:
+    authentication:
+        signature-algorithm: HS256
+        secret: jwtSecret
+        validity-duration: 600
+        overlap-duration: 300
+    account:
+        admin:
+            email: test@email.com
+            password: fortKnox
+
+
+spring:
+    jpa:
+        show-sql: true
+        hibernate:
+            ddl-auto: update
+
+        database-platform: org.hibernate.dialect.H2Dialect
+    datasource:
+        url: jdbc:h2:mem:testdb
+        driverClassName: org.h2.Driver
+        username: sa
+        password: password

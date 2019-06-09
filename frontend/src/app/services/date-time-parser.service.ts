@@ -43,4 +43,16 @@ export class DateTimeParserService {
             ':00'
         );
     }
+
+    // required string format from backend
+    public stringToDate(date: string): NgbDateStruct {
+        const splitted = date.split('T')[0].split('-');
+        return { year: +splitted[0], month: +splitted[1], day: +splitted[2] };
+    }
+
+    // required string format from backend
+    public stringToTime(date: string): NgbTimeStruct {
+        const splitted = date.split('T')[1].split(':');
+        return { hour: +splitted[0], minute: +splitted[1], second: 0 };
+    }
 }

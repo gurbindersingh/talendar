@@ -7,12 +7,15 @@ import at.ac.tuwien.sepm.groupphase.backend.testObjects.TrainerDto;
 import at.ac.tuwien.sepm.groupphase.backend.tests.configuration.URL;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.RestTemplate;
 
@@ -23,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+@ActiveProfiles("test")
 public class EventEndpointTest {
 
     private static final RestTemplate REST_TEMPLATE = new RestTemplate();
@@ -59,7 +63,7 @@ public class EventEndpointTest {
         }
         HttpEntity<EventDto> request = new HttpEntity<>(birthday);
         System.out.println(request.toString());
-        ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.EVENT,
+        ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.POST_BIRTHDAY,
                                                                    HttpMethod.POST,
                                                                    request,
                                                                    EventDto.class
@@ -98,7 +102,7 @@ public class EventEndpointTest {
         course.setCustomerDtos(null);
         HttpEntity<EventDto> request = new HttpEntity<>(course);
         System.out.println(request.toString());
-        ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.EVENT,
+        ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.POST_COURSE,
                                                                    HttpMethod.POST,
                                                                    request,
                                                                    EventDto.class
@@ -126,7 +130,7 @@ public class EventEndpointTest {
         }
         HttpEntity<EventDto> request = new HttpEntity<>(rent);
         System.out.println(request.toString());
-        ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.EVENT,
+        ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.POST_RENT,
                                                                    HttpMethod.POST,
                                                                    request,
                                                                    EventDto.class
@@ -164,7 +168,7 @@ public class EventEndpointTest {
         consultation.setTrainer(trainerResponse);
         HttpEntity<EventDto> request = new HttpEntity<>(consultation);
         System.out.println(request.toString());
-        ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.EVENT,
+        ResponseEntity<EventDto> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.POST_CONSULTATION,
                                                                    HttpMethod.POST,
                                                                    request,
                                                                    EventDto.class

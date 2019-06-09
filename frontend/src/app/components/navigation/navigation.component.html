@@ -13,6 +13,19 @@
         <i class="fas fa-bars"></i>
     </div>
 
+    <div id="loggedInInfo">
+        <div id="icon">
+            <i class="fas fa-user fa-3x"></i>
+        </div>
+        <div id="userLabels">
+            <span>Rolle: {{ authority }}</span>
+            <br />
+            <span>
+                <span *ngIf="user != null">{{ user.email }}</span>
+            </span>
+        </div>
+    </div>
+
     <div
         id="nav-items"
         class="navbar-nav overlay"
@@ -24,8 +37,8 @@
         <ul class="list-unstyled text-align-center">
             <li
                 class="nav-link"
-                *ngFor="let nav of navLinks"
-                (click)="toggleMenu()"
+                *ngFor="let nav of contextNavLinks"
+                (click)="toggleMenu(); checkForLogout(nav)"
             >
                 <a [routerLink]="nav.path" routerLinkActive="active-link">
                     {{ nav.name }}
