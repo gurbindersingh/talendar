@@ -30,62 +30,85 @@ public class EventEndpoint {
     private static Logger LOGGER = LoggerFactory.getLogger(EventEndpoint.class);
 
     private final IEventService eventService;
-    private final EventMapper   eventMapper;
+    private final EventMapper eventMapper;
 
 
     @Autowired
-    public EventEndpoint (IEventService eventService, EventMapper eventMapper) {
+    public EventEndpoint(IEventService eventService, EventMapper eventMapper) {
         this.eventService = eventService;
         this.eventMapper = eventMapper;
     }
 
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = "/course", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public EventDto createNewEvent (@RequestBody EventDto eventDto) throws BackendException {
-        LOGGER.info("Incoming POST Request for an Event with type: " + eventDto.toString());
-        try {
-            return eventMapper.entityToEventDto(eventService.save(eventMapper.dtoToEventEntity(eventDto)));
-        }catch(ValidationException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new BackendException(e.getMessage(), e);
-        }catch(ServiceException e){
-            LOGGER.error(e.getMessage(), e);
-            throw new BackendException(e.getMessage(), e);
-        }
+    public EventDto createNewCourse(@RequestBody EventDto eventDto) throws BackendException {
+        return postEvent(eventDto);
     }
+
+    @RequestMapping(value = "/birthday", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public EventDto createNewBirthday(@RequestBody EventDto eventDto) throws BackendException {
+        return postEvent(eventDto);
+    }
+
+    @RequestMapping(value = "/consultation", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public EventDto createNewConsultation(@RequestBody EventDto eventDto) throws BackendException {
+        return postEvent(eventDto);
+    }
+
+    @RequestMapping(value = "/rent" ,method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public EventDto createNewRent(@RequestBody EventDto eventDto) throws BackendException {
+        return postEvent(eventDto);
+    }
+
+
+
+
 
     @RequestMapping(method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     public EventDto updateEvent(@RequestBody EventDto eventDto) throws BackendException {
         LOGGER.info("Incoming PUT Request for an Event with type: " + eventDto.toString());
         try {
-            return eventMapper.entityToEventDto(eventService.update(eventMapper.dtoToEventEntity(eventDto)));
-        } catch(ValidationException e){
+            return eventMapper.entityToEventDto(
+                eventService.update(eventMapper.dtoToEventEntity(eventDto)));
+        }
+        catch(ValidationException e) {
             LOGGER.error(e.getMessage(), e);
             throw new BackendException(e.getMessage(), e);
-        } catch(ServiceException e){
+        }
+        catch(ServiceException e) {
             LOGGER.error(e.getMessage(), e);
             throw new BackendException(e.getMessage(), e);
-        } catch(NotFoundException e){
+        }
+        catch(NotFoundException e) {
             LOGGER.error(e.getMessage(), e);
             throw new BackendException(e.getMessage(), e);
         }
     }
 
+
     @RequestMapping(value = "/customers", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     public EventDto updateEventCustomers(@RequestBody EventDto eventDto) throws BackendException {
-        LOGGER.info("Incoming PUT Request (update customers) for an Event with type: " + eventDto.toString());
+        LOGGER.info("Incoming PUT Request (update customers) for an Event with type: " +
+                    eventDto.toString());
         try {
-            return eventMapper.entityToEventDto(eventService.updateCustomers(eventMapper.dtoToEventEntity(eventDto)));
-        } catch(ValidationException e){
+            return eventMapper.entityToEventDto(
+                eventService.updateCustomers(eventMapper.dtoToEventEntity(eventDto)));
+        }
+        catch(ValidationException e) {
             LOGGER.error(e.getMessage(), e);
             throw new BackendException(e.getMessage(), e);
-        } catch(ServiceException e){
+        }
+        catch(ServiceException e) {
             LOGGER.error(e.getMessage(), e);
             throw new BackendException(e.getMessage(), e);
-        } catch(NotFoundException e){
+        }
+        catch(NotFoundException e) {
             LOGGER.error(e.getMessage(), e);
             throw new BackendException(e.getMessage(), e);
         }
@@ -93,40 +116,47 @@ public class EventEndpoint {
 
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public void cancelEvent(@PathVariable("id") Long id) throws BackendException{
+    public void cancelEvent(@PathVariable("id") Long id) throws BackendException {
         LOGGER.info("Incoming DELETE Request for an Event with id " + id);
         try {
             eventService.cancelEvent(id);
         }catch(ValidationException e){
-            throw new BackendException("Die Validierung von dem Ausgewählten Event ist fehlgeschlagen", e);
+            throw new BackendException(e.getMessage(), e);
         }
-
     }
+
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public EventDto getEventById(@PathVariable("id") Long id) throws BackendException{
+    public EventDto getEventById(@PathVariable("id") Long id) throws BackendException {
         LOGGER.info("Incoming GET Request for an Event with id " + id);
         try {
             return eventMapper.entityToEventDto(eventService.getEventById(id));
-        } catch(NotFoundException ne) {
+        }
+        catch(NotFoundException ne) {
             throw new BackendException(ne.getMessage(), ne);
-        } catch(ServiceException se) {
+        }
+        catch(ServiceException se) {
             throw new BackendException(se.getMessage(), se);
         }
     }
+
 
     @GetMapping(value = "/all")
     public List<EventDto> getAllEvents() throws BackendException {
         LOGGER.info("Incoming GET Request to retrieve all events");
 
         try {
-            return this.eventService.getAllEvents().stream().map(eventMapper::entityToEventDto).collect(
-                Collectors.toList());
+            return this.eventService.getAllEvents()
+                                    .stream()
+                                    .map(eventMapper::entityToEventDto)
+                                    .collect(
+                                        Collectors.toList());
         }
         catch(ServiceException e) {
             LOGGER.error(e.getMessage(), e);
-            throw new BackendException("Es konnten keine Events geladen werden, etwas ist im Server schiefgelaufen", e);
+            throw new BackendException(
+                "Es konnten keine Events geladen werden, etwas ist im Server schiefgelaufen", e);
         }
     }
     /*
@@ -153,12 +183,36 @@ public class EventEndpoint {
     }
     */
 
+
     @GetMapping
-    public List<EventDto> getAllFutureCourses(){
+    public List<EventDto> getAllFutureCourses() {
         LOGGER.info("Incoming GET Request for all future Courses");
         return eventMapper.entityListToEventDtoList(eventService.getAllFutureCourses());
     }
 
 
+    /**
+     *  A simple wrapper for the post of a event.
+     *  This code hat been 1:1 part of the former 'createNewEvent' method, but we had
+     *  to split this abstract method into several distinct REST endpoints in order to distinguish
+     *  between posting of different kinds of events.
+     *
+     *  To avoid code repetition, the actual logic (which is always the same) had been extracted!
+     */
+    private EventDto postEvent(EventDto eventDto)  throws BackendException {
+        LOGGER.info("Incoming POST Request for an Event with type: " + eventDto.toString());
+        try {
+            return eventMapper.entityToEventDto(
+                eventService.save(eventMapper.dtoToEventEntity(eventDto)));
+        }
+        catch(ValidationException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new BackendException(e.getMessage(), e);
+        }
+        catch(ServiceException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new BackendException(e.getMessage(), e);
+        }
+    }
 
 }

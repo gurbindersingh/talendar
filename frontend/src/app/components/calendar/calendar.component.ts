@@ -1,15 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { registerLocaleData, DatePipe } from '@angular/common';
+import { registerLocaleData } from '@angular/common';
+import { Router } from '@angular/router';
 import localeDe from '@angular/common/locales/de-AT';
 
 import { CalendarDateFormatter, CalendarView } from 'angular-calendar';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { CustomDateFormatter } from './CustomDateFormatter';
-import { MetaEvent } from './MetaEvent';
-import { Event } from '../../models/event';
 import { BREAKPOINTS } from 'src/app/utils/Breakpoints';
+import { ClickedDateService } from 'src/app/services/clicked-date.service';
+import { CustomDateFormatter } from './CustomDateFormatter';
+import { Event } from 'src/app/models/event';
 import { EventClient } from 'src/app/rest/event-client';
 import { EventImportService } from 'src/app/services/event-import.service';
+import { MetaEvent } from './MetaEvent';
 import { Trainer } from 'src/app/models/trainer';
 import { TrainerClient } from 'src/app/rest/trainer-client';
 
@@ -45,10 +48,9 @@ export class CalendarComponent implements OnInit {
     view = CalendarView.Week;
     viewDate = new Date();
     weekStartsOn = 1;
-    navButtonLabel: { prev: string; next: string };
-
     // toggle between collapsed and open filter menu
     isCollapsed = true;
+    clickedEvent: Event;
 
     // filter specific content
 
@@ -88,7 +90,10 @@ export class CalendarComponent implements OnInit {
     constructor(
         private eventClient: EventClient,
         private trainerClient: TrainerClient,
-        private eventImport: EventImportService
+        private eventImport: EventImportService,
+        private modalService: NgbModal,
+        private router: Router,
+        private dateService: ClickedDateService
     ) {
         if (screen.width < BREAKPOINTS.medium) {
             this.daysInWeek = 3;
@@ -114,6 +119,43 @@ export class CalendarComponent implements OnInit {
             // explicit undefined value matches option 'reset' (if clicked selection is resetted)
             this.trainerList.push(undefined);
         });
+    }
+
+    showDetails(event: Event, detailsModal: any) {
+        console.warn(event);
+        this.clickedEvent = event;
+        this.modalService.open(detailsModal);
+    }
+
+    dateClicked(date: Date, newEventModal: any) {
+        console.warn(date);
+        // if (date.valueOf() >= Date.now()) {
+        this.dateService.setDateTime(date);
+        this.modalService.open(newEventModal);
+        // }
+    }
+
+    addEvent(type: string) {
+        switch (type) {
+            case 'new-course':
+                this.router.navigateByUrl('/course/add');
+                break;
+
+            case 'new-holiday':
+                this.router.navigateByUrl('/holiday/add');
+                break;
+
+            case 'new-consultation':
+                this.router.navigateByUrl('/consultation/add');
+                break;
+
+            case 'rent':
+                this.router.navigateByUrl('/rent');
+                break;
+
+            default:
+                break;
+        }
     }
 
     /**

@@ -1,8 +1,8 @@
 @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro&display=swap');
 
-@import 'node_modules/bootstrap/scss/functions';
-@import 'node_modules/bootstrap/scss/variables';
-@import 'node_modules/bootstrap/scss/mixins/_breakpoints';
+@import '../../../../node_modules/bootstrap/scss/functions';
+@import '../../../../node_modules/bootstrap/scss/variables';
+@import '../../../../node_modules/bootstrap/scss/mixins/breakpoints';
 
 #nav-items {
     ul {
@@ -38,6 +38,17 @@
     #image {
         display: inline-block;
     }
+}
+
+#loggedInInfo {
+    display: flex;
+    flex-direction: row;
+    margin-top: 2rem;
+    color: #bfbfbf;
+}
+
+#loggedInInfo > #icon {
+    margin-right: 1rem;
 }
 
 @include media-breakpoint-up(xl) {
@@ -80,5 +91,9 @@
         background-color: rgba(0, 0, 0, 0.9); /* Black w/opacity */
         overflow-x: hidden; /* Disable horizontal scroll */
         transition: width 0.1s; /* 0.5 second transition effect to slide in or slide down the overlay (height or width, depending on reveal) */
+    }
+
+    .pop-out-menu {
+        width: 100vw;
     }
 }

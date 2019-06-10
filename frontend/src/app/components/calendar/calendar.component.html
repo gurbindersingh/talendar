@@ -277,6 +277,8 @@
             [locale]="locale"
             [viewDate]="viewDate"
             [weekStartsOn]="weekStartsOn"
+            (eventClicked)="showDetails($event)"
+            (dayClicked)="dateClicked($event.day.date, newEventModal)"
         ></mwl-calendar-month-view>
     </ng-container>
 
@@ -298,6 +300,71 @@
             [locale]="locale"
             [viewDate]="viewDate"
             [weekStartsOn]="weekStartsOn"
+            (eventClicked)="showDetails($event.event.event, detailsModal)"
+            (hourSegmentClicked)="dateClicked($event.date, newEventModal)"
         ></mwl-calendar-week-view>
     </ng-template>
 </div>
+
+<!-- Modal -->
+<ng-template #newEventModal let-modal>
+    <div class="modal-body">
+        <h4>Welches Event möchten Sie anlegen?</h4>
+        <button
+            class="btn btn-link"
+            (click)="modal.close(); addEvent('new-course')"
+        >
+            Neuer Kurs</button
+        ><button
+            class="btn btn-link"
+            (click)="modal.close(); addEvent('new-holiday')"
+        >
+            Urlaub
+        </button>
+        <button
+            class="btn btn-link"
+            (click)="modal.close(); addEvent('new-consultation')"
+        >
+            Beratungstermin
+        </button>
+        <button class="btn btn-link" (click)="modal.close(); addEvent('rent')">
+            Raum Mieten
+        </button>
+        <div class="row justify-content-end">
+            <button
+                type="button"
+                class="btn btn-outline-primary"
+                (click)="modal.close()"
+                style="margin: 16px 16px 0 0"
+            >
+                Schließen
+            </button>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #detailsModal let-modal>
+    <div class="modal-body">
+        <h4>{{ clickedEvent.name }}</h4>
+        <p>{{ clickedEvent.description }}</p>
+        <p>
+            Trainer:
+            {{
+                clickedEvent.trainer.firstName +
+                    ' ' +
+                    clickedEvent.trainer.lastName
+            }}
+        </p>
+
+        <div class="row justify-content-end">
+            <button
+                type="button"
+                class="btn btn-outline-primary"
+                (click)="modal.close()"
+                style="margin: 16px 16px 0 0"
+            >
+                Schließen
+            </button>
+        </div>
+    </div>
+</ng-template>

@@ -9,24 +9,52 @@ import {
     CourseComponent,
     CourseViewComponent,
     HolidayComponent,
-    MeetingComponent,
+    RentComponent,
+    LoginComponent,
     TrainerComponent,
     TrainerListComponent,
 } from './components';
 import { CourseSignComponent } from './components/course-sign/course-sign.component';
+import { TrainerGuard } from './guards/trainer-guard';
+import { AuthenticatedGuard } from './guards/authenticated-guard';
+import { AdminGuard } from './guards/admin-guard';
 
 const routes: Routes = [
     { path: 'calendar', component: CalendarComponent },
     { path: 'birthday/book', component: BirthdayComponent },
-    { path: 'consultation/add', component: ConsultationComponent },
-    { path: 'course/add', component: CourseComponent },
+    {
+        path: 'consultation/add',
+        component: ConsultationComponent,
+    },
+    {
+        path: 'course/add',
+        component: CourseComponent,
+        canActivate: [AuthenticatedGuard],
+    },
     { path: 'course/sign', component: CourseSignComponent },
-    { path: 'course/view', component: CourseViewComponent },
+    {
+        path: 'course/view',
+        component: CourseViewComponent,
+        canActivate: [AdminGuard],
+    },
     { path: 'event/cancel', component: CancelEventComponent },
-    { path: 'holiday/add', component: HolidayComponent },
-    { path: 'rent', component: MeetingComponent },
-    { path: 'trainer/add', component: TrainerComponent },
-    { path: 'trainer/list', component: TrainerListComponent },
+    {
+        path: 'holiday/add',
+        component: HolidayComponent,
+        canActivate: [TrainerGuard],
+    },
+    { path: 'rent', component: RentComponent },
+    {
+        path: 'trainer/add',
+        component: TrainerComponent,
+        canActivate: [AdminGuard],
+    },
+    {
+        path: 'trainer/list',
+        component: TrainerListComponent,
+        canActivate: [AdminGuard],
+    },
+    { path: 'login', component: LoginComponent },
     {
         // This catch-all route should always be the LAST!
         path: '**',

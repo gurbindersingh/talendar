@@ -16,7 +16,7 @@ import { ConditionalExpr } from '@angular/compiler';
 export class CancelEventComponent implements OnInit {
     private event: Event = new Event();
 
-    private newList: Customer[];
+    private customerToRemove: Customer;
 
     private title: string;
     private textBox: string;
@@ -48,13 +48,12 @@ export class CancelEventComponent implements OnInit {
                 (data: Event) => {
                     console.log('Got event with id ' + data.id);
                     this.event = data;
-                    this.newList = [];
 
                     // SIGN OFF COURSE
 
-                    const lel = data.eventType as EventType;
+                    const eType = data.eventType as EventType;
 
-                    if (lel === EventType.Course) {
+                    if (eType === EventType.Course) {
                         this.btnText = 'Abmelden';
                         const emailId = Number(
                             this.route.snapshot.queryParams.emailId
@@ -72,8 +71,7 @@ export class CancelEventComponent implements OnInit {
                                     ' ' +
                                     customer.lastName +
                                     '!';
-                            } else {
-                                this.newList.push(customer);
+                                this.customerToRemove = customer;
                             }
                         }
                         this.textBox =
@@ -119,10 +117,13 @@ export class CancelEventComponent implements OnInit {
         const id: number = this.route.snapshot.queryParams.id;
 
         if (this.signOff) {
-            this.event.customerDtos = this.newList;
+            this.event.customerDtos = [this.customerToRemove];
             this.eventClient.updateCustomer(this.event).subscribe(
                 (data: Event) => {
-                    if (data.customerDtos.length < this.preCountOfCustomers) {
+                    if (
+                        data.customerDtos.length ===
+                        this.preCountOfCustomers - 1
+                    ) {
                         this.successMsg = 'Sie wurden erfolgreich abgemeldet';
                     } else {
                         console.log(data);
@@ -138,7 +139,7 @@ export class CancelEventComponent implements OnInit {
         } else {
             this.eventClient.cancelEvent(id).subscribe(
                 () => {
-                    this.successMsg = 'Der Event wurde erfolgreich storniert';
+                    this.successMsg = 'Ihr Event wurde erfolgreich storniert';
                 },
                 (error: Error) => {
                     console.log(error.message);

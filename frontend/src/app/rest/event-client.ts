@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Event } from '../models/event';
 import { Observable } from 'rxjs';
+import { EventType } from '../models/enum/eventType';
 
 @Injectable()
 export class EventClient extends RestClient {
@@ -11,12 +12,29 @@ export class EventClient extends RestClient {
     }
 
     public postNewEvent(event: Event): Observable<Event> {
+        let eventSpecificEndpoint: string;
+
+        switch (event.eventType) {
+            case EventType.Birthday:
+                eventSpecificEndpoint = '/birthday';
+                break;
+            case EventType.Rent:
+                eventSpecificEndpoint = '/rent';
+                break;
+            case EventType.Consultation:
+                eventSpecificEndpoint = '/consultation';
+                break;
+            case EventType.Course:
+                eventSpecificEndpoint = '/course';
+                break;
+        }
+
         console.log(JSON.stringify(event));
         return super.post(
             (error: HttpErrorResponse) => {
                 console.log('HTTP POST Birthday Failed: ' + error.message);
             },
-            '',
+            eventSpecificEndpoint,
             event
         );
     }
