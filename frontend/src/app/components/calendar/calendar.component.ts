@@ -1,20 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
+import { Router } from '@angular/router';
 import localeDe from '@angular/common/locales/de-AT';
 
 import { CalendarDateFormatter, CalendarView } from 'angular-calendar';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { BREAKPOINTS } from 'src/app/utils/Breakpoints';
+import { ClickedDateService } from 'src/app/services/clicked-date.service';
 import { CustomDateFormatter } from './CustomDateFormatter';
-import { Event } from '../../models/event';
+import { Event } from 'src/app/models/event';
 import { EventClient } from 'src/app/rest/event-client';
 import { EventImportService } from 'src/app/services/event-import.service';
 import { MetaEvent } from './MetaEvent';
 import { Trainer } from 'src/app/models/trainer';
 import { TrainerClient } from 'src/app/rest/trainer-client';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Router } from '@angular/router';
-import { ClickedDateService } from 'src/app/services/clicked-date.service';
 
 /**
  * In order to display week days in German the locale data
@@ -50,6 +50,7 @@ export class CalendarComponent implements OnInit {
     weekStartsOn = 1;
     // toggle between collapsed and open filter menu
     isCollapsed = true;
+    clickedEvent: Event;
 
     // filter specific content
 
@@ -120,16 +121,17 @@ export class CalendarComponent implements OnInit {
         });
     }
 
-    showDetails(event: any) {
+    showDetails(event: Event, detailsModal: any) {
         console.warn(event);
-        alert('Implement showDetails()');
+        this.clickedEvent = event;
+        this.modalService.open(detailsModal);
     }
 
-    dateClicked(date: Date, content: any) {
+    dateClicked(date: Date, newEventModal: any) {
         console.warn(date);
         // if (date.valueOf() >= Date.now()) {
         this.dateService.setDateTime(date);
-        this.modalService.open(content);
+        this.modalService.open(newEventModal);
         // }
     }
 
