@@ -39,6 +39,7 @@ import { AdminGuard } from './guards/admin-guard';
 import { TrainerGuard } from './guards/trainer-guard';
 import { AuthenticatedGuard } from './guards/authenticated-guard';
 import { InfoComponent } from './components/info/info.component';
+import { InfoClient } from './rest/info-client';
 
 @NgModule({
     declarations: [
@@ -84,6 +85,7 @@ import { InfoComponent } from './components/info/info.component';
         AdminGuard,
         TrainerGuard,
         AuthenticatedGuard,
+        InfoClient,
     ],
     bootstrap: [AppComponent],
     entryComponents: [NgbdModalConfirm],

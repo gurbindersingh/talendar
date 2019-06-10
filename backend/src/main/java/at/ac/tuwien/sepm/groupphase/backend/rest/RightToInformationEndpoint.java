@@ -49,6 +49,7 @@ public class RightToInformationEndpoint {
             headers.setContentDispositionFormData(filename, filename);
             headers.setCacheControl("must-revalidate, post-check=0, pre-check=0");
             ResponseEntity<byte[]> response = new ResponseEntity<>(info.getContents(), headers, HttpStatus.OK);
+            LOGGER.info("Sending back the response in form of byte[] with size: " + info.getContents().length);
             return response;
         } catch(ServiceException e){
             LOGGER.error("Error beim InformationOutput erstellen: " + e.getMessage(), e);

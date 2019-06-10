@@ -22,9 +22,7 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -34,7 +32,7 @@ import java.util.Locale;
 public class RightToInformationService implements IRightToInformationService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RightToInformationService.class);
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy - hh:mm").withLocale(Locale.forLanguageTag("German"));
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy_MMMM_dd-hh_mm");
     private CustomerRepository customerRepository;
     private CustomerMapper customerMapper;
 
@@ -52,7 +50,7 @@ public class RightToInformationService implements IRightToInformationService {
             throw new UserNotFoundException("Keine Kunden mit dieser Email-Adresse gefunden");
         }
         InformationOutput info = new InformationOutput();
-        String filename = LocalDateTime.now() + "_" + mail;
+        String filename = LocalDateTime.now().format(formatter) + "_" + mail;
         info.setFilename(filename);
         LOGGER.info("Docname: " + filename);
         Document document = new Document();
@@ -63,17 +61,17 @@ public class RightToInformationService implements IRightToInformationService {
         Paragraph chunk;
         for(int i = 0; i < customers.size(); i++){
             CustomerDto customerDto = customerMapper.entityToCustomerDto(customers.get(i));
-            chunk = new Paragraph("Vorname: " + customerDto.getFirstName() + "\nNachname: " + customerDto.getLastName() +
+            chunk = new Paragraph("\nVorname: " + customerDto.getFirstName() + "\nNachname: " + customerDto.getLastName() +
                                   "\nTelefonnummer: " + customerDto.getPhone() + "\nEmail-Adresse: " + customerDto.getEmail() +
                                   "\n Kind: " + customerDto.getChildName() + " " + customerDto.getChildLastName() +
-                                  "\n\nHat teilgenommen/Wird teilnehmen an:\n");
+                                  "\nHat teilgenommen/Wird teilnehmen an:\n\n\n");
 
             PdfPTable table = new PdfPTable(2);
             table.addCell("Event-Name");
             table.addCell("Datum");
             for(int j = 0; j < customerDto.getEventDtos().size(); j++){
                 table.addCell(customerDto.getEventDtos().get(j).getName());
-                table.addCell(customerDto.getEventDtos().get(j).getRoomUses().get(1).getBegin().format(formatter));
+                table.addCell(customerDto.getEventDtos().get(j).getRoomUses().get(0).getBegin().format(formatter));
             }
             document.add(chunk);
             document.add(table);

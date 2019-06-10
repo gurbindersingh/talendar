@@ -1,15 +1,39 @@
 import { Component, OnInit } from '@angular/core';
+import { InfoClient } from 'src/app/rest/info-client';
 
 @Component({
-  selector: 'app-info',
-  templateUrl: './info.component.html',
-  styleUrls: ['./info.component.scss']
+    selector: 'app-info',
+    templateUrl: './info.component.html',
+    styleUrls: ['./info.component.scss'],
 })
 export class InfoComponent implements OnInit {
+    title = 'E-Mail-basierter Informationsexport von Kundendaten';
+    mail: string;
+    errorMsg: string;
+    successMsg: string;
 
-  constructor() { }
+    constructor(private infoClient: InfoClient) {}
+    ngOnInit() {}
 
-  ngOnInit() {
-  }
+    public downloadInfoPdf(): void {
+        this.infoClient.getPdf(this.mail).subscribe(
+            (response: any) => {
+                console.log(response);
+                const file = new Blob([response], { type: 'application/pdf' });
+                const link = window.URL.createObjectURL(file);
+                const paw = window.open(link);
+                this.successMsg =
+                    'Das PDF konnte erfolgreich erstellt und heruntergeladen werden.';
+            },
+            (error: Error) => {
+                console.log(error);
+                this.errorMsg = error.message;
+            }
+        );
+    }
 
+    public clearInfoMsg(): void {
+        this.errorMsg = undefined;
+        this.successMsg = undefined;
+    }
 }

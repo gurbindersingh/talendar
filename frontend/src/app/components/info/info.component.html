@@ -1,5 +1,22 @@
-<button onclick=""></button>
-
-<p>
-    info works!
-</p>
+<h1 class="row justify-content-center">{{ title }}</h1>
+<hr />
+<div class="row">
+    <div class="col-lg-3"></div>
+    <div class="col-lg-6">
+        <div class="row">
+            <div class="col-lg-6">
+                <input
+                    [(ngModel)]="mail"
+                    placeholder="Bitte hier die E-Mailadresse eingeben!"
+                />
+            </div>
+            <div class="col-lg-6">
+                <button
+                    (click)="downloadInfoPdf()"
+                    class="btn btn-primary"
+                ></button>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3"></div>
+</div>
