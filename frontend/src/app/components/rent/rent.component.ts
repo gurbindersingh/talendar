@@ -8,17 +8,15 @@ import { EventType } from 'src/app/models/enum/eventType';
 import { EventClient } from 'src/app/rest/event-client';
 import { DateTimeParserService } from 'src/app/services/date-time-parser.service';
 
-import {
-    NgbDateStruct,
-    NgbTimeStruct,
-} from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateStruct, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
+import { ClickedDateService } from 'src/app/services/clicked-date.service';
 
 @Component({
     selector: 'app-meeting',
-    templateUrl: './meeting.component.html',
-    styleUrls: ['./meeting.component.scss'],
+    templateUrl: './rent.component.html',
+    styleUrls: ['./rent.component.scss'],
 })
-export class MeetingComponent implements OnInit {
+export class RentComponent implements OnInit {
     private event: Event = new Event();
     private customer: Customer = new Customer();
     private roomUse: RoomUse = new RoomUse();
@@ -42,27 +40,40 @@ export class MeetingComponent implements OnInit {
     constructor(
         private eventClient: EventClient,
         dateTimeParser: DateTimeParserService,
+        private clickedDateService: ClickedDateService
     ) {
+        const date = this.clickedDateService.getDate();
+        const time = this.clickedDateService.getTime();
+
         this.dateTimeParser = dateTimeParser;
-        this.startTime = { hour: 13, minute: 0, second: 0};
-        this.endTime = { hour: 14, minute: 0, second: 0};
+        this.startTime = this.clickedDateService.getTime();
+        this.endTime = { hour: this.startTime.hour + 1, minute: 0, second: 0 };
+
+        this.startDate = this.clickedDateService.getDate();
     }
 
     ngOnInit() {}
 
     public postMeeting(form: NgForm): void {
-        this.roomUse.begin = this.dateTimeParser.dateTimeToString(this.startDate, this.startTime);
-        this.roomUse.end = this.dateTimeParser.dateTimeToString(this.startDate, this.endTime);
+        this.roomUse.begin = this.dateTimeParser.dateTimeToString(
+            this.startDate,
+            this.startTime
+        );
+        this.roomUse.end = this.dateTimeParser.dateTimeToString(
+            this.startDate,
+            this.endTime
+        );
         this.roomUse.room = this.getSelectedRadioButtonRoom();
 
-        this.event.customerDtos = [ this.customer ];
-        this.event.roomUses = [ this.roomUse ];
+        this.event.customerDtos = [this.customer];
+        this.event.roomUses = [this.roomUse];
         this.event.eventType = EventType.Rent;
 
         this.eventClient.postNewEvent(this.event).subscribe(
             (data: Event) => {
                 console.log(data);
-                this.successMsg = 'Deine Reservierung wurde erfolgreich gespeichert';
+                this.successMsg =
+                    'Deine Reservierung wurde erfolgreich gespeichert';
             },
             (error: Error) => {
                 console.log(error);

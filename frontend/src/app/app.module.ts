@@ -14,7 +14,7 @@ import {
     BirthdayComponent,
     CourseComponent,
     HolidayComponent,
-    MeetingComponent,
+    RentComponent,
     NavigationComponent,
     TrainerComponent,
     ConsultationComponent,
@@ -23,7 +23,7 @@ import {
 } from 'src/app/components';
 
 import { httpInterceptorProviders } from './http-interceptors';
-import { SessionStorageService } from './services/session-storage-service';
+import { SessionStorageService } from './services/session-storage.service';
 import { SimpleHttpInterceptor } from './http-interceptors/simple-http-interceptor';
 import { TrainerClient } from './rest/trainer-client';
 import { EventClient } from './rest/event-client';
@@ -47,7 +47,7 @@ import { InfoComponent } from './components/info/info.component';
         CalendarComponent,
         CourseComponent,
         HolidayComponent,
-        MeetingComponent,
+        RentComponent,
         NavigationComponent,
         TrainerComponent,
         ConsultationComponent,

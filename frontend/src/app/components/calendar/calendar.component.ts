@@ -1,19 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
+import { Router } from '@angular/router';
 import localeDe from '@angular/common/locales/de-AT';
 
 import { CalendarDateFormatter, CalendarView } from 'angular-calendar';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { BREAKPOINTS } from 'src/app/utils/Breakpoints';
+import { ClickedDateService } from 'src/app/services/clicked-date.service';
 import { CustomDateFormatter } from './CustomDateFormatter';
-import { Event } from '../../models/event';
+import { Event } from 'src/app/models/event';
 import { EventClient } from 'src/app/rest/event-client';
 import { EventImportService } from 'src/app/services/event-import.service';
 import { MetaEvent } from './MetaEvent';
 import { Trainer } from 'src/app/models/trainer';
 import { TrainerClient } from 'src/app/rest/trainer-client';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Router } from '@angular/router';
 
 /**
  * In order to display week days in German the locale data
@@ -47,9 +48,9 @@ export class CalendarComponent implements OnInit {
     view = CalendarView.Week;
     viewDate = new Date();
     weekStartsOn = 1;
-    private clickedDateTime: Date;
     // toggle between collapsed and open filter menu
     isCollapsed = true;
+    clickedEvent: Event;
 
     // filter specific content
 
@@ -91,7 +92,8 @@ export class CalendarComponent implements OnInit {
         private trainerClient: TrainerClient,
         private eventImport: EventImportService,
         private modalService: NgbModal,
-        private router: Router
+        private router: Router,
+        private dateService: ClickedDateService
     ) {
         if (screen.width < BREAKPOINTS.medium) {
             this.daysInWeek = 3;
@@ -119,35 +121,38 @@ export class CalendarComponent implements OnInit {
         });
     }
 
-    showDetails(event: any) {
+    showDetails(event: Event, detailsModal: any) {
         console.warn(event);
-        alert('Implement showDetails()');
+        this.clickedEvent = event;
+        this.modalService.open(detailsModal);
     }
 
-    dateClicked(date: Date, content: any) {
+    dateClicked(date: Date, newEventModal: any) {
         console.warn(date);
-        this.clickedDateTime = date;
-        this.modalService.open(content);
+        // if (date.valueOf() >= Date.now()) {
+        this.dateService.setDateTime(date);
+        this.modalService.open(newEventModal);
+        // }
     }
 
     addEvent(type: string) {
         switch (type) {
             case 'new-course':
-                this.router.navigateByUrl(
-                    '/course/add?date=' + this.clickedDateTime
-                );
+                this.router.navigateByUrl('/course/add');
                 break;
 
             case 'new-holiday':
-                this.router.navigateByUrl(
-                    '/holiday/add?date=' + this.clickedDateTime
-                );
+                this.router.navigateByUrl('/holiday/add');
                 break;
+
             case 'new-consultation':
-                this.router.navigateByUrl(
-                    '/consultation/add?date=' + this.clickedDateTime
-                );
+                this.router.navigateByUrl('/consultation/add');
                 break;
+
+            case 'rent':
+                this.router.navigateByUrl('/rent');
+                break;
+
             default:
                 break;
         }

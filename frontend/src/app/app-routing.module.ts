@@ -9,8 +9,8 @@ import {
     CourseComponent,
     CourseViewComponent,
     HolidayComponent,
+    RentComponent,
     LoginComponent,
-    MeetingComponent,
     TrainerComponent,
     TrainerListComponent,
 } from './components';
@@ -43,7 +43,7 @@ const routes: Routes = [
         component: HolidayComponent,
         canActivate: [TrainerGuard],
     },
-    { path: 'rent', component: MeetingComponent },
+    { path: 'rent', component: RentComponent },
     {
         path: 'trainer/add',
         component: TrainerComponent,
