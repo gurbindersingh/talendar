@@ -38,6 +38,8 @@ import { AuthenticationClient } from './rest/authentication-client';
 import { AdminGuard } from './guards/admin-guard';
 import { TrainerGuard } from './guards/trainer-guard';
 import { AuthenticatedGuard } from './guards/authenticated-guard';
+import { InfoComponent } from './components/info/info.component';
+import { InfoClient } from './rest/info-client';
 
 @NgModule({
     declarations: [
@@ -56,6 +58,7 @@ import { AuthenticatedGuard } from './guards/authenticated-guard';
         CourseSignComponent,
         NgbdModalConfirm,
         LoginComponent,
+        InfoComponent,
     ],
     imports: [
         AppRoutingModule,
@@ -82,6 +85,7 @@ import { AuthenticatedGuard } from './guards/authenticated-guard';
         AdminGuard,
         TrainerGuard,
         AuthenticatedGuard,
+        InfoClient,
     ],
     bootstrap: [AppComponent],
     entryComponents: [NgbdModalConfirm],
