@@ -14,149 +14,182 @@ public class TrainerDto {
     private String phone;
     private String email;
     private List<String> birthdayTypes;
+    private String password;
     // List<Event> excluded from test Trainer Dummy because List of events that a trainer hosts does not affect his validity
     private LocalDateTime created;
     private LocalDateTime updated;
+    private Boolean deleted;
 
-    public TrainerDto () {
+
+    public TrainerDto() {
 
     }
 
 
-    public TrainerDto (String firstName, String lastName, LocalDate birthday, String phone, String email, List<String> birthdayTypes) {
+    public TrainerDto(String firstName, String lastName, LocalDate birthday, String phone,
+                      String email, List<String> birthdayTypes, String password
+    ) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthday = birthday;
         this.phone = phone;
         this.email = email;
         this.birthdayTypes = birthdayTypes;
+        this.deleted = false;
+        this.password = password;
     }
 
 
-    public List<String> getBirthdayTypes () {
+    public List<String> getBirthdayTypes() {
         return birthdayTypes;
     }
 
 
-    public void setBirthdayTypes (List<String> birthdayTypes) {
+    public void setBirthdayTypes(List<String> birthdayTypes) {
         this.birthdayTypes = birthdayTypes;
     }
 
 
-    public Long getId () {
+    public Long getId() {
         return id;
     }
 
 
-    public void setId (Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
 
-    public String getFirstName () {
+    public String getFirstName() {
         return firstName;
     }
 
 
-    public void setFirstName (String firstName) {
+    public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
 
-    public String getLastName () {
+    public String getLastName() {
         return lastName;
     }
 
 
-    public void setLastName (String lastName) {
+    public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
 
-    public LocalDate getBirthday () {
+    public LocalDate getBirthday() {
         return birthday;
     }
 
 
-    public void setBirthday (LocalDate birthday) {
+    public void setBirthday(LocalDate birthday) {
         this.birthday = birthday;
     }
 
 
-    public String getPhone () {
+    public String getPhone() {
         return phone;
     }
 
 
-    public void setPhone (String phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 
 
-    public String getEmail () {
+    public String getEmail() {
         return email;
     }
 
 
-    public void setEmail (String email) {
+    public void setEmail(String email) {
         this.email = email;
     }
 
 
-    public LocalDateTime getCreated () {
+    public String getPassword() {
+        return password;
+    }
+
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+
+    public LocalDateTime getCreated() {
         return created;
     }
 
 
-    public void setCreated (LocalDateTime created) {
+    public void setCreated(LocalDateTime created) {
         this.created = created;
     }
 
 
-    public LocalDateTime getUpdated () {
+    public LocalDateTime getUpdated() {
         return updated;
     }
 
 
-    public void setUpdated (LocalDateTime updated) {
+    public void setUpdated(LocalDateTime updated) {
         this.updated = updated;
     }
 
 
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
+
+
     @Override
-    public boolean equals (Object o) {
+    public boolean equals(Object o) {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
         TrainerDto that = (TrainerDto) o;
         return Objects.equals(id, that.id) &&
-            Objects.equals(firstName, that.firstName) &&
-            Objects.equals(lastName, that.lastName) &&
-            Objects.equals(birthday, that.birthday) &&
-            Objects.equals(phone, that.phone) &&
-            Objects.equals(email, that.email) &&
-            Objects.equals(created, that.created) &&
-            Objects.equals(updated, that.updated);
+               Objects.equals(firstName, that.firstName) &&
+               Objects.equals(lastName, that.lastName) &&
+               Objects.equals(birthday, that.birthday) &&
+               Objects.equals(phone, that.phone) &&
+               Objects.equals(email, that.email) &&
+               Objects.equals(birthdayTypes, that.birthdayTypes) &&
+               Objects.equals(created, that.created) &&
+               Objects.equals(updated, that.updated) &&
+               Objects.equals(deleted, that.deleted) &&
+               Objects.equals(password, that.password);
     }
 
 
     @Override
-    public int hashCode () {
-        return Objects.hash(id, firstName, lastName, birthday, phone, email, created, updated);
+    public int hashCode() {
+        return Objects.hash(id, firstName, lastName, birthday, phone, email, birthdayTypes, created,
+                            updated, deleted, password
+        );
     }
 
 
     @Override
-    public String toString () {
+    public String toString() {
         return "TrainerDto{" +
-            "id=" + id +
-            ", firstName='" + firstName + '\'' +
-            ", lastName='" + lastName + '\'' +
-            ", age=" + birthday +
-            ", phone='" + phone + '\'' +
-            ", email='" + email + '\'' +
-            ", created=" + created +
-            ", updated=" + updated +
-            ", birthdayTypes=" + birthdayTypes +
-            '}';
+               "id=" + id +
+               ", firstName='" + firstName + '\'' +
+               ", lastName='" + lastName + '\'' +
+               ", birthday=" + birthday +
+               ", phone='" + phone + '\'' +
+               ", email='" + email + '\'' +
+               ", birthdayTypes=" + birthdayTypes +
+               ", created=" + created +
+               ", updated=" + updated +
+               ", deleted=" + deleted +
+               '}';
     }
 }

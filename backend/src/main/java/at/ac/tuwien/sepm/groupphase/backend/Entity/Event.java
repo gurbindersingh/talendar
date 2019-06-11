@@ -5,6 +5,7 @@ import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -18,6 +19,7 @@ import java.util.Set;
 
 
 @Entity
+@Where(clause = "deleted <> true")
 public class Event {
 
     /*
@@ -33,7 +35,7 @@ public class Event {
     private String name;
 
     @NotNull
-    @OneToMany(fetch = FetchType.LAZY,
+    @OneToMany(fetch = FetchType.EAGER,
                mappedBy = "event",
                orphanRemoval = true,
                cascade = { CascadeType.PERSIST, CascadeType.MERGE })
@@ -54,7 +56,7 @@ public class Event {
     @Column(name = "event_type", nullable = false)
     private EventType eventType;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+    @ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(
         name = "event_customer",
         joinColumns = { @JoinColumn(name = "fk_event", referencedColumnName = "id")},
@@ -104,7 +106,7 @@ public class Event {
     @Column
     private Integer maxParticipants;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @Column

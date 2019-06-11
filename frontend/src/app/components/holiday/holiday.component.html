@@ -19,7 +19,7 @@
                             ngbDatepicker
                             #dstart="ngbDatepicker"
                             (click)="dstart.toggle()"
-                            placeholder="yyyy-mm-dd"
+                            placeholder="YYYY-MM-DD"
                             name="holidayStartDate"
                             [(ngModel)]="startDate"
                             required
@@ -50,7 +50,7 @@
                             ngbDatepicker
                             #dend="ngbDatepicker"
                             (click)="dend.toggle()"
-                            placeholder="yyyy-mm-dd"
+                            placeholder="YYYY-MM-DD"
                             name="holidayEndStart"
                             [(ngModel)]="endDate"
                             required
@@ -73,11 +73,10 @@
                 </div>
             </div>
 
-            
             <br />
 
             <div class="row">
-                <div class="col-lg-6">
+                <div class="col-lg">
                     <div class="custom-control custom-switch">
                         <input
                             name="toggler"
@@ -92,8 +91,6 @@
                         >
                     </div>
                 </div>
-
-                <div class="col-lg-4"></div>
             </div>
             <br />
 
@@ -163,12 +160,12 @@
                         </div>
                     </div>
                     <div class="col-lg-4" *ngIf="isTerminate()" id="10p">
-                        <p> Wiederholungen</p>
+                        <p>Wiederholungen</p>
                     </div>
                 </div>
             </div>
             <br />
-            
+
             <div class="row" *ngIf="errorMsg">
                 <div class="col-lg-6">
                     <p class="alert alert-danger">
@@ -183,12 +180,13 @@
                     </p>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-lg-7"></div>
+            <div class="row" style="padding:0 15px" id="submit">
+                <div class="col-lg-6"></div>
                 <button
                     [disabled]="!isCompleted()"
                     class="btn btn-primary"
                     type="submit"
+                    style="margin-left:15px;"
                 >
                     Urlaub eintragen
                 </button>

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.regex.Pattern;
 
 @Component
@@ -114,11 +115,13 @@ public class Validator {
 
         // Validator for Course
         if(event.getEventType() == EventType.Course) {
+
             if(event.getEndOfApplication() == null) {
                 throw new InvalidEntityException("Anmeldefrist ist nicht gesetzt");
             } else if(event.getEndOfApplication().isBefore(now)) {
                 throw new InvalidEntityException("Anmeldefrist liegt nicht in der Zukunft");
             }
+
 
             if(event.getPrice() == null) {
                 throw new InvalidEntityException("Preis ist nicht gesetzt");
@@ -171,6 +174,9 @@ public class Validator {
                 for(RoomUse r : event.getRoomUses()
                 ) {
                     validateRoomUse(r);
+                    if(event.getEndOfApplication().isAfter(r.getBegin())){
+                        throw new InvalidEntityException("Anmeldefrist ist nach Event Beginn");
+                    }
                 }
             }
             catch(InvalidEntityException e) {
@@ -195,6 +201,47 @@ public class Validator {
             catch(InvalidEntityException ie) {
                 throw ie;
             }
+        }
+    }
+
+    public void validateCourseForUpdate(Event event) throws  InvalidEntityException{
+        if(event.getName() == null || event.getName().isBlank()) {
+            throw new InvalidEntityException("Name nicht gesetzt");
+        }
+        if(event.getPrice() == null) {
+            throw new InvalidEntityException("Preis ist nicht gesetzt");
+        } else if(event.getPrice() < 0) {
+            throw new InvalidEntityException("Preis ist negativ");
+        }
+
+        if(event.getMaxParticipants() == null) {
+            throw new InvalidEntityException("Maximale Teilnehmeranzahl ist nicht gesetzt");
+        } else if(event.getMaxParticipants() < 5) {
+            throw new InvalidEntityException("Maximale Teilnehmeranzahl ist kleiner als 5");
+        }
+
+        if(event.getMaxParticipants() > 30) {
+            throw new InvalidEntityException("Maximale Teilnehmeranzahl ist größer als 30");
+        }
+
+        if(event.getMinAge() == null) {
+            throw new InvalidEntityException("Minimum Alter ist nicht gesetzt");
+        }
+
+        if(event.getMaxAge() == null) {
+            throw new InvalidEntityException("Maximum Alter ist nicht gesetzt");
+        }
+
+        if(event.getMinAge() > event.getMaxAge()) {
+            throw new InvalidEntityException("Minimum Alter ist größer als maximum Alter");
+        }
+
+        if(event.getMinAge() < 5) {
+            throw new InvalidEntityException("Minimum Alter ist kleiner als 5");
+        }
+
+        if(event.getMaxAge() > 100) {
+            throw new InvalidEntityException("Maximum Alter ist größer als 100");
         }
     }
 
@@ -234,10 +281,54 @@ public class Validator {
         }
     }
 
+    public void validateCustomerForCourseSign(Customer customer, Integer minAge, Integer maxAge, LocalDateTime endOfApplication) throws  InvalidEntityException {
+        LocalDateTime now = LocalDateTime.now();
+        if(now.isAfter(endOfApplication)){
+            throw new InvalidEntityException("Anmeldefrist verpasst");
+        }
+        try {
+            this.validateCustomer(customer);
+        } catch(InvalidEntityException ie){
+            throw ie;
+        }
+
+        if(customer.getChildName() == null || customer.getChildName().isBlank()){
+            throw new InvalidEntityException("Vorname des Kindes nicht gesetzt");
+        }
+        if(customer.getChildLastName() == null || customer.getChildLastName().isBlank()){
+            throw new InvalidEntityException("Nachname des Kindes nicht gesetzt");
+        }
+        if(customer.getBirthOfChild() == null) {
+            throw new InvalidEntityException("Geburtstag des Kindes nicht gesetzt");
+        }
+        Integer ageOfChild = calculateAge(customer.getBirthOfChild());
+        if(ageOfChild < minAge){
+            throw new InvalidEntityException("Ihr Kind ist noch zu jung um diesen Kurs besuchen zu können");
+        }
+        if(ageOfChild > maxAge){
+            throw new InvalidEntityException("Ihr Kind ist schon zu alt um diesen Kurs besuchen zu können");
+        }
+        if(customer.getWantsEmail() == null){
+            throw new InvalidEntityException("Ob Sie Werbung haben wollen wurde nicht gesetzt");
+        }
+
+    }
+
+    private static Integer calculateAge(LocalDateTime birthDate) {
+        LocalDateTime now = LocalDateTime.now();
+        if (birthDate != null) {
+            return Period.between(birthDate.toLocalDate(), now.toLocalDate()).getYears();
+        } else {
+            return 0;
+        }
+    }
+
 
     public void validateTrainer(Trainer entity) throws InvalidEntityException {
         LocalDateTime now = LocalDateTime.now();
-
+        if(entity == null){
+            throw new InvalidEntityException("Es konnte kein Trainer gefunden werden");
+        }
         if(entity.getFirstName() == null || entity.getFirstName().isBlank()) {
             throw new InvalidEntityException("Vorname ist nicht gesetzt");
         }

@@ -15,11 +15,23 @@ public interface IEventService {
 
     List<Event> getAllEvents() throws ServiceException;
 
+
+    /**
+     *
+     * @param event with the new customer to add. when customer id is null then a sign in is happening, otherwise a sign off
+     * @return the persistently saved instance is returned
+     * @throws ServiceException will be thrown if any error occurs during data processing that leads to an unsuccessful operation and if
+     *                  customer list is null or empty
+     * @throws ValidationException will be thrown if the given instance has invalid properties. The cause will be reported.
+     * @throws NotFoundException will be thrown if the given instance was not found
+     */
+    Event updateCustomers(Event event) throws ValidationException, NotFoundException, ServiceException;
+
     void deleteEvent(Long id);
 
     void cancelEvent(Long id) throws ValidationException;
 
-    Event getEventById(Long id);
+    Event getEventById(Long id) throws ServiceException, NotFoundException;;
 
     List<Event> getAllFutureCourses();
 

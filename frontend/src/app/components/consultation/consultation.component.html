@@ -94,6 +94,7 @@
                                 class="form-control"
                                 id="startDate"
                                 name="startDate"
+                                placeholder="YYYY-MM-DD"
                                 [(ngModel)]="startDate"
                                 ngbDatepicker
                                 (click)="dp1.toggle()"
@@ -123,6 +124,7 @@
                                 [readonly]="true"
                                 class="form-control"
                                 name="endDate"
+                                placeholder="YYYY-MM-DD"
                                 [(ngModel)]="endDate"
                                 ngbDatepicker
                                 (click)="dp2.toggle()"
@@ -206,7 +208,10 @@
                 <br />
 
                 <!-- Seventh row -->
-                <div class="row justify-content-end" style="padding-right: 15px">
+                <div
+                    class="row justify-content-end"
+                    style="padding-right: 15px"
+                >
                     <button
                         type="submit"
                         class="btn btn-primary"
