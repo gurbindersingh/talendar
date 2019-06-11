@@ -1,24 +1,45 @@
 import { AppRoutingModule } from './app-routing.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { NgModule } from '@angular/core';
 
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-
-import { OwlDateTimeModule, OwlNativeDateTimeModule } from 'ng-pick-datetime';
-
 import { AppComponent } from './app.component';
-import { BirthdayComponent } from './birthday/birthday.component';
-import { CalendarComponent } from './calendar/calendar.component';
-import { NavigationComponent } from './navigation/navigation.component';
+import {
+    CalendarComponent,
+    BirthdayComponent,
+    CourseComponent,
+    HolidayComponent,
+    RentComponent,
+    NavigationComponent,
+    TrainerComponent,
+    ConsultationComponent,
+    TrainerListComponent,
+    NgbdModalConfirm,
+} from 'src/app/components';
 
-import { CourseComponent } from './course/course.component';
-import { HolidayComponent } from './holiday/holiday.component';
-import { MeetingComponent } from './meeting/meeting.component';
-import { TrainerComponent } from './trainer/trainer.component';
+import { httpInterceptorProviders } from './http-interceptors';
+import { SessionStorageService } from './services/session-storage.service';
+import { SimpleHttpInterceptor } from './http-interceptors/simple-http-interceptor';
+import { TrainerClient } from './rest/trainer-client';
+import { EventClient } from './rest/event-client';
+import { DateTimeParserService } from './services/date-time-parser.service';
+import { HolidayClient } from 'src/app/rest/holiday-client';
+import { CancelEventComponent } from './components/cancel-event/cancel-event.component';
+import { CourseViewComponent } from './components/course-view/course-view.component';
+import { CourseSignComponent } from './components/course-sign/course-sign.component';
+import { LoginComponent } from './components/login/login.component';
+import { HolidaysClient } from 'src/app/rest/holidays-client';
+import { AuthenticationClient } from './rest/authentication-client';
+import { AdminGuard } from './guards/admin-guard';
+import { TrainerGuard } from './guards/trainer-guard';
+import { AuthenticatedGuard } from './guards/authenticated-guard';
+import { InfoComponent } from './components/info/info.component';
+import { InfoClient } from './rest/info-client';
 
 @NgModule({
     declarations: [
@@ -27,9 +48,17 @@ import { TrainerComponent } from './trainer/trainer.component';
         CalendarComponent,
         CourseComponent,
         HolidayComponent,
-        MeetingComponent,
+        RentComponent,
         NavigationComponent,
         TrainerComponent,
+        ConsultationComponent,
+        TrainerListComponent,
+        CancelEventComponent,
+        CourseViewComponent,
+        CourseSignComponent,
+        NgbdModalConfirm,
+        LoginComponent,
+        InfoComponent,
     ],
     imports: [
         AppRoutingModule,
@@ -41,10 +70,24 @@ import { TrainerComponent } from './trainer/trainer.component';
         }),
         NgbModule,
         FormsModule,
-        OwlDateTimeModule,
-        OwlNativeDateTimeModule,
+        HttpClientModule,
     ],
-    providers: [],
+    providers: [
+        httpInterceptorProviders,
+        SessionStorageService,
+        SimpleHttpInterceptor,
+        TrainerClient,
+        EventClient,
+        DateTimeParserService,
+        HolidayClient,
+        HolidaysClient,
+        AuthenticationClient,
+        AdminGuard,
+        TrainerGuard,
+        AuthenticatedGuard,
+        InfoClient,
+    ],
     bootstrap: [AppComponent],
+    entryComponents: [NgbdModalConfirm],
 })
 export class AppModule {}

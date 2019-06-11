@@ -1,9 +1,11 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest.dto;
 
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.LinkedList;
@@ -25,12 +27,13 @@ public class EventDto {
     private LocalDateTime created;
     private LocalDateTime updated;
     @JsonIgnoreProperties("eventDtos")
-    private Set<CustomerDto> customerDtos;
+    private List<CustomerDto> customerDtos = new LinkedList<>();
+	private boolean deleted;
 
     /*
         These Variables are used by non Rent Types
      */
-    @JsonIgnoreProperties("events")
+    @JsonIgnoreProperties({"events", "holidays"})
     private Trainer trainer;
 
     /*
@@ -52,7 +55,7 @@ public class EventDto {
 
     private LocalDateTime endOfApplication;
     private Double price;
-    private Integer maxParticipant;
+    private Integer maxParticipants;
     private String description;
     private Integer minAge;
     private Integer maxAge;
@@ -70,7 +73,7 @@ public class EventDto {
     }
 
 
-    public EventDto (Long id, EventType eventType, String name, List<RoomUse> roomUses, LocalDateTime created, LocalDateTime updated, Set<CustomerDto> customerDtos, Trainer trainer, int headcount, int ageToBe, String birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipant, String description, Integer minAge, Integer maxAge) {
+    public EventDto (Long id, EventType eventType, String name, List<RoomUse> roomUses, LocalDateTime created, LocalDateTime updated, List<CustomerDto> customerDtos, Trainer trainer, int headcount, int ageToBe, String birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipants, String description, Integer minAge, Integer maxAge, boolean deleted) {
         this.id = id;
         this.eventType = eventType;
         this.name = name;
@@ -84,10 +87,11 @@ public class EventDto {
         this.birthdayType = birthdayType;
         this.endOfApplication = endOfApplication;
         this.price = price;
-        this.maxParticipant = maxParticipant;
+        this.maxParticipants = maxParticipants;
         this.description = description;
         this.minAge = minAge;
         this.maxAge = maxAge;
+        this.deleted = deleted;
     }
 
 
@@ -151,12 +155,12 @@ public class EventDto {
     }
 
 
-    public Set<CustomerDto> getCustomerDtos () {
+    public List<CustomerDto> getCustomerDtos () {
         return customerDtos;
     }
 
 
-    public void setCustomerDtos (Set<CustomerDto> customerDtos) {
+    public void setCustomerDtos (List<CustomerDto> customerDtos) {
         this.customerDtos = customerDtos;
     }
 
@@ -221,13 +225,13 @@ public class EventDto {
     }
 
 
-    public Integer getMaxParticipant () {
-        return maxParticipant;
+    public Integer getMaxParticipants () {
+        return maxParticipants;
     }
 
 
-    public void setMaxParticipant (Integer maxParticipant) {
-        this.maxParticipant = maxParticipant;
+    public void setMaxParticipants (Integer maxParticipants) {
+        this.maxParticipants = maxParticipants;
     }
 
 
@@ -261,6 +265,16 @@ public class EventDto {
     }
 
 
+    public boolean isDeleted () {
+        return deleted;
+    }
+
+
+    public void setDeleted (boolean deleted) {
+        this.deleted = deleted;
+    }
+
+
     @Override
     public boolean equals (Object o) {
         if(this == o) return true;
@@ -279,7 +293,7 @@ public class EventDto {
             birthdayType == eventDto.birthdayType &&
             Objects.equals(endOfApplication, eventDto.endOfApplication) &&
             Objects.equals(price, eventDto.price) &&
-            Objects.equals(maxParticipant, eventDto.maxParticipant) &&
+            Objects.equals(maxParticipants, eventDto.maxParticipants) &&
             Objects.equals(description, eventDto.description) &&
             Objects.equals(minAge, eventDto.minAge) &&
             Objects.equals(maxAge, eventDto.maxAge);
@@ -288,7 +302,7 @@ public class EventDto {
 
     @Override
     public int hashCode () {
-        return Objects.hash(id, eventType, name, roomUses, created, updated, customerDtos, trainer, headcount, ageToBe, birthdayType, endOfApplication, price, maxParticipant, description, minAge, maxAge);
+        return Objects.hash(id, eventType, name, roomUses, created, updated, customerDtos, trainer, headcount, ageToBe, birthdayType, endOfApplication, price, maxParticipants, description, minAge, maxAge);
     }
 
 
@@ -301,14 +315,14 @@ public class EventDto {
             ", roomUses=" + roomUses +
             ", created=" + created +
             ", updated=" + updated +
-            ", customerDtos=" + customerDtos +
+            ", customers=" + customerDtos +
             ", trainer=" + trainer +
             ", headcount=" + headcount +
             ", ageToBe=" + ageToBe +
             ", birthdayType=" + birthdayType +
             ", endOfApplication=" + endOfApplication +
             ", price=" + price +
-            ", maxParticipant=" + maxParticipant +
+            ", maxParticipants=" + maxParticipants +
             ", description='" + description + '\'' +
             ", minAge=" + minAge +
             ", maxAge=" + maxAge +

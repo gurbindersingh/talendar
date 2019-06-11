@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>at.ac.tuwien.sepm.groupphase</groupId>
 	<artifactId>backend</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>backend</name>
 	<description>REST backend</description>
@@ -170,6 +170,12 @@
             <groupId>com.github.javafaker</groupId>
             <artifactId>javafaker</artifactId>
             <version>0.18</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itextpdf</artifactId>
+            <version>5.5.10</version>
         </dependency>
     </dependencies>
 

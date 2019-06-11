@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/talendar/template")
+@RequestMapping("/api/v1/talendar/template")
 public class TemplateEndpoint {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(TemplateEndpoint.class);

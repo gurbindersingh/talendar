@@ -20,9 +20,10 @@ public class TrainerDto {
     // List<Event> excluded from test Trainer Dummy because List of events that a trainer hosts does not affect his validity
     private LocalDateTime created;
     private LocalDateTime updated;
-    private boolean deleted;
+    private Boolean deleted;
 
-    public TrainerDto () {
+
+    public TrainerDto() {
 
     }
 
@@ -43,12 +44,12 @@ public class TrainerDto {
     }
 
 
-    public List<String> getBirthdayTypes () {
+    public List<String> getBirthdayTypes() {
         return birthdayTypes;
     }
 
 
-    public void setBirthdayTypes (List<String> birthdayTypes) {
+    public void setBirthdayTypes(List<String> birthdayTypes) {
         this.birthdayTypes = birthdayTypes;
     }
 
@@ -80,83 +81,103 @@ public class TrainerDto {
     }
 
 
-    public void setId (Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
 
-    public String getFirstName () {
+    public String getFirstName() {
         return firstName;
     }
 
 
-    public void setFirstName (String firstName) {
+    public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
 
-    public String getLastName () {
+    public String getLastName() {
         return lastName;
     }
 
 
-    public void setLastName (String lastName) {
+    public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
 
-    public LocalDate getBirthday () {
+    public LocalDate getBirthday() {
         return birthday;
     }
 
 
-    public void setBirthday (LocalDate birthday) {
+    public void setBirthday(LocalDate birthday) {
         this.birthday = birthday;
     }
 
 
-    public String getPhone () {
+    public String getPhone() {
         return phone;
     }
 
 
-    public void setPhone (String phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 
 
-    public String getEmail () {
+    public String getEmail() {
         return email;
     }
 
 
-    public void setEmail (String email) {
+    public void setEmail(String email) {
         this.email = email;
     }
 
 
-    public LocalDateTime getCreated () {
+    public String getPassword() {
+        return password;
+    }
+
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+
+    public LocalDateTime getCreated() {
         return created;
     }
 
 
-    public void setCreated (LocalDateTime created) {
+    public void setCreated(LocalDateTime created) {
         this.created = created;
     }
 
 
-    public LocalDateTime getUpdated () {
+    public LocalDateTime getUpdated() {
         return updated;
     }
 
 
-    public void setUpdated (LocalDateTime updated) {
+    public void setUpdated(LocalDateTime updated) {
         this.updated = updated;
     }
 
 
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
+
+
     @Override
-    public boolean equals (Object o) {
+    public boolean equals(Object o) {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
         TrainerDto that = (TrainerDto) o;
@@ -185,7 +206,7 @@ public class TrainerDto {
 
 
     @Override
-    public String toString () {
+    public String toString() {
         return "TrainerDto{" +
                "id=" + id +
                ", firstName='" + firstName + '\'' +
