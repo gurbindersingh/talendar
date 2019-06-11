@@ -10,8 +10,8 @@ import {
     NgbTimeStruct,
     NgbDateParserFormatter,
 } from '@ng-bootstrap/ng-bootstrap';
-import { NgbDateParserFormatterImplementation } from '../../services/parserformatter.service';
-import { NgbDateParserFormatterImplementationUser } from '../../services/parserformatterUser.service';
+import { NgbDateParserFormatterImplementation } from 'src/app/services/parserformatter.service';
+import { NgbDateParserFormatterImplementationUser } from 'src/app/services/parserformatterUser.service';
 @Component({
     selector: 'app-birthday',
     templateUrl: './birthday.component.html',
@@ -42,17 +42,17 @@ export class BirthdayComponent implements OnInit {
         19,
     ];
     public ageListb: Number[] = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
-    private event: Event = new Event();
-    private room: RoomUse = new RoomUse();
-    private customer: Customer = new Customer();
+    event: Event = new Event();
+    room: RoomUse = new RoomUse();
+    customer: Customer = new Customer();
     private date: Date = new Date();
-    private startDate: NgbDateStruct = {
+    startDate: NgbDateStruct = {
         year: this.date.getUTCFullYear(),
         month: this.date.getUTCMonth() + 1,
         day: this.date.getUTCDay(),
     };
-    private startTime: NgbTimeStruct = { hour: 13, minute: 30, second: 0 };
-    private parserFormatter: NgbDateParserFormatterImplementation = new NgbDateParserFormatterImplementation();
+    startTime: NgbTimeStruct = { hour: 13, minute: 30, second: 0 };
+    private parserFormatter = new NgbDateParserFormatterImplementation();
 
     constructor(private eventClient: EventClient) {}
 
