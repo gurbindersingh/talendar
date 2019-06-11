@@ -6,9 +6,22 @@
 
 #nav-items {
     ul {
-        margin-top: 7rem;
+        margin-top: 6rem;
     }
 
+    #user-info {
+        margin-bottom: 3rem;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+
+        .t-icon {
+            margin-right: 1rem;
+        }
+    }
+
+    #user-info,
     .nav-link a {
         font-size: 1.3rem;
         color: hsl(0, 0, 75);
@@ -40,17 +53,6 @@
     }
 }
 
-#loggedInInfo {
-    display: flex;
-    flex-direction: row;
-    margin-top: 2rem;
-    color: #bfbfbf;
-}
-
-#loggedInInfo > #icon {
-    margin-right: 1rem;
-}
-
 @include media-breakpoint-up(xl) {
     .close {
         display: none;
@@ -67,6 +69,10 @@
 }
 
 @include media-breakpoint-down(lg) {
+    #user-info {
+        justify-content: center;
+    }
+
     .close {
         position: absolute;
         top: 20px;
@@ -80,7 +86,6 @@
     }
 
     .overlay {
-        /* Height & width depends on how you want to reveal the overlay (see JS below) */
         height: 100vh;
         width: 0vw;
         position: fixed; /* Stay in place */
@@ -89,8 +94,8 @@
         top: 0;
         background-color: rgb(0, 0, 0); /* Black fallback color */
         background-color: rgba(0, 0, 0, 0.9); /* Black w/opacity */
-        overflow-x: hidden; /* Disable horizontal scroll */
-        transition: width 0.1s; /* 0.5 second transition effect to slide in or slide down the overlay (height or width, depending on reveal) */
+        overflow-x: hidden;
+        transition: width 0.1s;
     }
 
     .pop-out-menu {

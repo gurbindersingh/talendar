@@ -18,6 +18,7 @@ import { CourseSignComponent } from './components/course-sign/course-sign.compon
 import { TrainerGuard } from './guards/trainer-guard';
 import { AuthenticatedGuard } from './guards/authenticated-guard';
 import { AdminGuard } from './guards/admin-guard';
+import { InfoComponent } from './components/info/info.component';
 
 const routes: Routes = [
     { path: 'calendar', component: CalendarComponent },
@@ -52,6 +53,11 @@ const routes: Routes = [
     {
         path: 'trainer/list',
         component: TrainerListComponent,
+        canActivate: [AdminGuard],
+    },
+    {
+        path: 'info',
+        component: InfoComponent,
         canActivate: [AdminGuard],
     },
     { path: 'login', component: LoginComponent },

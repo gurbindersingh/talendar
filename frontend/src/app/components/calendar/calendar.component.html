@@ -300,7 +300,7 @@
             [locale]="locale"
             [viewDate]="viewDate"
             [weekStartsOn]="weekStartsOn"
-            (eventClicked)="showDetails($event.event.event, detailsModal)"
+            (eventClicked)="showDetails($event.event, detailsModal)"
             (hourSegmentClicked)="dateClicked($event.date, newEventModal)"
         ></mwl-calendar-week-view>
     </ng-template>
@@ -344,11 +344,11 @@
 </ng-template>
 
 <ng-template #detailsModal let-modal>
-    <div class="modal-body">
-        <h4>{{ clickedEvent.name }}</h4>
+    <div class="modal-body" ngbAutofocus>
+        <h4>{{ clickedEvent.title }}</h4>
         <p>{{ clickedEvent.description }}</p>
         <p>
-            Trainer:
+            <b> Abgehalten von: </b>
             {{
                 clickedEvent.trainer.firstName +
                     ' ' +
