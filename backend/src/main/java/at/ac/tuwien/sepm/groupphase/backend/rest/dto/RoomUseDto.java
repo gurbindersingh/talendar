@@ -13,6 +13,8 @@ public class RoomUseDto {
     private Room room;
     private Event event;
     private boolean deleted;
+    private String cronExpression;
+    private Integer roomOption;
 
     public RoomUseDto(){
 
@@ -24,6 +26,44 @@ public class RoomUseDto {
         this.room = room;
         this.event = event;
         this.deleted = deleted;
+    }
+
+
+    public RoomUseDto(Long id, LocalDateTime begin, LocalDateTime end,
+                      Room room,
+                      Event event,
+                      boolean deleted,
+                      String cronExpression,
+                      Integer roomOption
+    ) {
+        this.id = id;
+        this.begin = begin;
+        this.end = end;
+        this.room = room;
+        this.event = event;
+        this.deleted = deleted;
+        this.cronExpression = cronExpression;
+        this.roomOption = roomOption;
+    }
+
+
+    public String getCronExpression() {
+        return cronExpression;
+    }
+
+
+    public void setCronExpression(String cronExpression) {
+        this.cronExpression = cronExpression;
+    }
+
+
+    public Integer getRoomOption() {
+        return roomOption;
+    }
+
+
+    public void setRoomOption(Integer roomOption) {
+        this.roomOption = roomOption;
     }
 
 
@@ -88,32 +128,35 @@ public class RoomUseDto {
 
 
     @Override
-    public boolean equals (Object o) {
+    public boolean equals(Object o) {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
         RoomUseDto that = (RoomUseDto) o;
-        return Objects.equals(id, that.id) &&
-            Objects.equals(begin, that.begin) &&
-            Objects.equals(end, that.end) &&
-            room == that.room &&
-            Objects.equals(event, that.event);
+        return deleted == that.deleted &&
+               Objects.equals(begin, that.begin) &&
+               Objects.equals(end, that.end) &&
+               room == that.room &&
+               Objects.equals(cronExpression, that.cronExpression) &&
+               Objects.equals(roomOption, that.roomOption);
     }
 
 
     @Override
-    public int hashCode () {
-        return Objects.hash(id, begin, end, room, event);
+    public int hashCode() {
+        return Objects.hash(begin, end, room, deleted, cronExpression, roomOption);
     }
 
 
     @Override
-    public String toString () {
+    public String toString() {
         return "RoomUseDto{" +
-            "id=" + id +
-            ", begin=" + begin +
-            ", end=" + end +
-            ", room=" + room +
-            ", eventDto=" + event +
-            '}';
+               "id=" + id +
+               ", begin=" + begin +
+               ", end=" + end +
+               ", room=" + room +
+               ", deleted=" + deleted +
+               ", cronExpression='" + cronExpression + '\'' +
+               ", roomOption=" + roomOption +
+               '}';
     }
 }
