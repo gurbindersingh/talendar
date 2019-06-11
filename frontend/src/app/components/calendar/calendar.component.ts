@@ -61,6 +61,14 @@ export class CalendarComponent implements OnInit {
         { name: 'Erdgeschoss', value: 'GroundFloor' },
         { name: 'Kein Filter', value: undefined },
     ];
+    eventModal = [
+        { name: 'Neuen Kurs erstellen', type: 'course' },
+        { name: 'Urlaub eintragen', type: 'holiday' },
+        { name: 'Beratungstermin vereinbaren', type: 'consultation' },
+        { name: 'Geburtstag buchen', type: 'birthday' },
+        { name: 'Raum mieten', type: 'rent' },
+    ];
+    // The above and below should be merged
     eventTypes: any[] = [
         { name: 'Kurs', value: 'Course' },
         { name: 'Beratung', value: 'Consultation' },
@@ -76,6 +84,7 @@ export class CalendarComponent implements OnInit {
         { name: 'Malen Geburtstag', value: 'Painting' },
         { name: 'Kein Filter', value: undefined },
     ];
+
     trainerList: string[] = [];
     trainers: Trainer[] = [];
 
@@ -139,20 +148,24 @@ export class CalendarComponent implements OnInit {
 
     addEvent(type: string) {
         switch (type) {
-            case 'new-course':
+            case 'course':
                 this.router.navigateByUrl('/course/add');
                 break;
 
-            case 'new-holiday':
+            case 'holiday':
                 this.router.navigateByUrl('/holiday/add');
                 break;
 
-            case 'new-consultation':
+            case 'consultation':
                 this.router.navigateByUrl('/consultation/add');
                 break;
 
             case 'rent':
                 this.router.navigateByUrl('/rent');
+                break;
+
+            case 'birthday':
+                this.router.navigateByUrl('/birthday/book');
                 break;
 
             default:
