@@ -97,6 +97,9 @@ public class FakeData {
         trainer.setPhone(fakePhoneNumber());
         trainer.setFirstName(fakeFirstName());
         trainer.setLastName(fakeLastName());
+        List<String> birthdayTypes = new LinkedList<>();
+        birthdayTypes.add("Rocket");
+        trainer.setBirthdayTypes(birthdayTypes);
         trainer.setId(fakeID());
         trainer.setCreated(fakePastTimeAfter2000());
         boolean found = false;

@@ -13,23 +13,33 @@ public class TrainerDto {
     private LocalDate birthday;
     private String phone;
     private String email;
+    private List<EventDto> events;
     private List<String> birthdayTypes;
+    private List<HolidayDto> holidays;
+    private String password;
     // List<Event> excluded from test Trainer Dummy because List of events that a trainer hosts does not affect his validity
     private LocalDateTime created;
     private LocalDateTime updated;
+    private boolean deleted;
 
     public TrainerDto () {
 
     }
 
 
-    public TrainerDto (String firstName, String lastName, LocalDate birthday, String phone, String email, List<String> birthdayTypes) {
+    public TrainerDto(String firstName, String lastName, LocalDate birthday, String phone,
+                      String email, List<EventDto> events, List<String> birthdayTypes, List<HolidayDto> holidays, String password
+    ) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthday = birthday;
         this.phone = phone;
         this.email = email;
+        this.events = events;
         this.birthdayTypes = birthdayTypes;
+        this.holidays = holidays;
+        this.deleted = false;
+        this.password = password;
     }
 
 
@@ -43,7 +53,29 @@ public class TrainerDto {
     }
 
 
-    public Long getId () {
+    public List<EventDto> getEvents() {
+        return events;
+    }
+
+
+    public void setEvents(List<EventDto> events) {
+        this.events = events;
+    }
+
+
+    public List<HolidayDto> getHolidays() {
+        return holidays;
+    }
+
+
+    public void setHolidays(
+        List<HolidayDto> holidays
+    ) {
+        this.holidays = holidays;
+    }
+
+
+    public Long getId() {
         return id;
     }
 
@@ -129,34 +161,44 @@ public class TrainerDto {
         if(o == null || getClass() != o.getClass()) return false;
         TrainerDto that = (TrainerDto) o;
         return Objects.equals(id, that.id) &&
-            Objects.equals(firstName, that.firstName) &&
-            Objects.equals(lastName, that.lastName) &&
-            Objects.equals(birthday, that.birthday) &&
-            Objects.equals(phone, that.phone) &&
-            Objects.equals(email, that.email) &&
-            Objects.equals(created, that.created) &&
-            Objects.equals(updated, that.updated);
+               Objects.equals(firstName, that.firstName) &&
+               Objects.equals(lastName, that.lastName) &&
+               Objects.equals(birthday, that.birthday) &&
+               Objects.equals(phone, that.phone) &&
+               Objects.equals(email, that.email) &&
+               Objects.equals(events, that.events) &&
+               Objects.equals(birthdayTypes, that.birthdayTypes) &&
+               Objects.equals(holidays, that.holidays) &&
+               Objects.equals(created, that.created) &&
+               Objects.equals(updated, that.updated) &&
+               Objects.equals(deleted, that.deleted) &&
+               Objects.equals(password, that.password);
     }
 
 
     @Override
-    public int hashCode () {
-        return Objects.hash(id, firstName, lastName, birthday, phone, email, created, updated);
+    public int hashCode() {
+        return Objects.hash(id, firstName, lastName, birthday, phone, email, events, birthdayTypes, holidays, created,
+                            updated, deleted, password
+        );
     }
 
 
     @Override
     public String toString () {
         return "TrainerDto{" +
-            "id=" + id +
-            ", firstName='" + firstName + '\'' +
-            ", lastName='" + lastName + '\'' +
-            ", age=" + birthday +
-            ", phone='" + phone + '\'' +
-            ", email='" + email + '\'' +
-            ", created=" + created +
-            ", updated=" + updated +
-            ", birthdayTypes=" + birthdayTypes +
-            '}';
+               "id=" + id +
+               ", firstName='" + firstName + '\'' +
+               ", lastName='" + lastName + '\'' +
+               ", birthday=" + birthday +
+               ", phone='" + phone + '\'' +
+               ", email='" + email + '\'' +
+               ", events=" + events +
+               ", birthdayTypes=" + birthdayTypes +
+               ", holidays=" + holidays +
+               ", created=" + created +
+               ", updated=" + updated +
+               ", deleted=" + deleted +
+               '}';
     }
 }
