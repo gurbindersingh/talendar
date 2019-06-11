@@ -68,6 +68,9 @@ public class Event {
     @Column
     private boolean deleted;
 
+    @ElementCollection
+    @CollectionTable(name = "event_tags", joinColumns = { @JoinColumn(name = "event_id") })
+    private List<String> event_tags;
     /*
         These Variables are used by non Rent Types
      */
@@ -117,6 +120,7 @@ public class Event {
     private Integer maxAge;
 
 
+
     /*
         These Variables are Rent Specific
      */
@@ -127,7 +131,7 @@ public class Event {
     }
 
 
-    public Event (@NotBlank String name, @NotNull List<RoomUse> roomUses, @Past @NotNull LocalDateTime created, @Past @NotNull LocalDateTime updated, EventType eventType, Set<Customer> customers, Trainer trainer, int headcount, int ageToBe, String birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipants, String description, Integer minAge, Integer maxAge, boolean deleted) {
+    public Event (@NotBlank String name, @NotNull List<RoomUse> roomUses, @Past @NotNull LocalDateTime created, @Past @NotNull LocalDateTime updated, EventType eventType, Set<Customer> customers, Trainer trainer, int headcount, int ageToBe, String birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipants, String description, Integer minAge, Integer maxAge, boolean deleted, List<String> event_tags) {
         this.name = name;
         this.roomUses = roomUses;
         this.created = created;
@@ -145,6 +149,17 @@ public class Event {
         this.minAge = minAge;
         this.maxAge = maxAge;
         this.deleted = deleted;
+        this.event_tags = event_tags;
+    }
+
+
+    public List<String> getEvent_tags() {
+        return event_tags;
+    }
+
+
+    public void setEvent_tags(List<String> event_tags) {
+        this.event_tags = event_tags;
     }
 
 
@@ -382,6 +397,8 @@ public class Event {
                ", description='" + description + '\'' +
                ", minAge=" + minAge +
                ", maxAge=" + maxAge +
+               ", tags=" + event_tags +
                '}';
     }
+
 }
