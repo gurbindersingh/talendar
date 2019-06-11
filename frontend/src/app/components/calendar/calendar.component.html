@@ -308,44 +308,32 @@
 
 <!-- Modal -->
 <ng-template #newEventModal let-modal>
-    <div class="modal-body">
-        <h4>Welches Event möchten Sie anlegen?</h4>
-        <button
-            class="btn btn-link"
-            (click)="modal.close(); addEvent('new-course')"
-        >
-            Neuer Kurs</button
-        ><button
-            class="btn btn-link"
-            (click)="modal.close(); addEvent('new-holiday')"
-        >
-            Urlaub
+    <div class="modal-header">
+        <h4 ngbAutofocus>
+            Welches Event möchten Sie anlegen?
+        </h4>
+    </div>
+    <div class="modal-body row justify-content-between" style="margin: 0">
+        <ul class="list-unstyled">
+            <li *ngFor="let event of eventModal" (click)="modal.close()">
+                <button class="btn btn-link" (click)="addEvent(event.type)">
+                    {{ event.name }}
+                </button>
+            </li>
+        </ul>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-outline-primary" (click)="modal.close()">
+            Schließen
         </button>
-        <button
-            class="btn btn-link"
-            (click)="modal.close(); addEvent('new-consultation')"
-        >
-            Beratungstermin
-        </button>
-        <button class="btn btn-link" (click)="modal.close(); addEvent('rent')">
-            Raum Mieten
-        </button>
-        <div class="row justify-content-end">
-            <button
-                type="button"
-                class="btn btn-outline-primary"
-                (click)="modal.close()"
-                style="margin: 16px 16px 0 0"
-            >
-                Schließen
-            </button>
-        </div>
     </div>
 </ng-template>
 
 <ng-template #detailsModal let-modal>
-    <div class="modal-body" ngbAutofocus>
-        <h4>{{ clickedEvent.title }}</h4>
+    <div class="modal-header">
+        <h4 ngbAutofocus>{{ clickedEvent.title }}</h4>
+    </div>
+    <div class="modal-body">
         <p>{{ clickedEvent.description }}</p>
         <p>
             <b> Abgehalten von: </b>
@@ -355,16 +343,14 @@
                     clickedEvent.trainer.lastName
             }}
         </p>
-
-        <div class="row justify-content-end">
-            <button
-                type="button"
-                class="btn btn-outline-primary"
-                (click)="modal.close()"
-                style="margin: 16px 16px 0 0"
-            >
-                Schließen
-            </button>
-        </div>
+    </div>
+    <div class="modal-footer">
+        <button
+            type="button"
+            class="btn btn-outline-primary"
+            (click)="modal.close()"
+        >
+            Schließen
+        </button>
     </div>
 </ng-template>
