@@ -14,11 +14,6 @@ import { NotificationService } from 'src/app/services/notification.service';
 export class NavigationComponent implements OnInit {
     navLinks = [
         {
-            name: 'Login',
-            path: 'login',
-            restriction: Authorities.UNAUTHENTICATED,
-        },
-        {
             name: 'Kalender anzeigen',
             path: 'calendar',
             restriction: Authorities.NONE,
@@ -63,12 +58,19 @@ export class NavigationComponent implements OnInit {
             path: 'course/view',
             restriction: Authorities.ADMIN,
         },
-        {
-            name: 'Logout',
-            path: 'calendar?logout',
-            restriction: Authorities.AUTHENTICATED,
-        },
     ];
+
+    loginLink = {
+        name: 'Login',
+        path: 'login',
+        restriction: Authorities.UNAUTHENTICATED,
+    };
+
+    logoutLink = {
+        name: 'Logout',
+        path: 'calendar?logout',
+        restriction: Authorities.AUTHENTICATED,
+    };
 
     contextNavLinks: { name: string; path: string; restriction: Authorities }[];
 
@@ -81,7 +83,7 @@ export class NavigationComponent implements OnInit {
     user: UserDetails;
 
     constructor(
-        private authenticationService: AuthenticationService,
+        public authenticationService: AuthenticationService,
         private notificationService: NotificationService,
         private router: Router
     ) {}
@@ -107,15 +109,9 @@ export class NavigationComponent implements OnInit {
      * and notify this event to InternalUpdaeservice which will emit new event
      * for observables
      */
-    checkForLogout(navLink: {
-        name: string;
-        path: string;
-        restriction: Authorities;
-    }): void {
-        if (navLink.name === 'Logout') {
-            this.authenticationService.logout();
-            this.router.navigate(['/calendar']);
-        }
+    logout(): void {
+        this.authenticationService.logout();
+        this.router.navigate(['/calendar']);
     }
 
     /**
@@ -132,11 +128,11 @@ export class NavigationComponent implements OnInit {
                     this.contextNavLinks = this.contextNavLinks.filter((elem) =>
                         this.isAccessible(elem)
                     );
-                    if (this.user.roles.includes(Authorities.ADMIN)) {
-                        this.authority = 'Admin';
-                    } else {
-                        this.authority = 'Betreuer';
-                    }
+                    // if (this.user.roles.includes(Authorities.ADMIN)) {
+                    //     this.authority = 'Admin';
+                    // } else {
+                    //     this.authority = 'Betreuer';
+                    // }
                 },
                 (error: Error) => {
                     console.log(error.message);
@@ -147,7 +143,7 @@ export class NavigationComponent implements OnInit {
             this.contextNavLinks = this.contextNavLinks.filter((elem) =>
                 this.isAccessible(elem)
             );
-            this.authority = 'Gast';
+            // this.authority = 'Gast';
         }
     }
 
@@ -155,7 +151,7 @@ export class NavigationComponent implements OnInit {
      * Filter out navLinks based on access rights restrictions and the set
      * user profile (the active user)
      */
-    private isAccessible(navLink: {
+    isAccessible(navLink: {
         name: string;
         path: string;
         restriction: Authorities;
