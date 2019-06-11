@@ -187,6 +187,8 @@ public class SecurityConfiguration {
                 .authorizeRequests()
                 // any delete op is only accesible for the admin
                 .antMatchers(HttpMethod.DELETE, "/**").hasRole("ADMIN")
+                // dsgvo information endpoint
+                .antMatchers(HttpMethod.GET, "/api/v1/talendar/info/**").hasRole("ADMIN")
                 // next two has to be allowed in order to have a free accessible authentication endpoint
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1/talendar/authentication").permitAll()
