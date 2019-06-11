@@ -148,15 +148,64 @@ public class EventService implements IEventService {
                             new InvalidEntityException("Trainer mit Id nicht gefunden");
                         throw new ValidationException(e.getMessage(), e);
                     }
-                    try {
-                        isAvailable(event.getRoomUses());
+
+                    RoomUse roomUse = event.getRoomUses().get(0);
+
+                    if(roomUse.getCronExpression() != null && !roomUse.getCronExpression().isBlank()){
+                        try{
+                            validator.validateCronExpression(roomUse.getCronExpression());
+                        } catch(InvalidEntityException ie){
+                            LOGGER.error("Invalid cron expression!");
+                            throw new ServiceException("", ie);
+                        }
+                        event.setRoomUses(cronExpressionToRoomUsesList(event));
                     }
-                    catch(TimeNotAvailableException e) {
-                        throw new ValidationException(
-                            e.getMessage(),
-                            e
-                        );
+
+
+                    if(roomUse.getRoomOption() != null) {
+
+                        List<Room> roomPriority =
+                            createPriorityRoomList(roomUse.getRoomOption(), roomUse.getRoom());
+
+                        LOGGER.info("Priority list: " + roomPriority);
+                        int i = 0;
+
+                        LinkedList<RoomUse> temp = new LinkedList<>();
+                        for(int j = 0; j < event.getRoomUses().size(); j++) {
+                            temp.add(event.getRoomUses().get(j));
+                            for(i = 0; i < roomPriority.size(); i++) {
+                                try {
+                                    temp.get(0).setRoom(roomPriority.get(i));
+                                    isAvailable(temp);
+                                    break;
+                                }
+                                catch(TimeNotAvailableException e) {
+                                    LOGGER.info(i + ". alternative Room: " + roomPriority.get(i) + " -> is not available.");
+                                    if(i + 1 == roomPriority.size()) {
+                                        LOGGER.info("All rooms not available");
+                                        throw new ValidationException(
+                                            e.getMessage(),
+                                            e
+                                        );
+                                    }
+                                }
+                            }
+                            event.getRoomUses().get(j).setRoom(temp.get(0).getRoom());
+                            event.getRoomUses().get(j).setEvent(event);
+                            temp.remove(0);
+                        }
+                    } else {
+
+                        try{
+                            isAvailable(event.getRoomUses());
+                        } catch(TimeNotAvailableException te){
+                            throw new ValidationException(te.getMessage(), te);
+                        }
                     }
+
+                    LOGGER.info("Get RoomUses before saving:" + event.getRoomUses());
+
+
                     try{
                         LOGGER.info("Sending information mail to admin");
                         infoMail.sendAdminEventInfoMail(event, "Neuer Kurs", "newEvent");
@@ -245,6 +294,213 @@ public class EventService implements IEventService {
 
         return event;
     }
+
+
+
+    private List<Room> createPriorityRoomList(Integer roomOption, Room room){
+        List<Room> roomPriority = new LinkedList<>();
+
+        roomPriority.add(room);  //default: only one rooom
+
+        switch(roomOption){
+            case 1:
+                if(room == Room.Green){
+                    roomPriority.add(Room.Orange);
+                } else if (room == Room.Orange){
+                    roomPriority.add(Room.Green);
+                } else {
+                    roomPriority.add(Room.Green);
+                }
+                break;
+            case 2:
+                if(room == Room.Green){
+                    roomPriority.add(Room.GroundFloor);
+                } else if (room == Room.Orange){
+                    roomPriority.add(Room.GroundFloor);
+                } else {
+                    roomPriority.add(Room.Orange);
+                }
+                break;
+            case 3:
+                if(room == Room.Green){
+                    roomPriority.add(Room.Orange);
+                    roomPriority.add(Room.GroundFloor);
+                } else if(room == Room.Orange){
+                    roomPriority.add(Room.Green);
+                    roomPriority.add(Room.GroundFloor);
+                } else {
+                    roomPriority.add(Room.Green);
+                    roomPriority.add(Room.Orange);
+                }
+                break;
+            case 4:
+                if(room == Room.Green) {
+                    roomPriority.add(Room.GroundFloor);
+                    roomPriority.add(Room.Orange);
+                } else if(room == Room.Orange) {
+                    roomPriority.add(Room.GroundFloor);
+                    roomPriority.add(Room.Green);
+                } else {
+                    roomPriority.add(Room.Orange);
+                    roomPriority.add(Room.Green);
+                }
+                break;
+
+
+        }
+
+
+
+        return roomPriority;
+    }
+
+    private List<RoomUse> cronExpressionToRoomUsesList (Event event) throws ServiceException {
+        LOGGER.info("Cron expression will be resolved now!");
+
+        LinkedList<RoomUse> resultList = new LinkedList<>();
+
+        if(event.getRoomUses() == null || event.getRoomUses().size() != 1 || event.getRoomUses().get(0).getCronExpression() == null || event.getRoomUses().get(0).getCronExpression().isBlank()){
+            LOGGER.info("Cant resolve cron expression. It is missing.");
+            return event.getRoomUses();
+        }
+
+        try {
+            //Create LinkedLists and split cronExpression
+
+            LinkedList<LocalDateTime> startLocalDateTimes = new LinkedList<>();
+            LinkedList<LocalDateTime> endLocalDateTimes = new LinkedList<>();
+
+            RoomUse originRoomUse = event.getRoomUses().get(0);
+
+            String[] cronSplit = originRoomUse.getCronExpression().split(" ");
+
+
+
+
+            //Turn CronExpression Into a StartDateTime and EndDatetime and add to the correct list
+            String startMonth = (cronSplit[3].split("/"))[0];
+            if(startMonth.length()<2){
+                startMonth = "0" + startMonth;
+            }
+            String endMonth = (cronSplit[3].split("/"))[1];
+            if(endMonth.length()<2){
+                endMonth = "0" + endMonth;
+            }
+            String startDay = (cronSplit[2].split("/"))[0];
+            if(startDay.length()<2){
+                startDay = "0" + startDay;
+            }
+            String endDay = (cronSplit[2].split("/"))[1];
+            if(endDay.length()<2){
+                endDay = "0" + endDay;
+            }
+            String startMinute = (cronSplit[0].split("/"))[0];
+            if(startMinute.length()<2){
+                startMinute = "0" + startMinute;
+            }
+            String endMinute = (cronSplit[0].split("/"))[1];
+            if(endMinute.length()<2){
+                endMinute = "0" + endMinute;
+            }
+            String startHour = (cronSplit[1].split("/"))[0];
+            if(startHour.length()<2){
+                startHour = "0" + startHour;
+            }
+            String endHour = (cronSplit[1].split("/"))[1];
+            if(endHour.length()<2){
+                endHour = "0" + endHour;
+            }
+
+
+            String startTime = "T" + startHour + ":" + startMinute + ":00";
+            String endTime = "T" + endHour + ":" +  endMinute + ":00";
+
+            String startDate = (cronSplit[4].split("/"))[0] + "-" + startMonth + "-" + startDay;
+            String endDate = (cronSplit[4].split("/"))[1] + "-" + endMonth + "-" + endDay;
+
+            startLocalDateTimes.add(LocalDateTime.parse(startDate+startTime));
+            endLocalDateTimes.add(LocalDateTime.parse(endDate+endTime));
+
+
+            LOGGER.info("startLocalDateTimes:" + startLocalDateTimes);
+            LOGGER.info("endLocal:" + endLocalDateTimes);
+            //Use Rest of the cron expression to build up the list of holidayStartDateTimes and holidayEndDateTimes
+
+            boolean toggle = Boolean.parseBoolean(cronSplit[5]);
+            int repeatX = Integer.parseInt(cronSplit[7]);
+            int endX = Integer.parseInt(cronSplit[9]);
+
+            LocalDateTime startLast = startLocalDateTimes.getLast();
+            LocalDateTime endLast = endLocalDateTimes.getLast();
+
+
+
+            LOGGER.debug("Used Option: " + cronSplit[6]);
+            if(cronSplit[8].equals("Nie")){
+                endX = 1000;
+            }
+            if(toggle) {
+                for(int i = 0; i < endX; i++) {
+
+                    LOGGER.debug("Comparing endX: " + endX + " with i: " + i);
+                    if(cronSplit[6].equals("O1")) {
+                        i = 1000;
+                    } else if(cronSplit[6].equals("O2")) {
+                        if(startLast.plusDays(repeatX).isAfter(startLocalDateTimes.getFirst().plusYears(2))) {
+                            i = 1000;
+                        } else {
+                            startLast = startLast.plusDays(repeatX);
+                            startLocalDateTimes.add(startLast);
+                            endLast = endLast.plusDays(repeatX);
+                            endLocalDateTimes.add(endLast);
+                        }
+                    } else if(cronSplit[6].equals("O3")) {
+                        if(startLast.plusDays(repeatX).isAfter(startLocalDateTimes.getFirst().plusYears(2))) {
+                            i = 1000;
+                        } else {
+                            startLast = startLast.plusWeeks(repeatX);
+                            startLocalDateTimes.add(startLast);
+                            endLast = endLast.plusWeeks(repeatX);
+                            endLocalDateTimes.add(endLast);
+                        }
+                    } else {
+
+                        if(startLast.plusDays(repeatX).isAfter(startLocalDateTimes.getFirst().plusYears(2))) {
+                            i = 1000;
+                        } else {
+                            startLast = startLast.plusMonths(repeatX);
+                            startLocalDateTimes.add(startLast);
+                            endLast = endLast.plusMonths(repeatX);
+                            endLocalDateTimes.add(endLast);
+                        }
+                    }
+                }
+            }
+
+            LOGGER.info("resultStarts:" + startLocalDateTimes);
+            LOGGER.info("resultEnds:" + endLocalDateTimes);
+
+
+            //Create RoomUses
+
+            for(int i = 0; i < startLocalDateTimes.size(); i++){
+                RoomUse roomUse = new RoomUse();
+
+                roomUse.setRoom(originRoomUse.getRoom());
+                roomUse.setBegin(startLocalDateTimes.get(i));
+                roomUse.setEnd(endLocalDateTimes.get(i));
+
+                resultList.add(roomUse);
+            }
+
+
+
+            return resultList;
+        } catch(Exception e) {
+            throw new ServiceException(e);
+        }
+    }
+
 
 
     @Override

@@ -1,4 +1,4 @@
-<nav class="navbar">
+<nav class="navbar navbar-expand-lg">
     <div id="brand" class="">
         <span id="image">
             <img
@@ -13,19 +13,6 @@
         <i class="fas fa-bars"></i>
     </div>
 
-    <div id="loggedInInfo">
-        <div id="icon">
-            <i class="fas fa-user fa-3x"></i>
-        </div>
-        <div id="userLabels">
-            <span>Rolle: {{ authority }}</span>
-            <br />
-            <span>
-                <span *ngIf="user != null">{{ user.email }}</span>
-            </span>
-        </div>
-    </div>
-
     <div
         id="nav-items"
         class="navbar-nav overlay"
@@ -34,15 +21,37 @@
         <button class="close" (click)="toggleMenu()">
             <span>&times;</span>
         </button>
+
         <ul class="list-unstyled text-align-center">
+            <li id="user-info">
+                <i class="fas fa-user fa-2x t-icon"></i>
+                <span *ngIf="user != null"> {{ user.email }} </span>
+            </li>
+
             <li
                 class="nav-link"
                 *ngFor="let nav of contextNavLinks"
-                (click)="toggleMenu(); checkForLogout(nav)"
+                (click)="toggleMenu()"
             >
                 <a [routerLink]="nav.path" routerLinkActive="active-link">
                     {{ nav.name }}
                 </a>
+            </li>
+            <br />
+            <li
+                class="nav-link"
+                (click)="toggleMenu(); logout()"
+                *ngIf="isAccessible(logoutLink)"
+            >
+                <a [routerLink]="logoutLink.path"> {{ logoutLink.name }} </a>
+            </li>
+
+            <li
+                class="nav-link"
+                (click)="toggleMenu()"
+                *ngIf="isAccessible(loginLink)"
+            >
+                <a [routerLink]="loginLink.path"> {{ loginLink.name }} </a>
             </li>
         </ul>
     </div>
