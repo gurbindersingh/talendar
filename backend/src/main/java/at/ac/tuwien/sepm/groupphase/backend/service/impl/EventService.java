@@ -152,6 +152,12 @@ public class EventService implements IEventService {
                     RoomUse roomUse = event.getRoomUses().get(0);
 
                     if(roomUse.getCronExpression() != null && !roomUse.getCronExpression().isBlank()){
+                        try{
+                            validator.validateCronExpression(roomUse.getCronExpression());
+                        } catch(InvalidEntityException ie){
+                            LOGGER.error("Invalid cron expression!");
+                            throw new ServiceException("", ie);
+                        }
                         event.setRoomUses(cronExpressionToRoomUsesList(event));
                     }
 
