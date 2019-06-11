@@ -14,7 +14,7 @@ import {
     BirthdayComponent,
     CourseComponent,
     HolidayComponent,
-    MeetingComponent,
+    RentComponent,
     NavigationComponent,
     TrainerComponent,
     ConsultationComponent,
@@ -23,7 +23,7 @@ import {
 } from 'src/app/components';
 
 import { httpInterceptorProviders } from './http-interceptors';
-import { SessionStorageService } from './services/session-storage-service';
+import { SessionStorageService } from './services/session-storage.service';
 import { SimpleHttpInterceptor } from './http-interceptors/simple-http-interceptor';
 import { TrainerClient } from './rest/trainer-client';
 import { EventClient } from './rest/event-client';
@@ -38,6 +38,8 @@ import { AuthenticationClient } from './rest/authentication-client';
 import { AdminGuard } from './guards/admin-guard';
 import { TrainerGuard } from './guards/trainer-guard';
 import { AuthenticatedGuard } from './guards/authenticated-guard';
+import { InfoComponent } from './components/info/info.component';
+import { InfoClient } from './rest/info-client';
 
 @NgModule({
     declarations: [
@@ -46,7 +48,7 @@ import { AuthenticatedGuard } from './guards/authenticated-guard';
         CalendarComponent,
         CourseComponent,
         HolidayComponent,
-        MeetingComponent,
+        RentComponent,
         NavigationComponent,
         TrainerComponent,
         ConsultationComponent,
@@ -56,6 +58,7 @@ import { AuthenticatedGuard } from './guards/authenticated-guard';
         CourseSignComponent,
         NgbdModalConfirm,
         LoginComponent,
+        InfoComponent,
     ],
     imports: [
         AppRoutingModule,
@@ -82,6 +85,7 @@ import { AuthenticatedGuard } from './guards/authenticated-guard';
         AdminGuard,
         TrainerGuard,
         AuthenticatedGuard,
+        InfoClient,
     ],
     bootstrap: [AppComponent],
     entryComponents: [NgbdModalConfirm],

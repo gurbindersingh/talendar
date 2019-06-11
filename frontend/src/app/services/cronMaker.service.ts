@@ -12,8 +12,7 @@ export class CronMakerService {
         this.cronMaker = cronMaker;
     }
 
-
-    //Cron Expression has the form:
+    // Cron Expression has the form:
     // 'startMinute/endMinute startHour/endHour startDay/endDay startMonth/endMonth
     //        startYear/endYear toggle repeatAt(O1-O4 for the 4 options) repeatX endAt endX'
     public createCron(
@@ -48,7 +47,6 @@ export class CronMakerService {
         this.result = this.result + repeatX + ' ';
         this.result = this.result + endAt + ' ';
         this.result = this.result + endX + ' ';
-
 
         return this.result;
     }
