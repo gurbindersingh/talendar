@@ -2,18 +2,16 @@
 @import '../../node_modules/bootstrap/scss/variables';
 @import '../../node_modules/bootstrap/scss/mixins/breakpoints';
 
-#app-container {
-    height: 100vh;
-    width: 100vw;
-}
-
 #nav {
     color: hsl(84, 48, 49);
     background-color: hsl(120, 5, 13);
 }
 
-#content {
+.has-mobile-header {
     height: calc(100vh - 67px /* 64px is the height of the navbar on mobile */);
+}
+
+#content {
     overflow-x: hidden;
     overflow-y: auto;
 }
