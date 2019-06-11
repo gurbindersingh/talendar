@@ -375,7 +375,7 @@ public class EventServiceTest {
 
     @Test
     public void postCourse_TrainerNotFound(){
-        VALID_INCOMING_COURSE.getTrainer().setId(200L);
+        VALID_INCOMING_COURSE.getTrainer().setId(2000L);
         assertThrows(ValidationException.class, () -> eventService.save(VALID_INCOMING_COURSE));
     }
 
