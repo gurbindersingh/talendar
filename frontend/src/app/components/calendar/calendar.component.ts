@@ -39,9 +39,9 @@ export class CalendarComponent implements OnInit {
     dayStartHour = 8;
     dayStartMinute = 0;
     // list of all loaded events
-    allEvents: MetaEvent[] = [];
+    allEvents: Event[] = [];
     // list of all events relative to the applied filters
-    filteredEvents: MetaEvent[] = [];
+    filteredEvents: Event[] = [];
     hourSegments = 4;
     locale = 'de-AT';
     precision = 'minutes';
@@ -123,8 +123,10 @@ export class CalendarComponent implements OnInit {
 
     showDetails(event: Event, detailsModal: any) {
         console.warn(event);
-        this.clickedEvent = event;
-        this.modalService.open(detailsModal);
+        if (event.eventType !== 'Rent') {
+            this.clickedEvent = event;
+            this.modalService.open(detailsModal, { size: 'lg' });
+        }
     }
 
     dateClicked(date: Date, newEventModal: any) {
@@ -169,7 +171,7 @@ export class CalendarComponent implements OnInit {
     public updateView(): void {
         this.filteredEvents = this.allEvents;
 
-        this.filteredEvents = this.filteredEvents.filter((event: MetaEvent) => {
+        this.filteredEvents = this.filteredEvents.filter((event: Event) => {
             // vars are true if filter for this context was set in GUI
             const hasRoomFilter: boolean =
                 this.roomSelection !== undefined &&
@@ -192,7 +194,7 @@ export class CalendarComponent implements OnInit {
             if (hasRoomFilter) {
                 if (
                     this.roomSelection.value !==
-                    event.event.roomUses[0].room.toString()
+                    event.roomUses[0].room.toString()
                 ) {
                     return false;
                 }
@@ -202,17 +204,12 @@ export class CalendarComponent implements OnInit {
             // as rents have no assigned trainer (null)
             if (hasTrainerFilter) {
                 // if event without trainer then it is a rent, filter it
-                if (
-                    event.event.trainer === null ||
-                    event.event.trainer === undefined
-                ) {
+                if (event.trainer === null || event.trainer === undefined) {
                     return false;
                 }
 
                 const trainerNameOfEvent =
-                    event.event.trainer.firstName +
-                    ' ' +
-                    event.event.trainer.lastName;
+                    event.trainer.firstName + ' ' + event.trainer.lastName;
 
                 if (this.trainerSelection !== trainerNameOfEvent) {
                     return false;
@@ -221,8 +218,7 @@ export class CalendarComponent implements OnInit {
 
             if (hasTypeFilter) {
                 if (
-                    this.eventTypeSelection.value !==
-                    event.event.eventType.toString()
+                    this.eventTypeSelection.value !== event.eventType.toString()
                 ) {
                     return false;
                 }
@@ -231,14 +227,14 @@ export class CalendarComponent implements OnInit {
             if (hasCourseFilter) {
                 if (
                     this.minAgeFilter !== null &&
-                    event.event.minAge < this.minAgeFilter
+                    event.minAge < this.minAgeFilter
                 ) {
                     return false;
                 }
 
                 if (
                     this.maxAgeFilter !== null &&
-                    event.event.maxAge > this.maxAgeFilter
+                    event.maxAge > this.maxAgeFilter
                 ) {
                     return false;
                 }
@@ -246,7 +242,7 @@ export class CalendarComponent implements OnInit {
 
             // only possible if hasTypeSelection is set to 'Geburtstag'
             if (hasBirthdayTypeSelection) {
-                if (this.bdTypeSelection.value !== event.event.birthdayType) {
+                if (this.bdTypeSelection.value !== event.birthdayType) {
                     return false;
                 }
             }
