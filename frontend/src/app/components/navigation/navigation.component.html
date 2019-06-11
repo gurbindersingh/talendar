@@ -1,4 +1,4 @@
-<nav class="navbar">
+<nav class="navbar navbar-expand-lg">
     <div id="brand" class="">
         <span id="image">
             <img
@@ -9,11 +9,7 @@
         <span id="text">Talentegarten</span>
     </div>
 
-    <div
-        class="navbar-toggler"
-        (click)="toggleMenu()"
-        *ngIf="authenticationService.isLoggedIn"
-    >
+    <div class="navbar-toggler" (click)="toggleMenu()">
         <i class="fas fa-bars"></i>
     </div>
 
@@ -21,14 +17,13 @@
         id="nav-items"
         class="navbar-nav overlay"
         [ngClass]="{ 'pop-out-menu': showMenu }"
-        *ngIf="authenticationService.isLoggedIn"
     >
         <button class="close" (click)="toggleMenu()">
             <span>&times;</span>
         </button>
 
         <ul class="list-unstyled text-align-center">
-            <li id="user-info" *ngIf="authenticationService.isLoggedIn">
+            <li id="user-info">
                 <i class="fas fa-user fa-2x t-icon"></i>
                 <span *ngIf="user != null"> {{ user.email }} </span>
             </li>
