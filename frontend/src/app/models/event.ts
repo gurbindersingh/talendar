@@ -1,27 +1,40 @@
-import {Trainer} from './trainer';
-import {RoomUse} from './roomUse';
-import {Customer} from './customer';
-import {EventType} from './enum/eventType';
+import { Trainer } from './trainer';
+import { RoomUse } from './roomUse';
+import { Customer } from './customer';
+import { EventType } from './enum/eventType';
+import { CalendarEvent } from 'calendar-utils';
 
-export class Event{
-    public id: number;
-    public name: string;
-    public roomUses: RoomUse[];
-    public created: Date;
-    public updated: Date;
-    public eventType: EventType;
-    public customerDtos: Customer[];
+export class Event implements CalendarEvent {
+    // From CalenderEvent
+    id: number;
+    start: Date;
+    end?: Date;
+    title: string;
+    color?: import('calendar-utils').EventColor;
+    actions?: import('calendar-utils').EventAction[];
+    allDay?: boolean;
+    cssClass?: string;
+    resizable?: { beforeStart?: boolean; afterEnd?: boolean };
+    draggable?: boolean;
+    meta?: any;
+    // Custom properties
+    name: string;
+    roomUses: RoomUse[];
+    created: Date;
+    updated: Date;
+    eventType: EventType;
+    customerDtos: Customer[];
     // used by non rent types
-    public trainer: Trainer;
+    trainer: Trainer;
     // birthday specific
-    public headcount: number;
-    public ageToBe: number;
-    public birthdayType: string;
+    headcount: number;
+    ageToBe: number;
+    birthdayType: string;
     // course specific
-    public endOfApplication: string;
-    public price: number;
-    public maxParticipants: number;
-    public description: string;
-    public minAge: number;
-    public maxAge: number;
+    endOfApplication: string;
+    price: number;
+    maxParticipants: number;
+    description: string;
+    minAge: number;
+    maxAge: number;
 }
