@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.rest;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.InformationOutput;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.BackendException;
+import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.service.IRightToInformationService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.UserNotFoundException;
@@ -35,11 +36,12 @@ public class RightToInformationEndpoint {
     @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(method = RequestMethod.GET, value = "/{mail}")
     public ResponseEntity<byte[]> returnRightToInformationPdf(@PathVariable("mail") String mail) throws
-                                                                                                 BackendException,
                                                                                                  UserNotFoundException,
                                                                                                  DocumentException,
                                                                                                  FileNotFoundException,
-                                                                                                 TransformerConfigurationException {
+                                                                                                 TransformerConfigurationException,
+                                                                                                 ServiceException,
+                                                                                                 NotFoundException {
         LOGGER.info("Incoming Request to create a pdf containing UserData for User with mail: {}", mail);
         try{
             InformationOutput info = rightToInformationService.createInformationOutput(mail);
@@ -51,9 +53,9 @@ public class RightToInformationEndpoint {
             ResponseEntity<byte[]> response = new ResponseEntity<>(info.getContents(), headers, HttpStatus.OK);
             LOGGER.info("Sending back the response in form of byte[] with size: " + info.getContents().length);
             return response;
-        } catch(ServiceException e){
-            LOGGER.error("Error beim InformationOutput erstellen: " + e.getMessage(), e);
-            throw new BackendException("Etwas ist leider am Server schiefgelaufen", e);
+        } catch(NotFoundException e){
+            LOGGER.error("Couldnt find any customers with email: " + e.getMessage(), e);
+            throw new NotFoundException("Es konnten keine Kunden mit dieser E-Mail-Adresse in der Datenbank gefunden werden", e);
         }
     }
 }

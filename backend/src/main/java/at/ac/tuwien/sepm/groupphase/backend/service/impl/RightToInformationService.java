@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.InformationOutput;
+import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.CustomerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.CustomerDto;
 import at.ac.tuwien.sepm.groupphase.backend.service.IRightToInformationService;
@@ -43,11 +44,11 @@ public class RightToInformationService implements IRightToInformationService {
     }
 
     @Transactional
-    public InformationOutput createInformationOutput(String mail) throws UserNotFoundException,
-                                                                         DocumentException {
+    public InformationOutput createInformationOutput(String mail) throws DocumentException,
+                                                                         NotFoundException {
         List<Customer> customers = customerRepository.findByEmail(mail);
         if(customers.isEmpty()){
-            throw new UserNotFoundException("Keine Kunden mit dieser Email-Adresse gefunden");
+            throw new NotFoundException("Keine Kunden mit dieser Email-Adresse gefunden");
         }
         InformationOutput info = new InformationOutput();
         String filename = LocalDateTime.now().format(formatter) + "_" + mail;

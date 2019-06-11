@@ -16,6 +16,7 @@ export class InfoComponent implements OnInit {
     ngOnInit() {}
 
     public downloadInfoPdf(): void {
+        this.clearInfoMsg();
         this.infoClient.getPdf(this.mail).subscribe(
             (response: any) => {
                 console.log(response);
@@ -23,11 +24,13 @@ export class InfoComponent implements OnInit {
                 const link = window.URL.createObjectURL(file);
                 const paw = window.open(link);
                 this.successMsg =
-                    'Das PDF konnte erfolgreich erstellt und heruntergeladen werden.';
+                    'Das PDF konnte erfolgreich erstellt und geöffnet werden.';
             },
             (error: Error) => {
                 console.log(error);
-                this.errorMsg = error.message;
+                this.errorMsg =
+                    'Es konnten am Server keine Kunden gefunden werden,' +
+                    ' die diese E-Mail-Adresse haben';
             }
         );
     }

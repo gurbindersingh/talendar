@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.InformationOutput;
+import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.UserNotFoundException;
 import com.itextpdf.text.DocumentException;
@@ -25,5 +26,6 @@ public interface IRightToInformationService {
                                                                   UserNotFoundException,
                                                                   FileNotFoundException,
                                                                   DocumentException,
-                                                                  TransformerConfigurationException;
+                                                                  TransformerConfigurationException,
+                                                                  NotFoundException;
 }
