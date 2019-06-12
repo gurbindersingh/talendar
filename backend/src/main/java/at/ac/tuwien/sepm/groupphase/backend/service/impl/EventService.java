@@ -134,11 +134,11 @@ public class EventService implements IEventService {
                       return event;
                   }
                   catch(InvalidEntityException e) {
-                      throw new ValidationException("Given Birthday is invalid: " + e.getMessage(), e);
+                      throw new ValidationException(e.getMessage(), e);
                   }catch(TrainerNotAvailableException e){
-                      throw new ServiceException("There are no Trainers available for this birthday " + e.getMessage(),e);
+                      throw new ServiceException(e.getMessage(),e);
                   }catch(EmailException e){
-                      throw new ValidationException("Something went wrong while attempting to send an email: " + e.getMessage(), e);
+                      throw new ValidationException("" + e.getMessage(), e);
                   }
             case Course:
                 try {
@@ -527,6 +527,7 @@ public class EventService implements IEventService {
 
     @Override
     public List<Event> getAllEvents(Long trainerId) throws ValidationException, ServiceException {
+        //TODO
         return null;
     }
 
