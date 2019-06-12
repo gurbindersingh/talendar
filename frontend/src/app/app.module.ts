@@ -40,6 +40,7 @@ import { TrainerGuard } from './guards/trainer-guard';
 import { AuthenticatedGuard } from './guards/authenticated-guard';
 import { InfoComponent } from './components/info/info.component';
 import { InfoClient } from './rest/info-client';
+import { ImageClient } from './rest/image-client';
 
 @NgModule({
     declarations: [
@@ -86,6 +87,7 @@ import { InfoClient } from './rest/info-client';
         TrainerGuard,
         AuthenticatedGuard,
         InfoClient,
+        ImageClient,
     ],
     bootstrap: [AppComponent],
     entryComponents: [NgbdModalConfirm],

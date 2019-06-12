@@ -1,14 +1,15 @@
-import { Component, OnInit, SimpleChanges, OnChanges } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { TrainerClient } from 'src/app/rest/trainer-client';
 import { Trainer } from 'src/app/models/trainer';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import {
     NgbDateNativeAdapter,
     NgbDateStruct,
     NgbDate,
 } from '@ng-bootstrap/ng-bootstrap';
+import { ImageClient } from 'src/app/rest/image-client';
 
 @Component({
     selector: 'app-trainer',
@@ -41,8 +42,11 @@ export class TrainerComponent implements OnInit {
     private isSaveMode: boolean;
     private currentDate: Date = new Date();
 
+    private formData: FormData = null;
+
     constructor(
         private trainerClient: TrainerClient,
+        private imageClient: ImageClient,
         private route: ActivatedRoute,
         private location: Location,
         private adapter: NgbDateNativeAdapter
@@ -140,7 +144,7 @@ export class TrainerComponent implements OnInit {
         }
     }
 
-    public postTrainer(form: NgForm): void {
+    public submitForm(form: NgForm): void {
         const supervisedBirthdays: string[] = [];
         const allBirthdayOptions = Object.assign(
             {},
@@ -162,30 +166,19 @@ export class TrainerComponent implements OnInit {
             this.trainer.password = this.password;
         }
 
-        if (this.isSaveMode) {
-            this.trainerClient.postNewTrainer(this.trainer).subscribe(
-                (data: Trainer) => {
-                    console.log(data);
-                    this.successMsg =
-                        'Der Betreuer wurde erfolgreich gespeichert';
-                    form.reset();
-                },
-                (error: Error) => {
-                    this.errorMsg =
-                        'Der Betreuer konnte nicht angelegt werden: ' +
-                        error.message;
-                }
-            );
+        if (this.formData == null) {
+            // immediately pefrom request (PUT or POST dependant on state)
+            this.postData(form);
         } else {
-            this.trainerClient.update(this.trainer).subscribe(
-                (data: Trainer) => {
-                    console.log(data);
-                    this.successMsg =
-                        'Der Betreuer wurde erfolgreich aktualisiert';
+            // first post the selected image, if successful post trainer
+            this.imageClient.postProfilePicture(this.formData).subscribe(
+                (fileLocation: string) => {
+                    this.trainer.picture = fileLocation;
+                    this.postData(form);
                 },
                 (error: Error) => {
                     this.errorMsg =
-                        'Der Betreuer konnte nicht erfolgreich aktualisiert werden: ' +
+                        'Die Daten konnten nicht gespeichert werden: ' +
                         error.message;
                 }
             );
@@ -226,8 +219,13 @@ export class TrainerComponent implements OnInit {
         if (this.password !== this.passwordRepeated) {
             return false;
         }
-        // todo add check for password as soon as there is a mechanism that supports passwords
         return true;
+    }
+
+    public onFileSelected(event: any): void {
+        this.formData = new FormData();
+        const selectedFile = event.target.files[0];
+        this.formData.append('file', selectedFile);
     }
 
     public clearInfoMsg(): void {
@@ -237,6 +235,42 @@ export class TrainerComponent implements OnInit {
 
     public cancel(): void {
         this.location.back();
+    }
+
+    /**
+     * Post the form data to server.
+     * In edit mode an update (PUT request) will be performed.
+     * In save mode a POST request will be performed.
+     */
+    private postData(form: NgForm): void {
+        if (this.isSaveMode) {
+            this.trainerClient.postNewTrainer(this.trainer).subscribe(
+                (data: Trainer) => {
+                    console.log(data);
+                    this.successMsg =
+                        'Der Betreuer wurde erfolgreich gespeichert';
+                    form.reset();
+                },
+                (error: Error) => {
+                    this.errorMsg =
+                        'Der Betreuer konnte nicht angelegt werden: ' +
+                        error.message;
+                }
+            );
+        } else {
+            this.trainerClient.update(this.trainer).subscribe(
+                (data: Trainer) => {
+                    console.log(data);
+                    this.successMsg =
+                        'Der Betreuer wurde erfolgreich aktualisiert';
+                },
+                (error: Error) => {
+                    this.errorMsg =
+                        'Der Betreuer konnte nicht erfolgreich aktualisiert werden: ' +
+                        error.message;
+                }
+            );
+        }
     }
 
     private fillCheckboxes(supervisedBirthdays: string[]): void {

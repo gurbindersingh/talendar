@@ -50,6 +50,8 @@ public class Trainer {
     @OneToMany(mappedBy = "trainer",
                cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private List<Holiday> holidays;
+    // the location where the profile picture of this trainer is stored
+    private String picture;
 
     @NotNull
     @Past
@@ -78,6 +80,7 @@ public class Trainer {
                    @NotBlank @Email String email,
                    List<Event> events,
                    List<Holiday> holidays,
+                   String picture,
                    @NotNull List<String> birthdayTypes,
                    @NotNull @Past LocalDateTime created,
                    @NotNull @Past LocalDateTime updated
@@ -90,6 +93,7 @@ public class Trainer {
         this.email = email;
         this.events = events;
         this.holidays = holidays;
+        this.picture = picture;
         this.birthdayTypes = birthdayTypes;
         this.created = created;
         this.updated = updated;
@@ -187,6 +191,16 @@ public class Trainer {
     }
 
 
+    public String getPicture() {
+        return picture;
+    }
+
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+
     public LocalDateTime getCreated() {
         return created;
     }
@@ -238,6 +252,7 @@ public class Trainer {
                Objects.equals(events, trainer.events) &&
                Objects.equals(birthdayTypes, trainer.birthdayTypes) &&
                Objects.equals(holidays, trainer.holidays) &&
+               picture.equals(trainer.picture) &&
                created.equals(trainer.created) &&
                updated.equals(trainer.updated);
     }
@@ -246,7 +261,7 @@ public class Trainer {
     @Override
     public int hashCode() {
         return Objects.hash(id, firstName, lastName, birthday, phone, email, events, birthdayTypes,
-                            holidays, created, updated, deleted
+                            holidays, picture, created, updated, deleted
         );
     }
 
@@ -263,6 +278,7 @@ public class Trainer {
                ", events=" + events +
                ", birthdayTypes=" + birthdayTypes +
                ", holidays=" + holidays +
+               ", picture=" + picture +
                ", created=" + created +
                ", updated=" + updated +
                ", deleted=" + deleted +

@@ -12,7 +12,11 @@ import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -416,6 +420,43 @@ public class Validator {
                 break;
             default:
                 throw new CancelationException("Irgendwas ist schiefgelaufen");
+        }
+    }
+
+    public void validateImageFile(MultipartFile file) throws InvalidEntityException {
+        // max size is 10 MB
+        // 10 * 1 MB (size of file returned as bytes therefore 2^20 is performed to hop from bytes to megabytes)
+        long maxFileSize = 10 * (long)( Math.pow(2, 20));
+
+        if (file.isEmpty()) {
+            throw new InvalidEntityException("Das Bild darf nicht leer sein");
+        }
+
+        if (file.getSize() > maxFileSize) {
+            throw new InvalidEntityException("Maximale Groeße von 10 MB wurde überschritten");
+        }
+
+        // check what type of extension is specified
+        String mimeType = file.getContentType();
+
+        if (mimeType == null) {
+            throw new InvalidEntityException("Die Datei ist defekt. Kein Mime Type vorhanden.");
+        } else if (!mimeType.startsWith("image/")) {
+            throw new InvalidEntityException("Datei muss eine Bilddatei sein (JPG, JPEG, PNG)");
+        } else {
+            int endOfMimePrefix = mimeType.indexOf('/');
+            String extension = file.getContentType().substring(endOfMimePrefix + 1);
+
+            if (!extension.equals("jpeg") && !extension.equals("jpg") && !extension.equals("png")) {
+                throw new InvalidEntityException("Erlaubte Bildtypen: JPG, JPEG, PNG");
+            }
+        }
+
+        // now also check the actual content (as extension can be manipulated)
+        try(InputStream inputStream = file.getInputStream()) {
+            ImageIO.read(inputStream).toString();
+        } catch(IOException e) {
+            throw new InvalidEntityException("Die Datei ist defekt");
         }
     }
 }
