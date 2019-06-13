@@ -6,15 +6,17 @@
         <div
             class="col-xl-auto"
             id="nav"
-            [ngClass]="{ 'full-height': authenticationService.isLoggedIn }"
+            *ngIf="authenticationService.isLoggedIn"
         >
             <app-navigation></app-navigation>
         </div>
 
         <div
-            class="col-xl pb-3"
+            class="col-xl pb-3 full-height"
             id="content"
-            [ngClass]="{ 'full-height': authenticationService.isLoggedIn }"
+            [ngClass]="{
+                'has-mobile-header': authenticationService.isLoggedIn
+            }"
         >
             <router-outlet></router-outlet>
         </div>

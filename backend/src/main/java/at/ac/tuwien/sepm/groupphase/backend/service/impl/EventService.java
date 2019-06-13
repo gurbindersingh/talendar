@@ -109,7 +109,6 @@ public class EventService implements IEventService {
                       event = synchCustomers(event);
                       event.setTrainer(findTrainerForBirthday(event.getRoomUses(), event.getBirthdayType()));
                       validator.validateTrainer(event.getTrainer());
-                      System.out.println(event);
 
 
                       try {
@@ -124,7 +123,7 @@ public class EventService implements IEventService {
 
                       event = eventRepository.save(event);
                       eventRepository.flush();
-                      System.out.println(event.getId());
+
                       for(Customer c: event.getCustomers()
                       ) {
                           sendCancelationMail(c.getEmail(), event, c);
@@ -134,11 +133,11 @@ public class EventService implements IEventService {
                       return event;
                   }
                   catch(InvalidEntityException e) {
-                      throw new ValidationException("Given Birthday is invalid: " + e.getMessage(), e);
+                      throw new ValidationException(e.getMessage(), e);
                   }catch(TrainerNotAvailableException e){
-                      throw new ServiceException("There are no Trainers available for this birthday " + e.getMessage(),e);
+                      throw new ServiceException(e.getMessage(),e);
                   }catch(EmailException e){
-                      throw new ValidationException("Something went wrong while attempting to send an email: " + e.getMessage(), e);
+                      throw new ValidationException("" + e.getMessage(), e);
                   }
             case Course:
                 try {
@@ -152,6 +151,12 @@ public class EventService implements IEventService {
                     RoomUse roomUse = event.getRoomUses().get(0);
 
                     if(roomUse.getCronExpression() != null && !roomUse.getCronExpression().isBlank()){
+                        try{
+                            validator.validateCronExpression(roomUse.getCronExpression());
+                        } catch(InvalidEntityException ie){
+                            LOGGER.error("Invalid cron expression!");
+                            throw new ServiceException("", ie);
+                        }
                         event.setRoomUses(cronExpressionToRoomUsesList(event));
                     }
 
@@ -521,6 +526,7 @@ public class EventService implements IEventService {
 
     @Override
     public List<Event> getAllEvents(Long trainerId) throws ValidationException, ServiceException {
+        //TODO
         return null;
     }
 
@@ -834,7 +840,8 @@ public class EventService implements IEventService {
                 eventRepository.deleteThisEvent(id);
             }
         }catch(CancelationException e){
-            throw new ValidationException("The cancelation was ordered too late: " +  e.getMessage(), e);
+            LOGGER.error("Cancelation was ordered too late");
+            throw new ValidationException(e.getMessage(), e);
         }
         eventRepository.deleteThisEvent(id);
 
