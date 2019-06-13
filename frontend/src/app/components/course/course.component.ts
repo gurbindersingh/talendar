@@ -197,6 +197,7 @@ export class CourseComponent implements OnInit {
                     console.log(data);
                     this.successMsg =
                         'Deine Reservierung wurde erfolgreich gespeichert';
+                    this.resetFormular();
                     this.errorMsg = '';
                     this.loading = false;
                 },
@@ -226,6 +227,22 @@ export class CourseComponent implements OnInit {
                 }
             );
         }
+    }
+
+    private resetFormular(): void {
+        this.event.name = '';
+        this.event.description = '';
+        this.event.maxParticipants = undefined;
+        this.event.price = undefined;
+        this.event.minAge = undefined;
+        this.event.maxAge = undefined;
+        this.endOfApplicationDate = null;
+        this.startDate = null;
+        this.toggleOptions = false;
+        this.repeatModul = this.repeatEvery[0];
+        this.terminateModul = this.terminateAfter[0];
+        this.alleX = 1;
+        this.endedX = 1;
     }
 
     public isRoomChoosed(): boolean {
