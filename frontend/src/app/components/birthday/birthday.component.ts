@@ -46,7 +46,7 @@ export class BirthdayComponent implements OnInit {
     room: RoomUse = new RoomUse();
     customer: Customer = new Customer();
     private date: Date = new Date();
-    
+
     loading: boolean;
     errorMsg: string;
     successMsg: string;
@@ -97,7 +97,7 @@ export class BirthdayComponent implements OnInit {
                 this.loading = false;
                 this.successMsg = 'Geburtstag wurde erfolgreich gebucht';
                 this.errorMsg = '';
-                window.location.reload();
+                this.clearFormular();
             },
             (error) => {
                 console.log(error);
@@ -144,6 +144,17 @@ export class BirthdayComponent implements OnInit {
             return false;
         }
         return true;
+    }
+
+    private clearFormular(): void {
+        this.customer.firstName = '';
+        this.customer.lastName = '';
+        this.customer.email = '';
+        this.customer.phone = '';
+        this.room.room = null;
+        this.event.headcount = null;
+        this.event.birthdayType = null;
+        this.event.ageToBe = null;
     }
 
     private dateToString(date: NgbDateStruct, time: NgbTimeStruct) {
