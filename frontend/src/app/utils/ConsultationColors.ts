@@ -1,6 +1,4 @@
-import { EventColor } from 'calendar-utils';
-
-export const ConsultationColors: EventColor = {
-    primary: '',
-    secondary: '',
+export const ConsultationColors = {
+    primary: '#0d3b66',
+    secondary: '#0d3b66',
 };

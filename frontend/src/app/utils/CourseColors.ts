@@ -1,6 +1,4 @@
-import { EventColor } from 'calendar-utils';
-
-export const CourseColors: EventColor = {
-    primary: '',
-    secondary: ''
-}
+export const CourseColors = {
+    primary: '#0097E5',
+    secondary: '#0097E5',
+};

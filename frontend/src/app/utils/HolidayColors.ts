@@ -1,6 +1,4 @@
-import { EventColor } from 'calendar-utils';
-
-export const HolidayColors: EventColor = {
-    primary: '',
-    secondary: '',
+export const HolidayColors = {
+    primary: '#db5461',
+    secondary: '#db5461',
 };
