@@ -142,7 +142,7 @@ export class CalendarComponent implements OnInit {
         console.warn(date);
         // if (date.valueOf() >= Date.now()) {
         this.dateService.setDateTime(date);
-        this.modalService.open(newEventModal);
+        this.modalService.open(newEventModal, { size: 'sm' });
         // }
     }
 
