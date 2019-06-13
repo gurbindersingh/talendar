@@ -316,7 +316,11 @@
     <div class="modal-body row justify-content-between" style="margin: 0">
         <ul class="list-unstyled">
             <li *ngFor="let event of eventModal" (click)="modal.close()">
-                <button class="btn btn-link" (click)="addEvent(event.type)">
+                <button
+                    class="btn btn-link"
+                    (click)="addEvent(event.type)"
+                    *ngIf="event.noAuthRequired || authService.isLoggedIn"
+                >
                     {{ event.name }}
                 </button>
             </li>

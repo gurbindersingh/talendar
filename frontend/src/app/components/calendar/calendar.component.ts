@@ -15,6 +15,7 @@ import { EventImportService } from 'src/app/services/event-import.service';
 import { MetaEvent } from './MetaEvent';
 import { Trainer } from 'src/app/models/trainer';
 import { TrainerClient } from 'src/app/rest/trainer-client';
+import { AuthenticationService } from 'src/app/services/authentication.service';
 
 /**
  * In order to display week days in German the locale data
@@ -62,11 +63,15 @@ export class CalendarComponent implements OnInit {
         { name: 'Kein Filter', value: undefined },
     ];
     eventModal = [
-        { name: 'Neuen Kurs erstellen', type: 'course' },
-        { name: 'Urlaub eintragen', type: 'holiday' },
-        { name: 'Beratungstermin vereinbaren', type: 'consultation' },
-        { name: 'Geburtstag buchen', type: 'birthday' },
-        { name: 'Raum mieten', type: 'rent' },
+        { name: 'Neuen Kurs erstellen', type: 'course', noAuthRequired: false },
+        { name: 'Urlaub eintragen', type: 'holiday', noAuthRequired: false },
+        {
+            name: 'Beratungstermin vereinbaren',
+            type: 'consultation',
+            noAuthRequired: true,
+        },
+        { name: 'Geburtstag buchen', type: 'birthday', noAuthRequired: true },
+        { name: 'Raum mieten', type: 'rent', noAuthRequired: true },
     ];
     // The above and below should be merged
     eventTypes: any[] = [
@@ -102,7 +107,8 @@ export class CalendarComponent implements OnInit {
         private eventImport: EventImportService,
         private modalService: NgbModal,
         private router: Router,
-        private dateService: ClickedDateService
+        private dateService: ClickedDateService,
+        public authService: AuthenticationService
     ) {
         if (screen.width < BREAKPOINTS.medium) {
             this.daysInWeek = 3;
