@@ -44,12 +44,14 @@ public class ImageService implements IImageService {
             validator.validateImageFile(file);
         }
         catch(InvalidEntityException e) {
-            throw new ValidationException(e);
+            throw new ValidationException(e.getMessage(), e);
         }
         // now image is guaranteed to be in an accessible format
         try {
             String filePrefix = date.toString() + "_";
             String origFileExt = extractFileEnding(file);
+            // file created by createTempFile is not different to a regular file
+            // advantage: method guarantees to create a new file that did not already exist in the specified folder
             newFile = File.createTempFile(filePrefix,origFileExt, directory);
         }
         catch(IOException e) {
@@ -57,10 +59,7 @@ public class ImageService implements IImageService {
         }
 
         try {
-            Path destPath = newFile.toPath();
-            InputStream sourceStream = file.getInputStream();
-            Files.copy(sourceStream, destPath, StandardCopyOption.REPLACE_EXISTING);
-            //file.transferTo(newFile);
+            file.transferTo(newFile);
         }
         catch(IOException e) {
             throw new ServiceException("a error occurred while saving the content to the new file", e);

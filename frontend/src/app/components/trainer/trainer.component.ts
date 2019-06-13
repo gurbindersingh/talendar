@@ -176,10 +176,10 @@ export class TrainerComponent implements OnInit {
                     this.trainer.picture = fileLocation;
                     this.postData(form);
                 },
-                (error: Error) => {
-                    this.errorMsg =
-                        'Die Daten konnten nicht gespeichert werden: ' +
-                        error.message;
+                (error) => {
+                    // manual parsing required because this endpoint returns plain text (no json)
+                    const info = JSON.parse(error);
+                    this.errorMsg = info.message;
                 }
             );
         }

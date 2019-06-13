@@ -6,6 +6,7 @@ import {
     HttpHeaders,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Type } from '@angular/compiler/src/core';
 
 @Injectable()
 export class ImageClient extends RestClient {
@@ -20,14 +21,17 @@ export class ImageClient extends RestClient {
 
         console.log(payload);
 
-        return this.post(
+        return super.post(
             (error: HttpErrorResponse) => {
                 console.log(
                     'HTTP POST Profile Picture Failed: ' + error.message
                 );
             },
             '/image/trainer',
-            data
+            data,
+            null,
+            null,
+            'text'
         );
     }
 }
