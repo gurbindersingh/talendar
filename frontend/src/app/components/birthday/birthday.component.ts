@@ -46,6 +46,7 @@ export class BirthdayComponent implements OnInit {
     room: RoomUse = new RoomUse();
     customer: Customer = new Customer();
     private date: Date = new Date();
+    
     loading: boolean;
     errorMsg: string;
     successMsg: string;
@@ -83,7 +84,7 @@ export class BirthdayComponent implements OnInit {
         this.loading = true;
         this.event.name =
             this.event.birthdayType +
-            ' Geburtstag fuer ' +
+            ' Geburtstag für ' +
             this.customer.firstName +
             ' ' +
             this.customer.lastName +

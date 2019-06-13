@@ -42,7 +42,7 @@ export class EventClient extends RestClient {
     public cancelEvent(id: number): Observable<Event> {
         return super.delete((error: HttpErrorResponse) => {
             console.log(
-                'HTTP Delete To Cacnel Event With ID' +
+                'HTTP Delete To Cancel Event With ID' +
                     id +
                     ' Failed: ' +
                     error.message

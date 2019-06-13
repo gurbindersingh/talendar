@@ -109,7 +109,6 @@ public class EventService implements IEventService {
                       event = synchCustomers(event);
                       event.setTrainer(findTrainerForBirthday(event.getRoomUses(), event.getBirthdayType()));
                       validator.validateTrainer(event.getTrainer());
-                      System.out.println(event);
 
 
                       try {
@@ -124,7 +123,7 @@ public class EventService implements IEventService {
 
                       event = eventRepository.save(event);
                       eventRepository.flush();
-                      System.out.println(event.getId());
+
                       for(Customer c: event.getCustomers()
                       ) {
                           sendCancelationMail(c.getEmail(), event, c);
@@ -841,7 +840,8 @@ public class EventService implements IEventService {
                 eventRepository.deleteThisEvent(id);
             }
         }catch(CancelationException e){
-            throw new ValidationException("The cancelation was ordered too late: " +  e.getMessage(), e);
+            LOGGER.error("Cancelation was ordered too late");
+            throw new ValidationException(e.getMessage(), e);
         }
         eventRepository.deleteThisEvent(id);
 
