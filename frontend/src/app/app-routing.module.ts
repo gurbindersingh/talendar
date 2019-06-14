@@ -18,6 +18,8 @@ import { CourseSignComponent } from './components/course-sign/course-sign.compon
 import { TrainerGuard } from './guards/trainer-guard';
 import { AuthenticatedGuard } from './guards/authenticated-guard';
 import { AdminGuard } from './guards/admin-guard';
+import { TagComponent } from './components/tag/tag.component';
+import { CancelNewsletterComponent } from './components/cancel-newsletter/cancel-newsletter.component';
 
 const routes: Routes = [
     { path: 'calendar', component: CalendarComponent },
@@ -56,14 +58,21 @@ const routes: Routes = [
     },
     { path: 'login', component: LoginComponent },
     {
+        path: 'tag', component: TagComponent
+    },
+    {
+        path: 'cancelsubscription', component: CancelNewsletterComponent
+    },
+    {
         // This catch-all route should always be the LAST!
         path: '**',
         redirectTo: 'calendar',
     },
+
 ];
 
 @NgModule({
     imports: [RouterModule.forRoot(routes)],
     exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

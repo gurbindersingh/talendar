@@ -12,6 +12,7 @@ public class KMeans {
     public DoubleCluster[] overallRanking;
 
 
+
     public KMeans(List<AlgoCustomer> algoCustomers){
         this.algoCustomers = algoCustomers;
         clusterCustomerKMeans(3, 100);
@@ -25,15 +26,15 @@ public class KMeans {
         moneyCluster = new DoubleCluster[k];
         double earliest = Double.MIN_VALUE;
         double mostRecent = Double.MAX_VALUE;
-        double clusterCentersRecency[] = new double[k];
+        double[] clusterCentersRecency = new double[k];
 
         double minFrequency = Double.MAX_VALUE;
         double maxFrequency = Double.MIN_VALUE;
-        double clusterCenterFrequency[] = new double[k];
+        double[] clusterCenterFrequency = new double[k];
 
         double minMoney = Double.MAX_VALUE;
         double maxMoney = Double.MIN_VALUE;
-        double clusterCenterMoney[] = new double[k];
+        double[] clusterCenterMoney = new double[k];
 
 
         for(AlgoCustomer ac: algoCustomers

@@ -418,4 +418,10 @@ public class Validator {
                 throw new CancelationException("Irgendwas ist schiefgelaufen");
         }
     }
+
+    public void validateTag(Tag tag) throws InvalidEntityException{
+        if(tag.getTag() == null || tag.getTag().isBlank() || tag.getTag().equals("")){
+            throw new InvalidEntityException("Ein Tag kann nicht leer sein");
+        }
+    }
 }

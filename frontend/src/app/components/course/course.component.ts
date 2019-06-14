@@ -9,6 +9,8 @@ import { NgbDateStruct, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { RoomUse } from 'src/app/models/roomUse';
 import { Trainer } from 'src/app/models/trainer';
 import { ActivatedRoute } from '@angular/router';
+import { Tag } from 'src/app/models/tag';
+import { TagClient } from 'src/app/rest/tag-client';
 
 @Component({
     selector: 'app-course',
@@ -44,11 +46,15 @@ export class CourseComponent implements OnInit {
 
     private errorMsg: string;
     private successMsg: string;
+    private tags: Tag[] = [];
+    private tagStringSelected: string;
+    private tagStrings: string[] = [];
 
     constructor(
         private eventClient: EventClient,
         dateTimeParser: DateTimeParserService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private tagClient: TagClient,
     ) {
         this.dateTimeParser = dateTimeParser;
         this.startTime = { hour: 13, minute: 0, second: 0 };
@@ -64,6 +70,17 @@ export class CourseComponent implements OnInit {
             this.btnText = 'Erstellen';
             this.saveMode = true;
             this.isCreate = true;
+            this.tagClient.getAll().subscribe(
+                (tagList: Tag[]) => {
+                    this.tags = tagList;
+                },
+                (error) => {
+                    console.log(error);
+                }
+            );
+            for (var _i = 0; _i < this.tags.length; _i++) {
+                this.tagStrings.push(this.tags[_i].tag);
+            }
         } else {
             this.title = 'Kurs bearbeiten';
             this.btnText = 'Bearbeiten';
@@ -79,6 +96,17 @@ export class CourseComponent implements OnInit {
                         'Der ausgewählte Trainer konnte leider nicht geladen werden.';
                 }
             );
+            this.tagClient.getAll().subscribe(
+                (tagList: Tag[]) => {
+                    this.tags = tagList;
+                },
+                (error) => {
+                    console.log(error);
+                }
+            );
+            for (var _i = 0; _i < this.tags.length; _i++) {
+                this.tagStrings.push(this.tags[_i].tag);
+            }
         }
     }
 
@@ -134,6 +162,9 @@ export class CourseComponent implements OnInit {
     }
 
     public isCompleted(): boolean {
+        if (this.event.tag === undefined || this.event.tag === '') {
+            return false;
+        }
         if (this.event.name === undefined || this.event.name === '') {
             return false;
         }

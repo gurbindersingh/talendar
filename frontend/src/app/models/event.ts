@@ -1,9 +1,10 @@
-import {Trainer} from './trainer';
-import {RoomUse} from './roomUse';
-import {Customer} from './customer';
-import {EventType} from './enum/eventType';
+import { Trainer } from './trainer';
+import { RoomUse } from './roomUse';
+import { Customer } from './customer';
+import { EventType } from './enum/eventType';
+import { Tag } from './tag';
 
-export class Event{
+export class Event {
     public id: number;
     public name: string;
     public roomUses: RoomUse[];
@@ -24,4 +25,6 @@ export class Event{
     public description: string;
     public minAge: number;
     public maxAge: number;
+    //birthdays and courses
+    public tag: string;
 }

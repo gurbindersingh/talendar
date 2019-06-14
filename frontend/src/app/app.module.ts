@@ -26,6 +26,7 @@ import { httpInterceptorProviders } from './http-interceptors';
 import { SessionStorageService } from './services/session-storage.service';
 import { SimpleHttpInterceptor } from './http-interceptors/simple-http-interceptor';
 import { TrainerClient } from './rest/trainer-client';
+import { TagClient } from './rest/tag-client';
 import { EventClient } from './rest/event-client';
 import { DateTimeParserService } from './services/date-time-parser.service';
 import { HolidayClient } from 'src/app/rest/holiday-client';
@@ -38,6 +39,8 @@ import { AuthenticationClient } from './rest/authentication-client';
 import { AdminGuard } from './guards/admin-guard';
 import { TrainerGuard } from './guards/trainer-guard';
 import { AuthenticatedGuard } from './guards/authenticated-guard';
+import { TagComponent } from './components/tag/tag.component';
+import { CancelNewsletterComponent } from './components/cancel-newsletter/cancel-newsletter.component';
 
 @NgModule({
     declarations: [
@@ -48,6 +51,7 @@ import { AuthenticatedGuard } from './guards/authenticated-guard';
         HolidayComponent,
         RentComponent,
         NavigationComponent,
+        CancelNewsletterComponent,
         TrainerComponent,
         ConsultationComponent,
         TrainerListComponent,
@@ -56,6 +60,8 @@ import { AuthenticatedGuard } from './guards/authenticated-guard';
         CourseSignComponent,
         NgbdModalConfirm,
         LoginComponent,
+        TagComponent,
+        CancelNewsletterComponent,
     ],
     imports: [
         AppRoutingModule,
@@ -74,6 +80,7 @@ import { AuthenticatedGuard } from './guards/authenticated-guard';
         SessionStorageService,
         SimpleHttpInterceptor,
         TrainerClient,
+        TagClient,
         EventClient,
         DateTimeParserService,
         HolidayClient,
@@ -86,4 +93,4 @@ import { AuthenticatedGuard } from './guards/authenticated-guard';
     bootstrap: [AppComponent],
     entryComponents: [NgbdModalConfirm],
 })
-export class AppModule {}
+export class AppModule { }
