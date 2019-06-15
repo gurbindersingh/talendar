@@ -62,18 +62,24 @@ export class CalendarComponent implements OnInit {
         { name: 'Erdgeschoss', value: 'GroundFloor' },
         { name: 'Kein Filter', value: undefined },
     ];
-    eventModal = [
-        { name: 'Neuen Kurs erstellen', type: 'course', noAuthRequired: false },
-        { name: 'Urlaub eintragen', type: 'holiday', noAuthRequired: false },
+    visitorEventModalEntries = [
         {
             name: 'Beratungstermin vereinbaren',
             type: 'consultation',
-            noAuthRequired: true,
         },
-        { name: 'Geburtstag buchen', type: 'birthday', noAuthRequired: true },
-        { name: 'Raum mieten', type: 'rent', noAuthRequired: true },
+        { name: 'Geburtstag buchen', type: 'birthday' },
+        { name: 'Raum mieten', type: 'rent' },
     ];
-    // The above and below should be merged
+    trainerEventModalEntries = [
+        { name: 'Neuen Kurs', type: 'course' },
+        { name: 'Urlaub', type: 'holiday' },
+        {
+            name: 'Beratungstermin',
+            type: 'consultation',
+        },
+        { name: 'Geburtstag', type: 'birthday' },
+        // { name: 'Raummiete', type: 'rent' },
+    ];
     eventTypes: any[] = [
         { name: 'Kurs', value: 'Course' },
         { name: 'Beratung', value: 'Consultation' },
@@ -134,6 +140,14 @@ export class CalendarComponent implements OnInit {
             // explicit undefined value matches option 'reset' (if clicked selection is resetted)
             this.trainerList.push(undefined);
         });
+    }
+
+    getEventModalEntries() {
+        if (this.authService.isLoggedIn) {
+            return this.trainerEventModalEntries;
+        } else {
+            return this.visitorEventModalEntries;
+        }
     }
 
     showDetails(event: Event, detailsModal: any) {
