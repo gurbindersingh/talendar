@@ -46,8 +46,13 @@ export class CourseViewComponent implements OnInit {
         );
     }
 
-    filterList(value: string) {
-        console.warn(value);
+    filterList(pValue: string) {
+        const value = pValue.toLocaleLowerCase().replace(/\s+/g, '');
+
+        if (value.length > 0) {
+            console.warn(value);
+        }
+        // this.filteredEventList = this.eventList.filter((elem))
     }
 
     ngOnInit() {
