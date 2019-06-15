@@ -4,11 +4,7 @@ import { Event } from '../models/event';
 import { EventType } from '../models/enum/eventType';
 import { RoomUse } from '../models/roomUse';
 
-import { BirthdayColors } from '../utils/BirthdayColors';
-import { ConsultationColors } from '../utils/ConsultationColors';
-import { CourseColors } from '../utils/CourseColors';
-import { HolidayColors } from '../utils/HolidayColors';
-import { RentColors } from '../utils/RentColors';
+import * as Colors from '../utils/Colors';
 
 @Injectable({
     providedIn: 'root',
@@ -30,23 +26,23 @@ export class EventImportService {
 
             switch (event.eventType) {
                 case EventType.Birthday:
-                    event.color = BirthdayColors;
+                    event.color = Colors.Birthday;
                     break;
 
                 case EventType.Course:
-                    event.color = CourseColors;
+                    event.color = Colors.Course;
                     break;
 
                 case EventType.Consultation:
-                    event.color = ConsultationColors;
+                    event.color = Colors.Consultation;
                     break;
 
                 case EventType.Holiday:
-                    event.color = HolidayColors;
+                    event.color = Colors.Holiday;
                     break;
 
                 case EventType.Rent:
-                    event.color = RentColors;
+                    event.color = Colors.Rent;
                     break;
 
                 default:

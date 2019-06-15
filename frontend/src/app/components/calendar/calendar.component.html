@@ -310,13 +310,24 @@
 <ng-template #newEventModal let-modal>
     <div class="modal-header">
         <h4 ngbAutofocus>
-            Welches Event möchten Sie anlegen?
+            {{
+                authService.isLoggedIn
+                    ? 'Welches Event möchten sie anlegen?'
+                    : 'Ich möchte einen:'
+            }}
         </h4>
     </div>
     <div class="modal-body row justify-content-between" style="margin: 0">
         <ul class="list-unstyled">
-            <li *ngFor="let event of eventModal" (click)="modal.close()">
-                <button class="btn btn-link" (click)="addEvent(event.type)">
+            <li
+                *ngFor="let event of getEventModalEntries()"
+                (click)="modal.close()"
+            >
+                <button
+                    class="btn btn-link"
+                    style="font-size: 1.1rem"
+                    (click)="addEvent(event.type)"
+                >
                     {{ event.name }}
                 </button>
             </li>
