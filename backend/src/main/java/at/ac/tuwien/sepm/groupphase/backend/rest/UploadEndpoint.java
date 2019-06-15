@@ -7,6 +7,7 @@ import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationExcepti
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,7 +31,8 @@ public class UploadEndpoint {
     }
 
     @PostMapping(value = "/image/trainer")
-    public String uploadProfilePicture(@RequestParam("file") MultipartFile file) throws BackendException {
+    @ResponseStatus(HttpStatus.CREATED)
+    public String uploadProfilePicture(@RequestBody MultipartFile file) throws BackendException {
         LOGGER.info("Incoming POST Request For Uploading A Profile Picture");
 
         try {
