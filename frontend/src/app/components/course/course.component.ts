@@ -55,6 +55,9 @@ export class CourseComponent implements OnInit {
     greenRadioButton: RadioNodeList;
     radioButtonSelected = '';
 
+    // selected files to upload for a course
+    files: File[] = null;
+
     private event: Event = new Event();
     private roomUse: RoomUse = new RoomUse();
     private trainer: Trainer = new Trainer();
@@ -227,6 +230,20 @@ export class CourseComponent implements OnInit {
                 }
             );
         }
+    }
+
+    public onFileSelected(event: any): void {
+        this.files = [];
+        for (const file of event.target.files) {
+            this.files.push(file);
+        }
+    }
+
+    public removeFile(index: number): void {
+        console.log(index);
+        console.log('Start removing: ' + this.files.length);
+        this.files = this.files.splice(index, 1);
+        console.log('End: ' + this.files.length);
     }
 
     private resetFormular(): void {

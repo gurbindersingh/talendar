@@ -112,7 +112,7 @@
                     />
                 </div>
             </div>
-            <br />
+
             <div *ngIf="isCreate">
                 <div class="row">
                     <div
@@ -241,9 +241,8 @@
                         >
                     </div>
                 </div>
+                <br />
             </div>
-
-            <br />
 
             <div class="row" *ngIf="isRoomChoosed()">
                 <div class="col-lg">
@@ -261,8 +260,8 @@
                         >
                     </div>
                 </div>
+                <br />
             </div>
-            <br />
 
             <div *ngIf="toggleOptions">
                 <div class="row">
@@ -442,6 +441,42 @@
                     </div>
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <label class="custom-file-label" for="fileUpload"
+                        >Fotos hochladen
+                    </label>
+                    <input
+                        type="file"
+                        class="custom-file-input"
+                        id="fileUpload"
+                        (change)="onFileSelected($event)"
+                        multiple
+                    />
+
+                    <div *ngIf="files != null" id="allSelections">
+                        <h6>Ausgewählte Files:</h6>
+                        <ul class="list-unstyled">
+                            <li *ngFor="let file of files; index as i">
+                                <div class="selection">
+                                    <p class="fileName">{{file.name}}</p>
+                                    <button
+                                        type="button"
+                                        class="btn"
+                                        (click)="removeFile(i)"
+                                    >
+                                        <i
+                                            class="fileDelete fas fa-minus-circle"
+                                        ></i>
+                                    </button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
             <br />
             <div class="row" *ngIf="errorMsg">
                 <div class="col-sm-12">
