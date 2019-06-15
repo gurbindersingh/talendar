@@ -16,7 +16,7 @@ import { ConditionalExpr } from '@angular/compiler';
 export class CancelEventComponent implements OnInit {
     private event: Event = new Event();
 
-    private newList: Customer[];
+    private customerToRemove: Customer;
 
     private title: string;
     private textBox: string;
@@ -48,13 +48,11 @@ export class CancelEventComponent implements OnInit {
                 (data: Event) => {
                     console.log('Got event with id ' + data.id);
                     this.event = data;
-                    this.newList = [];
 
-                    // SIGN OFF COURSE
+                    const eType = data.eventType as EventType;
 
-                    const lel = data.eventType as EventType;
-
-                    if (lel === EventType.Course) {
+                    if (eType === EventType.Course) {
+                        // SIGN OFF COURSE
                         this.btnText = 'Abmelden';
                         const emailId = Number(
                             this.route.snapshot.queryParams.emailId
@@ -62,9 +60,9 @@ export class CancelEventComponent implements OnInit {
                         console.log(data.customerDtos);
 
                         this.signOff = true;
+                        let emailIdFound = false;
                         this.preCountOfCustomers = data.customerDtos.length;
                         for (const customer of data.customerDtos) {
-                            console.log(emailId + ' und ' + customer.emailId);
                             if (customer.emailId === emailId) {
                                 this.title =
                                     'Hallo ' +
@@ -72,14 +70,23 @@ export class CancelEventComponent implements OnInit {
                                     ' ' +
                                     customer.lastName +
                                     '!';
-                            } else {
-                                this.newList.push(customer);
+                                this.customerToRemove = customer;
+                                emailIdFound = true;
+                                break;
                             }
                         }
-                        this.textBox =
-                            'Wollen Sie sich wirklich von ' +
-                            data.name +
-                            ' abmelden?';
+                        if (!emailIdFound) {
+                            this.textBox =
+                                'Sie sind bereits abgemeldet vom Kurs';
+                            this.valid = false;
+                            this.title = '';
+                        } else {
+                            this.textBox =
+                                'Wollen Sie sich wirklich von ' +
+                                data.name +
+                                ' abmelden?';
+                            this.valid = true;
+                        }
                     } else {
                         this.btnText = 'Stornieren';
                         this.signOff = false;
@@ -91,8 +98,8 @@ export class CancelEventComponent implements OnInit {
                             '!';
                         this.textBox =
                             'Wollen Sie wirklich ' + data.name + ' stornieren?';
+                        this.valid = true;
                     }
-                    this.valid = true;
                 },
                 (error) => {
                     this.title = 'Fehler 404';
@@ -108,32 +115,42 @@ export class CancelEventComponent implements OnInit {
         const id: number = this.route.snapshot.queryParams.id;
 
         if (this.signOff) {
-            this.event.customerDtos = this.newList;
+            this.event.customerDtos = [this.customerToRemove];
             this.eventClient.updateCustomer(this.event).subscribe(
                 (data: Event) => {
-                    if (data.customerDtos.length < this.preCountOfCustomers) {
+                    if (
+                        data.customerDtos.length ===
+                        this.preCountOfCustomers - 1
+                    ) {
                         this.successMsg = 'Sie wurden erfolgreich abgemeldet';
+                        this.errorMsg = '';
+                        this.valid = false;
                     } else {
                         console.log(data);
-                        this.successMsg = 'Etwas ist schief gelaufen';
+                        this.errorMsg = 'Etwas ist schief gelaufen';
+                        this.successMsg = '';
                     }
                 },
                 (error: Error) => {
                     console.log(error);
                     this.errorMsg = 'Etwas ist schief gelaufen';
+                    this.successMsg = '';
                 }
             );
-            this.valid = false;
         } else {
+            console.log('ree', id);
             this.eventClient.cancelEvent(id).subscribe(
                 () => {
-                    this.successMsg = 'Der Event wurde erfolgreich storniert';
+                    this.successMsg = 'Ihr Event wurde erfolgreich storniert';
+                    this.errorMsg = '';
+                    this.valid = false;
                 },
                 (error: Error) => {
                     console.log(error.message);
                     this.errorMsg =
-                        'Ihr Event konnte nicht storniert werden ' +
+                        'Ihr Event konnte nicht storniert werden: ' +
                         error.message;
+                    this.successMsg = '';
                 }
             );
         }

@@ -277,6 +277,8 @@
             [locale]="locale"
             [viewDate]="viewDate"
             [weekStartsOn]="weekStartsOn"
+            (eventClicked)="showDetails($event)"
+            (dayClicked)="dateClicked($event.day.date, newEventModal)"
         ></mwl-calendar-month-view>
     </ng-container>
 
@@ -298,6 +300,57 @@
             [locale]="locale"
             [viewDate]="viewDate"
             [weekStartsOn]="weekStartsOn"
+            (eventClicked)="showDetails($event.event, detailsModal)"
+            (hourSegmentClicked)="dateClicked($event.date, newEventModal)"
         ></mwl-calendar-week-view>
     </ng-template>
 </div>
+
+<!-- Modal -->
+<ng-template #newEventModal let-modal>
+    <div class="modal-header">
+        <h4 ngbAutofocus>
+            Welches Event möchten Sie anlegen?
+        </h4>
+    </div>
+    <div class="modal-body row justify-content-between" style="margin: 0">
+        <ul class="list-unstyled">
+            <li *ngFor="let event of eventModal" (click)="modal.close()">
+                <button class="btn btn-link" (click)="addEvent(event.type)">
+                    {{ event.name }}
+                </button>
+            </li>
+        </ul>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-outline-primary" (click)="modal.close()">
+            Schließen
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #detailsModal let-modal>
+    <div class="modal-header">
+        <h4 ngbAutofocus>{{ clickedEvent.title }}</h4>
+    </div>
+    <div class="modal-body">
+        <p>{{ clickedEvent.description }}</p>
+        <p>
+            <b> Abgehalten von: </b>
+            {{
+                clickedEvent.trainer.firstName +
+                    ' ' +
+                    clickedEvent.trainer.lastName
+            }}
+        </p>
+    </div>
+    <div class="modal-footer">
+        <button
+            type="button"
+            class="btn btn-outline-primary"
+            (click)="modal.close()"
+        >
+            Schließen
+        </button>
+    </div>
+</ng-template>

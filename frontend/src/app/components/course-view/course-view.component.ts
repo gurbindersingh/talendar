@@ -6,11 +6,6 @@ import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ResourceLoader } from '@angular/compiler';
 
 @Component({
-    selector: 'ngbd-modal-confirm',
-    template:
-        '<div id= "modal-container" class = "hidden"> <div class = "modal-footer"><h2>Component inside modal</h2></div>  <div class = "modal-body"> <input class="btn btn-danger col-lg-3" id = "confirmDelete" (click) = "deleteCourse(selectedEvent.id)" value = "Löschen" /> <input class="btn btn-primary col-lg-3" id = "abbrechen" (click) = "modal.close()" value = "Abbrechen" /> </div> </div>  <div id=”overlay”></div>',
-})
-@Component({
     selector: 'app-course-view',
     templateUrl: './course-view.component.html',
     styleUrls: ['./course-view.component.scss'],

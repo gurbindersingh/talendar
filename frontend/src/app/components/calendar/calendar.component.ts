@@ -1,15 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { registerLocaleData, DatePipe } from '@angular/common';
+import { registerLocaleData } from '@angular/common';
+import { Router } from '@angular/router';
 import localeDe from '@angular/common/locales/de-AT';
 
 import { CalendarDateFormatter, CalendarView } from 'angular-calendar';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { CustomDateFormatter } from './CustomDateFormatter';
-import { MetaEvent } from './MetaEvent';
-import { Event } from '../../models/event';
 import { BREAKPOINTS } from 'src/app/utils/Breakpoints';
+import { ClickedDateService } from 'src/app/services/clicked-date.service';
+import { CustomDateFormatter } from './CustomDateFormatter';
+import { Event } from 'src/app/models/event';
 import { EventClient } from 'src/app/rest/event-client';
 import { EventImportService } from 'src/app/services/event-import.service';
+import { MetaEvent } from './MetaEvent';
 import { Trainer } from 'src/app/models/trainer';
 import { TrainerClient } from 'src/app/rest/trainer-client';
 
@@ -36,19 +39,18 @@ export class CalendarComponent implements OnInit {
     dayStartHour = 8;
     dayStartMinute = 0;
     // list of all loaded events
-    allEvents: MetaEvent[] = [];
+    allEvents: Event[] = [];
     // list of all events relative to the applied filters
-    filteredEvents: MetaEvent[] = [];
+    filteredEvents: Event[] = [];
     hourSegments = 4;
     locale = 'de-AT';
     precision = 'minutes';
     view = CalendarView.Week;
     viewDate = new Date();
     weekStartsOn = 1;
-    navButtonLabel: { prev: string; next: string };
-
     // toggle between collapsed and open filter menu
     isCollapsed = true;
+    clickedEvent: Event;
 
     // filter specific content
 
@@ -59,6 +61,14 @@ export class CalendarComponent implements OnInit {
         { name: 'Erdgeschoss', value: 'GroundFloor' },
         { name: 'Kein Filter', value: undefined },
     ];
+    eventModal = [
+        { name: 'Neuen Kurs erstellen', type: 'course' },
+        { name: 'Urlaub eintragen', type: 'holiday' },
+        { name: 'Beratungstermin vereinbaren', type: 'consultation' },
+        { name: 'Geburtstag buchen', type: 'birthday' },
+        { name: 'Raum mieten', type: 'rent' },
+    ];
+    // The above and below should be merged
     eventTypes: any[] = [
         { name: 'Kurs', value: 'Course' },
         { name: 'Beratung', value: 'Consultation' },
@@ -74,6 +84,7 @@ export class CalendarComponent implements OnInit {
         { name: 'Malen Geburtstag', value: 'Painting' },
         { name: 'Kein Filter', value: undefined },
     ];
+
     trainerList: string[] = [];
     trainers: Trainer[] = [];
 
@@ -88,7 +99,10 @@ export class CalendarComponent implements OnInit {
     constructor(
         private eventClient: EventClient,
         private trainerClient: TrainerClient,
-        private eventImport: EventImportService
+        private eventImport: EventImportService,
+        private modalService: NgbModal,
+        private router: Router,
+        private dateService: ClickedDateService
     ) {
         if (screen.width < BREAKPOINTS.medium) {
             this.daysInWeek = 3;
@@ -116,6 +130,49 @@ export class CalendarComponent implements OnInit {
         });
     }
 
+    showDetails(event: Event, detailsModal: any) {
+        console.warn(event);
+        if (event.eventType !== 'Rent') {
+            this.clickedEvent = event;
+            this.modalService.open(detailsModal, { size: 'lg' });
+        }
+    }
+
+    dateClicked(date: Date, newEventModal: any) {
+        console.warn(date);
+        // if (date.valueOf() >= Date.now()) {
+        this.dateService.setDateTime(date);
+        this.modalService.open(newEventModal, { size: 'sm' });
+        // }
+    }
+
+    addEvent(type: string) {
+        switch (type) {
+            case 'course':
+                this.router.navigateByUrl('/course/add');
+                break;
+
+            case 'holiday':
+                this.router.navigateByUrl('/holiday/add');
+                break;
+
+            case 'consultation':
+                this.router.navigateByUrl('/consultation/add');
+                break;
+
+            case 'rent':
+                this.router.navigateByUrl('/rent');
+                break;
+
+            case 'birthday':
+                this.router.navigateByUrl('/birthday/book');
+                break;
+
+            default:
+                break;
+        }
+    }
+
     /**
      *
      */
@@ -127,7 +184,7 @@ export class CalendarComponent implements OnInit {
     public updateView(): void {
         this.filteredEvents = this.allEvents;
 
-        this.filteredEvents = this.filteredEvents.filter((event: MetaEvent) => {
+        this.filteredEvents = this.filteredEvents.filter((event: Event) => {
             // vars are true if filter for this context was set in GUI
             const hasRoomFilter: boolean =
                 this.roomSelection !== undefined &&
@@ -150,7 +207,7 @@ export class CalendarComponent implements OnInit {
             if (hasRoomFilter) {
                 if (
                     this.roomSelection.value !==
-                    event.event.roomUses[0].room.toString()
+                    event.roomUses[0].room.toString()
                 ) {
                     return false;
                 }
@@ -160,17 +217,12 @@ export class CalendarComponent implements OnInit {
             // as rents have no assigned trainer (null)
             if (hasTrainerFilter) {
                 // if event without trainer then it is a rent, filter it
-                if (
-                    event.event.trainer === null ||
-                    event.event.trainer === undefined
-                ) {
+                if (event.trainer === null || event.trainer === undefined) {
                     return false;
                 }
 
                 const trainerNameOfEvent =
-                    event.event.trainer.firstName +
-                    ' ' +
-                    event.event.trainer.lastName;
+                    event.trainer.firstName + ' ' + event.trainer.lastName;
 
                 if (this.trainerSelection !== trainerNameOfEvent) {
                     return false;
@@ -179,8 +231,7 @@ export class CalendarComponent implements OnInit {
 
             if (hasTypeFilter) {
                 if (
-                    this.eventTypeSelection.value !==
-                    event.event.eventType.toString()
+                    this.eventTypeSelection.value !== event.eventType.toString()
                 ) {
                     return false;
                 }
@@ -189,14 +240,14 @@ export class CalendarComponent implements OnInit {
             if (hasCourseFilter) {
                 if (
                     this.minAgeFilter !== null &&
-                    event.event.minAge < this.minAgeFilter
+                    event.minAge < this.minAgeFilter
                 ) {
                     return false;
                 }
 
                 if (
                     this.maxAgeFilter !== null &&
-                    event.event.maxAge > this.maxAgeFilter
+                    event.maxAge > this.maxAgeFilter
                 ) {
                     return false;
                 }
@@ -204,7 +255,7 @@ export class CalendarComponent implements OnInit {
 
             // only possible if hasTypeSelection is set to 'Geburtstag'
             if (hasBirthdayTypeSelection) {
-                if (this.bdTypeSelection.value !== event.event.birthdayType) {
+                if (this.bdTypeSelection.value !== event.birthdayType) {
                     return false;
                 }
             }

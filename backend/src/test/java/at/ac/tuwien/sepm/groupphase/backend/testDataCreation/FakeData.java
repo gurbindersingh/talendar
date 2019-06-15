@@ -106,6 +106,7 @@ public class FakeData {
         List<String> birthdayTypes = new LinkedList<>();
         birthdayTypes.add("Rocket");
         trainer.setBirthdayTypes(birthdayTypes);
+        trainer.setPassword("password");
         trainer.setId(fakeID());
         trainer.setCreated(fakePastTimeAfter2000());
         boolean found = false;
@@ -128,6 +129,9 @@ public class FakeData {
         trainer.setPhone(fakePhoneNumber());
         trainer.setFirstName(fakeFirstName());
         trainer.setLastName(fakeLastName());
+        List<String> birthdayTypes = new LinkedList<>();
+        birthdayTypes.add("Rocket");
+        trainer.setBirthdayTypes(birthdayTypes);
         trainer.setId(fakeID());
         trainer.setCreated(fakePastTimeAfter2000());
         boolean found = false;
@@ -194,6 +198,15 @@ public class FakeData {
         return karen;
     }
 
+    // birth not set, we dont know anything about min and maxAge of event
+    public Customer fakeCustomerForSignInEntity(){
+        Customer karen = fakeCustomerEntity();
+        karen.setChildName(fakeFirstName());
+        karen.setChildLastName(fakeLastName());
+        karen.setWantsEmail(true);
+        return karen;
+    }
+
 
     public RoomUse fakeRoomUseDto() {
         RoomUse roomUse = new RoomUse();
@@ -235,6 +248,7 @@ public class FakeData {
         trainerDto.setPhone(fakePhoneNumber());
         trainerDto.setFirstName(fakeFirstName());
         trainerDto.setLastName(fakeLastName());
+        trainerDto.setPassword("password");
         trainerDto.setId(null);
         trainerDto.setCreated(null);
         trainerDto.setUpdated(null);

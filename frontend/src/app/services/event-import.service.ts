@@ -1,39 +1,58 @@
 import { Injectable } from '@angular/core';
-import { MetaEvent } from '../components/calendar/MetaEvent';
+
 import { Event } from '../models/event';
+import { EventType } from '../models/enum/eventType';
 import { RoomUse } from '../models/roomUse';
+
+import { BirthdayColors } from '../utils/BirthdayColors';
+import { ConsultationColors } from '../utils/ConsultationColors';
+import { CourseColors } from '../utils/CourseColors';
+import { HolidayColors } from '../utils/HolidayColors';
+import { RentColors } from '../utils/RentColors';
 
 @Injectable({
     providedIn: 'root',
 })
 export class EventImportService {
-    constructor() {}
-
-    public mapEventsToCalendar(events: Event[]): MetaEvent[] {
-        const metaEvents: MetaEvent[] = [];
-
+    public mapEventsToCalendar(events: Event[]) {
         for (const event of events) {
-            console.log(JSON.stringify(event));
-            const metaEvent: MetaEvent = new MetaEvent();
             const roomOfEvent: RoomUse[] = event.roomUses;
-            const start: Date = new Date(roomOfEvent[0].begin);
-            const end: Date = new Date(roomOfEvent[0].end);
 
-            metaEvent.id = event.id;
-            metaEvent.title = event.name;
+            event.start = new Date(roomOfEvent[0].begin);
+            event.end = new Date(roomOfEvent[0].end);
+            event.title = event.name;
 
             // Calendar Events' specific properties (style, assigned actions etc)
             // this set up is not completed -> consider what has to be set...
-            metaEvent.allDay = false;
-            metaEvent.draggable = false;
+            event.allDay = false;
+            event.draggable = false;
+            event.cssClass = 't-event-color';
 
-            metaEvent.start = start;
-            metaEvent.end = end;
-            metaEvent.event = event;
+            switch (event.eventType) {
+                case EventType.Birthday:
+                    event.color = BirthdayColors;
+                    break;
 
-            metaEvents.push(metaEvent);
+                case EventType.Course:
+                    event.color = CourseColors;
+                    break;
+
+                case EventType.Consultation:
+                    event.color = ConsultationColors;
+                    break;
+
+                case EventType.Holiday:
+                    event.color = HolidayColors;
+                    break;
+
+                case EventType.Rent:
+                    event.color = RentColors;
+                    break;
+
+                default:
+                    break;
+            }
         }
-
-        return metaEvents;
+        return events;
     }
 }

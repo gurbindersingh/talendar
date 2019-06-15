@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.testObjects;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Holiday;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ public class Trainer extends at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer
     private String email;
     private List<String> birthdayTypes;
     List<Event> events;
+    List<Holiday> holidays;
     private LocalDateTime created;
     private LocalDateTime updated;
     private Boolean deleted;
@@ -25,7 +27,7 @@ public class Trainer extends at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer
 
     }
 
-    public Trainer (Long id, String firstName,String lastName,LocalDate birthday, String phone,String email,LocalDateTime created,LocalDateTime updated, List<String> birthdayTypes, List<Event> events) {
+    public Trainer (Long id, String firstName,String lastName,LocalDate birthday, String phone,String email,LocalDateTime created,LocalDateTime updated, List<String> birthdayTypes, List<Event> events, List<Holiday> holidays) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -36,6 +38,7 @@ public class Trainer extends at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer
         this.updated = updated;
         this.birthdayTypes = birthdayTypes;
         this.events = events;
+        this.holidays = holidays;
         this.deleted = false;
     }
 
@@ -144,6 +147,18 @@ public class Trainer extends at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer
     }
 
 
+    @Override
+    public List<Holiday> getHolidays() {
+        return holidays;
+    }
+
+
+    @Override
+    public void setHolidays(List<Holiday> holidays) {
+        this.holidays = holidays;
+    }
+
+
     public Boolean getDeleted() {
         return deleted;
     }
@@ -168,6 +183,7 @@ public class Trainer extends at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer
                Objects.equals(email, trainer.email) &&
                Objects.equals(birthdayTypes, trainer.birthdayTypes) &&
                Objects.equals(events, trainer.events) &&
+               Objects.equals(holidays, trainer.holidays) &&
                Objects.equals(created, trainer.created) &&
                Objects.equals(updated, trainer.updated) &&
                Objects.equals(deleted, trainer.deleted);
@@ -177,7 +193,7 @@ public class Trainer extends at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), id, firstName, lastName, birthday, phone, email,
-                            birthdayTypes, events, created, updated, deleted
+                            birthdayTypes, events, holidays, created, updated, deleted
         );
     }
 
@@ -193,6 +209,7 @@ public class Trainer extends at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer
                ", email='" + email + '\'' +
                ", birthdayTypes=" + birthdayTypes +
                ", events=" + events +
+               ", holidays=" + holidays +
                ", created=" + created +
                ", updated=" + updated +
                ", deleted=" + deleted +

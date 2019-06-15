@@ -13,7 +13,10 @@ public class TrainerDto {
     private LocalDate birthday;
     private String phone;
     private String email;
+    private List<EventDto> events;
     private List<String> birthdayTypes;
+    private List<HolidayDto> holidays;
+    private String password;
     // List<Event> excluded from test Trainer Dummy because List of events that a trainer hosts does not affect his validity
     private LocalDateTime created;
     private LocalDateTime updated;
@@ -26,15 +29,18 @@ public class TrainerDto {
 
 
     public TrainerDto(String firstName, String lastName, LocalDate birthday, String phone,
-                      String email, List<String> birthdayTypes
+                      String email, List<EventDto> events, List<String> birthdayTypes, List<HolidayDto> holidays, String password
     ) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthday = birthday;
         this.phone = phone;
         this.email = email;
+        this.events = events;
         this.birthdayTypes = birthdayTypes;
+        this.holidays = holidays;
         this.deleted = false;
+        this.password = password;
     }
 
 
@@ -45,6 +51,28 @@ public class TrainerDto {
 
     public void setBirthdayTypes(List<String> birthdayTypes) {
         this.birthdayTypes = birthdayTypes;
+    }
+
+
+    public List<EventDto> getEvents() {
+        return events;
+    }
+
+
+    public void setEvents(List<EventDto> events) {
+        this.events = events;
+    }
+
+
+    public List<HolidayDto> getHolidays() {
+        return holidays;
+    }
+
+
+    public void setHolidays(
+        List<HolidayDto> holidays
+    ) {
+        this.holidays = holidays;
     }
 
 
@@ -108,6 +136,16 @@ public class TrainerDto {
     }
 
 
+    public String getPassword() {
+        return password;
+    }
+
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+
     public LocalDateTime getCreated() {
         return created;
     }
@@ -149,17 +187,20 @@ public class TrainerDto {
                Objects.equals(birthday, that.birthday) &&
                Objects.equals(phone, that.phone) &&
                Objects.equals(email, that.email) &&
+               Objects.equals(events, that.events) &&
                Objects.equals(birthdayTypes, that.birthdayTypes) &&
+               Objects.equals(holidays, that.holidays) &&
                Objects.equals(created, that.created) &&
                Objects.equals(updated, that.updated) &&
-               Objects.equals(deleted, that.deleted);
+               Objects.equals(deleted, that.deleted) &&
+               Objects.equals(password, that.password);
     }
 
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, birthday, phone, email, birthdayTypes, created,
-                            updated, deleted
+        return Objects.hash(id, firstName, lastName, birthday, phone, email, events, birthdayTypes, holidays, created,
+                            updated, deleted, password
         );
     }
 
@@ -173,7 +214,9 @@ public class TrainerDto {
                ", birthday=" + birthday +
                ", phone='" + phone + '\'' +
                ", email='" + email + '\'' +
+               ", events=" + events +
                ", birthdayTypes=" + birthdayTypes +
+               ", holidays=" + holidays +
                ", created=" + created +
                ", updated=" + updated +
                ", deleted=" + deleted +
