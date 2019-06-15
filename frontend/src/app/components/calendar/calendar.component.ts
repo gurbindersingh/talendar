@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import localeDe from '@angular/common/locales/de-AT';
 
 import { CalendarDateFormatter, CalendarView } from 'angular-calendar';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbCarouselConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { BREAKPOINTS } from 'src/app/utils/Breakpoints';
 import { ClickedDateService } from 'src/app/services/clicked-date.service';
@@ -30,6 +30,7 @@ registerLocaleData(localeDe);
     styleUrls: ['./calendar.component.scss'],
     providers: [
         { provide: CalendarDateFormatter, useClass: CustomDateFormatter },
+        [NgbCarouselConfig],
     ],
 })
 export class CalendarComponent implements OnInit {
@@ -52,6 +53,10 @@ export class CalendarComponent implements OnInit {
     // toggle between collapsed and open filter menu
     isCollapsed = true;
     clickedEvent: Event;
+
+    images = [1, 2, 3, 4].map(
+        () => `https://picsum.photos/900/500?random&t=${Math.random()}`
+    );
 
     // filter specific content
 

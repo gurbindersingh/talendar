@@ -355,6 +355,18 @@
             }}
         </p>
     </div>
+
+    <ngb-carousel>
+        <ng-template ngbSlide>
+            <img [src]="images[0]" />
+            <div class="carousel-caption"></div>
+        </ng-template>
+        <ng-template ngbSlide>
+            <img [src]="images[1]" />
+            <div class="carousel-caption"></div>
+        </ng-template>
+    </ngb-carousel>
+
     <div class="modal-footer">
         <button
             type="button"
