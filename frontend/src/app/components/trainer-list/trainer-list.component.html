@@ -17,7 +17,7 @@
     </div>
 </div>
 
-<div *ngFor="let trainer of trainerList">
+<div *ngFor="let trainer of trainerListPage">
     <div class="card border-dark mb-2 flex-row flex-wrap">
         <div class="card-header bg-secondary" id="cardLeft">
             Here goes the profil picture
@@ -61,3 +61,15 @@
         </div>
     </div>
 </div>
+<ngb-pagination
+    class="d-flex justify-content-center"
+    [(page)]="currentPage"
+    [pageSize]="itemsPerPage"
+    [collectionSize]="trainerList.length"
+    (pageChange)="updateListPage()"
+    [maxSize]="5"
+    [rotate]="true"
+>
+    <ng-template ngbPaginationPrevious> Zurück </ng-template>
+    <ng-template ngbPaginationNext> Weiter </ng-template>
+</ngb-pagination>
