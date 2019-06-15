@@ -17,10 +17,22 @@
     </div>
 </div>
 
-<div *ngFor="let trainer of trainerList">
+<div *ngFor="let trainer of trainerList; index as i">
     <div class="card border-dark mb-2 flex-row flex-wrap">
         <div class="card-header bg-secondary" id="cardLeft">
-            Here goes the profil picture
+            <div
+                *ngIf="binaryEncodedImages[i] != null"
+                id="profilePicContainer"
+            >
+                <img
+                    [src]="binaryEncodedImages[i] | safeServerImage"
+                    id="profilePicture"
+                    class="img-thumbnail"
+                />
+            </div>
+            <div *ngIf="binaryEncodedImages[i] == null" class="mx-auto d-block">
+                <i class="fas fa-user-alt fa-7x"></i>
+            </div>
         </div>
         <div class="card-block" id="cardMiddle">
             <div class="card-body" id="cardBody">

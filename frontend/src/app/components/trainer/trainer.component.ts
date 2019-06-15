@@ -9,6 +9,7 @@ import {
     NgbDateStruct,
     NgbDate,
 } from '@ng-bootstrap/ng-bootstrap';
+
 import { ImageClient } from 'src/app/rest/image-client';
 
 @Component({
@@ -24,6 +25,7 @@ export class TrainerComponent implements OnInit {
     birthday: NgbDateStruct;
     password: string;
     passwordRepeated: string;
+    binaryEncodedImage: any = null;
 
     btnContextDescription: string;
     errorMsg: string;
@@ -43,6 +45,7 @@ export class TrainerComponent implements OnInit {
     private currentDate: Date = new Date();
 
     private formData: FormData = null;
+    private image: File;
 
     constructor(
         private trainerClient: TrainerClient,
@@ -112,30 +115,42 @@ export class TrainerComponent implements OnInit {
             this.isSaveMode = false;
             this.trainerClient.getById(id).subscribe(
                 (data: Trainer) => {
-                    console.log(data);
                     // create ngb data model from trainer data and set bday in form
                     const loadedDate: Date = new Date(data.birthday);
-                    console.log(loadedDate);
                     const ngbDate: NgbDate = new NgbDate(
                         loadedDate.getFullYear(),
                         loadedDate.getUTCMonth() + 1,
                         loadedDate.getUTCDate()
                     );
-                    console.log(ngbDate);
                     this.birthday = ngbDate;
 
                     // mark active checkboxes of a trainer as selected
                     this.fillCheckboxes(data.birthdayTypes);
 
                     this.trainer = data;
+
+                    // load profile pic if picture (name of it) is associated with trainer
+                    if (this.trainer.picture != null) {
+                        this.imageClient
+                            .getProfilePicture(this.trainer.picture)
+                            .subscribe(
+                                // received data are octet stream (pure 'raw' binary data)
+                                (bytes: any) => {
+                                    const blob = new Blob([bytes]);
+                                    this.extractBinaryDataFromFile(blob);
+                                },
+                                (error) => {
+                                    // manual parsing required because (returntype is not json)
+                                    const info = JSON.parse(error);
+                                    console.log(
+                                        'profile picture could not be loaded: ' +
+                                            info.message
+                                    );
+                                }
+                            );
+                    }
                 },
                 (error: Error) => {
-                    /**
-                     * Even though this error situation should be very rare,
-                     * this is not the smoothest solution.
-                     * But what to do?!?
-                     * just stay here and continue with save made (imo not sensible too)
-                     */
                     this.errorMsg =
                         'Der ausgewählte Trainer konnte leider nicht geladen werden.';
                     this.location.back();
@@ -223,9 +238,19 @@ export class TrainerComponent implements OnInit {
     }
 
     public onFileSelected(event: any): void {
-        this.formData = new FormData();
-        const selectedFile = event.target.files[0];
-        this.formData.append('file', selectedFile);
+        const selected: File = event.target.files[0];
+
+        // when the file selection menu is closed without selection of file
+        if (selected == null) {
+            return;
+        } else {
+            this.formData = new FormData();
+            this.image = selected;
+        }
+
+        this.extractBinaryDataFromFile(this.image);
+
+        this.formData.append('file', this.image);
     }
 
     public clearInfoMsg(): void {
@@ -289,6 +314,21 @@ export class TrainerComponent implements OnInit {
                 this.birthdayOptionsColumn2[option].selected = true;
             }
         }
+    }
+
+    /**
+     * This method can be used to extract the content of a file as binary data.
+     * I.e. <img src"..."> can display images given their binary representation.
+     *
+     * @param file the wrapper of the content. 'File' can be also used as param as
+     *             it extends Blob!
+     */
+    private extractBinaryDataFromFile(file: Blob): void {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = () => {
+            this.binaryEncodedImage = reader.result;
+        };
     }
 
     private transformToDate(date: NgbDateStruct): Date {

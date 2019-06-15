@@ -1,9 +1,11 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
-import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 public interface IImageService {
 
@@ -24,7 +26,7 @@ public interface IImageService {
      * @param filename the unique name of the requested file (no absolute path, but merely the name itself without folder structure)
      * @return the requested file wrapped in a container
      * @throws ServiceException will be thrown is the lookup for the file could not be performed (malformed search string, internal errors)
-     * @throws NotFoundException will be thrown if no file exists that has the same filename as requested
+     * @throws FileNotFoundException will be thrown if no file exists that has the same filename as requested
      */
-    MultipartFile get(String filename) throws ServiceException, NotFoundException;
+    InputStream get(String filename) throws ServiceException, FileNotFoundException;
 }

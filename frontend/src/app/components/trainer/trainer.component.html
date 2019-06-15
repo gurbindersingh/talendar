@@ -185,8 +185,17 @@
                 <div class="form-row align-items-center" id="row5">
                     <div class="col-lg-2"></div>
                     <div class="col-4">
-                        <div *ngIf="false"></div>
-                        <div *ngIf="true">
+                        <div
+                            *ngIf="binaryEncodedImage != null"
+                            id="profilePicContainer"
+                        >
+                            <img
+                                [src]="binaryEncodedImage | safeServerImage"
+                                class="img-thumbnail"
+                                id="profilePicture"
+                            />
+                        </div>
+                        <div *ngIf="binaryEncodedImage == null">
                             <i class="fas fa-user-alt fa-5x"></i>
                         </div>
                     </div>

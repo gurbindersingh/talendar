@@ -7,8 +7,13 @@ import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationExcepti
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
@@ -38,6 +43,28 @@ public class UploadEndpoint {
         catch(ValidationException e) {
             LOGGER.error(e.getMessage(),e);
             throw new BackendException("Das Profilbild konnte nicht gespeichert werden: " + e.getMessage(), e);
+        }
+    }
+
+    @GetMapping(value = "image/trainer", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public byte[] getProfilePicture(@RequestParam("name") String name) throws BackendException {
+        LOGGER.info("Incoming GET Request For Retrieving Profile Picture");
+
+        try {
+            InputStream inputStream = imageService.get(name);
+            return inputStream.readAllBytes();
+        }
+        catch(ServiceException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new BackendException("Es konnte kein Profilbild geladen werden", e);
+        }
+        catch(FileNotFoundException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new BackendException("Es existiert kein Bild mit dem gegebenen Filenamen", e);
+        }
+        catch(IOException e) {
+            LOGGER.error("error occured while reading from input stream: " + e.getMessage(), e);
+            throw new BackendException("Es konnte kein Profilbild geladen werden", e);
         }
     }
 }

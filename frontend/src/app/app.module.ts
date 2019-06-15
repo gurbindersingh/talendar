@@ -41,6 +41,7 @@ import { AuthenticatedGuard } from './guards/authenticated-guard';
 import { InfoComponent } from './components/info/info.component';
 import { InfoClient } from './rest/info-client';
 import { ImageClient } from './rest/image-client';
+import { SafeServerImagePipe } from './pipes/safe-server-image-pipe';
 
 @NgModule({
     declarations: [
@@ -60,6 +61,7 @@ import { ImageClient } from './rest/image-client';
         NgbdModalConfirm,
         LoginComponent,
         InfoComponent,
+        SafeServerImagePipe,
     ],
     imports: [
         AppRoutingModule,

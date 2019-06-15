@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { TrainerClient } from '../../rest/trainer-client';
 import { Trainer } from '../../models/trainer';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ImageClient } from 'src/app/rest/image-client';
 
 @Component({
     selector: 'ngbd-modal-confirm',
@@ -67,11 +68,14 @@ export class NgbdModalConfirm {
 export class TrainerListComponent implements OnInit {
     constructor(
         private trainerClient: TrainerClient,
+        private imageClient: ImageClient,
         private _modalService: NgbModal
     ) {}
 
-    private title = 'Trainerliste';
-    private trainerList: Trainer[] = [];
+    // accessed in the template
+    title = 'Trainerliste';
+    trainerList: Trainer[] = [];
+    binaryEncodedImages: any[] = [];
 
     open(trainer: Trainer) {
         const modalRef = this._modalService.open(NgbdModalConfirm);
@@ -87,7 +91,7 @@ export class TrainerListComponent implements OnInit {
                     (error) => {
                         console.log(error);
                     }
-                  );
+                );
             },
             () => {
                 // on dismiss
@@ -100,10 +104,49 @@ export class TrainerListComponent implements OnInit {
         this.trainerClient.getAll().subscribe(
             (list: Trainer[]) => {
                 this.trainerList = list;
+                this.binaryEncodedImages = new Array(this.trainerList.length);
+
+                for (let i = 0; i < this.trainerList.length; i++) {
+                    const trainer: Trainer = this.trainerList[i];
+                    if (trainer.picture != null) {
+                        this.imageClient
+                            .getProfilePicture(trainer.picture)
+                            .subscribe(
+                                // received data are octet stream (pure 'raw' binary data)
+                                (bytes: any) => {
+                                    const blob = new Blob([bytes]);
+                                    this.extractBinaryDataFromFile(blob, i);
+                                },
+                                (error) => {
+                                    // manual parsing required because (returntype is not json)
+                                    const info = JSON.parse(error);
+                                    console.log(
+                                        'profile picture could not be loaded: ' +
+                                            info.message
+                                    );
+                                }
+                            );
+                    }
+                }
             },
             (error) => {
                 console.log(error);
             }
         );
+    }
+
+    /**
+     * This method can be used to extract the content of a file as binary data.
+     * I.e. <img src"..."> can display images given their binary representation.
+     *
+     * @param file the wrapper of the content. 'File' can be also used as param as
+     *             it extends Blob!
+     */
+    private extractBinaryDataFromFile(file: Blob, index: number): void {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = () => {
+            this.binaryEncodedImages[index] = reader.result;
+        };
     }
 }

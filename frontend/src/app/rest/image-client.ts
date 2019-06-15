@@ -15,12 +15,6 @@ export class ImageClient extends RestClient {
     }
 
     public postProfilePicture(data: FormData): Observable<string> {
-        console.log(data);
-
-        const payload: FormDataEntryValue = data.get('file');
-
-        console.log(payload);
-
         return super.post(
             (error: HttpErrorResponse) => {
                 console.log(
@@ -32,6 +26,20 @@ export class ImageClient extends RestClient {
             null,
             null,
             'text'
+        );
+    }
+
+    public getProfilePicture(fileName: string): Observable<any> {
+        return super.get(
+            (error: HttpErrorResponse) => {
+                console.log(
+                    'HTTP GET Profile Picture Failed: ' + error.message
+                );
+            },
+            '/image/trainer',
+            { name: fileName },
+            null,
+            'arraybuffer'
         );
     }
 }
