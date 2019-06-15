@@ -11,7 +11,7 @@ public class HolidayDto {
 
 
     private Long id;
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "holidays"})
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "holidays", "events"})
     private Trainer trainer;
     private LocalDateTime holidayStart;
     private LocalDateTime holidayEnd;
