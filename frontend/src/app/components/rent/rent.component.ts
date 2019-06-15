@@ -27,6 +27,7 @@ export class RentComponent implements OnInit {
     private successMsg: string;
 
     greenRadioButton: RadioNodeList;
+    loading = false;
 
     radioButtonSelected = '';
 
@@ -68,16 +69,20 @@ export class RentComponent implements OnInit {
         this.event.customerDtos = [this.customer];
         this.event.roomUses = [this.roomUse];
         this.event.eventType = EventType.Rent;
-
+        this.loading = true;
         this.eventClient.postNewEvent(this.event).subscribe(
             (data: Event) => {
                 console.log(data);
                 this.successMsg =
                     'Deine Reservierung wurde erfolgreich gespeichert';
+                this.errorMsg = '';
+                this.loading = false;
             },
             (error: Error) => {
                 console.log(error);
                 this.errorMsg = error.message;
+                this.successMsg = '';
+                this.loading = false;
             }
         );
     }
