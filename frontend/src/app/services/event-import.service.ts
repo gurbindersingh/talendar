@@ -52,7 +52,6 @@ export class EventImportService {
                 default:
                     break;
             }
-            console.warn(event.color);
         }
         return events;
     }
