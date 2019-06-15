@@ -34,8 +34,12 @@ public class Validator {
     private String phoneRegex = "^[+]*[(]{0,1}[0-9]{1,5}[)]{0,1}[-\\s\\./0-9]*$";
     private String emailRegex =
         "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])";
+
+    private String cronRegex = "(0|15|30|45)/(0|15|30|45)\\s([0-9]|1[0-9]|2[0-3])/([0-9]|1[0-9]|2[0-3])\\s([1-9]|[1-2][0-9]|3[0-1])/([1-9]|[1-2][0-9]|3[0-1])\\s([1-9]|1[0-2])/([1-9]|1[0-2])\\s([1-9][0-9][0-9][0-9])/([1-9][0-9][0-9][0-9])\\s(true|false)\\s(O1|O2|O3|O4)\\s([0-9]|[1-9][0-9]|[1-9][0-9][0-9])\\s(Nie|nie|Nach|nach)\\s([0-9]|[1-9][0-9]|[1-9][0-9][0-9])\\s";
+
     private Pattern phonePattern = Pattern.compile(phoneRegex);
     private Pattern emailPattern = Pattern.compile(emailRegex);
+    private Pattern cronPattern = Pattern.compile(cronRegex);
 
 
     public void validateEvent(Event event) throws InvalidEntityException {
@@ -320,8 +324,15 @@ public class Validator {
         if(customer.getWantsEmail() == null){
             throw new InvalidEntityException("Ob Sie Werbung haben wollen wurde nicht gesetzt");
         }
-
     }
+
+
+    public void validateCronExpression(String cronExpression) throws InvalidEntityException {
+        if(cronExpression == null || cronExpression.isBlank() || !this.cronPattern.matcher(cronExpression).find()){
+            throw new InvalidEntityException("");
+        }
+    }
+
 
     private static Integer calculateAge(LocalDateTime birthDate) {
         LocalDateTime now = LocalDateTime.now();

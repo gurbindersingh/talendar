@@ -1,13 +1,15 @@
 import { Injectable } from '@angular/core';
+
 import { Event } from '../models/event';
+import { EventType } from '../models/enum/eventType';
 import { RoomUse } from '../models/roomUse';
+
+import * as Colors from '../utils/Colors';
 
 @Injectable({
     providedIn: 'root',
 })
 export class EventImportService {
-    constructor() {}
-
     public mapEventsToCalendar(events: Event[]) {
         for (const event of events) {
             const roomOfEvent: RoomUse[] = event.roomUses;
@@ -20,6 +22,32 @@ export class EventImportService {
             // this set up is not completed -> consider what has to be set...
             event.allDay = false;
             event.draggable = false;
+            event.cssClass = 't-event-color';
+
+            switch (event.eventType) {
+                case EventType.Birthday:
+                    event.color = Colors.Birthday;
+                    break;
+
+                case EventType.Course:
+                    event.color = Colors.Course;
+                    break;
+
+                case EventType.Consultation:
+                    event.color = Colors.Consultation;
+                    break;
+
+                case EventType.Holiday:
+                    event.color = Colors.Holiday;
+                    break;
+
+                case EventType.Rent:
+                    event.color = Colors.Rent;
+                    break;
+
+                default:
+                    break;
+            }
         }
         return events;
     }

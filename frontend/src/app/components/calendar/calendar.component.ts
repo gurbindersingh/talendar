@@ -15,6 +15,7 @@ import { EventImportService } from 'src/app/services/event-import.service';
 import { MetaEvent } from './MetaEvent';
 import { Trainer } from 'src/app/models/trainer';
 import { TrainerClient } from 'src/app/rest/trainer-client';
+import { AuthenticationService } from 'src/app/services/authentication.service';
 
 /**
  * In order to display week days in German the locale data
@@ -61,6 +62,24 @@ export class CalendarComponent implements OnInit {
         { name: 'Erdgeschoss', value: 'GroundFloor' },
         { name: 'Kein Filter', value: undefined },
     ];
+    visitorEventModalEntries = [
+        {
+            name: 'Beratungstermin vereinbaren',
+            type: 'consultation',
+        },
+        { name: 'Geburtstag buchen', type: 'birthday' },
+        { name: 'Raum mieten', type: 'rent' },
+    ];
+    trainerEventModalEntries = [
+        { name: 'Neuen Kurs', type: 'course' },
+        { name: 'Urlaub', type: 'holiday' },
+        {
+            name: 'Beratungstermin',
+            type: 'consultation',
+        },
+        { name: 'Geburtstag', type: 'birthday' },
+        // { name: 'Raummiete', type: 'rent' },
+    ];
     eventTypes: any[] = [
         { name: 'Kurs', value: 'Course' },
         { name: 'Beratung', value: 'Consultation' },
@@ -76,6 +95,7 @@ export class CalendarComponent implements OnInit {
         { name: 'Malen Geburtstag', value: 'Painting' },
         { name: 'Kein Filter', value: undefined },
     ];
+
     trainerList: string[] = [];
     trainers: Trainer[] = [];
 
@@ -93,7 +113,8 @@ export class CalendarComponent implements OnInit {
         private eventImport: EventImportService,
         private modalService: NgbModal,
         private router: Router,
-        private dateService: ClickedDateService
+        private dateService: ClickedDateService,
+        public authService: AuthenticationService
     ) {
         if (screen.width < BREAKPOINTS.medium) {
             this.daysInWeek = 3;
@@ -121,6 +142,14 @@ export class CalendarComponent implements OnInit {
         });
     }
 
+    getEventModalEntries() {
+        if (this.authService.isLoggedIn) {
+            return this.trainerEventModalEntries;
+        } else {
+            return this.visitorEventModalEntries;
+        }
+    }
+
     showDetails(event: Event, detailsModal: any) {
         console.warn(event);
         if (event.eventType !== 'Rent') {
@@ -133,26 +162,30 @@ export class CalendarComponent implements OnInit {
         console.warn(date);
         // if (date.valueOf() >= Date.now()) {
         this.dateService.setDateTime(date);
-        this.modalService.open(newEventModal);
+        this.modalService.open(newEventModal, { size: 'sm' });
         // }
     }
 
     addEvent(type: string) {
         switch (type) {
-            case 'new-course':
+            case 'course':
                 this.router.navigateByUrl('/course/add');
                 break;
 
-            case 'new-holiday':
+            case 'holiday':
                 this.router.navigateByUrl('/holiday/add');
                 break;
 
-            case 'new-consultation':
+            case 'consultation':
                 this.router.navigateByUrl('/consultation/add');
                 break;
 
             case 'rent':
                 this.router.navigateByUrl('/rent');
+                break;
+
+            case 'birthday':
+                this.router.navigateByUrl('/birthday/book');
                 break;
 
             default:
