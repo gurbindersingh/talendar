@@ -1,14 +1,16 @@
-import { Component, OnInit, SimpleChanges, OnChanges } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { TrainerClient } from 'src/app/rest/trainer-client';
 import { Trainer } from 'src/app/models/trainer';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import {
     NgbDateNativeAdapter,
     NgbDateStruct,
     NgbDate,
 } from '@ng-bootstrap/ng-bootstrap';
+
+import { ImageClient } from 'src/app/rest/image-client';
 
 @Component({
     selector: 'app-trainer',
@@ -23,6 +25,7 @@ export class TrainerComponent implements OnInit {
     birthday: NgbDateStruct;
     password: string;
     passwordRepeated: string;
+    binaryEncodedImage: any = null;
 
     btnContextDescription: string;
     errorMsg: string;
@@ -41,8 +44,12 @@ export class TrainerComponent implements OnInit {
     private isSaveMode: boolean;
     private currentDate: Date = new Date();
 
+    private formData: FormData = null;
+    private image: File;
+
     constructor(
         private trainerClient: TrainerClient,
+        private imageClient: ImageClient,
         private route: ActivatedRoute,
         private location: Location,
         private adapter: NgbDateNativeAdapter
@@ -108,30 +115,42 @@ export class TrainerComponent implements OnInit {
             this.isSaveMode = false;
             this.trainerClient.getById(id).subscribe(
                 (data: Trainer) => {
-                    console.log(data);
                     // create ngb data model from trainer data and set bday in form
                     const loadedDate: Date = new Date(data.birthday);
-                    console.log(loadedDate);
                     const ngbDate: NgbDate = new NgbDate(
                         loadedDate.getFullYear(),
                         loadedDate.getUTCMonth() + 1,
                         loadedDate.getUTCDate()
                     );
-                    console.log(ngbDate);
                     this.birthday = ngbDate;
 
                     // mark active checkboxes of a trainer as selected
                     this.fillCheckboxes(data.birthdayTypes);
 
                     this.trainer = data;
+
+                    // load profile pic if picture (name of it) is associated with trainer
+                    if (this.trainer.picture != null) {
+                        this.imageClient
+                            .getProfilePicture(this.trainer.picture)
+                            .subscribe(
+                                // received data are octet stream (pure 'raw' binary data)
+                                (bytes: any) => {
+                                    const blob = new Blob([bytes]);
+                                    this.extractBinaryDataFromFile(blob);
+                                },
+                                (error) => {
+                                    // manual parsing required because (returntype is not json)
+                                    const info = JSON.parse(error);
+                                    console.log(
+                                        'profile picture could not be loaded: ' +
+                                            info.message
+                                    );
+                                }
+                            );
+                    }
                 },
                 (error: Error) => {
-                    /**
-                     * Even though this error situation should be very rare,
-                     * this is not the smoothest solution.
-                     * But what to do?!?
-                     * just stay here and continue with save made (imo not sensible too)
-                     */
                     this.errorMsg =
                         'Der ausgewählte Trainer konnte leider nicht geladen werden.';
                     this.location.back();
@@ -140,7 +159,7 @@ export class TrainerComponent implements OnInit {
         }
     }
 
-    public postTrainer(form: NgForm): void {
+    public submitForm(form: NgForm): void {
         const supervisedBirthdays: string[] = [];
         const allBirthdayOptions = Object.assign(
             {},
@@ -162,31 +181,20 @@ export class TrainerComponent implements OnInit {
             this.trainer.password = this.password;
         }
 
-        if (this.isSaveMode) {
-            this.trainerClient.postNewTrainer(this.trainer).subscribe(
-                (data: Trainer) => {
-                    console.log(data);
-                    this.successMsg =
-                        'Der Betreuer wurde erfolgreich gespeichert';
-                    form.reset();
-                },
-                (error: Error) => {
-                    this.errorMsg =
-                        'Der Betreuer konnte nicht angelegt werden: ' +
-                        error.message;
-                }
-            );
+        if (this.formData == null) {
+            // immediately pefrom request (PUT or POST dependant on state)
+            this.postData(form);
         } else {
-            this.trainerClient.update(this.trainer).subscribe(
-                (data: Trainer) => {
-                    console.log(data);
-                    this.successMsg =
-                        'Der Betreuer wurde erfolgreich aktualisiert';
+            // first post the selected image, if successful post trainer
+            this.imageClient.postProfilePicture(this.formData).subscribe(
+                (fileLocation: string) => {
+                    this.trainer.picture = fileLocation;
+                    this.postData(form);
                 },
-                (error: Error) => {
-                    this.errorMsg =
-                        'Der Betreuer konnte nicht erfolgreich aktualisiert werden: ' +
-                        error.message;
+                (error) => {
+                    // manual parsing required because this endpoint returns plain text (no json)
+                    const info = JSON.parse(error);
+                    this.errorMsg = info.message;
                 }
             );
         }
@@ -226,8 +234,23 @@ export class TrainerComponent implements OnInit {
         if (this.password !== this.passwordRepeated) {
             return false;
         }
-        // todo add check for password as soon as there is a mechanism that supports passwords
         return true;
+    }
+
+    public onFileSelected(event: any): void {
+        const selected: File = event.target.files[0];
+
+        // when the file selection menu is closed without selection of file
+        if (selected == null) {
+            return;
+        } else {
+            this.formData = new FormData();
+            this.image = selected;
+        }
+
+        this.extractBinaryDataFromFile(this.image);
+
+        this.formData.append('file', this.image);
     }
 
     public clearInfoMsg(): void {
@@ -237,6 +260,42 @@ export class TrainerComponent implements OnInit {
 
     public cancel(): void {
         this.location.back();
+    }
+
+    /**
+     * Post the form data to server.
+     * In edit mode an update (PUT request) will be performed.
+     * In save mode a POST request will be performed.
+     */
+    private postData(form: NgForm): void {
+        if (this.isSaveMode) {
+            this.trainerClient.postNewTrainer(this.trainer).subscribe(
+                (data: Trainer) => {
+                    console.log(data);
+                    this.successMsg =
+                        'Der Betreuer wurde erfolgreich gespeichert';
+                    form.reset();
+                },
+                (error: Error) => {
+                    this.errorMsg =
+                        'Der Betreuer konnte nicht angelegt werden: ' +
+                        error.message;
+                }
+            );
+        } else {
+            this.trainerClient.update(this.trainer).subscribe(
+                (data: Trainer) => {
+                    console.log(data);
+                    this.successMsg =
+                        'Der Betreuer wurde erfolgreich aktualisiert';
+                },
+                (error: Error) => {
+                    this.errorMsg =
+                        'Der Betreuer konnte nicht erfolgreich aktualisiert werden: ' +
+                        error.message;
+                }
+            );
+        }
     }
 
     private fillCheckboxes(supervisedBirthdays: string[]): void {
@@ -255,6 +314,21 @@ export class TrainerComponent implements OnInit {
                 this.birthdayOptionsColumn2[option].selected = true;
             }
         }
+    }
+
+    /**
+     * This method can be used to extract the content of a file as binary data.
+     * I.e. <img src"..."> can display images given their binary representation.
+     *
+     * @param file the wrapper of the content. 'File' can be also used as param as
+     *             it extends Blob!
+     */
+    private extractBinaryDataFromFile(file: Blob): void {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = () => {
+            this.binaryEncodedImage = reader.result;
+        };
     }
 
     private transformToDate(date: NgbDateStruct): Date {

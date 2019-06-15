@@ -13,6 +13,12 @@ application:
       email: test@email.com
       password: fortKnox
 
+storage:
+  location:
+    images:
+      base: /resources/img/
+      profile: profile/
+      defaultImg: default
 
 spring:
   jpa:

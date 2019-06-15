@@ -9,7 +9,6 @@
     flex-grow: 1;
 }
 
-
 #cardBody {
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
@@ -17,12 +16,20 @@
 
 #cardLeft {
     width: 20%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #cardMiddle {
-  width: calc(100% - 20% - 100px);
+    width: calc(100% - 20% - 100px);
 }
 
 #cardRight {
     width: 100px;
+}
+
+#profilePicContainer {
+    width: 150px;
+    height: 150px;
 }

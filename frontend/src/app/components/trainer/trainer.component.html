@@ -8,7 +8,7 @@
             <form
                 id="trainerForm"
                 #trainerForm
-                (submit)="postTrainer(trainerForm)"
+                (submit)="submitForm(trainerForm)"
                 (change)="clearInfoMsg()"
                 class="container-fluid"
             >
@@ -182,15 +182,36 @@
                     </div>
                 </div>
 
-                <div class="form-row" id="row5">
-                    <div class="col-6">
-                        Here goes a container for a profile picture if uploaded,
-                        else an icon
+                <div class="form-row align-items-center" id="row5">
+                    <div class="col-lg-2"></div>
+                    <div class="col-4">
+                        <div
+                            *ngIf="binaryEncodedImage != null"
+                            id="profilePicContainer"
+                        >
+                            <img
+                                [src]="binaryEncodedImage | safeServerImage"
+                                class="img-thumbnail"
+                                id="profilePicture"
+                            />
+                        </div>
+                        <div *ngIf="binaryEncodedImage == null">
+                            <i class="fas fa-user-alt fa-5x"></i>
+                        </div>
                     </div>
 
-                    <div class="col-6">
-                        Here should be a clickable icon to upload a picture
+                    <div class="col-4">
+                        <label class="custom-file-label" for="fileUpload"
+                            >Foto</label
+                        >
+                        <input
+                            type="file"
+                            class="custom-file-input align-self-middle"
+                            id="fileUpload"
+                            (change)="onFileSelected($event)"
+                        />
                     </div>
+                    <div class="col-lg-2"></div>
                 </div>
 
                 <div class="row" *ngIf="errorMsg">
@@ -208,7 +229,7 @@
                     </div>
                 </div>
 
-                <div class="form-row justify-content-end">
+                <div class="form-row justify-content-end" id="row6">
                     <div>
                         <button
                             type="reset"

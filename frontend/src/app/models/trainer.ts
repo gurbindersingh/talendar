@@ -9,6 +9,8 @@ export class Trainer {
     public phone: string;
     public birthday: Date;
     public birthdayTypes: string[] = [];
+    // the filepath where it is stored on server side
+    public picture: string;
     public created: Date;
     public updated: Date;
     public events: Event;
