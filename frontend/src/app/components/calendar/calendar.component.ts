@@ -15,6 +15,7 @@ import { EventImportService } from 'src/app/services/event-import.service';
 import { MetaEvent } from './MetaEvent';
 import { Trainer } from 'src/app/models/trainer';
 import { TrainerClient } from 'src/app/rest/trainer-client';
+import { AuthenticationService } from 'src/app/services/authentication.service';
 
 /**
  * In order to display week days in German the locale data
@@ -61,14 +62,24 @@ export class CalendarComponent implements OnInit {
         { name: 'Erdgeschoss', value: 'GroundFloor' },
         { name: 'Kein Filter', value: undefined },
     ];
-    eventModal = [
-        { name: 'Neuen Kurs erstellen', type: 'course' },
-        { name: 'Urlaub eintragen', type: 'holiday' },
-        { name: 'Beratungstermin vereinbaren', type: 'consultation' },
+    visitorEventModalEntries = [
+        {
+            name: 'Beratungstermin vereinbaren',
+            type: 'consultation',
+        },
         { name: 'Geburtstag buchen', type: 'birthday' },
         { name: 'Raum mieten', type: 'rent' },
     ];
-    // The above and below should be merged
+    trainerEventModalEntries = [
+        { name: 'Neuen Kurs', type: 'course' },
+        { name: 'Urlaub', type: 'holiday' },
+        {
+            name: 'Beratungstermin',
+            type: 'consultation',
+        },
+        { name: 'Geburtstag', type: 'birthday' },
+        // { name: 'Raummiete', type: 'rent' },
+    ];
     eventTypes: any[] = [
         { name: 'Kurs', value: 'Course' },
         { name: 'Beratung', value: 'Consultation' },
@@ -102,7 +113,8 @@ export class CalendarComponent implements OnInit {
         private eventImport: EventImportService,
         private modalService: NgbModal,
         private router: Router,
-        private dateService: ClickedDateService
+        private dateService: ClickedDateService,
+        public authService: AuthenticationService
     ) {
         if (screen.width < BREAKPOINTS.medium) {
             this.daysInWeek = 3;
@@ -128,6 +140,14 @@ export class CalendarComponent implements OnInit {
             // explicit undefined value matches option 'reset' (if clicked selection is resetted)
             this.trainerList.push(undefined);
         });
+    }
+
+    getEventModalEntries() {
+        if (this.authService.isLoggedIn) {
+            return this.trainerEventModalEntries;
+        } else {
+            return this.visitorEventModalEntries;
+        }
     }
 
     showDetails(event: Event, detailsModal: any) {
