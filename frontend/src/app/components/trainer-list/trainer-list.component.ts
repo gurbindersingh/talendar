@@ -66,7 +66,7 @@ export class NgbdModalConfirm {
 })
 export class TrainerListComponent implements OnInit {
     title = 'Trainerliste';
-    trainerList: Trainer[] = [];
+    private trainerList: Trainer[] = [];
     filteredTrainerList: Trainer[] = [];
     trainerListPage: Trainer[] = [];
     currentPage = 1;

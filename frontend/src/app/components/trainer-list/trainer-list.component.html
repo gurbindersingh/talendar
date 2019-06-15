@@ -65,7 +65,7 @@
     class="d-flex justify-content-center"
     [(page)]="currentPage"
     [pageSize]="itemsPerPage"
-    [collectionSize]="trainerList.length"
+    [collectionSize]="filteredTrainerList.length"
     (pageChange)="updateListPage()"
     [maxSize]="5"
     [rotate]="true"

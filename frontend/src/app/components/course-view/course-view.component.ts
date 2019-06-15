@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter } from '@angular/core';
 import { EventClient } from '../../rest/event-client';
 import { Event } from '../../models/event';
 import { NgForm } from '@angular/forms';
@@ -16,8 +16,12 @@ export class CourseViewComponent implements OnInit {
         private modalService: NgbModal
     ) {}
 
-    private eventList: Event[] = [];
-    private title: String = 'Kursansicht';
+    eventList: Event[] = [];
+    filteredEventList: Event[] = [];
+    eventListPage: Event[] = [];
+    currentPage = 1;
+    itemsPerPage = 10;
+    title = 'Kursansicht';
     private selectedEvent: Event;
 
     openModal(event: Event, name: string) {
@@ -35,11 +39,24 @@ export class CourseViewComponent implements OnInit {
             );
     }
 
+    updateListPage(page?: number) {
+        this.eventListPage = this.filteredEventList.slice(
+            (this.currentPage - 1) * this.itemsPerPage,
+            this.currentPage * this.itemsPerPage
+        );
+    }
+
+    filterList(value: string) {
+        console.warn(value);
+    }
+
     ngOnInit() {
         console.log('Init Event List');
         this.eventClient.getAllFutureCourses().subscribe(
             (courses: Event[]) => {
                 this.eventList = courses;
+                this.filteredEventList = this.eventList;
+                this.updateListPage();
             },
             (error) => {
                 console.log(error);
