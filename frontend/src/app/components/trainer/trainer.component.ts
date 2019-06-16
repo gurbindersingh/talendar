@@ -185,7 +185,7 @@ export class TrainerComponent implements OnInit {
                 }
             );
         } else {
-            this.trainerClient.update(this.trainer).subscribe(
+            this.trainerClient.update(this.trainer, this.password).subscribe(
                 (data: Trainer) => {
                     console.log(data);
                     this.successMsg =

@@ -227,9 +227,11 @@ public class TrainerService implements ITrainerService {
         persisted.setBirthday(newVersion.getBirthday());
         persisted.setBirthdayTypes(newVersion.getBirthdayTypes());
         persisted.setEmail(newVersion.getEmail());
-        persisted.setPassword(newVersion.getPassword());
         persisted.setPhone(newVersion.getPhone());
         persisted.setUpdated(newVersion.getUpdated());
+        if (!persisted.getPassword().equals(newVersion.getPassword())) {
+            persisted.setPassword(passwordEncoder.encode(newVersion.getPassword()));
+        }
         return persisted;
     }
 }
