@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest;
 
+import at.ac.tuwien.sepm.groupphase.backend.annotations.Anyone;
+import at.ac.tuwien.sepm.groupphase.backend.annotations.IsAdmin;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.BackendException;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.TrainerDto;
@@ -24,8 +26,8 @@ import java.util.stream.Collectors;
  * Therefore Spring will automatically map such an thrown exception to an appropriate HTTP response
  * status (i.e. the status which was specified in annotation)
  */
-
-
+@IsAdmin
+@CrossOrigin(origins = { "http://localhost:4200", "http://localhost:8080" })
 @RestController
 @RequestMapping("/api/v1/talendar/trainers")
 public class TrainerEndpoint {
@@ -42,8 +44,7 @@ public class TrainerEndpoint {
         this.mapper = mapper;
     }
 
-
-    @CrossOrigin(origins = "http://localhost:4200")
+    @Anyone
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")
     public TrainerDto getOneTrainerById(@PathVariable("id") Long id) throws BackendException {
         LOGGER.info("Incoming Request To Retrieve Trainer With ID {}", id);
@@ -62,7 +63,7 @@ public class TrainerEndpoint {
     }
 
 
-    @CrossOrigin(origins = "http://localhost:4200")
+    @Anyone
     @RequestMapping(method = RequestMethod.GET)
     public List<TrainerDto> getAllTrainers() throws BackendException {
         LOGGER.info("Incoming Request To Retrieve List Of All Trainers");
@@ -80,7 +81,7 @@ public class TrainerEndpoint {
     }
 
 
-    @CrossOrigin(origins = "http://localhost:4200")
+    @IsAdmin
     @RequestMapping(method = RequestMethod.PUT)
     public TrainerDto updateTrainer(@RequestBody TrainerDto trainerDto) throws BackendException {
         LOGGER.info("Incoming Request To Update An Existing Trainer With Id {}",
@@ -107,7 +108,7 @@ public class TrainerEndpoint {
     }
 
 
-    @CrossOrigin(origins = "http://localhost:4200")
+    @IsAdmin
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public TrainerDto createNewTrainer(@RequestBody TrainerDto trainerDto) throws BackendException {
@@ -126,7 +127,7 @@ public class TrainerEndpoint {
     }
 
 
-    @CrossOrigin(origins = "http://localhost:4200")
+    @IsAdmin
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     public void deleteTrainer(@PathVariable("id") Long id) throws BackendException {

@@ -1,5 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest;
 
+import at.ac.tuwien.sepm.groupphase.backend.annotations.Anyone;
+import at.ac.tuwien.sepm.groupphase.backend.annotations.IsAdmin;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.authentication.AuthenticationRequest;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.authentication.AuthenticationToken;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.authentication.AuthenticationTokenInfo;
@@ -11,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 
+@Anyone
 @CrossOrigin(origins = { "http://localhost:4200", "http://localhost:8080" })
 @RestController
 @RequestMapping(value = "/api/v1/talendar/authentication")
