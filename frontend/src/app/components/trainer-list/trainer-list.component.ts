@@ -98,6 +98,28 @@ export class TrainerListComponent implements OnInit {
         );
     }
 
+    filterList(pValue: string) {
+        // Think about splitting up the string at white spaces
+        const searchString = pValue
+            .replace(/^\s+/, '') // Remove whitespaces at the start of the string
+            .replace(/\s+$/, '') // Remove whitespaces at the end
+            .replace(/\s{2,}/g, ' ') // Remove subsequent whitespaces
+            .toLocaleLowerCase();
+
+        if (searchString.length > 0 && searchString !== ' ') {
+            this.filteredTrainerList = this.trainerList.filter(
+                (trainer) =>
+                    trainer.firstName
+                        .toLocaleLowerCase()
+                        .includes(searchString) ||
+                    trainer.lastName.toLocaleLowerCase().includes(searchString)
+            );
+        } else {
+            this.filteredTrainerList = this.trainerList;
+        }
+        this.updateListPage();
+    }
+
     open(trainer: Trainer) {
         const modalRef = this.modalService.open(NgbdModalConfirm);
         modalRef.componentInstance.trainer = trainer;

@@ -17,6 +17,7 @@
     </div>
 </div>
 
+<!-- Search Bar -->
 <div class="input-group justify-content-center mb-3">
     <div class="col-md-3"></div>
     <div class="input-group-prepend">
@@ -28,8 +29,8 @@
         type="text"
         class="form-control"
         placeholder="Nach einen Kurs suchen ..."
-        (keyup)="filterList(filter.value)"
         #filter
+        (keyup)="filterList(filter.value)"
     />
     <div class="col-md-3"></div>
 </div>

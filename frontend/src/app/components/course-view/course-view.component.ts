@@ -1,9 +1,7 @@
 import { Component, OnInit, EventEmitter } from '@angular/core';
 import { EventClient } from '../../rest/event-client';
 import { Event } from '../../models/event';
-import { NgForm } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ResourceLoader } from '@angular/compiler';
 
 @Component({
     selector: 'app-course-view',
@@ -47,12 +45,21 @@ export class CourseViewComponent implements OnInit {
     }
 
     filterList(pValue: string) {
-        const value = pValue.toLocaleLowerCase().replace(/\s+/g, '');
+        // Think about splitting up the string at white spaces
+        const searchString = pValue
+            .replace(/^\s+/, '') // Remove whitespaces at the start of the string
+            .replace(/\s+$/, '') // Remove whitespaces at the end
+            .replace(/\s{2,}/g, ' ') // Remove subsequent whitespaces
+            .toLocaleLowerCase();
 
-        if (value.length > 0) {
-            console.warn(value);
+        if (searchString.length > 0 && searchString !== ' ') {
+            this.filteredEventList = this.eventList.filter((event) =>
+                event.name.toLocaleLowerCase().includes(searchString)
+            );
+        } else {
+            this.filteredEventList = this.eventList;
         }
-        // this.filteredEventList = this.eventList.filter((elem))
+        this.updateListPage();
     }
 
     ngOnInit() {
