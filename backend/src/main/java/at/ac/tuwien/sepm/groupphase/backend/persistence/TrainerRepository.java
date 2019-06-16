@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface TrainerRepository extends UserBaseRepository<Trainer> {
+public interface TrainerRepository extends JpaRepository<Trainer, Long> {
 
     List<Trainer> findByBirthdayTypes(String birthdayType);
 
@@ -25,4 +25,9 @@ public interface TrainerRepository extends UserBaseRepository<Trainer> {
 
     Trainer findByEvents_Id(Long id);
 
+    Optional<Trainer> findByIdAndDeletedFalse(Long id);
+
+    List<Trainer> findAll();
+
+    Trainer findByEmail(String email);
 }

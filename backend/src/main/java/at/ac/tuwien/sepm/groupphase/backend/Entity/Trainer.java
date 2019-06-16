@@ -1,11 +1,5 @@
 package at.ac.tuwien.sepm.groupphase.backend.Entity;
 
-import at.ac.tuwien.sepm.groupphase.backend.enums.BirthdayType;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-import org.springframework.data.repository.query.Param;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -17,6 +11,11 @@ import java.util.Objects;
 
 @Entity
 public class Trainer extends User {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false, updatable = false)
+    private Long id;
 
     @NotBlank
     @Pattern(regexp = "^[+]*[(]{0,1}[0-9]{1,5}[)]{0,1}[-\\s\\./0-9]*$")
@@ -52,11 +51,22 @@ public class Trainer extends User {
                    @NotNull @Past LocalDateTime created,
                    @NotNull @Past LocalDateTime updated
     ) {
-        super(id, firstName, lastName, birthday, email, password, created, updated);
+        super(firstName, lastName, birthday, email, password, created, updated);
+        this.id = id;
         this.phone = phone;
         this.events = events;
         this.holidays = holidays;
         this.birthdayTypes = birthdayTypes;
+    }
+
+
+    public Long getId() {
+        return id;
+    }
+
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
 
@@ -106,7 +116,8 @@ public class Trainer extends User {
         if(!( o instanceof Trainer )) return false;
         if(!super.equals(o)) return false;
         Trainer trainer = (Trainer) o;
-        return Objects.equals(phone, trainer.phone) &&
+        return id == trainer.id &&
+            Objects.equals(phone, trainer.phone) &&
                Objects.equals(events, trainer.events) &&
                Objects.equals(birthdayTypes, trainer.birthdayTypes) &&
                Objects.equals(holidays, trainer.holidays);
@@ -115,13 +126,14 @@ public class Trainer extends User {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), phone, events, birthdayTypes, holidays);
+        return Objects.hash(super.hashCode(),id, phone, events, birthdayTypes, holidays);
     }
 
 
     @Override
     public String toString() {
         return "Trainer{" +
+               "id=" + id +
                "phone='" + phone + '\'' +
                ", events=" + events +
                ", birthdayTypes=" + birthdayTypes +

@@ -1,28 +1,20 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.User;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.configuration.properties.UserAccountConfigurationProperties;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
-import at.ac.tuwien.sepm.groupphase.backend.persistence.EventRepository;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
-import at.ac.tuwien.sepm.groupphase.backend.persistence.UserRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
-import at.ac.tuwien.sepm.groupphase.backend.service.IUserService;
-import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.AccountCreationException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.Validator;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidEntityException;
-import org.aspectj.weaver.ast.Not;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.repository.query.Param;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,11 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class TrainerService implements ITrainerService {
@@ -42,7 +31,6 @@ public class TrainerService implements ITrainerService {
     private final static Logger LOGGER = LoggerFactory.getLogger(TrainerService.class);
 
     private final TrainerRepository trainerRepository;
-    private final UserRepository userRepository;
     private final EventService eventService;
     private final Validator validator;
     private final InfoMail infoMail;
@@ -52,12 +40,11 @@ public class TrainerService implements ITrainerService {
 
 
     @Autowired
-    public TrainerService(TrainerRepository trainerRepository, UserRepository userRepository, Validator validator,
+    public TrainerService(TrainerRepository trainerRepository, Validator validator,
                           EventService eventService, InfoMail infoMail, PasswordEncoder passwordEncoder,
                           UserAccountConfigurationProperties userAccountConfigurationProperties
     ) {
         this.trainerRepository = trainerRepository;
-        this.userRepository = userRepository;
         this.eventService = eventService;
         this.validator = validator;
         this.infoMail = infoMail;
@@ -243,43 +230,5 @@ public class TrainerService implements ITrainerService {
         persisted.setPhone(newVersion.getPhone());
         persisted.setUpdated(newVersion.getUpdated());
         return persisted;
-    }
-
-    @PostConstruct
-    public void initializeBaseAccount()  {
-        LocalDateTime timeOfCreation = LocalDateTime.now().minusSeconds(1);
-        LOGGER.info("Check if admin account is set upon boot");
-
-        String adminMail = userAccountConfigurationProperties.getEmail();
-        String adminPassword = userAccountConfigurationProperties.getPassword();
-        String firstName = userAccountConfigurationProperties.getFirstName();
-        String lastName = userAccountConfigurationProperties.getLastName();
-        LocalDate birthday = LocalDate.parse(userAccountConfigurationProperties.getBirthday());
-        User admin;
-
-        // try to retrieve pre configured instance
-        admin = trainerRepository.findByEmail(adminMail);
-
-        if (admin == null) {
-            admin = new User();
-            admin.setEmail(adminMail);
-            admin.setPassword(passwordEncoder.encode(adminPassword));
-            admin.setFirstName(firstName);
-            admin.setLastName(lastName);
-            admin.setBirthday(birthday);
-            admin.setAdmin(true);
-            admin.setDeleted(false);
-            admin.setCreated(timeOfCreation);
-            admin.setUpdated(timeOfCreation);
-            // currently for admin account: not of subtype trainer but can be changed if needed easily
-            try {
-                userRepository.save(admin);
-                LOGGER.info("Admin account dod not exist upon boot. New account was created with given credentials");
-            }
-            catch(DataAccessException e) {
-                LOGGER.error("Admin did not exist upon boot and could not be created. Shutdown!");
-                throw new IllegalStateException(e);
-            }
-        }
     }
 }

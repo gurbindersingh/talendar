@@ -8,16 +8,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Entity
-@Inheritance(strategy = InheritanceType.JOINED)
+@MappedSuperclass
 @Where(clause = "deleted <> true")
 public class User {
 
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(nullable = false, updatable = false)
-    private Long id;
 
     /**
      * Minimal Personal Information
@@ -65,8 +59,7 @@ public class User {
     }
 
 
-    // TODO id was set previously in trainer
-    public User(Long id,
+    public User(
                 @NotBlank String firstName,
                 @NotBlank String lastName,
                 @NotNull @Past LocalDate birthday,
@@ -74,9 +67,7 @@ public class User {
                 @NotBlank String password,
                 @NotNull @Past LocalDateTime created,
                 @NotNull @Past LocalDateTime updated
-    ) {
-        this.id = id;
-        this.firstName = firstName;
+    ) { this.firstName = firstName;
         this.lastName = lastName;
         this.birthday = birthday;
         this.email = email;
@@ -85,16 +76,6 @@ public class User {
         this.updated = updated;
         this.deleted = false;
         this.admin = false;
-    }
-
-
-    public Long getId() {
-        return id;
-    }
-
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
 
@@ -201,7 +182,6 @@ public class User {
         User user = (User) o;
         return admin == user.admin &&
                deleted == user.deleted &&
-               Objects.equals(id, user.id) &&
                Objects.equals(firstName, user.firstName) &&
                Objects.equals(lastName, user.lastName) &&
                Objects.equals(birthday, user.birthday) &&
@@ -214,7 +194,7 @@ public class User {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, birthday, email, password, admin, deleted,
+        return Objects.hash(firstName, lastName, birthday, email, password, admin, deleted,
                             created,
                             updated
         );
@@ -224,7 +204,6 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-               "id=" + id +
                ", firstName='" + firstName + '\'' +
                ", lastName='" + lastName + '\'' +
                ", birthday=" + birthday +

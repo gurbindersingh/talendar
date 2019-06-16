@@ -15,6 +15,7 @@ application:
       firstName: Jane
       lastName: Doe
       birthday: 1980-01-01
+      phone: 1234567
 
 
 spring:

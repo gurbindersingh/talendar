@@ -16,6 +16,7 @@ public class UserAccountConfigurationProperties {
     private String firstName;
     private String lastName;
     private String birthday;
+    private String phone;
 
 
     public String getEmail() {
@@ -65,5 +66,15 @@ public class UserAccountConfigurationProperties {
 
     public void setBirthday(String birthday) {
         this.birthday = birthday;
+    }
+
+
+    public String getPhone() {
+        return phone;
+    }
+
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
-import at.ac.tuwien.sepm.groupphase.backend.persistence.UserRepository;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
+import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.authentication.AuthenticationToken;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.authentication.AuthenticationTokenInfo;
 import at.ac.tuwien.sepm.groupphase.backend.configuration.properties.AuthenticationConfigurationProperties;
@@ -45,7 +46,7 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
     // an instance which handles the JWT verification process
     private final AuthenticationManager authenticationManager;
 
-    private final UserRepository userRepository;
+    private final TrainerRepository trainerRepository;
 
     private final ObjectMapper objectMapper;
 
@@ -59,11 +60,11 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
     public SimpleHeaderTokenAuthenticationService(
         @Lazy AuthenticationManager authenticationManager,
         AuthenticationConfigurationProperties authenticationConfigurationProperties,
-        UserRepository userRepository,
+        TrainerRepository trainerRepository,
         ObjectMapper objectMapper
     ) {
         this.authenticationManager = authenticationManager;
-        this.userRepository = userRepository;
+        this.trainerRepository = trainerRepository;
         this.objectMapper = objectMapper;
         byte[] apiKeySecretBytes = Base64.getEncoder().encode(
             authenticationConfigurationProperties.getSecret().getBytes());
@@ -93,8 +94,8 @@ public class SimpleHeaderTokenAuthenticationService implements HeaderTokenAuthen
         }
 
         // load user given the email (if existent retrieve his ID)
-        at.ac.tuwien.sepm.groupphase.backend.Entity.User user = null;
-        try {user = userRepository.findByEmail(email);}
+        Trainer user = null;
+        try {user = trainerRepository.findByEmail(email);}
         catch(DataAccessException e) {
             // nothing to do, authentication will simply fail
             LOGGER.error(
