@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.persistence;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -13,13 +14,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface TrainerRepository extends JpaRepository<Trainer, Long> {
+public interface TrainerRepository extends UserBaseRepository<Trainer> {
 
     List<Trainer> findByBirthdayTypes(String birthdayType);
-
-    Optional<Trainer> findByIdAndDeletedFalse(Long id);
-
-    List<Trainer> findAll();
 
     @Transactional
     @Modifying
@@ -27,4 +24,5 @@ public interface TrainerRepository extends JpaRepository<Trainer, Long> {
     void deleteThisTrainer(@Param("id") Long id, @Param("updated") LocalDateTime updated);
 
     Trainer findByEvents_Id(Long id);
+
 }

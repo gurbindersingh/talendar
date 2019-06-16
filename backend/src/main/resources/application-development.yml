@@ -12,6 +12,9 @@ application:
     admin:
       email: test@email.com
       password: fortKnox
+      firstName: Jane
+      lastName: Doe
+      birthday: 1980-01-01
 
 
 spring:

@@ -87,7 +87,8 @@ public class TestDataGenerator implements ApplicationRunner {
         // create initial trainer set
         for (int i = 0; i < NO_TRAINERS; i++) {
             Trainer trainer = faker.fakeNewTrainerEntity();
-            Trainer saved = trainerService.save(trainer, "password");
+            trainer.setPassword("password");
+            Trainer saved = trainerService.save(trainer);
 
             trainers.add(saved);
         }

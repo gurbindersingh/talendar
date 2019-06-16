@@ -2,10 +2,12 @@ package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.User;
+import at.ac.tuwien.sepm.groupphase.backend.configuration.properties.UserAccountConfigurationProperties;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.EventRepository;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
+import at.ac.tuwien.sepm.groupphase.backend.persistence.UserRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
 import at.ac.tuwien.sepm.groupphase.backend.service.IUserService;
@@ -21,9 +23,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -37,40 +41,39 @@ public class TrainerService implements ITrainerService {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(TrainerService.class);
 
-    private final IUserService userService;
     private final TrainerRepository trainerRepository;
+    private final UserRepository userRepository;
     private final EventService eventService;
     private final Validator validator;
     private final InfoMail infoMail;
 
+    private final PasswordEncoder passwordEncoder;
+    private final UserAccountConfigurationProperties userAccountConfigurationProperties;
+
 
     @Autowired
-    public TrainerService(TrainerRepository trainerRepository, Validator validator,
-                          EventService eventService, IUserService userService, InfoMail infoMail
+    public TrainerService(TrainerRepository trainerRepository, UserRepository userRepository, Validator validator,
+                          EventService eventService, InfoMail infoMail, PasswordEncoder passwordEncoder,
+                          UserAccountConfigurationProperties userAccountConfigurationProperties
     ) {
         this.trainerRepository = trainerRepository;
-        this.userService = userService;
+        this.userRepository = userRepository;
         this.eventService = eventService;
         this.validator = validator;
         this.infoMail = infoMail;
+        this.passwordEncoder = passwordEncoder;
+        this.userAccountConfigurationProperties = userAccountConfigurationProperties;
     }
+
 
     @Transactional
     @Override
-    public Trainer save (Trainer trainer, String password) throws ServiceException, ValidationException {
+    public Trainer save(Trainer trainer) throws ServiceException, ValidationException {
         LOGGER.info("Prepare save of new trainer: {}", trainer);
-        User account;
-        LocalDateTime timeOfCreation = LocalDateTime.now();
+        LocalDateTime timeOfCreation = LocalDateTime.now().minusSeconds(1);
 
         trainer.setCreated(timeOfCreation);
         trainer.setUpdated(timeOfCreation);
-
-        try {
-            TimeUnit.MILLISECONDS.sleep(1);
-        }
-        catch(InterruptedException e) {
-            throw new ServiceException("Internal Server error", e);
-        }
 
         try {
             validator.validateTrainer(trainer);
@@ -79,33 +82,19 @@ public class TrainerService implements ITrainerService {
             throw new ValidationException(e.getMessage(), e);
         }
 
+        trainer.setPassword(passwordEncoder.encode(trainer.getPassword()));
+
         try {
             trainer = trainerRepository.save(trainer);
             try {
                 infoMail.sendAdminTrainerInfoMail(trainer, "Neuer Trainer erstellt", "newTrainer");
-            } catch(EmailException e){
+            }
+            catch(EmailException e) {
                 LOGGER.error("Error trying to send new trainer info mail to admin");
             }
         }
         catch(DataAccessException e) { //catch specific exceptions
             throw new ServiceException("Error while performing a data access operation", e);
-        }
-
-        /**
-         * Now create the user account (needed for authentication)
-         */
-        account = new User();
-        account.setEmail(trainer.getEmail());
-        account.setPassword(password);
-        account.setDeleted(false);
-        account.setAdmin(false);
-        account.setTrainer(trainer);
-
-        try {
-            userService.createUser(account);
-        }
-        catch(AccountCreationException e) {
-            throw new ServiceException(e.getMessage(), e);
         }
 
         return trainer;
@@ -179,15 +168,18 @@ public class TrainerService implements ITrainerService {
             currentVersion.setPhone("06641234567");
             currentVersion.setUpdated(timeOfUpdate);
 
-            if (!(currentVersion.getEvents() == null || currentVersion.getEvents().isEmpty())) {
+            if(!( currentVersion.getEvents() == null || currentVersion.getEvents().isEmpty() )) {
                 for(Event e : currentVersion.getEvents()) {
                     eventService.deleteEvent(e.getId());
                 }
             }
             trainerRepository.deleteThisTrainer(currentVersion.getId(), timeOfUpdate);
-            try{
-                infoMail.sendAdminTrainerInfoMail(currentVersion, "Trainer gelöscht", "deleteTrainer");
-            } catch(EmailException e){
+            try {
+                infoMail.sendAdminTrainerInfoMail(currentVersion, "Trainer gelöscht",
+                                                  "deleteTrainer"
+                );
+            }
+            catch(EmailException e) {
                 LOGGER.error("Error trying to send delete trainer info mail to admin");
             }
         }
@@ -251,5 +243,43 @@ public class TrainerService implements ITrainerService {
         persisted.setPhone(newVersion.getPhone());
         persisted.setUpdated(newVersion.getUpdated());
         return persisted;
+    }
+
+    @PostConstruct
+    public void initializeBaseAccount()  {
+        LocalDateTime timeOfCreation = LocalDateTime.now().minusSeconds(1);
+        LOGGER.info("Check if admin account is set upon boot");
+
+        String adminMail = userAccountConfigurationProperties.getEmail();
+        String adminPassword = userAccountConfigurationProperties.getPassword();
+        String firstName = userAccountConfigurationProperties.getFirstName();
+        String lastName = userAccountConfigurationProperties.getLastName();
+        LocalDate birthday = LocalDate.parse(userAccountConfigurationProperties.getBirthday());
+        User admin;
+
+        // try to retrieve pre configured instance
+        admin = trainerRepository.findByEmail(adminMail);
+
+        if (admin == null) {
+            admin = new User();
+            admin.setEmail(adminMail);
+            admin.setPassword(passwordEncoder.encode(adminPassword));
+            admin.setFirstName(firstName);
+            admin.setLastName(lastName);
+            admin.setBirthday(birthday);
+            admin.setAdmin(true);
+            admin.setDeleted(false);
+            admin.setCreated(timeOfCreation);
+            admin.setUpdated(timeOfCreation);
+            // currently for admin account: not of subtype trainer but can be changed if needed easily
+            try {
+                userRepository.save(admin);
+                LOGGER.info("Admin account dod not exist upon boot. New account was created with given credentials");
+            }
+            catch(DataAccessException e) {
+                LOGGER.error("Admin did not exist upon boot and could not be created. Shutdown!");
+                throw new IllegalStateException(e);
+            }
+        }
     }
 }

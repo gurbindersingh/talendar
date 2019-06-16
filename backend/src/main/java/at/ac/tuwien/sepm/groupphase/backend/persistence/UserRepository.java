@@ -7,9 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends UserBaseRepository<User> {
 
-    List<User> findByDeletedFalse();
-
-    User findByEmail(String email);
 }

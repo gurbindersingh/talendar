@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.User;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.HolidayRepository;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Holiday;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
@@ -97,7 +98,7 @@ public class HolidayService implements IHolidayService {
             LOGGER.error("attempt to save holidays with trainer that doesnt exist");
             throw new ValidationException(e.getMessage(), e);
         }
-        Trainer trainer = trainerRepository.getOne(holidaysDto.getTrainerid());
+        Trainer trainer = (Trainer)trainerRepository.getOne(holidaysDto.getTrainerid());
         LOGGER.info("Trainer is: " + trainer);
         try {
             //Create LinkedLists and split cronExpression

@@ -16,32 +16,12 @@ import java.util.Objects;
 
 
 @Entity
-@Where(clause = "deleted <> true")
-public class Trainer {
+public class Trainer extends User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false, updatable = false)
-    private Long id;
-
-    @NotBlank
-    @Column(nullable = false)
-    private String firstName;
-    @NotBlank
-    @Column(nullable = false)
-    private String lastName;
-    @NotNull
-    @Past
-    @Column(nullable = false)
-    private LocalDate birthday;
     @NotBlank
     @Pattern(regexp = "^[+]*[(]{0,1}[0-9]{1,5}[)]{0,1}[-\\s\\./0-9]*$")
     @Column(nullable = false)
     private String phone;
-    @NotBlank
-    @Email
-    @Column(nullable = false)
-    private String email;
     @OneToMany(mappedBy = "trainer", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<Event> events;
     @ElementCollection
@@ -51,18 +31,7 @@ public class Trainer {
                cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private List<Holiday> holidays;
 
-    @NotNull
-    @Past
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime created;
-    @NotNull
-    @Past
-    @Column(nullable = false)
-    private LocalDateTime updated;
 
-    @NotNull
-    @Column(nullable = false)
-    private boolean deleted;
 
 
     public Trainer() {
@@ -76,64 +45,18 @@ public class Trainer {
                    @NotNull @Past LocalDate birthday,
                    @NotBlank @Pattern(regexp = "^[+]*[(]{0,1}[0-9]{1,5}[)]{0,1}[-\\s\\./0-9]*$") String phone,
                    @NotBlank @Email String email,
+                   @NotBlank String password,
                    List<Event> events,
                    List<Holiday> holidays,
                    @NotNull List<String> birthdayTypes,
                    @NotNull @Past LocalDateTime created,
                    @NotNull @Past LocalDateTime updated
     ) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.birthday = birthday;
+        super(id, firstName, lastName, birthday, email, password, created, updated);
         this.phone = phone;
-        this.email = email;
         this.events = events;
         this.holidays = holidays;
         this.birthdayTypes = birthdayTypes;
-        this.created = created;
-        this.updated = updated;
-        this.deleted = false;
-    }
-
-
-    public Long getId() {
-        return id;
-    }
-
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-
-    public String getLastName() {
-        return lastName;
-    }
-
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-
-    public LocalDate getBirthday() {
-        return birthday;
-    }
-
-
-    public void setBirthday(LocalDate birthday) {
-        this.birthday = birthday;
     }
 
 
@@ -144,16 +67,6 @@ public class Trainer {
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-
-    public String getEmail() {
-        return email;
-    }
-
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
 
@@ -187,85 +100,32 @@ public class Trainer {
     }
 
 
-    public LocalDateTime getCreated() {
-        return created;
-    }
-
-
-    public void setCreated(LocalDateTime created) {
-        this.created = created;
-    }
-
-
-    public LocalDateTime getUpdated() {
-        return updated;
-    }
-
-
-    public void setUpdated(LocalDateTime updated) {
-        this.updated = updated;
-    }
-
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
-
-    @PreRemove
-    public void deleteUser() {
-        this.deleted = true;
-    }
-
-
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
+        if(!( o instanceof Trainer )) return false;
+        if(!super.equals(o)) return false;
         Trainer trainer = (Trainer) o;
-        return deleted == trainer.deleted &&
-               id.equals(trainer.id) &&
-               firstName.equals(trainer.firstName) &&
-               lastName.equals(trainer.lastName) &&
-               birthday.equals(trainer.birthday) &&
-               phone.equals(trainer.phone) &&
-               email.equals(trainer.email) &&
+        return Objects.equals(phone, trainer.phone) &&
                Objects.equals(events, trainer.events) &&
                Objects.equals(birthdayTypes, trainer.birthdayTypes) &&
-               Objects.equals(holidays, trainer.holidays) &&
-               created.equals(trainer.created) &&
-               updated.equals(trainer.updated);
+               Objects.equals(holidays, trainer.holidays);
     }
 
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, birthday, phone, email, events, birthdayTypes,
-                            holidays, created, updated, deleted
-        );
+        return Objects.hash(super.hashCode(), phone, events, birthdayTypes, holidays);
     }
 
 
     @Override
     public String toString() {
         return "Trainer{" +
-               "id=" + id +
-               ", firstName='" + firstName + '\'' +
-               ", lastName='" + lastName + '\'' +
-               ", birthday=" + birthday +
-               ", phone='" + phone + '\'' +
-               ", email='" + email + '\'' +
+               "phone='" + phone + '\'' +
                ", events=" + events +
                ", birthdayTypes=" + birthdayTypes +
                ", holidays=" + holidays +
-               ", created=" + created +
-               ", updated=" + updated +
-               ", deleted=" + deleted +
                '}';
     }
 }
