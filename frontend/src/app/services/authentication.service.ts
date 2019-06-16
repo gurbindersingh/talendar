@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { UserDetails } from '../models/user-details';
 import { NotificationService } from './notification.service';
+import { SHA3 } from 'sha3';
 
 @Injectable({
     providedIn: 'root',
@@ -35,7 +36,7 @@ export class AuthenticationService {
         return this.authenticationClient
             .authenticate({
                 email,
-                password,
+                password: new SHA3(512).update(password).digest('hex'),
             })
             .pipe(
                 map((response) => {
