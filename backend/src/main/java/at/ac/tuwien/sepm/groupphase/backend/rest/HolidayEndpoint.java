@@ -1,6 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Holiday;
+import at.ac.tuwien.sepm.groupphase.backend.annotations.IsAdmin;
+import at.ac.tuwien.sepm.groupphase.backend.annotations.IsTrainer;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.HolidayDto;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.HolidaysDto;
 import at.ac.tuwien.sepm.groupphase.backend.service.IHolidayService;
@@ -20,8 +22,8 @@ import java.util.LinkedList;
  * Therefore Spring will automatically map such an thrown exception to an appropriate HTTP response
  * status (i.e. the status which was specified in annotation)
  */
-
-
+@IsAdmin
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/v1/talendar/holiday")
 public class HolidayEndpoint {
@@ -37,7 +39,7 @@ public class HolidayEndpoint {
         this.mapper = mapper;
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
+    @IsTrainer
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public HolidayDto createNewHoliday(@RequestBody HolidayDto holidayDto) throws Exception {

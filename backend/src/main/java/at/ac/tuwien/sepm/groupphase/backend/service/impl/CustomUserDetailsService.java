@@ -1,7 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.User;
-import at.ac.tuwien.sepm.groupphase.backend.persistence.UserRepository;
+import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.security.entity.SecurityUserProfile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -30,7 +30,7 @@ import org.springframework.stereotype.Service;
 public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
-    private UserRepository userRepository;
+    private TrainerRepository trainerRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email
@@ -38,7 +38,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         User user;
 
         try {
-            user = userRepository.findByEmail(email);
+            user = trainerRepository.findByEmail(email);
         } catch(DataAccessException e) {
             throw new UsernameNotFoundException("User with email " + email + " could not be loaded", e);
         }

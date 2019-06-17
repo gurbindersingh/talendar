@@ -12,6 +12,7 @@ import { HolidaysClient } from 'src/app/rest/holidays-client';
 import { DateTimeParserService } from 'src/app/services/date-time-parser.service';
 import { CronMakerService } from 'src/app/services/cronMaker.service';
 import { Holidays } from 'src/app/models/holidays';
+import { SessionStorageService } from 'src/app/services/session-storage.service';
 
 @Component({
     selector: 'app-holiday',
@@ -46,7 +47,8 @@ export class HolidayComponent implements OnInit {
         private holidayClient: HolidayClient,
         private holidaysClient: HolidaysClient,
         dateTimeParser: DateTimeParserService,
-        cronMaker: CronMakerService
+        cronMaker: CronMakerService,
+        private sessionService: SessionStorageService
     ) {
         this.cronMaker = cronMaker;
         this.dateTimeParser = dateTimeParser;
@@ -64,7 +66,7 @@ export class HolidayComponent implements OnInit {
         console.log('Pass Form Data To Rest Client');
         this.clearInfoMsg();
         this.holiday.id = null;
-        this.trainer.id = 1;
+        this.trainer.id = this.sessionService.userId;
         this.holiday.trainer = this.trainer;
 
         this.holiday.holidayStart = this.dateTimeParser.dateTimeToString(
@@ -79,7 +81,8 @@ export class HolidayComponent implements OnInit {
             this.holidayClient.postNewHoliday(this.holiday).subscribe(
                 (data: Holiday) => {
                     console.log(data);
-                    this.successMsg = 'Der Urlaub wurde erfolgreich gespeichert';
+                    this.successMsg =
+                        'Der Urlaub wurde erfolgreich gespeichert';
                 },
                 (error: Error) => {
                     console.log(error);
@@ -92,7 +95,8 @@ export class HolidayComponent implements OnInit {
             this.holidaysClient.postNewHolidays(this.holidays).subscribe(
                 (data: Holiday[]) => {
                     console.log(data);
-                    this.successMsg = 'Die Urlaube wurde erfolgreich gespeichert';
+                    this.successMsg =
+                        'Die Urlaube wurde erfolgreich gespeichert';
                 },
                 (error: Error) => {
                     console.log(error);
@@ -100,7 +104,6 @@ export class HolidayComponent implements OnInit {
                 }
             );
         }
-
     }
 
     public clearInfoMsg(): void {
@@ -141,18 +144,16 @@ export class HolidayComponent implements OnInit {
         }
     }
     public getCron(): string {
-        return (
-            this.cronMaker.createCron(
-                this.startDate,
-                this.startTime,
-                this.endDate,
-                this.endTime,
-                this.toggleOptions,
-                this.repeatModul,
-                this.alleX,
-                this.terminateModul,
-                this.endedX
-            )
+        return this.cronMaker.createCron(
+            this.startDate,
+            this.startTime,
+            this.endDate,
+            this.endTime,
+            this.toggleOptions,
+            this.repeatModul,
+            this.alleX,
+            this.terminateModul,
+            this.endedX
         );
     }
 }
