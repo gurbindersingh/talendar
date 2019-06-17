@@ -17,7 +17,25 @@
     </div>
 </div>
 
-<div *ngFor="let trainer of trainerList">
+<!-- Search Bar -->
+<div class="input-group justify-content-center mb-3">
+    <div class="col-md-3"></div>
+    <div class="input-group-prepend">
+        <span class="input-group-text" id="basic-addon1"
+            ><i class="fas fa-search"></i
+        ></span>
+    </div>
+    <input
+        type="text"
+        class="form-control"
+        placeholder="Nach einen Trainer suchen ..."
+        #filter
+        (keyup)="filterList(filter.value)"
+    />
+    <div class="col-md-3"></div>
+</div>
+
+<div *ngFor="let trainer of trainerListPage">
     <div class="card border-dark mb-2 flex-row flex-wrap">
         <div class="card-header bg-secondary" id="cardLeft">
             Here goes the profil picture
@@ -61,3 +79,15 @@
         </div>
     </div>
 </div>
+<ngb-pagination
+    class="d-flex justify-content-center"
+    [(page)]="currentPage"
+    [pageSize]="itemsPerPage"
+    [collectionSize]="filteredTrainerList.length"
+    (pageChange)="updateListPage()"
+    [maxSize]="5"
+    [rotate]="true"
+>
+    <ng-template ngbPaginationPrevious> Zurück </ng-template>
+    <ng-template ngbPaginationNext> Weiter </ng-template>
+</ngb-pagination>

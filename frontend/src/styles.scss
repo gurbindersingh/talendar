@@ -9,3 +9,14 @@
 .ng-invalid:not(form) {
     border-left: 5px solid red; /* red */
 }
+
+// Defines the text color for Event titles
+.t-event-color span {
+    font-size: 0.9rem;
+    color: whitesmoke;
+    font-weight: bold;
+    overflow-wrap: break-word;
+    white-space: normal;
+    display: block;
+    text-align: center;
+}

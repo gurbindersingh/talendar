@@ -6,5 +6,7 @@ export class RoomUse {
     public begin: string;
     public end: string;
     public room: Room;
+    public cronExpression: string;
+    public roomOption: number;
     public event: Event;
 }

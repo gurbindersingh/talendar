@@ -4,7 +4,7 @@ import at.ac.tuwien.sepm.groupphase.backend.Entity.InformationOutput;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.UserNotFoundException;
-import com.itextpdf.text.DocumentException;
+import com.lowagie.text.DocumentException;
 import org.springframework.stereotype.Component;
 
 import javax.xml.transform.TransformerConfigurationException;
