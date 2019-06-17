@@ -77,6 +77,7 @@ export class RentComponent implements OnInit {
                     'Deine Reservierung wurde erfolgreich gespeichert';
                 this.errorMsg = '';
                 this.loading = false;
+                this.resetFormular();
             },
             (error: Error) => {
                 console.log(error);
@@ -85,6 +86,13 @@ export class RentComponent implements OnInit {
                 this.loading = false;
             }
         );
+    }
+
+    private resetFormular(): void {
+        this.customer.firstName = '';
+        this.customer.lastName = '';
+        this.customer.phone = '';
+        this.customer.email = '';
     }
 
     public greenSelected(): void {
