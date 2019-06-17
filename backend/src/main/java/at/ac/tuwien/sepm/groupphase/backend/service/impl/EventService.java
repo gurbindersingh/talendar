@@ -516,7 +516,7 @@ public class EventService implements IEventService {
         }
 
         if(result != null){
-            LOGGER.info("Event with id found: " + result);
+            LOGGER.info("Event with id found: ");  //result gives null pointer exception because of trainer is null
             return result;
         } else {
             throw new NotFoundException("The event with id " + id + " does not exist");
