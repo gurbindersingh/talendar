@@ -57,6 +57,7 @@ public class HolidayService implements IHolidayService {
         }
 
         try {
+            holiday.setTrainer(trainerRepository.getOne(holiday.getTrainer().getId()));
             return holidayRepository.save(holiday);
         } catch(Exception e) {
             throw new ServiceException(e);
@@ -216,7 +217,8 @@ public class HolidayService implements IHolidayService {
             //Create HolidayList out of Start and End lists + trainerId
             LOGGER.info("Trainerid is: " + holidaysDto.getTrainerid());
             for(int i = 0; i < startLocalDateTimes.size(); i++){
-                Holiday h = new Holiday(trainer, startLocalDateTimes.get(i), endLocalDateTimes.get(i));
+                Holiday h = new Holiday(trainer, holidaysDto.getTitle(), holidaysDto.getDescription(),
+                                        startLocalDateTimes.get(i), endLocalDateTimes.get(i));
                 resultList.add(h);
             }
 
