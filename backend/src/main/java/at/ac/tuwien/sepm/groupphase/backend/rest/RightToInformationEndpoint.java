@@ -1,7 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.InformationOutput;
-import at.ac.tuwien.sepm.groupphase.backend.annotations.IsAdmin;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.service.IRightToInformationService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.xml.transform.TransformerConfigurationException;
 import java.io.FileNotFoundException;
 
-@IsAdmin
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/v1/talendar/info")
@@ -35,7 +33,6 @@ public class RightToInformationEndpoint {
     }
 
 
-    @IsAdmin
     @RequestMapping(method = RequestMethod.GET, value = "/{mail}")
     public ResponseEntity<byte[]> returnRightToInformationPdf(@PathVariable("mail") String mail) throws
                                                                                                  UserNotFoundException,

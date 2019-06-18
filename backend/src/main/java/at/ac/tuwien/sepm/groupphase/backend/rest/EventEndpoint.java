@@ -1,9 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest;
 
 
-import at.ac.tuwien.sepm.groupphase.backend.annotations.Anyone;
-import at.ac.tuwien.sepm.groupphase.backend.annotations.IsAdmin;
-import at.ac.tuwien.sepm.groupphase.backend.annotations.IsTrainer;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.BackendException;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.RoomUseRepository;
@@ -26,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@IsAdmin
+
 @CrossOrigin(origins = { "http://localhost:4200", "http://localhost:8080" })
 @RestController
 @RequestMapping("/api/v1/talendar/events")
@@ -44,28 +41,24 @@ public class EventEndpoint {
     }
 
 
-    @IsTrainer
     @RequestMapping(value = "/course", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public EventDto createNewCourse(@RequestBody EventDto eventDto) throws BackendException {
         return postEvent(eventDto);
     }
 
-    @Anyone
     @RequestMapping(value = "/birthday", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public EventDto createNewBirthday(@RequestBody EventDto eventDto) throws BackendException {
         return postEvent(eventDto);
     }
 
-    @Anyone
     @RequestMapping(value = "/consultation", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public EventDto createNewConsultation(@RequestBody EventDto eventDto) throws BackendException {
         return postEvent(eventDto);
     }
 
-    @Anyone
     @RequestMapping(value = "/rent" ,method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public EventDto createNewRent(@RequestBody EventDto eventDto) throws BackendException {
@@ -73,8 +66,6 @@ public class EventEndpoint {
     }
 
 
-    // TODO is a trainer allowed to change existing events?
-    @IsAdmin
     @RequestMapping(method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     public EventDto updateEvent(@RequestBody EventDto eventDto) throws BackendException {
@@ -98,7 +89,6 @@ public class EventEndpoint {
     }
 
 
-    @Anyone
     @RequestMapping(value = "/customers", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     public EventDto updateEventCustomers(@RequestBody EventDto eventDto) throws BackendException {
@@ -123,7 +113,6 @@ public class EventEndpoint {
     }
 
 
-    @IsAdmin
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public void cancelEvent(@PathVariable("id") Long id) throws BackendException {
         LOGGER.info("Incoming DELETE Request for an Event with id " + id);
@@ -135,7 +124,6 @@ public class EventEndpoint {
     }
 
 
-    @Anyone
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
     public EventDto getEventById(@PathVariable("id") Long id) throws BackendException {
@@ -152,7 +140,6 @@ public class EventEndpoint {
     }
 
 
-    @Anyone
     @GetMapping(value = "/all")
     public List<EventDto> getAllEvents() throws BackendException {
         LOGGER.info("Incoming GET Request to retrieve all events");
@@ -195,7 +182,6 @@ public class EventEndpoint {
     */
 
 
-    @Anyone
     @GetMapping
     public List<EventDto> getAllFutureCourses() {
         LOGGER.info("Incoming GET Request for all future Courses");
