@@ -10,10 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -23,6 +20,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -57,6 +55,8 @@ public class HolidayEndpointTest {
         HolidayDto holiday = new HolidayDto(
             null,
             trainerResponse,
+            "TestTitle",
+            "TestDescription",
             LocalDateTime.now().plusDays(1),
             LocalDateTime.now().plusDays(3)
         );
@@ -88,7 +88,10 @@ public class HolidayEndpointTest {
             );
         TrainerDto trainerResponse = tresponse.getBody();
 
-        HolidayDto holiday = new HolidayDto(null, trainerResponse, LocalDateTime.now().minusDays(1),
+        HolidayDto holiday = new HolidayDto(null, trainerResponse,
+                                            "TestTitle",
+                                            "TestDescription",
+                                            LocalDateTime.now().minusDays(1),
                                             LocalDateTime.now().plusDays(3)
         );
 
@@ -119,7 +122,10 @@ public class HolidayEndpointTest {
             );
         TrainerDto trainerResponse = tresponse.getBody();
 
-        HolidayDto holiday = new HolidayDto(null, trainerResponse, LocalDateTime.now().plusDays(5),
+        HolidayDto holiday = new HolidayDto(null, trainerResponse,
+                                            "TestTitle",
+                                            "TestDescription",
+                                            LocalDateTime.now().plusDays(5),
                                             LocalDateTime.now().plusDays(3)
         );
         HttpEntity<HolidayDto> request = new HttpEntity<>(holiday);
@@ -136,7 +142,10 @@ public class HolidayEndpointTest {
     @Test
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public void postHolidayWithNullTrainerThenStatus400() {
-        HolidayDto holiday = new HolidayDto(null, null, LocalDateTime.now().plusDays(5),
+        HolidayDto holiday = new HolidayDto(null, null,
+                                            "TestTitle",
+                                            "TestDescription",
+                                            LocalDateTime.now().plusDays(5),
                                             LocalDateTime.now().plusDays(3)
         );
 
@@ -168,7 +177,10 @@ public class HolidayEndpointTest {
 
         trainerResponse.setId(9999l);
 
-        HolidayDto holiday = new HolidayDto(null, trainerResponse, LocalDateTime.now().plusDays(2),
+        HolidayDto holiday = new HolidayDto(null, trainerResponse,
+                                            "TestTitle",
+                                            "TestDescription",
+                                            LocalDateTime.now().plusDays(2),
                                             LocalDateTime.now().plusDays(3)
         );
         HttpEntity<HolidayDto> request = new HttpEntity<>(holiday);
@@ -200,6 +212,8 @@ public class HolidayEndpointTest {
 
         HolidaysDto holiday = new HolidaysDto(
             trainerResponse.getId(),
+            "TestTitle",
+            "TestDescription",
             cronExpression
         );
         HttpEntity<HolidaysDto> request = new HttpEntity<>(holiday);
@@ -231,6 +245,8 @@ public class HolidayEndpointTest {
 
         HolidaysDto holidays = new HolidaysDto(
             trainerResponse.getId(),
+            "TestTitle",
+            "TestDescription",
             cronExpression
         );
         HttpEntity<HolidaysDto> request = new HttpEntity<>(holidays);
@@ -248,6 +264,8 @@ public class HolidayEndpointTest {
 
         holidays = new HolidaysDto(
             trainerResponse.getId(),
+            "TestTitle",
+            "TestDescription",
             cronExpression
         );
         request = new HttpEntity<>(holidays);

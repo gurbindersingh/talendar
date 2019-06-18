@@ -1,5 +1,6 @@
 <h1 class="row justify-content-center">{{ title }}</h1>
 <hr />
+
 <div class="row">
     <div class="col-lg-3"></div>
     <div class="col-lg-6">
@@ -9,6 +10,37 @@
             (ngSubmit)="postHoliday(holiday)"
             #holidayForm
         >
+            <div class="row">
+                <div class="form-group col-lg-12">
+                    <label for="name">Urlaubsname</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        [(ngModel)]="holidayName"
+                        name="holidayname"
+                        id="holidayname"
+                        placeholder="Urlaubsname"
+                        required
+                    />
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-lg-12">
+                    <label for="holidayDescription">Beschreibung</label>
+                    <textarea
+                        type="text"
+                        class="form-control"
+                        rows="4"
+                        name="descriptionTextarea"
+                        [(ngModel)]="holidayDescription"
+                        id="holidayDescription"
+                        ng-trim="false"
+                        maxlength="1024"
+                        placeholder="Beschreibung/Detaillinformation"
+                    ></textarea>
+                </div>
+            </div>
+
             <div class="row">
                 <div class="col-lg-6" id="d6p1">
                     <label for="startdate" id="labelvon">Von</label>
