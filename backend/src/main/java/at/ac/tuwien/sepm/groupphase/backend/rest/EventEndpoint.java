@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 @CrossOrigin(origins = { "http://localhost:4200", "http://localhost:8080" })
 @RestController
 @RequestMapping("/api/v1/talendar/events")
@@ -63,9 +64,6 @@ public class EventEndpoint {
     public EventDto createNewRent(@RequestBody EventDto eventDto) throws BackendException {
         return postEvent(eventDto);
     }
-
-
-
 
 
     @RequestMapping(method = RequestMethod.PUT)

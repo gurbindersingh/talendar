@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.xml.transform.TransformerConfigurationException;
 import java.io.FileNotFoundException;
 
-
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/v1/talendar/info")
 public class RightToInformationEndpoint {
@@ -32,7 +32,7 @@ public class RightToInformationEndpoint {
         this.rightToInformationService = rightToInformationService;
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
+
     @RequestMapping(method = RequestMethod.GET, value = "/{mail}")
     public ResponseEntity<byte[]> returnRightToInformationPdf(@PathVariable("mail") String mail) throws
                                                                                                  UserNotFoundException,

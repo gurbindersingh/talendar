@@ -28,8 +28,11 @@ export class TrainerComponent implements OnInit {
     binaryEncodedImage: any = null;
 
     btnContextDescription: string;
+    pwPlaceholder: string;
+    pwRepeatPlaceholder: string;
     errorMsg: string;
     successMsg: string;
+
     birthdayOptionsColumn1: any = {
         Trockeneis: { selected: false, value: 'DryIce' },
         Raketen: { selected: false, value: 'Rocket' },
@@ -104,6 +107,8 @@ export class TrainerComponent implements OnInit {
         // check whether this site was loaded with a query param (edit) else
         // we are in save mode
         const id: number = this.route.snapshot.queryParams.id;
+        this.pwPlaceholder = 'Neues Passwort';
+        this.pwRepeatPlaceholder = 'Passwort wiederholen';
 
         if (id === undefined) {
             this.title = 'Trainer erstellen';
@@ -112,6 +117,7 @@ export class TrainerComponent implements OnInit {
         } else {
             this.title = 'Trainer Bearbeiten';
             this.btnContextDescription = 'Änderungen speichern';
+            this.pwPlaceholder += ' (Optional)';
             this.isSaveMode = false;
             this.trainerClient.getById(id).subscribe(
                 (data: Trainer) => {
@@ -177,7 +183,9 @@ export class TrainerComponent implements OnInit {
 
         if (this.password !== this.passwordRepeated) {
             return;
-        } else {
+        }
+
+        if (this.password !== undefined && this.password !== '') {
             this.trainer.password = this.password;
         }
 
@@ -222,18 +230,24 @@ export class TrainerComponent implements OnInit {
         if (this.trainer.phone === undefined || this.trainer.phone === '') {
             return false;
         }
-        if (this.password === undefined || this.password === '') {
-            return false;
-        }
-        if (
-            this.passwordRepeated === undefined ||
-            this.passwordRepeated === ''
-        ) {
-            return false;
-        }
+        // whenever password fields are not equals disable submit
         if (this.password !== this.passwordRepeated) {
             return false;
         }
+        // in save mode pw has to be specified, in edit mode it may be unspecified (== no changes)
+        if (this.isSaveMode) {
+            if (this.password === undefined || this.password === '') {
+                return false;
+            }
+            if (
+                this.passwordRepeated === undefined ||
+                this.passwordRepeated === ''
+            ) {
+                return false;
+            }
+        }
+
+        // todo add check for password as soon as there is a mechanism that supports passwords
         return true;
     }
 

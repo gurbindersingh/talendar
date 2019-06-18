@@ -1,4 +1,4 @@
-package at.ac.tuwien.sepm.groupphase.backend.configuration;
+package at.ac.tuwien.sepm.groupphase.backend.tests.configuration;
 
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.context.annotation.Configuration;
