@@ -40,6 +40,8 @@ public class HolidayEndpoint {
     @ResponseStatus(HttpStatus.CREATED)
     public HolidayDto createNewHoliday(@RequestBody HolidayDto holidayDto) throws Exception {
         LOGGER.info("Incoming POST holiday Request");
+        LOGGER.info("DTO is {}", holidayDto);
+        LOGGER.info("Entity is {}", mapper.dtoToHolidayEntity(holidayDto));
 
         try {
             return mapper.entityToHolidayDto(holidayService.save(mapper.dtoToHolidayEntity(holidayDto)));

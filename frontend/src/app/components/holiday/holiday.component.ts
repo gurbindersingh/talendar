@@ -27,6 +27,8 @@ export class HolidayComponent implements OnInit {
     terminateAfter = ['Nie', 'Nach'];
     repeatModul: string;
     terminateModul: string;
+    holidayName: string;
+    holidayDescription: string;
     alleX: number;
     endedX: number;
 
@@ -68,6 +70,12 @@ export class HolidayComponent implements OnInit {
         this.holiday.id = null;
         this.trainer.id = this.sessionService.userId;
         this.holiday.trainer = this.trainer;
+        this.holidays.trainerid = this.sessionService.userId;
+
+        this.holiday.title = this.holidayName;
+        this.holidays.title = this.holidayName;
+        this.holiday.description = this.holidayDescription;
+        this.holidays.description = this.holidayDescription;
 
         this.holiday.holidayStart = this.dateTimeParser.dateTimeToString(
             this.startDate,
@@ -78,6 +86,7 @@ export class HolidayComponent implements OnInit {
             this.endTime
         );
         if (!this.toggleOptions) {
+            console.log(this.holiday);
             this.holidayClient.postNewHoliday(this.holiday).subscribe(
                 (data: Holiday) => {
                     console.log(data);
@@ -90,7 +99,6 @@ export class HolidayComponent implements OnInit {
                 }
             );
         } else {
-            this.holidays.trainerid = 1;
             this.holidays.cronExpression = this.getCron();
             this.holidaysClient.postNewHolidays(this.holidays).subscribe(
                 (data: Holiday[]) => {
@@ -116,6 +124,9 @@ export class HolidayComponent implements OnInit {
             return false;
         }
         if (this.endDate === undefined) {
+            return false;
+        }
+        if (this.holidayName === undefined) {
             return false;
         }
         return true;
