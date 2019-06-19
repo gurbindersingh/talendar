@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest;
 
 
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.BackendException;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.RoomUseRepository;
@@ -140,8 +141,8 @@ public class EventEndpoint {
     }
 
 
-    @GetMapping(value = "/all")
-    public List<EventDto> getAllEvents() throws BackendException {
+    @GetMapping(value = "/all/admin")
+    public List<EventDto> getAllEventsForAdmin() throws BackendException {
         LOGGER.info("Incoming GET Request to retrieve all events");
 
         try {
@@ -157,6 +158,48 @@ public class EventEndpoint {
                 "Es konnten keine Events geladen werden, etwas ist im Server schiefgelaufen", e);
         }
     }
+
+    @GetMapping(value = "/all/trainer/{id}")
+    public List<EventDto> getAllEventsForTrainer(@PathVariable("id") Long id) throws BackendException {
+        LOGGER.info("Incoming GET Request to retrieve all events");
+
+        try {
+            List<Event> events = this.eventService.getAllEvents();
+            events = this.eventService.getTrainerView(events, id);
+            return events           .stream()
+                                    .map(eventMapper::entityToEventDto)
+                                    .collect(
+                                        Collectors.toList());
+        }
+        catch(ServiceException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new BackendException(
+                "Es konnten keine Events geladen werden, etwas ist im Server schiefgelaufen", e);
+        }
+    }
+
+
+    @GetMapping(value = "/all/client")
+    public List<EventDto> getAllEventsForClients() throws BackendException {
+        LOGGER.info("Incoming GET Request to retrieve all events");
+
+        try {
+            List<Event> events = this.eventService.getAllEvents();
+            events = this.eventService.getClientView(events);
+            return events
+                                    .stream()
+                                    .map(eventMapper::entityToEventDto)
+                                    .collect(
+                                        Collectors.toList());
+        }
+        catch(ServiceException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new BackendException(
+                "Es konnten keine Events geladen werden, etwas ist im Server schiefgelaufen", e);
+        }
+    }
+
+
     /*
     @GetMapping
     @RequestMapping(value = "/trainer/{id}", method = RequestMethod.GET)

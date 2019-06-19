@@ -50,10 +50,28 @@ export class EventClient extends RestClient {
         }, '/' + id);
     }
 
-    public getAllEvents(): Observable<Event[]> {
+    public getAllEvents_adminView(): Observable<Event[]> {
         return super.get((error: HttpErrorResponse) => {
-            console.log('HTTP GET All Events Failed: ' + error.message);
-        }, '/all');
+            console.log(
+                'HTTP GET All Events (For Admin) Failed: ' + error.message
+            );
+        }, '/all/admin');
+    }
+
+    public getAllEvents_trainerView(id: number): Observable<Event[]> {
+        return super.get((error: HttpErrorResponse) => {
+            console.log(
+                'HTTP GET All Events (For Admin) Failed: ' + error.message
+            );
+        }, '/all/trainer/' + id);
+    }
+
+    public getAllEvents_clientView(): Observable<Event[]> {
+        return super.get((error: HttpErrorResponse) => {
+            console.log(
+                'HTTP GET All Events (For Clients) Failed: ' + error.message
+            );
+        }, '/all/client');
     }
 
     public getAllFutureCourses(): Observable<Event[]> {
