@@ -11,7 +11,10 @@ import java.util.List;
 public interface ITrainerService {
 
     /**
-     * This method will save the given instance of trainer.
+     * This method will save the given instance of trainer and a user account for authentication will
+     * be created.
+     * Note: This method is handled as one atomic transaction. It can be assumed that after a successful
+     * operation a valid user account is associated with the trainer.
      *
      * @param trainer the given trainer to be saved
      * @return the persistently saved instance is returned

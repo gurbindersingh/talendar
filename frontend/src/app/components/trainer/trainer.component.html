@@ -153,10 +153,13 @@
                         <label for="trainerPw">Neues Passwort eingeben</label>
                         <input
                             type="password"
+                            [(ngModel)]="password"
                             class="form-control"
                             name="password"
                             id="trainerPw"
-                            placeholder="Neues Passwort"
+                            placeholder="{{ pwPlaceholder }}"
+                            minlength="8"
+                            autocomplete="new-password"
                             required
                         />
                     </div>
@@ -167,10 +170,13 @@
                         >
                         <input
                             type="password"
+                            [(ngModel)]="passwordRepeated"
                             class="form-control"
                             name="passwordRepeat"
                             id="trainerPwRepeat"
-                            placeholder="Passwort wiederholen"
+                            placeholder="{{ pwRepeatPlaceholder }}"
+                            minlength="8"
+                            autocomplete="new-password"
                             required
                         />
                     </div>

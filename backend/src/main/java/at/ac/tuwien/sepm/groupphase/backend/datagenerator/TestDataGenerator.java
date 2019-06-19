@@ -5,6 +5,7 @@ import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.service.IEventService;
 import at.ac.tuwien.sepm.groupphase.backend.service.IHolidayService;
 import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;
+import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,10 +83,12 @@ public class TestDataGenerator implements ApplicationRunner {
 
     private void startSimulation() throws Exception {
         List<Trainer> trainers = new LinkedList();
+        String password = "e9a75486736a550af4fea861e2378305c4a555a05094dee1dca2f68afea49cc3a50e8de6ea131ea521311f4d6fb054a146e8282f8e35ff2e6368c1a62e909716";
 
         // create initial trainer set
         for (int i = 0; i < NO_TRAINERS; i++) {
             Trainer trainer = faker.fakeNewTrainerEntity();
+            trainer.setPassword(password);
             Trainer saved = trainerService.save(trainer);
 
             trainers.add(saved);
@@ -96,7 +99,7 @@ public class TestDataGenerator implements ApplicationRunner {
 
             try {
                 eventService.save(course);
-            } catch(ValidationException e) {
+            } catch(ValidationException | ServiceException e) {
                 // its a simulation, some add courses will fail, but that is okay
             }
         }
@@ -106,7 +109,7 @@ public class TestDataGenerator implements ApplicationRunner {
 
             try {
                 eventService.save(rent);
-            } catch(ValidationException e) {
+            } catch(ValidationException | ServiceException e) {
                 // its a simulation, some add courses will fail, but that is okay
             }
         }
@@ -116,7 +119,7 @@ public class TestDataGenerator implements ApplicationRunner {
 
             try {
                 eventService.save(birthday);
-            } catch(ValidationException e) {
+            } catch(ValidationException | ServiceException e) {
                 // its a simulation, some add courses will fail, but that is okay
             }
         }
@@ -126,7 +129,7 @@ public class TestDataGenerator implements ApplicationRunner {
 
             try {
                 eventService.save(consultation);
-            } catch(ValidationException e) {
+            } catch(ValidationException | ServiceException e) {
                 // its a simulation, some add courses will fail, but that is okay
             }
         }

@@ -16,11 +16,8 @@ public interface HolidayMapper {
     /**
      * Mapping methods are definded here. Automatic mapping between dto <-> entity
      */
-
-    @Mapping(target = "trainer", source = "trainer")
     HolidayDto entityToHolidayDto(Holiday holiday);
 
-    @Mapping(target = "trainer", source = "trainer")
     Holiday dtoToHolidayEntity(HolidayDto holidayDto);
 
     LinkedList<HolidayDto> entityListToHolidayDtoList(LinkedList<Holiday> holiday);

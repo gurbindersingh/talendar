@@ -2,7 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.schedule;
 
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.BackendException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
-import com.itextpdf.text.DocumentException;
+import com.lowagie.text.DocumentException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -24,14 +24,14 @@ public class ScheduleCaller {
     }
 
 
-    //Change to daily 23:00
+    //Daily 23:00
     @Scheduled(cron = "0 0 23 * * ?")
     public void callDaily() throws BackendException, DocumentException, EmailException, IOException {
         participantsList.createParticipantsList();
     }
 
 
-    //Change to weekly 02:00 on sunday
+    //Weekly 02:00 on sunday
     @Scheduled(cron = "0 0 2 ? * SUN")
     public void callWeekly() throws BackendException {
         redactInactiveUsers.redact();

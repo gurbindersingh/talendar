@@ -24,8 +24,7 @@ import java.util.stream.Collectors;
  * Therefore Spring will automatically map such an thrown exception to an appropriate HTTP response
  * status (i.e. the status which was specified in annotation)
  */
-
-
+@CrossOrigin(origins = { "http://localhost:4200", "http://localhost:8080" })
 @RestController
 @RequestMapping("/api/v1/talendar/trainers")
 public class TrainerEndpoint {
@@ -42,8 +41,6 @@ public class TrainerEndpoint {
         this.mapper = mapper;
     }
 
-
-    @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")
     public TrainerDto getOneTrainerById(@PathVariable("id") Long id) throws BackendException {
         LOGGER.info("Incoming Request To Retrieve Trainer With ID {}", id);
@@ -62,7 +59,6 @@ public class TrainerEndpoint {
     }
 
 
-    @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(method = RequestMethod.GET)
     public List<TrainerDto> getAllTrainers() throws BackendException {
         LOGGER.info("Incoming Request To Retrieve List Of All Trainers");
@@ -80,7 +76,6 @@ public class TrainerEndpoint {
     }
 
 
-    @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(method = RequestMethod.PUT)
     public TrainerDto updateTrainer(@RequestBody TrainerDto trainerDto) throws BackendException {
         LOGGER.info("Incoming Request To Update An Existing Trainer With Id {}",
@@ -107,17 +102,14 @@ public class TrainerEndpoint {
     }
 
 
-    @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public TrainerDto createNewTrainer(@RequestBody TrainerDto trainerDto) throws BackendException {
         LOGGER.info("Incoming POST Trainer Request");
 
         try {
-            return mapper.entityToTrainerDto(
-                trainerService.save(mapper.dtoToTrainerEntity(trainerDto)));
-        }
-        catch(ValidationException e) {
+            return mapper.entityToTrainerDto(trainerService.save(mapper.dtoToTrainerEntity(trainerDto)));
+        } catch(ValidationException e) {
             LOGGER.error("POST Request unsuccessful: " + e.getMessage(), e);
             throw new BackendException(e.getMessage(), e);
         }
@@ -128,7 +120,6 @@ public class TrainerEndpoint {
     }
 
 
-    @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
     public void deleteTrainer(@PathVariable("id") Long id) throws BackendException {

@@ -12,6 +12,7 @@ import { HolidaysClient } from 'src/app/rest/holidays-client';
 import { DateTimeParserService } from 'src/app/services/date-time-parser.service';
 import { CronMakerService } from 'src/app/services/cronMaker.service';
 import { Holidays } from 'src/app/models/holidays';
+import { SessionStorageService } from 'src/app/services/session-storage.service';
 
 @Component({
     selector: 'app-holiday',
@@ -26,6 +27,8 @@ export class HolidayComponent implements OnInit {
     terminateAfter = ['Nie', 'Nach'];
     repeatModul: string;
     terminateModul: string;
+    holidayName: string;
+    holidayDescription: string;
     alleX: number;
     endedX: number;
 
@@ -46,7 +49,8 @@ export class HolidayComponent implements OnInit {
         private holidayClient: HolidayClient,
         private holidaysClient: HolidaysClient,
         dateTimeParser: DateTimeParserService,
-        cronMaker: CronMakerService
+        cronMaker: CronMakerService,
+        private sessionService: SessionStorageService
     ) {
         this.cronMaker = cronMaker;
         this.dateTimeParser = dateTimeParser;
@@ -64,8 +68,14 @@ export class HolidayComponent implements OnInit {
         console.log('Pass Form Data To Rest Client');
         this.clearInfoMsg();
         this.holiday.id = null;
-        this.trainer.id = 1;
+        this.trainer.id = this.sessionService.userId;
         this.holiday.trainer = this.trainer;
+        this.holidays.trainerid = this.sessionService.userId;
+
+        this.holiday.title = this.holidayName;
+        this.holidays.title = this.holidayName;
+        this.holiday.description = this.holidayDescription;
+        this.holidays.description = this.holidayDescription;
 
         this.holiday.holidayStart = this.dateTimeParser.dateTimeToString(
             this.startDate,
@@ -76,10 +86,12 @@ export class HolidayComponent implements OnInit {
             this.endTime
         );
         if (!this.toggleOptions) {
+            console.log(this.holiday);
             this.holidayClient.postNewHoliday(this.holiday).subscribe(
                 (data: Holiday) => {
                     console.log(data);
-                    this.successMsg = 'Der Urlaub wurde erfolgreich gespeichert';
+                    this.successMsg =
+                        'Der Urlaub wurde erfolgreich gespeichert';
                 },
                 (error: Error) => {
                     console.log(error);
@@ -87,12 +99,12 @@ export class HolidayComponent implements OnInit {
                 }
             );
         } else {
-            this.holidays.trainerid = 1;
             this.holidays.cronExpression = this.getCron();
             this.holidaysClient.postNewHolidays(this.holidays).subscribe(
                 (data: Holiday[]) => {
                     console.log(data);
-                    this.successMsg = 'Die Urlaube wurde erfolgreich gespeichert';
+                    this.successMsg =
+                        'Die Urlaube wurde erfolgreich gespeichert';
                 },
                 (error: Error) => {
                     console.log(error);
@@ -100,7 +112,6 @@ export class HolidayComponent implements OnInit {
                 }
             );
         }
-
     }
 
     public clearInfoMsg(): void {
@@ -113,6 +124,9 @@ export class HolidayComponent implements OnInit {
             return false;
         }
         if (this.endDate === undefined) {
+            return false;
+        }
+        if (this.holidayName === undefined) {
             return false;
         }
         return true;
@@ -141,18 +155,16 @@ export class HolidayComponent implements OnInit {
         }
     }
     public getCron(): string {
-        return (
-            this.cronMaker.createCron(
-                this.startDate,
-                this.startTime,
-                this.endDate,
-                this.endTime,
-                this.toggleOptions,
-                this.repeatModul,
-                this.alleX,
-                this.terminateModul,
-                this.endedX
-            )
+        return this.cronMaker.createCron(
+            this.startDate,
+            this.startTime,
+            this.endDate,
+            this.endTime,
+            this.toggleOptions,
+            this.repeatModul,
+            this.alleX,
+            this.terminateModul,
+            this.endedX
         );
     }
 }

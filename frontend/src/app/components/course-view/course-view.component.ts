@@ -1,15 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter } from '@angular/core';
 import { EventClient } from '../../rest/event-client';
 import { Event } from '../../models/event';
-import { NgForm } from '@angular/forms';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ResourceLoader } from '@angular/compiler';
 
-@Component({
-    selector: 'ngbd-modal-confirm',
-    template:
-        '<div id= "modal-container" class = "hidden"> <div class = "modal-footer"><h2>Component inside modal</h2></div>  <div class = "modal-body"> <input class="btn btn-danger col-lg-3" id = "confirmDelete" (click) = "deleteCourse(selectedEvent.id)" value = "Löschen" /> <input class="btn btn-primary col-lg-3" id = "abbrechen" (click) = "modal.close()" value = "Abbrechen" /> </div> </div>  <div id=”overlay”></div>',
-})
 @Component({
     selector: 'app-course-view',
     templateUrl: './course-view.component.html',
@@ -21,8 +14,12 @@ export class CourseViewComponent implements OnInit {
         private modalService: NgbModal
     ) {}
 
-    private eventList: Event[] = [];
-    private title: String = 'Kursansicht';
+    eventList: Event[] = [];
+    filteredEventList: Event[] = [];
+    eventListPage: Event[] = [];
+    currentPage = 1;
+    itemsPerPage = 10;
+    title = 'Kursansicht';
     private selectedEvent: Event;
 
     openModal(event: Event, name: string) {
@@ -40,11 +37,38 @@ export class CourseViewComponent implements OnInit {
             );
     }
 
+    updateListPage(page?: number) {
+        this.eventListPage = this.filteredEventList.slice(
+            (this.currentPage - 1) * this.itemsPerPage,
+            this.currentPage * this.itemsPerPage
+        );
+    }
+
+    filterList(pValue: string) {
+        // Think about splitting up the string at white spaces
+        const searchString = pValue
+            .replace(/^\s+/, '') // Remove whitespaces at the start of the string
+            .replace(/\s+$/, '') // Remove whitespaces at the end
+            .replace(/\s{2,}/g, ' ') // Remove subsequent whitespaces
+            .toLocaleLowerCase();
+
+        if (searchString.length > 0 && searchString !== ' ') {
+            this.filteredEventList = this.eventList.filter((event) =>
+                event.name.toLocaleLowerCase().includes(searchString)
+            );
+        } else {
+            this.filteredEventList = this.eventList;
+        }
+        this.updateListPage();
+    }
+
     ngOnInit() {
         console.log('Init Event List');
         this.eventClient.getAllFutureCourses().subscribe(
             (courses: Event[]) => {
                 this.eventList = courses;
+                this.filteredEventList = this.eventList;
+                this.updateListPage();
             },
             (error) => {
                 console.log(error);

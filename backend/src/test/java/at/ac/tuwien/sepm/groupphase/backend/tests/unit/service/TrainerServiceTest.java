@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.tests.unit.service;
 
 
+import at.ac.tuwien.sepm.groupphase.backend.Entity.User;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.testDataCreation.FakeData;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
@@ -65,6 +66,9 @@ public class TrainerServiceTest {
     private static Trainer INVALID_TRAINER_FUTURE_CREATION_TIME = trainerFaker.fakeTrainerEntity();
     private static Trainer INVALID_TRAINER_FUTURE_UPDATE_TIME = trainerFaker.fakeTrainerEntity();
 
+    private static User PERSISTED_USER_DUMMY = new User();
+
+    private final String DUMMY_PW = "PASSWORD";
 
     /**
      * Prepare Each Instance Individually

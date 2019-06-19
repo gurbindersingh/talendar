@@ -1,39 +1,54 @@
 import { Injectable } from '@angular/core';
-import { MetaEvent } from '../components/calendar/MetaEvent';
+
 import { Event } from '../models/event';
+import { EventType } from '../models/enum/eventType';
 import { RoomUse } from '../models/roomUse';
+
+import * as Colors from '../utils/Colors';
 
 @Injectable({
     providedIn: 'root',
 })
 export class EventImportService {
-    constructor() {}
-
-    public mapEventsToCalendar(events: Event[]): MetaEvent[] {
-        const metaEvents: MetaEvent[] = [];
-
+    public mapEventsToCalendar(events: Event[]) {
         for (const event of events) {
-            console.log(JSON.stringify(event));
-            const metaEvent: MetaEvent = new MetaEvent();
             const roomOfEvent: RoomUse[] = event.roomUses;
-            const start: Date = new Date(roomOfEvent[0].begin);
-            const end: Date = new Date(roomOfEvent[0].end);
 
-            metaEvent.id = event.id;
-            metaEvent.title = event.name;
+            event.start = new Date(roomOfEvent[0].begin);
+            event.end = new Date(roomOfEvent[0].end);
+            event.title = event.name;
 
             // Calendar Events' specific properties (style, assigned actions etc)
             // this set up is not completed -> consider what has to be set...
-            metaEvent.allDay = false;
-            metaEvent.draggable = false;
+            event.allDay = false;
+            event.draggable = false;
+            event.cssClass = 't-event-color';
 
-            metaEvent.start = start;
-            metaEvent.end = end;
-            metaEvent.event = event;
+            switch (event.eventType) {
+                case EventType.Birthday:
+                    event.color = Colors.Birthday;
+                    break;
 
-            metaEvents.push(metaEvent);
+                case EventType.Course:
+                    event.color = Colors.Course;
+                    break;
+
+                case EventType.Consultation:
+                    event.color = Colors.Consultation;
+                    break;
+
+                case EventType.Holiday:
+                    event.color = Colors.Holiday;
+                    break;
+
+                case EventType.Rent:
+                    event.color = Colors.Rent;
+                    break;
+
+                default:
+                    break;
+            }
         }
-
-        return metaEvents;
+        return events;
     }
 }

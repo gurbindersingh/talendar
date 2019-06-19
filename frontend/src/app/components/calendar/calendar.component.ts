@@ -1,17 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-import { registerLocaleData, DatePipe } from '@angular/common';
+import { registerLocaleData } from '@angular/common';
+import { Router } from '@angular/router';
 import localeDe from '@angular/common/locales/de-AT';
 
 import { CalendarDateFormatter, CalendarView } from 'angular-calendar';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { CustomDateFormatter } from './CustomDateFormatter';
-import { MetaEvent } from './MetaEvent';
-import { Event } from '../../models/event';
 import { BREAKPOINTS } from 'src/app/utils/Breakpoints';
+import { ClickedDateService } from 'src/app/services/clicked-date.service';
+import { CustomDateFormatter } from './CustomDateFormatter';
+import { Event } from 'src/app/models/event';
 import { EventClient } from 'src/app/rest/event-client';
 import { EventImportService } from 'src/app/services/event-import.service';
+import { MetaEvent } from './MetaEvent';
 import { Trainer } from 'src/app/models/trainer';
 import { TrainerClient } from 'src/app/rest/trainer-client';
+import { AuthenticationService } from 'src/app/services/authentication.service';
 
 /**
  * In order to display week days in German the locale data
@@ -32,23 +36,22 @@ export class CalendarComponent implements OnInit {
     calendarView = CalendarView;
     dayEndHour = 20;
     dayEndMinute = 0;
-    daysInWeek: number | null = null;
+    daysInWeek: 1 | 3 | null = null;
     dayStartHour = 8;
     dayStartMinute = 0;
     // list of all loaded events
-    allEvents: MetaEvent[] = [];
+    allEvents: Event[] = [];
     // list of all events relative to the applied filters
-    filteredEvents: MetaEvent[] = [];
+    filteredEvents: Event[] = [];
     hourSegments = 4;
     locale = 'de-AT';
     precision = 'minutes';
     view = CalendarView.Week;
     viewDate = new Date();
     weekStartsOn = 1;
-    navButtonLabel: { prev: string; next: string };
-
     // toggle between collapsed and open filter menu
     isCollapsed = true;
+    clickedEvent: Event;
 
     // filter specific content
 
@@ -58,6 +61,24 @@ export class CalendarComponent implements OnInit {
         { name: 'Orange', value: 'Orange' },
         { name: 'Erdgeschoss', value: 'GroundFloor' },
         { name: 'Kein Filter', value: undefined },
+    ];
+    visitorEventModalEntries = [
+        {
+            name: 'Beratungstermin vereinbaren',
+            type: 'consultation',
+        },
+        { name: 'Geburtstag buchen', type: 'birthday' },
+        { name: 'Raum mieten', type: 'rent' },
+    ];
+    trainerEventModalEntries = [
+        { name: 'Neuen Kurs', type: 'course' },
+        { name: 'Urlaub', type: 'holiday' },
+        {
+            name: 'Beratungstermin',
+            type: 'consultation',
+        },
+        { name: 'Geburtstag', type: 'birthday' },
+        // { name: 'Raummiete', type: 'rent' },
     ];
     eventTypes: any[] = [
         { name: 'Kurs', value: 'Course' },
@@ -74,6 +95,7 @@ export class CalendarComponent implements OnInit {
         { name: 'Malen Geburtstag', value: 'Painting' },
         { name: 'Kein Filter', value: undefined },
     ];
+
     trainerList: string[] = [];
     trainers: Trainer[] = [];
 
@@ -88,14 +110,16 @@ export class CalendarComponent implements OnInit {
     constructor(
         private eventClient: EventClient,
         private trainerClient: TrainerClient,
-        private eventImport: EventImportService
+        private eventImport: EventImportService,
+        private modalService: NgbModal,
+        private router: Router,
+        private dateService: ClickedDateService,
+        public authService: AuthenticationService
     ) {
         if (screen.width < BREAKPOINTS.medium) {
             this.daysInWeek = 3;
         } else if (screen.width < BREAKPOINTS.small) {
             this.daysInWeek = 1;
-        } else {
-            this.daysInWeek = 7;
         }
     }
 
@@ -118,7 +142,61 @@ export class CalendarComponent implements OnInit {
         });
     }
 
-    toggleView(view: CalendarView, daysInWeek: number) {
+    getEventModalEntries() {
+        if (this.authService.isLoggedIn) {
+            return this.trainerEventModalEntries;
+        } else {
+            return this.visitorEventModalEntries;
+        }
+    }
+
+    showDetails(event: Event, detailsModal: any) {
+        console.warn(event);
+        if (event.eventType !== 'Rent') {
+            this.clickedEvent = event;
+            this.modalService.open(detailsModal, { size: 'lg' });
+        }
+    }
+
+    dateClicked(date: Date, newEventModal: any) {
+        console.warn(date);
+        // if (date.valueOf() >= Date.now()) {
+        this.dateService.setDateTime(date);
+        this.modalService.open(newEventModal, { size: 'sm' });
+        // }
+    }
+
+    addEvent(type: string) {
+        switch (type) {
+            case 'course':
+                this.router.navigateByUrl('/course/add');
+                break;
+
+            case 'holiday':
+                this.router.navigateByUrl('/holiday/add');
+                break;
+
+            case 'consultation':
+                this.router.navigateByUrl('/consultation/add');
+                break;
+
+            case 'rent':
+                this.router.navigateByUrl('/rent');
+                break;
+
+            case 'birthday':
+                this.router.navigateByUrl('/birthday/book');
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    /**
+     *
+     */
+    toggleView(view: CalendarView, daysInWeek: 1 | 3 | null = null) {
         this.view = view;
         this.daysInWeek = daysInWeek;
     }
@@ -126,7 +204,7 @@ export class CalendarComponent implements OnInit {
     public updateView(): void {
         this.filteredEvents = this.allEvents;
 
-        this.filteredEvents = this.filteredEvents.filter((event: MetaEvent) => {
+        this.filteredEvents = this.filteredEvents.filter((event: Event) => {
             // vars are true if filter for this context was set in GUI
             const hasRoomFilter: boolean =
                 this.roomSelection !== undefined &&
@@ -149,7 +227,7 @@ export class CalendarComponent implements OnInit {
             if (hasRoomFilter) {
                 if (
                     this.roomSelection.value !==
-                    event.event.roomUses[0].room.toString()
+                    event.roomUses[0].room.toString()
                 ) {
                     return false;
                 }
@@ -159,17 +237,12 @@ export class CalendarComponent implements OnInit {
             // as rents have no assigned trainer (null)
             if (hasTrainerFilter) {
                 // if event without trainer then it is a rent, filter it
-                if (
-                    event.event.trainer === null ||
-                    event.event.trainer === undefined
-                ) {
+                if (event.trainer === null || event.trainer === undefined) {
                     return false;
                 }
 
                 const trainerNameOfEvent =
-                    event.event.trainer.firstName +
-                    ' ' +
-                    event.event.trainer.lastName;
+                    event.trainer.firstName + ' ' + event.trainer.lastName;
 
                 if (this.trainerSelection !== trainerNameOfEvent) {
                     return false;
@@ -178,8 +251,7 @@ export class CalendarComponent implements OnInit {
 
             if (hasTypeFilter) {
                 if (
-                    this.eventTypeSelection.value !==
-                    event.event.eventType.toString()
+                    this.eventTypeSelection.value !== event.eventType.toString()
                 ) {
                     return false;
                 }
@@ -188,14 +260,14 @@ export class CalendarComponent implements OnInit {
             if (hasCourseFilter) {
                 if (
                     this.minAgeFilter !== null &&
-                    event.event.minAge < this.minAgeFilter
+                    event.minAge < this.minAgeFilter
                 ) {
                     return false;
                 }
 
                 if (
                     this.maxAgeFilter !== null &&
-                    event.event.maxAge > this.maxAgeFilter
+                    event.maxAge > this.maxAgeFilter
                 ) {
                     return false;
                 }
@@ -203,7 +275,7 @@ export class CalendarComponent implements OnInit {
 
             // only possible if hasTypeSelection is set to 'Geburtstag'
             if (hasBirthdayTypeSelection) {
-                if (this.bdTypeSelection.value !== event.event.birthdayType) {
+                if (this.bdTypeSelection.value !== event.birthdayType) {
                     return false;
                 }
             }

@@ -11,8 +11,10 @@
             </button>
             <button
                 class="btn btn-primary px-4"
-                (click)="toggleView(calendarView.Week, 7)"
-                [class.active]="view === calendarView.Week && daysInWeek === 7"
+                (click)="toggleView(calendarView.Week)"
+                [class.active]="
+                    view === calendarView.Week && daysInWeek === null
+                "
             >
                 Woche
             </button>
@@ -275,6 +277,8 @@
             [locale]="locale"
             [viewDate]="viewDate"
             [weekStartsOn]="weekStartsOn"
+            (eventClicked)="showDetails($event)"
+            (dayClicked)="dateClicked($event.day.date, newEventModal)"
         ></mwl-calendar-month-view>
     </ng-container>
 
@@ -296,6 +300,68 @@
             [locale]="locale"
             [viewDate]="viewDate"
             [weekStartsOn]="weekStartsOn"
+            (eventClicked)="showDetails($event.event, detailsModal)"
+            (hourSegmentClicked)="dateClicked($event.date, newEventModal)"
         ></mwl-calendar-week-view>
     </ng-template>
 </div>
+
+<!-- Modal -->
+<ng-template #newEventModal let-modal>
+    <div class="modal-header">
+        <h4 ngbAutofocus>
+            {{
+                authService.isLoggedIn
+                    ? 'Welches Event möchten sie anlegen?'
+                    : 'Ich möchte einen:'
+            }}
+        </h4>
+    </div>
+    <div class="modal-body row justify-content-between" style="margin: 0">
+        <ul class="list-unstyled">
+            <li
+                *ngFor="let event of getEventModalEntries()"
+                (click)="modal.close()"
+            >
+                <button
+                    class="btn btn-link"
+                    style="font-size: 1.1rem"
+                    (click)="addEvent(event.type)"
+                >
+                    {{ event.name }}
+                </button>
+            </li>
+        </ul>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-outline-primary" (click)="modal.close()">
+            Schließen
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #detailsModal let-modal>
+    <div class="modal-header">
+        <h4 ngbAutofocus>{{ clickedEvent.title }}</h4>
+    </div>
+    <div class="modal-body">
+        <p>{{ clickedEvent.description }}</p>
+        <p>
+            <b> Abgehalten von: </b>
+            {{
+                clickedEvent.trainer.firstName +
+                    ' ' +
+                    clickedEvent.trainer.lastName
+            }}
+        </p>
+    </div>
+    <div class="modal-footer">
+        <button
+            type="button"
+            class="btn btn-outline-primary"
+            (click)="modal.close()"
+        >
+            Schließen
+        </button>
+    </div>
+</ng-template>

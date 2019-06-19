@@ -1,31 +1,29 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
-import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
-import at.ac.tuwien.sepm.groupphase.backend.persistence.EventRepository;
-import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
+import at.ac.tuwien.sepm.groupphase.backend.configuration.properties.UserAccountConfigurationProperties;
+import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;
+import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.Validator;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidEntityException;
-import org.aspectj.weaver.ast.Not;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.repository.query.Param;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class TrainerService implements ITrainerService {
@@ -35,32 +33,34 @@ public class TrainerService implements ITrainerService {
     private final TrainerRepository trainerRepository;
     private final EventService eventService;
     private final Validator validator;
+    private final InfoMail infoMail;
+
+    private final PasswordEncoder passwordEncoder;
+    private final UserAccountConfigurationProperties userAccountConfigurationProperties;
 
 
     @Autowired
     public TrainerService(TrainerRepository trainerRepository, Validator validator,
-                          EventService eventService
+                          EventService eventService, InfoMail infoMail, PasswordEncoder passwordEncoder,
+                          UserAccountConfigurationProperties userAccountConfigurationProperties
     ) {
         this.trainerRepository = trainerRepository;
         this.eventService = eventService;
         this.validator = validator;
+        this.infoMail = infoMail;
+        this.passwordEncoder = passwordEncoder;
+        this.userAccountConfigurationProperties = userAccountConfigurationProperties;
     }
 
 
+    @Transactional
     @Override
     public Trainer save(Trainer trainer) throws ServiceException, ValidationException {
         LOGGER.info("Prepare save of new trainer: {}", trainer);
-        LocalDateTime timeOfCreation = LocalDateTime.now();
+        LocalDateTime timeOfCreation = LocalDateTime.now().minusSeconds(1);
 
         trainer.setCreated(timeOfCreation);
         trainer.setUpdated(timeOfCreation);
-
-        try {
-            TimeUnit.MILLISECONDS.sleep(1);
-        }
-        catch(InterruptedException e) {
-            throw new ServiceException("Internal Server error", e);
-        }
 
         try {
             validator.validateTrainer(trainer);
@@ -69,12 +69,22 @@ public class TrainerService implements ITrainerService {
             throw new ValidationException(e.getMessage(), e);
         }
 
+        trainer.setPassword(passwordEncoder.encode(trainer.getPassword()));
+
         try {
-            return trainerRepository.save(trainer);
+            trainer = trainerRepository.save(trainer);
+            try {
+                infoMail.sendAdminTrainerInfoMail(trainer, "Neuer Trainer erstellt", "newTrainer");
+            }
+            catch(EmailException e) {
+                LOGGER.error("Error trying to send new trainer info mail to admin");
+            }
         }
         catch(DataAccessException e) { //catch specific exceptions
             throw new ServiceException("Error while performing a data access operation", e);
         }
+
+        return trainer;
     }
 
 
@@ -145,12 +155,20 @@ public class TrainerService implements ITrainerService {
             currentVersion.setPhone("06641234567");
             currentVersion.setUpdated(timeOfUpdate);
 
-            if (!(currentVersion.getEvents() == null || currentVersion.getEvents().isEmpty())) {
+            if(!( currentVersion.getEvents() == null || currentVersion.getEvents().isEmpty() )) {
                 for(Event e : currentVersion.getEvents()) {
                     eventService.deleteEvent(e.getId());
                 }
             }
             trainerRepository.deleteThisTrainer(currentVersion.getId(), timeOfUpdate);
+            try {
+                infoMail.sendAdminTrainerInfoMail(currentVersion, "Trainer gelöscht",
+                                                  "deleteTrainer"
+                );
+            }
+            catch(EmailException e) {
+                LOGGER.error("Error trying to send delete trainer info mail to admin");
+            }
         }
         catch(DataAccessException e) {
             throw new ServiceException(
@@ -211,6 +229,9 @@ public class TrainerService implements ITrainerService {
         persisted.setEmail(newVersion.getEmail());
         persisted.setPhone(newVersion.getPhone());
         persisted.setUpdated(newVersion.getUpdated());
+        if (!persisted.getPassword().equals(newVersion.getPassword())) {
+            persisted.setPassword(passwordEncoder.encode(newVersion.getPassword()));
+        }
         return persisted;
     }
 }
