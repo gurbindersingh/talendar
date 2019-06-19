@@ -67,7 +67,7 @@ export class NgbdModalConfirm {
 })
 export class TrainerListComponent implements OnInit {
     title = 'Trainerliste';
-    private trainerList: Trainer[] = [];
+    trainerList: Trainer[] = [];
     filteredTrainerList: Trainer[] = [];
     trainerListPage: Trainer[] = [];
     currentPage = 1;
@@ -79,32 +79,7 @@ export class TrainerListComponent implements OnInit {
         private modalService: NgbModal
     ) {}
 
-    // accessed in the template
-    title = 'Trainerliste';
-    trainerList: Trainer[] = [];
     binaryEncodedImages: any[] = [];
-
-    open(trainer: Trainer) {
-        const modalRef = this._modalService.open(NgbdModalConfirm);
-        modalRef.componentInstance.trainer = trainer;
-        modalRef.result.then(
-            () => {
-                // on close
-                console.log('Trying to DELETE Trainer with id ' + trainer.id);
-                this.trainerClient.deleteTrainer(trainer.id).subscribe(
-                    () => {
-                        this.ngOnInit();
-                    },
-                    (error) => {
-                        console.log(error);
-                    }
-                );
-            },
-            () => {
-                // on dismiss
-            }
-        );
-    }
 
     ngOnInit() {
         console.log('Init Trainer List');
@@ -188,6 +163,7 @@ export class TrainerListComponent implements OnInit {
                 }
             );
         });
+    }
     /**
      * This method can be used to extract the content of a file as binary data.
      * I.e. <img src"..."> can display images given their binary representation.

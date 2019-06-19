@@ -124,40 +124,6 @@ public class Trainer extends User {
     }
 
 
-    public LocalDateTime getCreated() {
-        return created;
-    }
-
-
-    public void setCreated(LocalDateTime created) {
-        this.created = created;
-    }
-
-
-    public LocalDateTime getUpdated() {
-        return updated;
-    }
-
-
-    public void setUpdated(LocalDateTime updated) {
-        this.updated = updated;
-    }
-
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
-
-    @PreRemove
-    public void deleteUser() {
-        this.deleted = true;
-    }
 
 
     @Override
@@ -171,16 +137,14 @@ public class Trainer extends User {
                Objects.equals(events, trainer.events) &&
                Objects.equals(birthdayTypes, trainer.birthdayTypes) &&
                Objects.equals(holidays, trainer.holidays) &&
-               picture.equals(trainer.picture) &&
-               created.equals(trainer.created) &&
-               updated.equals(trainer.updated);
+               picture.equals(trainer.picture);
     }
 
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, birthday, phone, email, events, birthdayTypes,
-                            holidays, picture, created, updated, deleted
+        return Objects.hash(super.hashCode(), id, phone, events, birthdayTypes,
+                            holidays, picture
         );
     }
 
@@ -194,9 +158,6 @@ public class Trainer extends User {
                ", birthdayTypes=" + birthdayTypes +
                ", holidays=" + holidays +
                ", picture=" + picture +
-               ", created=" + created +
-               ", updated=" + updated +
-               ", deleted=" + deleted +
                '}';
     }
 }
