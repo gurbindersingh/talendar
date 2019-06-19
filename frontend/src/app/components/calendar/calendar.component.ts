@@ -16,6 +16,9 @@ import { MetaEvent } from './MetaEvent';
 import { Trainer } from 'src/app/models/trainer';
 import { TrainerClient } from 'src/app/rest/trainer-client';
 import { AuthenticationService } from 'src/app/services/authentication.service';
+import { UserDetails } from 'src/app/models/user-details';
+import { Authorities } from 'src/app/models/enum/authorities';
+import { SessionStorageService } from 'src/app/services/session-storage.service';
 
 /**
  * In order to display week days in German the locale data
@@ -106,6 +109,12 @@ export class CalendarComponent implements OnInit {
     trainerSelection: string;
     minAgeFilter: number;
     maxAgeFilter: number;
+    // decides whether we show all events or only the ones that a trainer hosts by himself
+    // only (for admin/trainer)
+    isPersonalView: boolean;
+
+    // status of user
+    userStatus: Authorities;
 
     constructor(
         private eventClient: EventClient,
@@ -114,7 +123,8 @@ export class CalendarComponent implements OnInit {
         private modalService: NgbModal,
         private router: Router,
         private dateService: ClickedDateService,
-        public authService: AuthenticationService
+        public authService: AuthenticationService,
+        private sessionService: SessionStorageService
     ) {
         if (screen.width < BREAKPOINTS.medium) {
             this.daysInWeek = 3;
@@ -124,22 +134,76 @@ export class CalendarComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.eventClient.getAllEvents().subscribe((data: Event[]) => {
+        // anyone who is not logged cannot see every event
+        if (this.authService.isLoggedIn === false) {
+            // set role (will affect filter options)
+            this.userStatus = Authorities.UNAUTHENTICATED;
+            this.eventTypeSelection = { name: 'Kurs', value: 'Course' };
+
+            this.eventClient
+                .getAllEvents_clientView()
+                .subscribe((data: Event[]) => {
+                    this.allEvents = this.eventImport.mapEventsToCalendar(data);
+                    this.filteredEvents = this.allEvents;
+                });
+        } else {
+            // if logged in, check role of user and show appropriate details (== extended view)
+            this.authService.getUserDetails().subscribe(
+                (auth: UserDetails) => {
+                    if (auth.roles.includes(Authorities.ADMIN)) {
+                        this.userStatus = Authorities.AUTHENTICATED;
+                        // admin start with 'all view' per default
+                        this.isPersonalView = false;
+
+                        this.eventClient
+                            .getAllEvents_adminView()
+                            .subscribe((data: Event[]) => {
+                                this.allEvents = this.eventImport.mapEventsToCalendar(
+                                    data
+                                );
+                                this.filteredEvents = this.allEvents;
+                            });
+                    } else if (auth.roles.includes(Authorities.TRAINER)) {
+                        this.userStatus = Authorities.AUTHENTICATED;
+                        // trainer start with 'personal events view' per default
+                        this.isPersonalView = true;
+                        const userID = this.sessionService.userId;
+
+                        this.eventClient
+                            .getAllEvents_trainerView(userID)
+                            .subscribe((data: Event[]) => {
+                                this.allEvents = this.eventImport.mapEventsToCalendar(
+                                    data
+                                );
+                                this.filteredEvents = this.allEvents;
+                            });
+                    }
+                },
+                (error: Error) => {
+                    console.log(error.message);
+                    this.authService.logout();
+                    this.router.navigateByUrl('/login');
+                }
+            );
+        }
+        /*         this.eventClient.getAllEvents().subscribe((data: Event[]) => {
             this.allEvents = this.eventImport.mapEventsToCalendar(data);
             this.filteredEvents = this.allEvents;
         });
 
-        this.trainerClient.getAll().subscribe((data: Trainer[]) => {
-            this.trainers = data;
+ */     this.trainerClient
+            .getAll()
+            .subscribe((data: Trainer[]) => {
+                this.trainers = data;
 
-            for (const trainer of this.trainers) {
-                const name = trainer.firstName + ' ' + trainer.lastName;
-                this.trainerList.push(name);
-            }
+                for (const trainer of this.trainers) {
+                    const name = trainer.firstName + ' ' + trainer.lastName;
+                    this.trainerList.push(name);
+                }
 
-            // explicit undefined value matches option 'reset' (if clicked selection is resetted)
-            this.trainerList.push(undefined);
-        });
+                // explicit undefined value matches option 'reset'
+                this.trainerList.push(undefined);
+            });
     }
 
     getEventModalEntries() {
@@ -152,6 +216,13 @@ export class CalendarComponent implements OnInit {
 
     showDetails(event: Event, detailsModal: any) {
         console.warn(event);
+
+        // a user only sees an event (like rent, birthday (of others))
+        // as reserved and will not be able to see further details
+        if (event.redacted === true) {
+            return;
+        }
+
         if (event.eventType !== 'Rent') {
             this.clickedEvent = event;
             this.modalService.open(detailsModal, { size: 'lg' });
@@ -201,6 +272,52 @@ export class CalendarComponent implements OnInit {
         this.daysInWeek = daysInWeek;
     }
 
+    /**
+     * For authenticated users: change view of all events between 'complete data for all events'
+     * and a view where complete data is only shown for events that are held by the currently
+     * logged in trainer/admin.
+     */
+    public changeView(): void {
+        console.log(this.isPersonalView);
+        this.authService.getUserDetails().subscribe(
+            (status: UserDetails) => {
+                if (
+                    status.roles.includes(Authorities.ADMIN) ||
+                    status.roles.includes(Authorities.TRAINER)
+                ) {
+                    if (!this.isPersonalView) {
+                        this.eventClient
+                            .getAllEvents_adminView()
+                            .subscribe((data: Event[]) => {
+                                this.allEvents = this.eventImport.mapEventsToCalendar(
+                                    data
+                                );
+                                this.filteredEvents = this.allEvents;
+                            });
+                    } else {
+                        const userID = this.sessionService.userId;
+                        this.eventClient
+                            .getAllEvents_trainerView(userID)
+                            .subscribe((data: Event[]) => {
+                                this.allEvents = this.eventImport.mapEventsToCalendar(
+                                    data
+                                );
+                                this.filteredEvents = this.allEvents;
+                            });
+                    }
+                }
+            },
+            (error: Error) => {
+                console.log(error.message);
+                this.authService.logout();
+                this.router.navigateByUrl('/login');
+            }
+        );
+    }
+
+    /**
+     * Reset the list of all events and then apply each filter that has been specified.
+     */
     public updateView(): void {
         this.filteredEvents = this.allEvents;
 
@@ -223,7 +340,6 @@ export class CalendarComponent implements OnInit {
 
             // check if given filters satisfy given event properties
             // iff filter doesnt match (ret false) remove this elem from array
-
             if (hasRoomFilter) {
                 if (
                     this.roomSelection.value !==
@@ -231,6 +347,16 @@ export class CalendarComponent implements OnInit {
                 ) {
                     return false;
                 }
+            }
+
+            /**
+             * Now check if this event is marked as reserved
+             * If yes, then we can not expect that any data except room and time
+             * are set.
+             * I.e. Stop filtering!
+             */
+            if (event.redacted) {
+                return true;
             }
 
             // this filter is not apllicable to events of type 'rent'
