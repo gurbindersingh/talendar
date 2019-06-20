@@ -8,9 +8,11 @@ import {
     NgbDateNativeAdapter,
     NgbDateStruct,
     NgbDate,
+    NgbModal,
 } from '@ng-bootstrap/ng-bootstrap';
 
 import { ImageClient } from 'src/app/rest/image-client';
+import * as Croppie from 'croppie';
 
 @Component({
     selector: 'app-trainer',
@@ -50,12 +52,15 @@ export class TrainerComponent implements OnInit {
     private formData: FormData = null;
     private image: File;
 
+    private croppie: Croppie;
+
     constructor(
         private trainerClient: TrainerClient,
         private imageClient: ImageClient,
         private route: ActivatedRoute,
         private location: Location,
-        private adapter: NgbDateNativeAdapter
+        private adapter: NgbDateNativeAdapter,
+        private modalService: NgbModal
     ) {}
 
     getBirthdayColumn1Keys() {
@@ -106,6 +111,7 @@ export class TrainerComponent implements OnInit {
     ngOnInit() {
         // check whether this site was loaded with a query param (edit) else
         // we are in save mode
+
         const id: number = this.route.snapshot.queryParams.id;
         this.pwPlaceholder = 'Neues Passwort';
         this.pwRepeatPlaceholder = 'Passwort wiederholen';
@@ -251,20 +257,48 @@ export class TrainerComponent implements OnInit {
         return true;
     }
 
-    public onFileSelected(event: any): void {
+    public onFileSelected(event: any, croppieModal: any): void {
         const selected: File = event.target.files[0];
 
         // when the file selection menu is closed without selection of file
         if (selected == null) {
             return;
-        } else {
-            this.formData = new FormData();
-            this.image = selected;
         }
+        this.image = selected;
 
         this.extractBinaryDataFromFile(this.image);
 
-        this.formData.append('file', this.image);
+        this.modalService.open(croppieModal);
+
+        setTimeout(() => {
+            const img = document.getElementById('profilePicture');
+            // console.warn(img);
+            this.croppie = new Croppie(img as HTMLImageElement, {
+                viewport: { width: 200, height: 200 },
+                boundary: { width: 250, height: 250 },
+                showZoomer: true,
+            });
+        }, 100);
+    }
+
+    public saveCropped() {
+        // this.croppie
+        this.croppie
+            .result({ type: 'blob', quality: 1, format: 'jpeg' })
+            .then((image: Blob) => {
+                console.warn('saving image');
+
+                this.image = image as File;
+
+                this.formData = new FormData();
+                this.formData.append('file', this.image);
+            })
+            .catch((error) => {
+                console.log(error);
+                this.errorMsg =
+                    'Das Bild konnte leider nicht gespeichert werden. ' +
+                    'Bitte versuchen Sie es erneut.';
+            });
     }
 
     public clearInfoMsg(): void {

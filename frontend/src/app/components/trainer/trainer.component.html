@@ -184,6 +184,19 @@
 
                 <div class="form-row align-items-center" id="row5">
                     <div class="col-lg-2"></div>
+
+                    <div class="col-4">
+                        <label class="custom-file-label" for="fileUpload"
+                            >Foto</label
+                        >
+                        <input
+                            type="file"
+                            class="custom-file-input"
+                            id="fileUpload"
+                            (change)="onFileSelected($event, croppieModal)"
+                        />
+                    </div>
+
                     <div class="col-4">
                         <div
                             *ngIf="binaryEncodedImage != null"
@@ -192,7 +205,7 @@
                             <img
                                 [src]="binaryEncodedImage | safeServerImage"
                                 class="img-thumbnail"
-                                id="profilePicture"
+                                id="cropped-picture"
                             />
                         </div>
                         <div *ngIf="binaryEncodedImage == null">
@@ -200,17 +213,6 @@
                         </div>
                     </div>
 
-                    <div class="col-4">
-                        <label class="custom-file-label" for="fileUpload"
-                            >Foto</label
-                        >
-                        <input
-                            type="file"
-                            class="custom-file-input align-self-middle"
-                            id="fileUpload"
-                            (change)="onFileSelected($event)"
-                        />
-                    </div>
                     <div class="col-lg-2"></div>
                 </div>
 
@@ -255,3 +257,22 @@
         <div class="col-lg-3"></div>
     </div>
 </div>
+
+<ng-template #croppieModal let-modal>
+    <div class="modal-body">
+        <img
+            [src]="binaryEncodedImage | safeServerImage"
+            class="img-thumbnail"
+            id="profilePicture"
+        />
+    </div>
+    <div class="modal-footer">
+        <button
+            type="button"
+            class="btn btn-primary"
+            (click)="modal.close(); saveCropped()"
+        >
+            Speichern
+        </button>
+    </div>
+</ng-template>
