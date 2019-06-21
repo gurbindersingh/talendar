@@ -148,7 +148,7 @@ export class TrainerListComponent implements OnInit {
         this.updateListPage();
     }
 
-    open(trainer: Trainer) {
+    open(trainer: Trainer, index: number) {
         const modalRef = this.modalService.open(NgbdModalConfirm);
         modalRef.componentInstance.trainer = trainer;
         modalRef.result.then(() => {
@@ -157,6 +157,7 @@ export class TrainerListComponent implements OnInit {
             this.trainerClient.deleteTrainer(trainer.id).subscribe(
                 () => {
                     this.ngOnInit();
+                    this.binaryEncodedImages[index] = null;
                 },
                 (error) => {
                     console.log(error);

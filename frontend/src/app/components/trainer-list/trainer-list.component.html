@@ -55,7 +55,13 @@
                     class="img-fluid"
                 />
             </div>
-            <div *ngIf="binaryEncodedImages[i] == null" class="mx-auto d-block">
+            <div
+                *ngIf="
+                    binaryEncodedImages[i + (currentPage - 1) * itemsPerPage] ==
+                    null
+                "
+                class="mx-auto d-block"
+            >
                 <i class="fas fa-user-alt fa-7x"></i>
             </div>
         </div>
@@ -91,7 +97,13 @@
                 </button>
             </div>
             <div class="mb-1 mt-1">
-                <button type="button" class="btn" (click)="open(trainer)">
+                <button
+                    type="button"
+                    class="btn"
+                    (click)="
+                        open(trainer, i + (currentPage - 1) * itemsPerPage)
+                    "
+                >
                     <i class="fas fa-trash fa-2x"></i>
                 </button>
             </div>
