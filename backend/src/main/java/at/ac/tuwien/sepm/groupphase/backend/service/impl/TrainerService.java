@@ -230,7 +230,7 @@ public class TrainerService implements ITrainerService {
         LOGGER.info("Try to retrieve a list of all trainers");
 
         try {
-            return trainerRepository.findAll();
+            return trainerRepository.findByDeletedFalse();
         }
         catch(DataAccessException e) {
             throw new ServiceException("Error while performing a data access operation", e);
