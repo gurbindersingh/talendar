@@ -209,6 +209,7 @@ public class SecurityConfiguration {
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1/talendar/authentication").permitAll()
                 // now disable a couple of manipulating ops for normal users
+                .antMatchers(HttpMethod.POST, "/api/v1/talendar/upload/image/trainer").hasAnyRole("ADMIN", "TRAINER")
                 .antMatchers(HttpMethod.POST, "/api/v1/talendar/events/course").hasAnyRole("ADMIN", "TRAINER")
                 .antMatchers(HttpMethod.POST, "/api/v1/talendar/events/consultation").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1/talendar/events/rent").permitAll()

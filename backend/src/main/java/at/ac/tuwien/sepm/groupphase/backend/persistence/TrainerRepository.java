@@ -29,5 +29,7 @@ public interface TrainerRepository extends JpaRepository<Trainer, Long> {
 
     List<Trainer> findAll();
 
+    List<Trainer> findByDeletedFalse();
+
     Trainer findByEmail(String email);
 }

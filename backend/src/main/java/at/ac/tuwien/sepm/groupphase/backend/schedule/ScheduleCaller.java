@@ -15,13 +15,16 @@ public class ScheduleCaller {
     private ParticipantsList participantsList;
     private RedactInactiveUsers redactInactiveUsers;
     private RedactInactiveTrainers redactInactiveTrainers;
+    private GarbageImageCollector garbageImageCollector;
 
     public ScheduleCaller (ParticipantsList participantsList,
                            RedactInactiveUsers redactInactiveUsers,
-                           RedactInactiveTrainers redactInactiveTrainers){
+                           RedactInactiveTrainers redactInactiveTrainers,
+                           GarbageImageCollector garbageImageCollector){
         this.participantsList = participantsList;
         this.redactInactiveUsers = redactInactiveUsers;
         this.redactInactiveTrainers = redactInactiveTrainers;
+        this.garbageImageCollector = garbageImageCollector;
     }
 
 
@@ -42,5 +45,7 @@ public class ScheduleCaller {
     @Scheduled(cron = "0 0 0 1 * ?")
     public void callMonthly() throws BackendException {
         redactInactiveTrainers.redact();
+        // sometimes files can not be deleted on the fly, therfore garbage collect later
+        garbageImageCollector.deleteLegacyProfilePictures();
     }
 }
