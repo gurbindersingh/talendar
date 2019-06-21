@@ -15,6 +15,7 @@ import {
     NgbDateStruct,
     NgbTimeStruct,
 } from '@ng-bootstrap/ng-bootstrap';
+import { ClickedDateService } from 'src/app/services/clicked-date.service';
 
 @Component({
     selector: 'app-consultation',
@@ -45,8 +46,18 @@ export class ConsultationComponent implements OnInit {
     constructor(
         private trainerClient: TrainerClient,
         private eventClient: EventClient,
-        private parserFormatter: NgbDateParserFormatter
-    ) {}
+        private parserFormatter: NgbDateParserFormatter,
+        private clickedDateService: ClickedDateService
+    ) {
+        const date = this.clickedDateService.getDate();
+        const time = this.clickedDateService.getTime();
+
+        this.startTime = this.clickedDateService.getTime();
+        this.endTime = { hour: this.startTime.hour + 1, minute: 0, second: 0 };
+
+        this.startDate = this.clickedDateService.getDate();
+        this.endDate = this.clickedDateService.getDate();
+    }
 
     ngOnInit() {
         console.log('Init Trainer List');
