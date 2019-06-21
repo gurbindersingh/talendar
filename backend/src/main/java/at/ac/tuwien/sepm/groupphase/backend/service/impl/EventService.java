@@ -1,7 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.*;
-import at.ac.tuwien.sepm.groupphase.backend.enums.BirthdayType;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.enums.Room;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
@@ -11,7 +10,6 @@ import at.ac.tuwien.sepm.groupphase.backend.persistence.EventRepository;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.HolidayRepository;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.RoomUseRepository;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
-import at.ac.tuwien.sepm.groupphase.backend.rest.dto.CustomerDto;
 import at.ac.tuwien.sepm.groupphase.backend.service.IEventService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.CancelationException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
@@ -19,12 +17,9 @@ import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.Validator;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidEntityException;
-import org.apache.tomcat.jni.Local;
-import org.aspectj.weaver.ast.Not;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
 
 import org.slf4j.Logger;
@@ -36,9 +31,6 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.sql.rowset.serial.SerialException;
-import javax.validation.Valid;
-import javax.validation.Validation;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDateTime;
@@ -714,6 +706,38 @@ public class EventService implements IEventService {
         }
     }
 
+    @Override
+    public List<Event> getClientView(List<Event> events) {
+        events.forEach((Event event) -> {
+            // for rents, consultations and birthdays we remove linked data and mark is as reserved
+            if (event.getEventType() != EventType.Course) {
+                event.setRedacted(true);
+                event.setId(-1l);
+                event.setEventType(null);
+                event.setBirthdayType(null);
+                event.setCustomers(null);
+                event.setDescription("");
+                event.setName("Reserviert");
+                event.setTrainer(null);
+                event.setMaxAge(null);
+                event.setPrice(null);
+            }
+        });
+        return events;
+    }
+
+    @Override
+    public List<Event> getTrainerView(List<Event> events, Long id) {
+        events.forEach((Event event) -> {
+            // any rent (not hosted by any trainer) and any event that is not hosted by the given
+            // give meta information that this event may is displayed different
+            if (event.getEventType() == EventType.Rent || event.getTrainer().getId() != id) {
+                event.setHide(true);
+                event.setName("Reserviert");
+            }
+        });
+        return events;
+    }
 
     @Transactional
     @Override

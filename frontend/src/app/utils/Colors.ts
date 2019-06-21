@@ -22,3 +22,8 @@ export const Rent = {
     primary: '#A997DF',
     secondary: '#A997DF',
 };
+
+export const Reserved = {
+    primary: '#404040',
+    secondary: '#7a7a7a',
+};

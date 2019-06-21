@@ -199,6 +199,12 @@ public class SecurityConfiguration {
                 .antMatchers(HttpMethod.DELETE, "/**").hasRole("ADMIN")
                 // dsgvo information endpoint
                 .antMatchers(HttpMethod.GET, "/api/v1/talendar/info/**").hasRole("ADMIN")
+                // restricted view taht display any event only for admins
+                .antMatchers(HttpMethod.GET, "/api/v1/talendar/events/all/admin").hasAnyRole("ADMIN", "TRAINER")
+                .antMatchers(HttpMethod.GET, "/api/v1/talendar/events/all/trainer/**").hasRole("TRAINER")
+                // allowed by default anyway, but to make it more obvious, the view of events
+                // that can be seen by clients is explicitely permitted
+                .antMatchers(HttpMethod.GET, "/api/v1/talendar/events/all/client").permitAll()
                 // next two has to be allowed in order to have a free accessible authentication endpoint
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1/talendar/authentication").permitAll()
