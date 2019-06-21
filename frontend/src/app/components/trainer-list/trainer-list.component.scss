@@ -9,27 +9,33 @@
     flex-grow: 1;
 }
 
+#card {
+    height: 184px;
+}
+
 #cardBody {
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
 }
 
 #cardLeft {
-    width: 20%;
+    height: 100%;
+    width: 184px;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 0;
 }
 
 #cardMiddle {
-    width: calc(100% - 20% - 100px);
+    width: calc(100% - 184px - 95px);
 }
 
 #cardRight {
-    width: 100px;
+    width: 95px;
 }
 
 #profilePicContainer {
-    width: 150px;
-    height: 150px;
+    width: 182px;
+    height: 182px;
 }

@@ -14,4 +14,5 @@ export class Trainer {
     public created: Date;
     public updated: Date;
     public events: Event;
+    public deleted: boolean;
 }

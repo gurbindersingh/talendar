@@ -7,6 +7,7 @@ import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
+import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.FileDeletionException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.Validator;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,6 +34,7 @@ public class TrainerService implements ITrainerService {
 
     private final TrainerRepository trainerRepository;
     private final EventService eventService;
+    private final ImageService imageService;
     private final Validator validator;
     private final InfoMail infoMail;
 
@@ -41,11 +44,12 @@ public class TrainerService implements ITrainerService {
 
     @Autowired
     public TrainerService(TrainerRepository trainerRepository, Validator validator,
-                          EventService eventService, InfoMail infoMail, PasswordEncoder passwordEncoder,
+                          EventService eventService, ImageService imageService, InfoMail infoMail, PasswordEncoder passwordEncoder,
                           UserAccountConfigurationProperties userAccountConfigurationProperties
     ) {
         this.trainerRepository = trainerRepository;
         this.eventService = eventService;
+        this.imageService = imageService;
         this.validator = validator;
         this.infoMail = infoMail;
         this.passwordEncoder = passwordEncoder;
@@ -122,6 +126,17 @@ public class TrainerService implements ITrainerService {
                     "Trainer with id " + trainer.getId() + " does not exist. Update not possible");
             }
 
+            // if new Picture differs from existent, delete the old old picture
+            if (currentVersion.getPicture() != null && !currentVersion.getPicture().equals(trainer.getPicture())) {
+                try {
+                    imageService.delete(currentVersion.getPicture());
+                }
+                catch(FileDeletionException e) {
+                    // not a critical error but should be logged
+                    LOGGER.warn(e.getMessage(), e);
+                }
+            }
+
             // merge the new values from trainer (as received from frontend) to the stored entity (which is managed by JPA)
             return mergeTrainers(currentVersion, trainer);
         }
@@ -160,6 +175,18 @@ public class TrainerService implements ITrainerService {
                     eventService.deleteEvent(e.getId());
                 }
             }
+
+            // clean up and remove image of this trainer
+            if (currentVersion.getPicture() != null) {
+                try {
+                    imageService.delete(currentVersion.getPicture());
+                    currentVersion.setPicture(null);
+                }
+                catch(FileDeletionException e) {
+                    LOGGER.warn(e.getMessage(), e);
+                }
+            }
+
             trainerRepository.deleteThisTrainer(currentVersion.getId(), timeOfUpdate);
             try {
                 infoMail.sendAdminTrainerInfoMail(currentVersion, "Trainer gelöscht",
@@ -229,6 +256,7 @@ public class TrainerService implements ITrainerService {
         persisted.setEmail(newVersion.getEmail());
         persisted.setPhone(newVersion.getPhone());
         persisted.setUpdated(newVersion.getUpdated());
+        persisted.setPicture(newVersion.getPicture());
         if (!persisted.getPassword().equals(newVersion.getPassword())) {
             persisted.setPassword(passwordEncoder.encode(newVersion.getPassword()));
         }

@@ -28,6 +28,7 @@ export class TrainerComponent implements OnInit {
     password: string;
     passwordRepeated: string;
     binaryEncodedImage: any = null;
+    binaryEncodedCroppedImage: any = null;
 
     btnContextDescription: string;
     pwPlaceholder: string;
@@ -140,7 +141,6 @@ export class TrainerComponent implements OnInit {
                     this.fillCheckboxes(data.birthdayTypes);
 
                     this.trainer = data;
-
                     // load profile pic if picture (name of it) is associated with trainer
                     if (this.trainer.picture != null) {
                         this.imageClient
@@ -149,7 +149,7 @@ export class TrainerComponent implements OnInit {
                                 // received data are octet stream (pure 'raw' binary data)
                                 (bytes: any) => {
                                     const blob = new Blob([bytes]);
-                                    this.extractBinaryDataFromFile(blob);
+                                    this.extractBinaryDataFromFile(blob, true);
                                 },
                                 (error) => {
                                     // manual parsing required because (returntype is not json)
@@ -266,13 +266,12 @@ export class TrainerComponent implements OnInit {
         }
         this.image = selected;
 
-        this.extractBinaryDataFromFile(this.image);
+        this.extractBinaryDataFromFile(this.image, false);
 
         this.modalService.open(croppieModal);
 
         setTimeout(() => {
             const img = document.getElementById('profilePicture');
-            // console.warn(img);
             this.croppie = new Croppie(img as HTMLImageElement, {
                 viewport: { width: 200, height: 200 },
                 boundary: { width: 250, height: 250 },
@@ -283,13 +282,12 @@ export class TrainerComponent implements OnInit {
 
     public saveCropped() {
         // this.croppie
+        this.croppie.bind({ url: '' });
         this.croppie
-            .result({ type: 'blob', quality: 1, format: 'jpeg' })
+            .result({ type: 'blob', quality: 1, format: 'png' })
             .then((image: Blob) => {
-                console.warn('saving image');
-
                 this.image = image as File;
-
+                this.extractBinaryDataFromFile(image, true);
                 this.formData = new FormData();
                 this.formData.append('file', this.image);
             })
@@ -371,11 +369,18 @@ export class TrainerComponent implements OnInit {
      * @param file the wrapper of the content. 'File' can be also used as param as
      *             it extends Blob!
      */
-    private extractBinaryDataFromFile(file: Blob): void {
+    private extractBinaryDataFromFile(
+        file: Blob,
+        setCropperContainer: boolean
+    ): void {
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onloadend = () => {
-            this.binaryEncodedImage = reader.result;
+            if (setCropperContainer) {
+                this.binaryEncodedCroppedImage = reader.result;
+            } else {
+                this.binaryEncodedImage = reader.result;
+            }
         };
     }
 
