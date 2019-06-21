@@ -12,6 +12,9 @@ import {
 } from '@ng-bootstrap/ng-bootstrap';
 import { NgbDateParserFormatterImplementation } from 'src/app/services/parserformatter.service';
 import { NgbDateParserFormatterImplementationUser } from 'src/app/services/parserformatterUser.service';
+import { DateTimeParserService } from 'src/app/services/date-time-parser.service';
+import { ClickedDateService } from 'src/app/services/clicked-date.service';
+
 @Component({
     selector: 'app-birthday',
     templateUrl: './birthday.component.html',
@@ -58,7 +61,16 @@ export class BirthdayComponent implements OnInit {
     startTime: NgbTimeStruct = { hour: 13, minute: 30, second: 0 };
     private parserFormatter = new NgbDateParserFormatterImplementation();
 
-    constructor(private eventClient: EventClient) {}
+    constructor(
+        private eventClient: EventClient,
+        private clickedDateService: ClickedDateService
+    ) {
+        const date = this.clickedDateService.getDate();
+        const time = this.clickedDateService.getTime();
+
+        this.startTime = this.clickedDateService.getTime();
+        this.startDate = this.clickedDateService.getDate();
+    }
 
     ngOnInit() {
         this.loading = false;
