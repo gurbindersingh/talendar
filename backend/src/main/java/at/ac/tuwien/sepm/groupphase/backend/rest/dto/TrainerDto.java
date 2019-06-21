@@ -25,7 +25,6 @@ public class TrainerDto {
     private String picture;
     private LocalDateTime created;
     private LocalDateTime updated;
-    // this property is not reflected by the trainer entity (at least not in the current version 04-06-2019)
     private String password;
     private Boolean deleted;
 

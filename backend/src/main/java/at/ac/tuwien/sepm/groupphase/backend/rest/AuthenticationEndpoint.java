@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest;
 
+
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.authentication.AuthenticationRequest;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.authentication.AuthenticationToken;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.authentication.AuthenticationTokenInfo;

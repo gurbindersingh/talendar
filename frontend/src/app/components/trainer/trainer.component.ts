@@ -8,9 +8,11 @@ import {
     NgbDateNativeAdapter,
     NgbDateStruct,
     NgbDate,
+    NgbModal,
 } from '@ng-bootstrap/ng-bootstrap';
 
 import { ImageClient } from 'src/app/rest/image-client';
+import * as Croppie from 'croppie';
 
 @Component({
     selector: 'app-trainer',
@@ -26,10 +28,14 @@ export class TrainerComponent implements OnInit {
     password: string;
     passwordRepeated: string;
     binaryEncodedImage: any = null;
+    binaryEncodedCroppedImage: any = null;
 
     btnContextDescription: string;
+    pwPlaceholder: string;
+    pwRepeatPlaceholder: string;
     errorMsg: string;
     successMsg: string;
+
     birthdayOptionsColumn1: any = {
         Trockeneis: { selected: false, value: 'DryIce' },
         Raketen: { selected: false, value: 'Rocket' },
@@ -47,12 +53,15 @@ export class TrainerComponent implements OnInit {
     private formData: FormData = null;
     private image: File;
 
+    private croppie: Croppie;
+
     constructor(
         private trainerClient: TrainerClient,
         private imageClient: ImageClient,
         private route: ActivatedRoute,
         private location: Location,
-        private adapter: NgbDateNativeAdapter
+        private adapter: NgbDateNativeAdapter,
+        private modalService: NgbModal
     ) {}
 
     getBirthdayColumn1Keys() {
@@ -103,7 +112,10 @@ export class TrainerComponent implements OnInit {
     ngOnInit() {
         // check whether this site was loaded with a query param (edit) else
         // we are in save mode
+
         const id: number = this.route.snapshot.queryParams.id;
+        this.pwPlaceholder = 'Neues Passwort';
+        this.pwRepeatPlaceholder = 'Passwort wiederholen';
 
         if (id === undefined) {
             this.title = 'Trainer erstellen';
@@ -112,6 +124,7 @@ export class TrainerComponent implements OnInit {
         } else {
             this.title = 'Trainer Bearbeiten';
             this.btnContextDescription = 'Änderungen speichern';
+            this.pwPlaceholder += ' (Optional)';
             this.isSaveMode = false;
             this.trainerClient.getById(id).subscribe(
                 (data: Trainer) => {
@@ -128,7 +141,6 @@ export class TrainerComponent implements OnInit {
                     this.fillCheckboxes(data.birthdayTypes);
 
                     this.trainer = data;
-
                     // load profile pic if picture (name of it) is associated with trainer
                     if (this.trainer.picture != null) {
                         this.imageClient
@@ -137,7 +149,7 @@ export class TrainerComponent implements OnInit {
                                 // received data are octet stream (pure 'raw' binary data)
                                 (bytes: any) => {
                                     const blob = new Blob([bytes]);
-                                    this.extractBinaryDataFromFile(blob);
+                                    this.extractBinaryDataFromFile(blob, true);
                                 },
                                 (error) => {
                                     // manual parsing required because (returntype is not json)
@@ -177,7 +189,9 @@ export class TrainerComponent implements OnInit {
 
         if (this.password !== this.passwordRepeated) {
             return;
-        } else {
+        }
+
+        if (this.password !== undefined && this.password !== '') {
             this.trainer.password = this.password;
         }
 
@@ -222,35 +236,67 @@ export class TrainerComponent implements OnInit {
         if (this.trainer.phone === undefined || this.trainer.phone === '') {
             return false;
         }
-        if (this.password === undefined || this.password === '') {
-            return false;
-        }
-        if (
-            this.passwordRepeated === undefined ||
-            this.passwordRepeated === ''
-        ) {
-            return false;
-        }
+        // whenever password fields are not equals disable submit
         if (this.password !== this.passwordRepeated) {
             return false;
         }
+        // in save mode pw has to be specified, in edit mode it may be unspecified (== no changes)
+        if (this.isSaveMode) {
+            if (this.password === undefined || this.password === '') {
+                return false;
+            }
+            if (
+                this.passwordRepeated === undefined ||
+                this.passwordRepeated === ''
+            ) {
+                return false;
+            }
+        }
+
+        // todo add check for password as soon as there is a mechanism that supports passwords
         return true;
     }
 
-    public onFileSelected(event: any): void {
+    public onFileSelected(event: any, croppieModal: any): void {
         const selected: File = event.target.files[0];
 
         // when the file selection menu is closed without selection of file
         if (selected == null) {
             return;
-        } else {
-            this.formData = new FormData();
-            this.image = selected;
         }
+        this.image = selected;
 
-        this.extractBinaryDataFromFile(this.image);
+        this.extractBinaryDataFromFile(this.image, false);
 
-        this.formData.append('file', this.image);
+        this.modalService.open(croppieModal);
+
+        setTimeout(() => {
+            const img = document.getElementById('profilePicture');
+            this.croppie = new Croppie(img as HTMLImageElement, {
+                viewport: { width: 200, height: 200 },
+                boundary: { width: 250, height: 250 },
+                showZoomer: true,
+            });
+        }, 100);
+    }
+
+    public saveCropped() {
+        // this.croppie
+        this.croppie.bind({ url: '' });
+        this.croppie
+            .result({ type: 'blob', quality: 1, format: 'png' })
+            .then((image: Blob) => {
+                this.image = image as File;
+                this.extractBinaryDataFromFile(image, true);
+                this.formData = new FormData();
+                this.formData.append('file', this.image);
+            })
+            .catch((error) => {
+                console.log(error);
+                this.errorMsg =
+                    'Das Bild konnte leider nicht gespeichert werden. ' +
+                    'Bitte versuchen Sie es erneut.';
+            });
     }
 
     public clearInfoMsg(): void {
@@ -283,7 +329,7 @@ export class TrainerComponent implements OnInit {
                 }
             );
         } else {
-            this.trainerClient.update(this.trainer).subscribe(
+            this.trainerClient.update(this.trainer, this.password).subscribe(
                 (data: Trainer) => {
                     console.log(data);
                     this.successMsg =
@@ -323,11 +369,18 @@ export class TrainerComponent implements OnInit {
      * @param file the wrapper of the content. 'File' can be also used as param as
      *             it extends Blob!
      */
-    private extractBinaryDataFromFile(file: Blob): void {
+    private extractBinaryDataFromFile(
+        file: Blob,
+        setCropperContainer: boolean
+    ): void {
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onloadend = () => {
-            this.binaryEncodedImage = reader.result;
+            if (setCropperContainer) {
+                this.binaryEncodedCroppedImage = reader.result;
+            } else {
+                this.binaryEncodedImage = reader.result;
+            }
         };
     }
 

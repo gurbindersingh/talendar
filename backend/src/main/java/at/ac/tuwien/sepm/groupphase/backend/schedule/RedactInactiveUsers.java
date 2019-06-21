@@ -5,6 +5,9 @@ import at.ac.tuwien.sepm.groupphase.backend.exceptions.BackendException;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.CustomerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.rest.EventEndpoint;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.EventDto;
+import at.ac.tuwien.sepm.groupphase.backend.service.IEventService;
+import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
+import at.ac.tuwien.sepm.groupphase.backend.util.mapper.EventMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class RedactInactiveUsers {
@@ -22,12 +26,14 @@ public class RedactInactiveUsers {
     private static final Logger LOGGER = LoggerFactory.getLogger(RedactInactiveUsers.class);
 
     private final CustomerRepository customerRepository;
-    private final EventEndpoint eventEndpoint;
+    private final IEventService eventServcie;
+    private final EventMapper eventMapper;
 
     @Autowired
-    public RedactInactiveUsers (CustomerRepository customerRepository, EventEndpoint eventEndpoint) {
+    public RedactInactiveUsers (CustomerRepository customerRepository, IEventService eventServcie, EventMapper eventMapper) {
         this.customerRepository = customerRepository;
-        this.eventEndpoint = eventEndpoint;
+        this.eventServcie = eventServcie;
+        this.eventMapper = eventMapper;
     }
 
 
@@ -37,8 +43,16 @@ public class RedactInactiveUsers {
     public void redact() throws BackendException {
         LOGGER.info("Initiated redaction of inactive customers...");
         List<Customer> customers = customerRepository.findAll();
-        List<EventDto> events = eventEndpoint.getAllEvents();
         List<EventDto> eventsNotOlderThan6Months = new LinkedList<>();
+        List<EventDto> events = null;
+        try {
+            events = eventServcie.getAllEvents().stream().map(eventMapper::entityToEventDto).collect(
+                Collectors.toList());
+        }
+        catch(ServiceException e) {
+            LOGGER.error("Error occurred while retrieving list of all events for attempt to prepare redaction of inactive customers", e);
+            throw new BackendException(e.getMessage(), e);
+        }
 
         LOGGER.info("Creating list of events not older than 6 months.");
         for(int i = 0; i < events.size(); i++){

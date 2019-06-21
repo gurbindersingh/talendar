@@ -20,8 +20,7 @@ import java.util.LinkedList;
  * Therefore Spring will automatically map such an thrown exception to an appropriate HTTP response
  * status (i.e. the status which was specified in annotation)
  */
-
-
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/v1/talendar/holidays")
 public class HolidaysEndpoint {
@@ -37,7 +36,7 @@ public class HolidaysEndpoint {
         this.mapper = mapper;
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
+
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public LinkedList<HolidayDto> createNewHolidays(@RequestBody HolidaysDto holidaysDto) throws Exception {

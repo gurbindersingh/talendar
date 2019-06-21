@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
+import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.FileDeletionException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,4 +30,12 @@ public interface IImageService {
      * @throws FileNotFoundException will be thrown if no file exists that has the same filename as requested
      */
     InputStream get(String filename) throws ServiceException, FileNotFoundException;
+
+    /**
+     * Deletes the given file.
+     * @param fileName file to be deleted
+     * @throws FileDeletionException will be thrown if something went wrong during deleting the specified
+     *                          file (e.g, delete not permitted, IO error)
+     */
+    void delete(String fileName) throws FileDeletionException;
 }
