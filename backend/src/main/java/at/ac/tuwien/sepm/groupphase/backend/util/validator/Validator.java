@@ -490,7 +490,7 @@ public class Validator {
         }
 
         if (!file.exists()) {
-            throw new FileNotFoundException("there is no file that can be referred to by the given filename");
+            throw new FileNotFoundException("there is no file that can be referred to by the given filename: " + fileName);
         }
 
         if (file.isDirectory()) {
