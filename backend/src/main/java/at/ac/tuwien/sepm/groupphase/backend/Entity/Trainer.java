@@ -29,6 +29,8 @@ public class Trainer extends User {
     @OneToMany(mappedBy = "trainer",
                cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private List<Holiday> holidays;
+    // the location where the profile picture of this trainer is stored
+    private String picture;
 
 
 
@@ -47,6 +49,7 @@ public class Trainer extends User {
                    @NotBlank String password,
                    List<Event> events,
                    List<Holiday> holidays,
+                   String picture,
                    @NotNull List<String> birthdayTypes,
                    @NotNull @Past LocalDateTime created,
                    @NotNull @Past LocalDateTime updated
@@ -56,6 +59,7 @@ public class Trainer extends User {
         this.phone = phone;
         this.events = events;
         this.holidays = holidays;
+        this.picture = picture;
         this.birthdayTypes = birthdayTypes;
     }
 
@@ -110,6 +114,18 @@ public class Trainer extends User {
     }
 
 
+    public String getPicture() {
+        return picture;
+    }
+
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+
+
+
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;
@@ -120,13 +136,16 @@ public class Trainer extends User {
             Objects.equals(phone, trainer.phone) &&
                Objects.equals(events, trainer.events) &&
                Objects.equals(birthdayTypes, trainer.birthdayTypes) &&
-               Objects.equals(holidays, trainer.holidays);
+               Objects.equals(holidays, trainer.holidays) &&
+               picture.equals(trainer.picture);
     }
 
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(),id, phone, events, birthdayTypes, holidays);
+        return Objects.hash(super.hashCode(), id, phone, events, birthdayTypes,
+                            holidays, picture
+        );
     }
 
 
@@ -138,6 +157,7 @@ public class Trainer extends User {
                ", events=" + events +
                ", birthdayTypes=" + birthdayTypes +
                ", holidays=" + holidays +
+               ", picture=" + picture +
                '}';
     }
 }

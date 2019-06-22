@@ -40,6 +40,8 @@ import { TrainerGuard } from './guards/trainer-guard';
 import { AuthenticatedGuard } from './guards/authenticated-guard';
 import { InfoComponent } from './components/info/info.component';
 import { InfoClient } from './rest/info-client';
+import { ImageClient } from './rest/image-client';
+import { SafeServerImagePipe } from './pipes/safe-server-image-pipe';
 
 @NgModule({
     declarations: [
@@ -59,6 +61,7 @@ import { InfoClient } from './rest/info-client';
         NgbdModalConfirm,
         LoginComponent,
         InfoComponent,
+        SafeServerImagePipe,
     ],
     imports: [
         AppRoutingModule,
@@ -86,6 +89,7 @@ import { InfoClient } from './rest/info-client';
         TrainerGuard,
         AuthenticatedGuard,
         InfoClient,
+        ImageClient,
     ],
     bootstrap: [AppComponent],
     entryComponents: [NgbdModalConfirm],

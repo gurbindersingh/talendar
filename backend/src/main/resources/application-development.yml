@@ -17,6 +17,12 @@ application:
       birthday: 1980-01-01
       phone: 1234567
 
+storage:
+  location:
+    images:
+      base: /resources/img/
+      profile: profile/
+      defaultImg: default
 
 spring:
   jpa:

@@ -15,6 +15,23 @@ public interface IEventService {
 
     List<Event> getAllEvents() throws ServiceException;
 
+    /**
+     * Prepare the given list of all events for clients by removing any sensitive data that should not
+     * be publicly available.
+     * @param events list of all events
+     * @return the same list of events is returned but the internals of some events are reset
+     */
+    List<Event> getClientView(List<Event> events);
+
+    /***
+     * Mark all events that are not held by the given trainer as hidden and reset the name of the
+     * events.
+     * @param events list of all events
+     * @param id the id of the trainer
+     * @return a complete list of all events that are hosted by a trainer with the given id.
+     *         all other events remain too but are marked as hidden/subordinate.
+     */
+    List<Event> getTrainerView(List<Event> events, Long id);
 
     /**
      *

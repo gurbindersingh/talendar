@@ -29,12 +29,13 @@ export class CourseViewComponent implements OnInit {
 
     public deleteCourse(id: number): void {
         console.log('Deleting Course with id ' + id);
-        this.eventClient
-            .cancelEvent(id)
-            .subscribe(
-                (result) => console.log(result),
-                (error) => console.log(error)
-            );
+        this.eventClient.cancelEvent(id).subscribe(
+            (result) => {
+                console.log(result);
+                this.ngOnInit();
+            },
+            (error) => console.log(error)
+        );
     }
 
     updateListPage(page?: number) {

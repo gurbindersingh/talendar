@@ -195,25 +195,43 @@ public class SecurityConfiguration {
                  *  ###############################################################################
                  */
                 .authorizeRequests()
-                /**
-                 *  NOTE:   WHITELISTING ANYTHING because we use Annotations for authentication!
-                 *          (Yet they are applied after filter, therefore they need an 'all good' setup)
-                 *
-                 *          See Controllers: all authentication happens there
-                 *          And in controller everything is blacklisted again for security reasons
-                 *          (== redoing the whitewashing which is done here!!!)
-                 *
-                 *          Why doing this 'double work'?
-                 *          Writing ant matchers is more cruel and confusing.
-                 *          Now simple use one the unique annotations (see 'annotations' package)
-                 *          for any new controller method and dont give a damn about this security
-                 *          configuration
-                 */
+                // any delete op is only accesible for the admin
+                .antMatchers(HttpMethod.DELETE, "/**").hasRole("ADMIN")
+                // dsgvo information endpoint
+                .antMatchers(HttpMethod.GET, "/api/v1/talendar/info/**").hasRole("ADMIN")
+                // restricted view taht display any event only for admins
+                .antMatchers(HttpMethod.GET, "/api/v1/talendar/events/all/admin").hasAnyRole("ADMIN", "TRAINER")
+                .antMatchers(HttpMethod.GET, "/api/v1/talendar/events/all/trainer/**").hasRole("TRAINER")
+                // allowed by default anyway, but to make it more obvious, the view of events
+                // that can be seen by clients is explicitely permitted
+                .antMatchers(HttpMethod.GET, "/api/v1/talendar/events/all/client").permitAll()
+                // next two has to be allowed in order to have a free accessible authentication endpoint
+                .antMatchers(HttpMethod.OPTIONS).permitAll()
+                .antMatchers(HttpMethod.POST, "/api/v1/talendar/authentication").permitAll()
+                // now disable a couple of manipulating ops for normal users
+                .antMatchers(HttpMethod.POST, "/api/v1/talendar/upload/image/trainer").hasAnyRole("ADMIN", "TRAINER")
+                .antMatchers(HttpMethod.POST, "/api/v1/talendar/events/course").hasAnyRole("ADMIN", "TRAINER")
+                .antMatchers(HttpMethod.POST, "/api/v1/talendar/events/consultation").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/v1/talendar/events/rent").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/v1/talendar/events/birthday").permitAll()
+                .antMatchers(HttpMethod.PUT, "/api/v1/talendar/events/customers").permitAll()
+                .antMatchers(HttpMethod.PUT, "/api/v1/talendar/events").hasAnyRole("ADMIN", "TRAINER")
+                .antMatchers(HttpMethod.POST, "/api/v1/talendar/holiday").hasRole("TRAINER")
+                .antMatchers(HttpMethod.POST, "/api/v1/talendar/holidays").hasRole("TRAINER")
+                .antMatchers(HttpMethod.PUT, "/api/v1/talendar/trainers").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST, "/api/v1/talendar/trainers").hasRole("ADMIN")
+
+                // explicitly allow SWAGGER (because this is really a sage haven)
+                .antMatchers(HttpMethod.GET,
+                             //"/v2/api-docs",
+                             "/swagger-resources/**",
+                             "/webjars/springfox-swagger-ui/**",
+                             "/swagger-ui.html")
+                .permitAll()
+
+                // allow anything that has not been disabled by a more specific rule
 
                 .antMatchers(HttpMethod.GET, "/**").permitAll()
-                .antMatchers(HttpMethod.POST, "/**").permitAll()
-                .antMatchers(HttpMethod.PUT, "/**").permitAll()
-                .antMatchers(HttpMethod.PATCH, "/**").permitAll()
             ;
 
             /*
@@ -247,7 +265,6 @@ public class SecurityConfiguration {
                 .addFilterBefore(new CustomHeaderTokenAuthenticationFilter(authenticationProvider),
                                  UsernamePasswordAuthenticationFilter.class
                 );
-            http.cors();
         }
 
 

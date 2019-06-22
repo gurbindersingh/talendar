@@ -24,6 +24,11 @@ export class EventImportService {
             event.draggable = false;
             event.cssClass = 't-event-color';
 
+            if (event.redacted || event.hide) {
+                event.color = Colors.Reserved;
+                continue;
+            }
+
             switch (event.eventType) {
                 case EventType.Birthday:
                     event.color = Colors.Birthday;
