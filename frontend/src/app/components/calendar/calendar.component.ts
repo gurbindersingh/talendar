@@ -21,6 +21,7 @@ import { Authorities } from 'src/app/models/enum/authorities';
 import { SessionStorageService } from 'src/app/services/session-storage.service';
 import { promise } from 'protractor';
 import { ImageClient } from 'src/app/rest/image-client';
+import { Room } from 'src/app/models/enum/room';
 
 /**
  * In order to display week days in German the locale data
@@ -58,6 +59,9 @@ export class CalendarComponent implements OnInit {
     // toggle between collapsed and open filter menu
     isCollapsed = true;
     clickedEvent: Event;
+
+    // simple helper to map events room name to actual name for ui
+    eventLocation: string;
 
     images: any[] = [];
     // filter specific content
@@ -247,6 +251,17 @@ export class CalendarComponent implements OnInit {
         // as reserved and will not be able to see further details
         if (event.redacted === true) {
             return;
+        }
+
+        const room = event.roomUses[0].room;
+        if (room.includes(Room.Green)) {
+            this.eventLocation = 'Grüner Raum';
+        }
+        if (room.includes(Room.Orange)){
+            this.eventLocation = 'Oranger Raum';
+        }
+        if (room.includes(Room.GroundFloor)){
+            this.eventLocation = 'Erdgeschoss';
         }
 
         if (event.eventType !== 'Rent') {
