@@ -22,6 +22,7 @@ import { SessionStorageService } from 'src/app/services/session-storage.service'
 import { promise } from 'protractor';
 import { ImageClient } from 'src/app/rest/image-client';
 import { Room } from 'src/app/models/enum/room';
+import { NotificationService } from 'src/app/services/notification.service';
 
 /**
  * In order to display week days in German the locale data
@@ -133,13 +134,18 @@ export class CalendarComponent implements OnInit {
         private router: Router,
         private dateService: ClickedDateService,
         public authService: AuthenticationService,
-        private sessionService: SessionStorageService
+        private sessionService: SessionStorageService,
+        private notificationService: NotificationService
     ) {
         if (screen.width < BREAKPOINTS.medium) {
             this.daysInWeek = 3;
         } else if (screen.width < BREAKPOINTS.small) {
             this.daysInWeek = 1;
         }
+
+        this.notificationService.loginStatusChanges$.subscribe((update) => {
+            this.ngOnInit();
+        });
     }
 
     ngOnInit() {
@@ -257,10 +263,10 @@ export class CalendarComponent implements OnInit {
         if (room.includes(Room.Green)) {
             this.eventLocation = 'Grüner Raum';
         }
-        if (room.includes(Room.Orange)){
+        if (room.includes(Room.Orange)) {
             this.eventLocation = 'Oranger Raum';
         }
-        if (room.includes(Room.GroundFloor)){
+        if (room.includes(Room.GroundFloor)) {
             this.eventLocation = 'Erdgeschoss';
         }
 
