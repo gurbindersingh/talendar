@@ -4,6 +4,7 @@ import {
     HttpHandler,
     HttpEvent,
     HttpErrorResponse,
+    HttpHeaders,
 } from '@angular/common/http';
 import { Observable, EMPTY, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -21,15 +22,46 @@ export class SimpleHttpInterceptor implements HttpInterceptor {
         private router: Router
     ) {}
 
+    private doRenew = true;
+
     intercept(
         req: HttpRequest<any>,
         next: HttpHandler
     ): Observable<HttpEvent<any>> {
         {
             const token = this.sessionService.sessionToken;
+
             const authReq = req.clone({
                 headers: req.headers.set('Authorization', 'Bearer ' + token),
             });
+
+            const headers: HttpHeaders = authReq.headers;
+
+            if (
+                this.sessionService.loggedIn &&
+                this.sessionService.isOldToken &&
+                this.doRenew
+            ) {
+                console.log('Renew authentication\nOld Token: ' + token);
+                this.doRenew = false;
+
+                this.authenticationService.renewLogin(headers).subscribe(
+                    (data) => {
+                        console.log('Authentication successfully renewed');
+                        console.log(
+                            'New Tokens: ' + this.sessionService.sessionToken
+                        );
+                        this.doRenew = true;
+                    },
+                    (error: Error) => {
+                        console.log(
+                            'Authentication could not be renewed: ' +
+                                error.message
+                        );
+                        this.doRenew = true;
+                    }
+                );
+            }
 
             console.log('Interceptor: Token = ' + token);
 
@@ -44,7 +76,7 @@ export class SimpleHttpInterceptor implements HttpInterceptor {
             return next.handle(authReq).pipe(
                 catchError((error: HttpErrorResponse, caught) => {
                     if (error.status === 401) {
-                        this.router.navigate(['/login']);
+                        this.router.navigateByUrl('/login');
                     }
                     throw error;
                 })

@@ -2,6 +2,9 @@
 ### Environment ###
 ###################
 
+### Image Folder ###
+resources/*
+
 ### PDF-Files ###
 *.pdf
 

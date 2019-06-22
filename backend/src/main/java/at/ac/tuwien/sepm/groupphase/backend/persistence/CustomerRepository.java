@@ -17,6 +17,11 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     @Modifying
     @Query(value = "update Customer set wants_email = false where email = :em")
     void setWantsEmailFalse(@Param("em")String em);
+    
+    List<Customer> findByEvents_Id(Long id);
+
+    List<Customer> findByEmail(String email);
+}
 
     List<Customer> findByEvents_Id(Long id);
 }

@@ -9,6 +9,8 @@ import { NgbDateStruct, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { RoomUse } from 'src/app/models/roomUse';
 import { Trainer } from 'src/app/models/trainer';
 import { ActivatedRoute } from '@angular/router';
+import { CronMakerService } from 'src/app/services/cronMaker.service';
+import { SessionStorageService } from 'src/app/services/session-storage.service';
 import { Tag } from 'src/app/models/tag';
 import { TagClient } from 'src/app/rest/tag-client';
 
@@ -19,8 +21,25 @@ import { TagClient } from 'src/app/rest/tag-client';
 })
 export class CourseComponent implements OnInit {
     title = 'Kurs eintragen';
+
+    cronMaker: CronMakerService;
+
+    roomOption = 0;
+    otherRoom1String: string;
+    otherRoom2String: string;
+
+    repeatEvery = ['Nie', 'Jeden Tag', 'Jede Woche', 'Jeden Monat'];
+    terminateAfter = ['Nie', 'Nach'];
+    repeatModul: string;
+    terminateModul: string;
+    alleX: number;
+    endedX: number;
+
+    loading = false;
+
     minuteStep = 15;
     description = '';
+    toggleOptions = false;
     maxParticipants: number;
     price: number;
     minAge: number;
@@ -54,12 +73,19 @@ export class CourseComponent implements OnInit {
         private eventClient: EventClient,
         dateTimeParser: DateTimeParserService,
         private route: ActivatedRoute,
+        cronMaker: CronMakerService,
+        private sessionService: SessionStorageService,
         private tagClient: TagClient,
     ) {
+        this.cronMaker = cronMaker;
         this.dateTimeParser = dateTimeParser;
         this.startTime = { hour: 13, minute: 0, second: 0 };
         this.endTime = { hour: 14, minute: 0, second: 0 };
         this.endOfApplicationTime = { hour: 13, minute: 0, second: 0 };
+        this.repeatModul = this.repeatEvery[0];
+        this.terminateModul = this.terminateAfter[0];
+        this.alleX = 1;
+        this.endedX = 1;
     }
 
     ngOnInit() {
@@ -110,9 +136,67 @@ export class CourseComponent implements OnInit {
         }
     }
 
+    public roomOption0Clicked(): void {
+        this.roomOption = 0;
+    }
+
+    public roomOption1Clicked(): void {
+        this.roomOption = 1;
+    }
+
+    public roomOption2Clicked(): void {
+        this.roomOption = 2;
+    }
+
+    public roomOption3Clicked(): void {
+        this.roomOption = 3;
+    }
+
+    public roomOption4Clicked(): void {
+        this.roomOption = 4;
+    }
+
+    public isRepeat(): boolean {
+        if (this.repeatModul === 'Nie') {
+            return false;
+        }
+        return true;
+    }
+
+    public togg(): void {
+        if (this.toggleOptions === false) {
+            this.toggleOptions = true;
+        } else {
+            this.toggleOptions = false;
+            this.repeatModul = this.repeatEvery[0];
+            this.terminateModul = this.terminateAfter[0];
+        }
+    }
+
+    public isTerminate(): boolean {
+        if (this.terminateModul === 'Nie') {
+            return false;
+        }
+        return true;
+    }
+
+    public getCron(): string {
+        return this.cronMaker.createCron(
+            this.startDate,
+            this.startTime,
+            this.startDate,
+            this.endTime,
+            this.toggleOptions,
+            this.repeatModul,
+            this.alleX,
+            this.terminateModul,
+            this.endedX
+        );
+    }
+
     public postMeeting(form: NgForm): void {
-        this.trainer.id = 1;
         if (this.isCreate) {
+            this.trainer.id = this.sessionService.userId;
             this.event.eventType = EventType.Course;
             this.event.trainer = this.trainer;
 
@@ -131,17 +215,27 @@ export class CourseComponent implements OnInit {
                 this.endOfApplicationTime
             );
 
+            if (this.toggleOptions) {
+                this.roomUse.cronExpression = this.getCron();
+                this.roomUse.roomOption = this.roomOption;
+            }
             this.event.roomUses = [this.roomUse];
 
+            this.loading = true;
             this.eventClient.postNewEvent(this.event).subscribe(
                 (data: Event) => {
                     console.log(data);
                     this.successMsg =
                         'Deine Reservierung wurde erfolgreich gespeichert';
+                    this.resetFormular();
+                    this.errorMsg = '';
+                    this.loading = false;
                 },
                 (error: Error) => {
                     console.log(error);
                     this.errorMsg = error.message;
+                    this.successMsg = '';
+                    this.loading = false;
                 }
             );
         } else {
@@ -150,15 +244,42 @@ export class CourseComponent implements OnInit {
                 (data: Event) => {
                     console.log(data);
                     this.successMsg = 'Der Kurs wurde erfolgreich aktualisiert';
+                    this.errorMsg = '';
+                    this.loading = false;
                 },
                 (error: Error) => {
                     console.log(error.message);
                     this.errorMsg =
                         'Der Kurs konnte nicht erfolgreich aktualisiert werden: ' +
                         error.message;
+                    this.successMsg = '';
+                    this.loading = false;
                 }
             );
         }
+    }
+
+    private resetFormular(): void {
+        this.event.name = '';
+        this.event.description = '';
+        this.event.maxParticipants = undefined;
+        this.event.price = undefined;
+        this.event.minAge = undefined;
+        this.event.maxAge = undefined;
+        this.endOfApplicationDate = null;
+        this.startDate = null;
+        this.toggleOptions = false;
+        this.repeatModul = this.repeatEvery[0];
+        this.terminateModul = this.terminateAfter[0];
+        this.alleX = 1;
+        this.endedX = 1;
+    }
+
+    public isRoomChoosed(): boolean {
+        if (this.radioButtonSelected === '') {
+            return false;
+        }
+        return true;
     }
 
     public isCompleted(): boolean {
@@ -205,14 +326,20 @@ export class CourseComponent implements OnInit {
 
     public greenSelected(): void {
         this.radioButtonSelected = 'Grün';
+        this.otherRoom1String = 'Orange';
+        this.otherRoom2String = 'Erdgeschoss';
     }
 
     public orangeSelected(): void {
         this.radioButtonSelected = 'Orange';
+        this.otherRoom1String = 'Grün';
+        this.otherRoom2String = 'Erdgeschoss';
     }
 
     public groundFloorSelected(): void {
         this.radioButtonSelected = 'Erdgeschoss';
+        this.otherRoom1String = 'Grün';
+        this.otherRoom2String = 'Orange';
     }
 
     public getSelectedRadioButtonRoom(): Room {

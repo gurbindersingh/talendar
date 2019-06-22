@@ -39,6 +39,10 @@ import { AuthenticationClient } from './rest/authentication-client';
 import { AdminGuard } from './guards/admin-guard';
 import { TrainerGuard } from './guards/trainer-guard';
 import { AuthenticatedGuard } from './guards/authenticated-guard';
+import { InfoComponent } from './components/info/info.component';
+import { InfoClient } from './rest/info-client';
+import { ImageClient } from './rest/image-client';
+import { SafeServerImagePipe } from './pipes/safe-server-image-pipe';
 import { TagComponent } from './components/tag/tag.component';
 import { CancelNewsletterComponent } from './components/cancel-newsletter/cancel-newsletter.component';
 
@@ -60,6 +64,8 @@ import { CancelNewsletterComponent } from './components/cancel-newsletter/cancel
         CourseSignComponent,
         NgbdModalConfirm,
         LoginComponent,
+        InfoComponent,
+        SafeServerImagePipe,
         TagComponent,
         CancelNewsletterComponent,
     ],
@@ -89,6 +95,8 @@ import { CancelNewsletterComponent } from './components/cancel-newsletter/cancel
         AdminGuard,
         TrainerGuard,
         AuthenticatedGuard,
+        InfoClient,
+        ImageClient,
     ],
     bootstrap: [AppComponent],
     entryComponents: [NgbdModalConfirm],

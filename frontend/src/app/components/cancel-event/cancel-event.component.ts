@@ -49,11 +49,10 @@ export class CancelEventComponent implements OnInit {
                     console.log('Got event with id ' + data.id);
                     this.event = data;
 
-                    // SIGN OFF COURSE
-
                     const eType = data.eventType as EventType;
 
                     if (eType === EventType.Course) {
+                        // SIGN OFF COURSE
                         this.btnText = 'Abmelden';
                         const emailId = Number(
                             this.route.snapshot.queryParams.emailId
@@ -61,9 +60,9 @@ export class CancelEventComponent implements OnInit {
                         console.log(data.customerDtos);
 
                         this.signOff = true;
+                        let emailIdFound = false;
                         this.preCountOfCustomers = data.customerDtos.length;
                         for (const customer of data.customerDtos) {
-                            console.log(emailId + ' und ' + customer.emailId);
                             if (customer.emailId === emailId) {
                                 this.title =
                                     'Hallo ' +
@@ -72,12 +71,22 @@ export class CancelEventComponent implements OnInit {
                                     customer.lastName +
                                     '!';
                                 this.customerToRemove = customer;
+                                emailIdFound = true;
+                                break;
                             }
                         }
-                        this.textBox =
-                            'Wollen Sie sich wirklich von ' +
-                            data.name +
-                            ' abmelden?';
+                        if (!emailIdFound) {
+                            this.textBox =
+                                'Sie sind bereits abgemeldet vom Kurs';
+                            this.valid = false;
+                            this.title = '';
+                        } else {
+                            this.textBox =
+                                'Wollen Sie sich wirklich von ' +
+                                data.name +
+                                ' abmelden?';
+                            this.valid = true;
+                        }
                     } else {
                         this.btnText = 'Stornieren';
                         this.signOff = false;
@@ -89,8 +98,8 @@ export class CancelEventComponent implements OnInit {
                             '!';
                         this.textBox =
                             'Wollen Sie wirklich ' + data.name + ' stornieren?';
+                        this.valid = true;
                     }
-                    this.valid = true;
                 },
                 (error) => {
                     this.title = 'Fehler 404';
@@ -125,27 +134,34 @@ export class CancelEventComponent implements OnInit {
                         this.preCountOfCustomers - 1
                     ) {
                         this.successMsg = 'Sie wurden erfolgreich abgemeldet';
+                        this.errorMsg = '';
+                        this.valid = false;
                     } else {
                         console.log(data);
-                        this.successMsg = 'Etwas ist schief gelaufen';
+                        this.errorMsg = 'Etwas ist schief gelaufen';
+                        this.successMsg = '';
                     }
                 },
                 (error: Error) => {
                     console.log(error);
                     this.errorMsg = 'Etwas ist schief gelaufen';
+                    this.successMsg = '';
                 }
             );
-            this.valid = false;
         } else {
+            console.log('ree', id);
             this.eventClient.cancelEvent(id).subscribe(
                 () => {
                     this.successMsg = 'Ihr Event wurde erfolgreich storniert';
+                    this.errorMsg = '';
+                    this.valid = false;
                 },
                 (error: Error) => {
                     console.log(error.message);
                     this.errorMsg =
-                        'Ihr Event konnte nicht storniert werden ' +
+                        'Ihr Event konnte nicht storniert werden: ' +
                         error.message;
+                    this.successMsg = '';
                 }
             );
         }

@@ -4,6 +4,7 @@ import at.ac.tuwien.sepm.groupphase.backend.exceptions.BackendException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
 import at.ac.tuwien.sepm.groupphase.backend.service.impl.AlgorithmService;
 import com.itextpdf.text.DocumentException;
+import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -15,22 +16,25 @@ public class ScheduleCaller {
     private ParticipantsList participantsList;
     private RedactInactiveUsers redactInactiveUsers;
     private RedactInactiveTrainers redactInactiveTrainers;
+    private GarbageImageCollector garbageImageCollector;
     private AlgorithmService algorithmService;
 
     public ScheduleCaller (ParticipantsList participantsList,
                            RedactInactiveUsers redactInactiveUsers,
                            RedactInactiveTrainers redactInactiveTrainers,
-                           AlgorithmService algorithmService){
+                           AlgorithmService algorithmService,
+                           GarbageImageCollector garbageImageCollector){
         this.participantsList = participantsList;
         this.redactInactiveUsers = redactInactiveUsers;
         this.redactInactiveTrainers = redactInactiveTrainers;
         this.algorithmService = algorithmService;
+        this.garbageImageCollector = garbageImageCollector;
     }
 
 
     //Daily 23:00
     @Scheduled(cron = "0 0 23 * * ?")
-    public void callDaily() throws BackendException, DocumentException, EmailException, IOException {
+    public void callDaily() throws BackendException, DocumentException, EmailException, IOException{
         participantsList.createParticipantsList();
     }
 
@@ -45,6 +49,8 @@ public class ScheduleCaller {
     @Scheduled(cron = "0 0 0 1 * ?")
     public void callMonthly() throws BackendException {
         redactInactiveTrainers.redact();
+        // sometimes files can not be deleted on the fly, therfore garbage collect later
+        garbageImageCollector.deleteLegacyProfilePictures();
     }
 
     @Scheduled(cron = "0 0 3 ? * MON")

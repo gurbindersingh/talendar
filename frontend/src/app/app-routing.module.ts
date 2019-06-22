@@ -18,6 +18,7 @@ import { CourseSignComponent } from './components/course-sign/course-sign.compon
 import { TrainerGuard } from './guards/trainer-guard';
 import { AuthenticatedGuard } from './guards/authenticated-guard';
 import { AdminGuard } from './guards/admin-guard';
+import { InfoComponent } from './components/info/info.component';
 import { TagComponent } from './components/tag/tag.component';
 import { CancelNewsletterComponent } from './components/cancel-newsletter/cancel-newsletter.component';
 
@@ -52,8 +53,18 @@ const routes: Routes = [
         canActivate: [AdminGuard],
     },
     {
+        path: 'trainer/edit',
+        component: TrainerComponent,
+        canActivate: [AdminGuard],
+    },
+    {
         path: 'trainer/list',
         component: TrainerListComponent,
+        canActivate: [AdminGuard],
+    },
+    {
+        path: 'info',
+        component: InfoComponent,
         canActivate: [AdminGuard],
     },
     { path: 'login', component: LoginComponent },

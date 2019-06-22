@@ -1,10 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.Entity;
 
-import at.ac.tuwien.sepm.groupphase.backend.enums.BirthdayType;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
@@ -124,6 +121,25 @@ public class Event {
         These Variables are Rent Specific
      */
 
+    /**
+     * TRANSIENT VALUES: NOT STORED IN DB, BUT MERELY META INFORMATION FOR INTERNAL PROCESSING
+     * AND FLAGS (IN THAT CASE) FOR THE FRONTEND.
+     * THIS PROPERTIES MAY ARE HANDLED OR IGNORED BY THE FRONTEND (ITS UP TO THE FRONTEND TO
+     * USE THIS META DATA AS HELP)
+     */
+
+    /*
+        This property signals to the frontend that the data for this entity had been removed
+        for privacy reasons. The frontend may display such events in an appropriate way.
+     */
+    @Transient
+    private boolean redacted;
+    /*
+       This property signals to the frontend that the data are existent but that this events may
+       are displayed in a non priority manner.
+     */
+    @Transient
+    private boolean hide;
 
     public Event () {
 
@@ -332,6 +348,26 @@ public class Event {
     }
 
 
+    public boolean isRedacted() {
+        return redacted;
+    }
+
+
+    public void setRedacted(boolean redacted) {
+        this.redacted = redacted;
+    }
+
+
+    public boolean isHide() {
+        return hide;
+    }
+
+
+    public void setHide(boolean hide) {
+        this.hide = hide;
+    }
+
+
     public boolean isDeleted () {
         return deleted;
     }
@@ -396,6 +432,8 @@ public class Event {
                ", description='" + description + '\'' +
                ", minAge=" + minAge +
                ", maxAge=" + maxAge +
+               ", redacted=" + redacted +
+               ", hide=" + hide +
                ", tags=" + event_tags +
                '}';
     }
