@@ -69,50 +69,38 @@
                     <div class="col-lg-6">
                         <div
                             class="custom-control custom-checkbox"
-                            *ngFor="let option of getBirthdayColumn1Keys()"
-                            (click)="
-                                birthdayOptionsColumn1[
-                                    option
-                                ].selected = !birthdayOptionsColumn1[option]
-                                    .selected
-                            "
+                            *ngFor="let option of birthdayOptionsColumn1"
+                            (click)="option.selected = !option.selected"
                         >
                             <input
                                 class="custom-control-input"
                                 type="checkbox"
                                 [name]="option"
-                                [(ngModel)]="
-                                    birthdayOptionsColumn1[option].selected
-                                "
+                                [(ngModel)]="option.selected"
+                                [ngModelOptions]="{ standalone: true }"
                                 value="{{ option.value }}"
                             />
                             <label class="custom-control-label" for="option">
-                                {{ option }} Geburtstag
+                                {{ option.label }} Geburtstag
                             </label>
                         </div>
                     </div>
                     <div class="col-lg-6">
                         <div
                             class="custom-control custom-checkbox"
-                            *ngFor="let option of getBirthdayColumn2Keys()"
-                            (click)="
-                                birthdayOptionsColumn2[
-                                    option
-                                ].selected = !birthdayOptionsColumn2[option]
-                                    .selected
-                            "
+                            *ngFor="let option of birthdayOptionsColumn2"
+                            (click)="option.selected = !option.selected"
                         >
                             <input
                                 class="custom-control-input"
                                 type="checkbox"
                                 [name]="option"
-                                [(ngModel)]="
-                                    birthdayOptionsColumn2[option].selected
-                                "
+                                [(ngModel)]="option.selected"
+                                [ngModelOptions]="{ standalone: true }"
                                 value="{{ option.value }}"
                             />
                             <label class="custom-control-label" for="option">
-                                {{ option }} Geburtstag
+                                {{ option.label }} Geburtstag
                             </label>
                         </div>
                     </div>

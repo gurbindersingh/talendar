@@ -65,7 +65,6 @@ public class RightToInformationService implements IRightToInformationService {
             CustomerDto customerDto = customerMapper.entityToCustomerDto(customers.get(i));
             chunk = new Paragraph("\nVorname: " + customerDto.getFirstName() + "\nNachname: " + customerDto.getLastName() +
                                   "\nTelefonnummer: " + customerDto.getPhone() + "\nEmail-Adresse: " + customerDto.getEmail() +
-                                  "\n Kind: " + customerDto.getChildName() + " " + customerDto.getChildLastName() +
                                   "\nHat teilgenommen/Wird teilnehmen an:\n\n\n");
 
             PdfPTable table = new PdfPTable(2);

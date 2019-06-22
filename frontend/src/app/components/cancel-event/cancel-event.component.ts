@@ -34,7 +34,7 @@ export class CancelEventComponent implements OnInit {
         private eventClient: EventClient,
         private route: ActivatedRoute,
         private router: Router
-    ) {}
+    ) { }
 
     ngOnInit() {
         const id: number = this.route.snapshot.queryParams.id;
@@ -108,6 +108,17 @@ export class CancelEventComponent implements OnInit {
                     console.log(error);
                 }
             );
+        }
+
+        if (this.event === null || this.event === undefined) {
+            this.title = "Fehler 404";
+            this.textBox = "Dieser Ereignis existiert nicht in der Datenbank"
+            this.valid = false;
+        } else {
+            console.log('Got event with id ' + this.event.id);
+            this.title = "Hallo!";
+            this.textBox = "Wollen sie wirklich stornieren?";
+            this.valid = true;
         }
     }
 

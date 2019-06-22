@@ -36,7 +36,7 @@ public class FakeData {
      */
 
 
-    private int randomInt(int min, int max) {
+    public int randomInt(int min, int max) {
         return (int) ( Math.random() * ( ( max - min ) + 1 ) ) + min;
     }
 
@@ -103,6 +103,13 @@ public class FakeData {
                                             .toInstant(), ZoneId.systemDefault());
     }
 
+    private LocalDateTime fakeChildBirthday() {
+        return LocalDateTime.ofInstant(faker.date()
+                                            .between(Date.valueOf("2000-01-01"),
+                                                     Date.valueOf("2010-05-14")
+                                            )
+                                            .toInstant(), ZoneId.systemDefault());
+    }
 
     private LocalDateTime fakeFutureTime() {
         return LocalDateTime.ofInstant(faker.date()
@@ -248,6 +255,7 @@ public class FakeData {
         trainer.setId(null);
         trainer.setCreated(null);
         trainer.setUpdated(null);
+        trainer.setPassword("password123");
 
         trainer.setBirthdayTypes(randomBirthdayTypes());
         return trainer;
@@ -261,6 +269,10 @@ public class FakeData {
         karen.setPhone(fakePhoneNumber());
         karen.setFirstName(fakeFirstName());
         karen.setLastName(fakeLastName());
+        karen.setBirthOfChild(fakeChildBirthday());
+        karen.setWantsEmail(true);
+        karen.setChildName(fakeFirstName());
+        karen.setChildLastName(karen.getLastName());
         return karen;
     }
 
@@ -416,12 +428,16 @@ public class FakeData {
         event.setTrainer(availableTrainer.get(0));
         LocalDateTime now = LocalDateTime.now();
         event.setEndOfApplication(now.plusDays(endOfApplication));
+        String tag[] = {"Math", "Science", "Expirements", "Dance", "Painting", "Art", "Programming"};
+        String set = tag[randomInt(0,6)];
+        event.setEvent_tags(set);
         event.setId(null);
+        event.setDeleted(false);
         return event;
     }
 
 
-    static void shuffleArray(String[] ar) {
+    public static void shuffleArray(String[] ar) {
         Random rnd = new Random();
         for(int i = ar.length - 1; i > 0; i--) {
             int index = rnd.nextInt(i + 1);

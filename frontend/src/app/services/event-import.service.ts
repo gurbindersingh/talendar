@@ -5,6 +5,7 @@ import { EventType } from '../models/enum/eventType';
 import { RoomUse } from '../models/roomUse';
 
 import * as Colors from '../utils/Colors';
+import { Room } from '../models/enum/room';
 
 @Injectable({
     providedIn: 'root',
@@ -26,6 +27,21 @@ export class EventImportService {
 
             if (event.redacted || event.hide) {
                 event.color = Colors.Reserved;
+                let reservedName;
+                const room = event.roomUses[0].room;
+
+                if (room.includes(Room.Green)) {
+                    reservedName = 'Grüner Raum';
+                }
+                if (room.includes(Room.Orange)) {
+                    reservedName = 'Oranger Raum';
+                }
+                if (room.includes(Room.GroundFloor)) {
+                    reservedName = 'Erdgeschoss';
+                }
+                reservedName += ' reserviert';
+                event.title = reservedName;
+
                 continue;
             }
 

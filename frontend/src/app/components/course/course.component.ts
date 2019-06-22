@@ -11,6 +11,8 @@ import { Trainer } from 'src/app/models/trainer';
 import { ActivatedRoute } from '@angular/router';
 import { CronMakerService } from 'src/app/services/cronMaker.service';
 import { SessionStorageService } from 'src/app/services/session-storage.service';
+import { Tag } from 'src/app/models/tag';
+import { TagClient } from 'src/app/rest/tag-client';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as Croppie from 'croppie';
 import { ImageClient } from 'src/app/rest/image-client';
@@ -80,6 +82,9 @@ export class CourseComponent implements OnInit {
 
     private errorMsg: string;
     private successMsg: string;
+    private tags: Tag[] = [];
+    private tagStringSelected: string;
+    private tagStrings: string[] = [];
 
     constructor(
         private eventClient: EventClient,
@@ -88,6 +93,7 @@ export class CourseComponent implements OnInit {
         private route: ActivatedRoute,
         cronMaker: CronMakerService,
         private sessionService: SessionStorageService,
+        private tagClient: TagClient,
         private modalService: NgbModal
     ) {
         this.cronMaker = cronMaker;
@@ -109,6 +115,17 @@ export class CourseComponent implements OnInit {
             this.btnText = 'Erstellen';
             this.saveMode = true;
             this.isCreate = true;
+            this.tagClient.getAll().subscribe(
+                (tagList: Tag[]) => {
+                    this.tags = tagList;
+                },
+                (error) => {
+                    console.log(error);
+                }
+            );
+            for (var _i = 0; _i < this.tags.length; _i++) {
+                this.tagStrings.push(this.tags[_i].tag);
+            }
         } else {
             this.title = 'Kurs bearbeiten';
             this.btnText = 'Bearbeiten';
@@ -124,6 +141,17 @@ export class CourseComponent implements OnInit {
                         'Der ausgewählte Trainer konnte leider nicht geladen werden.';
                 }
             );
+            this.tagClient.getAll().subscribe(
+                (tagList: Tag[]) => {
+                    this.tags = tagList;
+                },
+                (error) => {
+                    console.log(error);
+                }
+            );
+            for (var _i = 0; _i < this.tags.length; _i++) {
+                this.tagStrings.push(this.tags[_i].tag);
+            }
         }
     }
 
@@ -312,6 +340,9 @@ export class CourseComponent implements OnInit {
     }
 
     public isCompleted(): boolean {
+        if (this.event.tag === undefined || this.event.tag === '') {
+            return false;
+        }
         if (this.event.name === undefined || this.event.name === '') {
             return false;
         }

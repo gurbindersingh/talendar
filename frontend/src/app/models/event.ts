@@ -3,6 +3,7 @@ import { RoomUse } from './roomUse';
 import { Customer } from './customer';
 import { EventType } from './enum/eventType';
 import { CalendarEvent } from 'calendar-utils';
+import { Tag } from './tag';
 
 export class Event implements CalendarEvent {
     // From CalenderEvent
@@ -42,4 +43,5 @@ export class Event implements CalendarEvent {
     redacted: boolean;
     // signals that this event shall be displayed subordinate to other events
     hide: boolean;
+    tag: string;
 }
