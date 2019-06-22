@@ -14,6 +14,12 @@ import {
 import { ImageClient } from 'src/app/rest/image-client';
 import * as Croppie from 'croppie';
 
+interface IBDayOptions {
+    selected: boolean;
+    value: string;
+    label: string;
+}
+
 @Component({
     selector: 'app-trainer',
     templateUrl: './trainer.component.html',
@@ -36,15 +42,8 @@ export class TrainerComponent implements OnInit {
     errorMsg: string;
     successMsg: string;
 
-    birthdayOptionsColumn1: any = {
-        Trockeneis: { selected: false, value: 'DryIce' },
-        Raketen: { selected: false, value: 'Rocket' },
-        Superhelden: { selected: false, value: 'Superhero' },
-    };
-    birthdayOptionsColumn2: any = {
-        Photo: { selected: false, value: 'Photo' },
-        Malen: { selected: false, value: 'Painting' },
-    };
+    birthdayOptionsColumn1: IBDayOptions[];
+    birthdayOptionsColumn2: IBDayOptions[];
 
     // only used within component
     private isSaveMode: boolean;
@@ -62,14 +61,16 @@ export class TrainerComponent implements OnInit {
         private location: Location,
         private adapter: NgbDateNativeAdapter,
         private modalService: NgbModal
-    ) {}
-
-    getBirthdayColumn1Keys() {
-        return Object.keys(this.birthdayOptionsColumn1);
-    }
-
-    getBirthdayColumn2Keys() {
-        return Object.keys(this.birthdayOptionsColumn2);
+    ) {
+        this.birthdayOptionsColumn1 = [
+            { selected: false, value: 'DryIce', label: 'Trockeneis' },
+            { selected: false, value: 'Rocket', label: 'Raketen' },
+            { selected: false, value: 'Superhero', label: 'Superhelden' },
+        ];
+        this.birthdayOptionsColumn2 = [
+            { selected: false, value: 'Photo', label: 'Photo' },
+            { selected: false, value: 'Painting', label: 'Malen' },
+        ];
     }
 
     getMinDateForBirth() {
@@ -173,15 +174,13 @@ export class TrainerComponent implements OnInit {
 
     public submitForm(form: NgForm): void {
         const supervisedBirthdays: string[] = [];
-        const allBirthdayOptions = Object.assign(
-            {},
-            this.birthdayOptionsColumn1,
+        const allBirthdayOptions = this.birthdayOptionsColumn1.concat(
             this.birthdayOptionsColumn2
         );
 
-        for (const option of Object.keys(allBirthdayOptions)) {
-            if (allBirthdayOptions[option].selected) {
-                supervisedBirthdays.push(allBirthdayOptions[option].value);
+        for (const option of allBirthdayOptions) {
+            if (option.selected) {
+                supervisedBirthdays.push(option.value);
             }
         }
         this.trainer.birthdayTypes = supervisedBirthdays;
@@ -345,20 +344,13 @@ export class TrainerComponent implements OnInit {
     }
 
     private fillCheckboxes(supervisedBirthdays: string[]): void {
-        const birthdayOptions1 = Object.assign({}, this.birthdayOptionsColumn1);
-
-        for (const option of Object.keys(birthdayOptions1)) {
-            if (supervisedBirthdays.includes(birthdayOptions1[option].value)) {
-                this.birthdayOptionsColumn1[option].selected = true;
-            }
+        for (const option of this.birthdayOptionsColumn1) {
+            const supervises = supervisedBirthdays.includes(option.value);
+            option.selected = supervises;
         }
-
-        const birthdayOptions2 = Object.assign({}, this.birthdayOptionsColumn2);
-
-        for (const option of Object.keys(birthdayOptions2)) {
-            if (supervisedBirthdays.includes(birthdayOptions2[option].value)) {
-                this.birthdayOptionsColumn2[option].selected = true;
-            }
+        for (const option of this.birthdayOptionsColumn2) {
+            const supervises = supervisedBirthdays.includes(option.value);
+            option.selected = supervises;
         }
     }
 
