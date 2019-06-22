@@ -291,7 +291,6 @@ export class CourseComponent implements OnInit {
                 );
 
                 if (this.numImg < this.binaryEncodedImages.length - 1) {
-                    this.modalService.open(croppieModal, { size: 'lg' });
                     this.startCroppie(croppieModal);
                 }
 
@@ -303,10 +302,6 @@ export class CourseComponent implements OnInit {
                     'Das Bild konnte leider nicht gespeichert werden. ' +
                     'Bitte versuchen Sie es erneut.';
             });
-    }
-
-    public finishCropping(): void {
-        console.log('FINISH');
     }
 
     public cancel(): void {
