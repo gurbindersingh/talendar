@@ -2,12 +2,10 @@ package at.ac.tuwien.sepm.groupphase.backend.datagenerator;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Tag;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
-import at.ac.tuwien.sepm.groupphase.backend.service.ICustomerService;
-import at.ac.tuwien.sepm.groupphase.backend.service.IEventService;
-import at.ac.tuwien.sepm.groupphase.backend.service.IHolidayService;
-import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;
+import at.ac.tuwien.sepm.groupphase.backend.service.*;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
 import org.apache.tomcat.jni.Local;
@@ -33,6 +31,7 @@ public class TestDataGenerator implements ApplicationRunner {
     private IHolidayService holidayService;
     private ITrainerService trainerService;
     private ICustomerService customerService;
+    private ITagService tagService;
     // ENVIRONMENT SETUP DEFAULT
     private int NO_TRAINERS = 10;
     private int NO_COURSES = 50;
@@ -44,12 +43,13 @@ public class TestDataGenerator implements ApplicationRunner {
 
 
     @Autowired
-    public TestDataGenerator(FakeData fakeData, IEventService eventService, IHolidayService holidayService, ITrainerService trainerService, ICustomerService customerService) {
+    public TestDataGenerator(FakeData fakeData, IEventService eventService, IHolidayService holidayService, ITrainerService trainerService, ICustomerService customerService, ITagService tagService) {
         this.faker = fakeData;
         this.eventService = eventService;
         this.holidayService = holidayService;
         this.trainerService = trainerService;
         this.customerService = customerService;
+        this.tagService = tagService;
     }
 
 
@@ -81,6 +81,13 @@ public class TestDataGenerator implements ApplicationRunner {
                 }
 
                 startSimulation();
+
+                System.out.println(
+                    "##################################\n" +
+                    "#  Test Data Creation Completed  #\n" +
+                    "##################################\n"
+                );
+
                 return;
             }
         }
@@ -99,6 +106,10 @@ public class TestDataGenerator implements ApplicationRunner {
             Trainer saved = trainerService.save(trainer);
 
             trainers.add(saved);
+        }
+
+        for (Tag tag: faker.getFakedTags()) {
+            tagService.save(tag);
         }
 
         for (int i = 0; i < NO_COURSES; i++) {

@@ -1,9 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.datagenerator;
 
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.enums.Room;
 import com.github.javafaker.Faker;
@@ -237,6 +234,10 @@ public class FakeData {
         return courseName;
     }
 
+    private String[] tagsCreator() {
+        String[] arr = {"Math", "Science", "Expirements", "Dance", "Painting", "Art", "Programming"};
+        return arr;
+    }
 
     /**
      * #################
@@ -244,6 +245,17 @@ public class FakeData {
      * #################
      */
 
+    public List<Tag> getFakedTags() {
+        List<Tag> tags = new LinkedList<>();
+        String[] names = tagsCreator();
+
+        for (String name: names) {
+            Tag tag = new Tag();
+            tag.setTag(name);
+            tags.add(tag);
+        }
+        return tags;
+    }
 
     public Trainer fakeNewTrainerEntity() {
         Trainer trainer = new Trainer();
@@ -428,9 +440,9 @@ public class FakeData {
         event.setTrainer(availableTrainer.get(0));
         LocalDateTime now = LocalDateTime.now();
         event.setEndOfApplication(now.plusDays(endOfApplication));
-        String tag[] = {"Math", "Science", "Expirements", "Dance", "Painting", "Art", "Programming"};
+        String tag[] = tagsCreator();
         String set = tag[randomInt(0,6)];
-        event.setEvent_tags(set);
+        event.setEventTags(set);
         event.setId(null);
         event.setDeleted(false);
         return event;
