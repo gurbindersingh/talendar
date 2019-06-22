@@ -242,6 +242,209 @@
                     </div>
                 </div>
             </div>
+
+            <br />
+
+            <div class="row" *ngIf="isRoomChoosed()">
+                <div class="col-lg">
+                    <div class="custom-control custom-switch">
+                        <input
+                            name="toggler"
+                            type="checkbox"
+                            class="custom-control-input"
+                            id="options"
+                            [(ngModel)]="toggleOptions"
+                            (input)="togg()"
+                        />
+                        <label class="custom-control-label" for="options"
+                            >Wiederkehrende Termine</label
+                        >
+                    </div>
+                </div>
+            </div>
+            <br />
+
+            <div *ngIf="toggleOptions">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <label for="repeatAt">Wiederhohlen</label>
+                        <select
+                            class="browser-default custom-select"
+                            id="repeatAt"
+                            name="repeatAt"
+                            [(ngModel)]="repeatModul"
+                        >
+                            <option *ngFor="let r of repeatEvery">{{
+                                r
+                            }}</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-4"></div>
+                </div>
+                <br />
+                <div class="row" *ngIf="isRepeat()">
+                    <div class="col-lg-6">
+                        <div class="row">
+                            <div class="col-lg-2">
+                                <label for="repeatAfterX">Alle</label>
+                            </div>
+                            <div class="col-lg-4">
+                                <input
+                                    class="form-control"
+                                    type="number"
+                                    name="repeatAfterX"
+                                    id="repeatAfterX"
+                                    [(ngModel)]="alleX"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <p>Tage/Wochen/Monate wiederholen</p>
+                    </div>
+                </div>
+                <br />
+                <div *ngIf="isRepeat()">
+                    <div class="row">
+                        <div
+                            class="custom-control custom-radio custom-control-inline"
+                        >
+                            <input
+                                type="radio"
+                                id="exactRoom"
+                                name="customRadioInline2"
+                                class="custom-control-input"
+                                (click)="roomOption0Clicked()"
+                                checked=""
+                            />
+                            <label class="custom-control-label" for="exactRoom"
+                                >Ich möchte das meine Termine nur wie im oben
+                                genannten Raum stattfinden</label
+                            >
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <label
+                            >Wenn der oben genannter Raum belegt ist, dann
+                            ausweichen auf</label
+                        >
+                    </div>
+                    <div class="row">
+                        <div
+                            class="custom-control custom-radio custom-control-inline"
+                        >
+                            <input
+                                type="radio"
+                                id="otherRoom1"
+                                name="customRadioInline2"
+                                class="custom-control-input"
+                                (click)="roomOption1Clicked()"
+                            />
+                            <label
+                                class="custom-control-label"
+                                for="otherRoom1"
+                            >
+                                {{ otherRoom1String }}</label
+                            >
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div
+                            class="custom-control custom-radio custom-control-inline"
+                        >
+                            <input
+                                type="radio"
+                                id="otherRoom2"
+                                name="customRadioInline2"
+                                class="custom-control-input"
+                                (click)="roomOption2Clicked()"
+                            />
+                            <label
+                                class="custom-control-label"
+                                for="otherRoom2"
+                            >
+                                {{ otherRoom2String }}</label
+                            >
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div
+                            class="custom-control custom-radio custom-control-inline"
+                        >
+                            <input
+                                type="radio"
+                                id="otherRoom3"
+                                name="customRadioInline2"
+                                class="custom-control-input"
+                                (click)="roomOption3Clicked()"
+                            />
+                            <label
+                                class="custom-control-label"
+                                for="otherRoom3"
+                            >
+                                {{ otherRoom1String }} und falls dieser auch
+                                nicht frei ist, dann auf
+                                {{ otherRoom2String }}</label
+                            >
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div
+                            class="custom-control custom-radio custom-control-inline"
+                        >
+                            <input
+                                type="radio"
+                                id="otherRoom4"
+                                name="customRadioInline2"
+                                class="custom-control-input"
+                                (click)="roomOption4Clicked()"
+                            />
+                            <label
+                                class="custom-control-label"
+                                for="otherRoom4"
+                            >
+                                {{ otherRoom2String }} und falls dieser auch
+                                nicht frei ist, dann auf
+                                {{ otherRoom1String }}</label
+                            >
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="row align-center-right" *ngIf="isRepeat()">
+                    <div class="col-lg-3">
+                        <label for="stopAfter">Ended</label>
+                    </div>
+
+                    <div class="col-lg-3 mb-1">
+                        <select
+                            class="browser-default custom-select"
+                            id="stopAfter"
+                            name="stopAfter"
+                            [(ngModel)]="terminateModul"
+                        >
+                            <option *ngFor="let t of terminateAfter">
+                                {{ t }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3" *ngIf="isTerminate()">
+                        <input
+                            class="form-control"
+                            type="number"
+                            name="termAfter"
+                            id="termAfter"
+                            [(ngModel)]="endedX"
+                        />
+                    </div>
+
+                    <div class="col-lg-3" *ngIf="isTerminate()">
+                        <label for="stopAfter">Wiederholungen</label>
+                    </div>
+                </div>
+            </div>
+            <br />
             <div class="row" *ngIf="errorMsg">
                 <div class="col-sm-12">
                     <p class="alert alert-danger">
@@ -257,15 +460,30 @@
                 </div>
             </div>
             <br />
+
             <div class="row justify-content-end">
                 <input
                     type="submit"
                     class="btn btn-primary col-lg-3"
-                    id="couseSave"
-                    [(value)]="btnText"
                     [disabled]="!isCompleted()"
+                    id="courseSave"
+                    [(value)]="btnText"
                     (click)="postMeeting(courseForm)"
+                    *ngIf="!loading"
                 />
+                <button
+                    class="btn btn-primary col-lg-3"
+                    type="button"
+                    *ngIf="loading"
+                    disabled
+                >
+                    <span
+                        class="spinner-border spinner-border-sm"
+                        role="status"
+                        aria-hidden="true"
+                    ></span>
+                    Loading...
+                </button>
             </div>
         </form>
     </div>

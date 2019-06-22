@@ -78,189 +78,213 @@
     </div>
 
     <!-- Filter menu -->
-    <div
-        class="row justify-content-center"
-        id="collapsedFilterMenu"
-        [ngbCollapse]="isCollapsed"
-    >
-        <!-- Basis Filter Options (Room, Trainer, Eventtype) -->
+    <div class="align-items-center">
+        <div
+            class="row justify-content-center align-items-center"
+            id="collapsedFilterMenu"
+            [ngbCollapse]="isCollapsed"
+        >
+            <!-- Basis Filter Options (Room, Trainer, Eventtype) -->
+            <div
+                class="custom-control custom-switch pb-3 mx-2"
+                *ngIf="userStatus == 'AUTHENTICATED'"
+            >
+                <input
+                    name="toggler"
+                    type="checkbox"
+                    class="custom-control-input"
+                    id="eventView"
+                    [(ngModel)]="isPersonalView"
+                    (input)="changeView()"
+                />
+                <label class="custom-control-label" for="eventView"
+                    >Eigene Termine</label
+                >
+            </div>
+            <div ngbDropdown class="pb-3 mx-2">
+                <button
+                    class="btn"
+                    [class.btn-outline-primary]="
+                        roomSelection === undefined ||
+                        roomSelection.value === undefined
+                    "
+                    [class.btn-primary]="
+                        roomSelection !== undefined &&
+                        roomSelection.value !== undefined
+                    "
+                    id="roomFilterBtn"
+                    name="roomFilter"
+                    ngbDropdownToggle
+                >
+                    {{
+                        roomSelection === undefined ||
+                        roomSelection.value === undefined
+                            ? 'Raum auswählen'
+                            : roomSelection.name
+                    }}
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownRoomFilter">
+                    <button
+                        class="dropdown-item"
+                        id="selectedRoomBtn"
+                        name="selectedRoomFilter"
+                        *ngFor="let room of rooms"
+                        (click)="roomSelection = room; updateView()"
+                        active
+                    >
+                        {{ room.name }}
+                    </button>
+                </div>
+            </div>
+            <div ngbDropdown class="pb-3 mx-2">
+                <button
+                    class="col-auto btn"
+                    [class.btn-outline-primary]="trainerSelection === undefined"
+                    [class.btn-primary]="trainerSelection !== undefined"
+                    id="trainerFilterBtn"
+                    name="trainerFilter"
+                    ngbDropdownToggle
+                >
+                    {{
+                        trainerSelection === undefined
+                            ? 'Trainer auswählen'
+                            : trainerSelection
+                    }}
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownTrainerFilter">
+                    <button
+                        class="dropdown-item"
+                        id="selectedTrainerBtn"
+                        name="selectedTrainerFilter"
+                        *ngFor="let trainer of trainerList"
+                        (click)="trainerSelection = trainer; updateView()"
+                    >
+                        {{ trainer !== undefined ? trainer : 'Kein Filter' }}
+                    </button>
+                </div>
+            </div>
+            <div
+                ngbDropdown
+                class="pb-3 mx-2"
+                *ngIf="userStatus != 'UNAUTHENTICATED'"
+            >
+                <button
+                    class="col-auto btn"
+                    [class.btn-outline-primary]="
+                        eventTypeSelection === undefined ||
+                        eventTypeSelection.value === undefined
+                    "
+                    [class.btn-primary]="
+                        eventTypeSelection !== undefined &&
+                        eventTypeSelection.value !== undefined
+                    "
+                    id="eventtypeFilterBtn"
+                    name="eventtypeFilter"
+                    ngbDropdownToggle
+                >
+                    {{
+                        eventTypeSelection === undefined ||
+                        eventTypeSelection.value === undefined
+                            ? 'Eventtyp auswählen'
+                            : eventTypeSelection.name
+                    }}
+                </button>
+                <div ngbDropdownMenu aria-labelledby="dropdownEventtypeFilter">
+                    <button
+                        class="dropdown-item"
+                        id="selectedEventtypeBtn"
+                        name="selectedEventtypeFilter"
+                        *ngFor="let type of eventTypes"
+                        (click)="eventTypeSelection = type; updateView()"
+                    >
+                        {{ type.name }}
+                    </button>
+                </div>
+            </div>
 
-        <div ngbDropdown class="pb-3 mx-2">
-            <button
-                class="btn"
-                [class.btn-outline-primary]="
-                    roomSelection === undefined ||
-                    roomSelection.value === undefined
-                "
-                [class.btn-primary]="
-                    roomSelection !== undefined &&
-                    roomSelection.value !== undefined
-                "
-                id="roomFilterBtn"
-                name="roomFilter"
-                ngbDropdownToggle
-            >
-                {{
-                    roomSelection === undefined ||
-                    roomSelection.value === undefined
-                        ? 'Raum auswählen'
-                        : roomSelection.name
-                }}
-            </button>
-            <div ngbDropdownMenu aria-labelledby="dropdownRoomFilter">
-                <button
-                    class="dropdown-item"
-                    id="selectedRoomBtn"
-                    name="selectedRoomFilter"
-                    *ngFor="let room of rooms"
-                    (click)="roomSelection = room; updateView()"
-                    active
-                >
-                    {{ room.name }}
-                </button>
-            </div>
-        </div>
-        <div ngbDropdown class="pb-3 mx-2">
-            <button
-                class="col-auto btn"
-                [class.btn-outline-primary]="trainerSelection === undefined"
-                [class.btn-primary]="trainerSelection !== undefined"
-                id="trainerFilterBtn"
-                name="trainerFilter"
-                ngbDropdownToggle
-            >
-                {{
-                    trainerSelection === undefined
-                        ? 'Trainer auswählen'
-                        : trainerSelection
-                }}
-            </button>
-            <div ngbDropdownMenu aria-labelledby="dropdownTrainerFilter">
-                <button
-                    class="dropdown-item"
-                    id="selectedTrainerBtn"
-                    name="selectedTrainerFilter"
-                    *ngFor="let trainer of trainerList"
-                    (click)="trainerSelection = trainer; updateView()"
-                >
-                    {{ trainer !== undefined ? trainer : 'Kein Filter' }}
-                </button>
-            </div>
-        </div>
-        <div ngbDropdown class="pb-3 mx-2">
-            <button
-                class="col-auto btn"
-                [class.btn-outline-primary]="
-                    eventTypeSelection === undefined ||
-                    eventTypeSelection.value === undefined
-                "
-                [class.btn-primary]="
-                    eventTypeSelection !== undefined &&
-                    eventTypeSelection.value !== undefined
-                "
-                id="eventtypeFilterBtn"
-                name="eventtypeFilter"
-                ngbDropdownToggle
-            >
-                {{
-                    eventTypeSelection === undefined ||
-                    eventTypeSelection.value === undefined
-                        ? 'Eventtyp auswählen'
-                        : eventTypeSelection.name
-                }}
-            </button>
-            <div ngbDropdownMenu aria-labelledby="dropdownEventtypeFilter">
-                <button
-                    class="dropdown-item"
-                    id="selectedEventtypeBtn"
-                    name="selectedEventtypeFilter"
-                    *ngFor="let type of eventTypes"
-                    (click)="eventTypeSelection = type; updateView()"
-                >
-                    {{ type.name }}
-                </button>
-            </div>
-        </div>
-
-        <!--    dependant on eventtype selection (above) some subfilter appear
+            <!--    dependant on eventtype selection (above) some subfilter appear
                 on md+ screens: same row
                 on small screens shall be in next row
         -->
-        <div id="additionalContextFilter" class="mb-1">
-            <div
-                *ngIf="
-                    eventTypeSelection !== undefined &&
-                    eventTypeSelection.name === 'Kurs'
-                "
-                id="ageFilter"
-            >
-                <div class="form-group ml-1 mr-1" id="minFilter">
-                    <label for="minAgeFilter">Min Alter</label>
-                    <input
-                        type="number"
-                        min="5"
-                        max="20"
-                        class="form-control"
-                        id="minAgeFilter"
-                        name="minAgeFilter"
-                        [(ngModel)]="minAgeFilter"
-                        (input)="updateView()"
-                    />
+            <div id="additionalContextFilter" class="mb-1">
+                <div
+                    *ngIf="
+                        eventTypeSelection !== undefined &&
+                        eventTypeSelection.name === 'Kurs'
+                    "
+                    id="ageFilter"
+                >
+                    <div class="form-group ml-1 mr-1" id="minFilter">
+                        <label for="minAgeFilter">Min Alter</label>
+                        <input
+                            type="number"
+                            min="5"
+                            max="20"
+                            class="form-control"
+                            id="minAgeFilter"
+                            name="minAgeFilter"
+                            [(ngModel)]="minAgeFilter"
+                            (input)="updateView()"
+                        />
+                    </div>
+                    <div class="form-group" id="maxFilter">
+                        <label for="maxAgeFilter">Max Alter</label>
+                        <input
+                            type="number"
+                            min="5"
+                            max="20"
+                            class="form-control"
+                            id="maxAgeFilter"
+                            name="maxAgeFilter"
+                            [(ngModel)]="maxAgeFilter"
+                            (input)="updateView()"
+                        />
+                    </div>
                 </div>
-                <div class="form-group" id="maxFilter">
-                    <label for="maxAgeFilter">Max Alter</label>
-                    <input
-                        type="number"
-                        min="5"
-                        max="20"
-                        class="form-control"
-                        id="maxAgeFilter"
-                        name="maxAgeFilter"
-                        [(ngModel)]="maxAgeFilter"
-                        (input)="updateView()"
-                    />
-                </div>
-            </div>
 
-            <div
-                *ngIf="
-                    eventTypeSelection !== undefined &&
-                    eventTypeSelection.name === 'Geburtstag'
-                "
-                id="bdTypeFilter"
-            >
-                <div ngbDropdown class="mr-1">
-                    <button
-                        class="btn"
-                        [class.btn-outline-primary]="
-                            bdTypeSelection === undefined ||
-                            bdTypeSelection.value === undefined
-                        "
-                        [class.btn-primary]="
-                            bdTypeSelection !== undefined &&
-                            bdTypeSelection.value !== undefined
-                        "
-                        id="bdTypeFilterBtn"
-                        name="bdTypeFilter"
-                        ngbDropdownToggle
-                    >
-                        {{
-                            bdTypeSelection === undefined ||
-                            bdTypeSelection.value === undefined
-                                ? 'Geburtstagsart auswählen'
-                                : bdTypeSelection.name
-                        }}
-                    </button>
-                    <div ngbDropdownMenu aria-labelledby="dropdownBdTypeFilter">
+                <div
+                    *ngIf="
+                        eventTypeSelection !== undefined &&
+                        eventTypeSelection.name === 'Geburtstag'
+                    "
+                    id="bdTypeFilter"
+                >
+                    <div ngbDropdown class="mr-1">
                         <button
-                            class="dropdown-item"
-                            id="selectedBdTypeBtn"
-                            name="selectedBdTypeFilter"
-                            *ngFor="let type of bdTypes"
-                            (click)="bdTypeSelection = type; updateView()"
+                            class="btn"
+                            [class.btn-outline-primary]="
+                                bdTypeSelection === undefined ||
+                                bdTypeSelection.value === undefined
+                            "
+                            [class.btn-primary]="
+                                bdTypeSelection !== undefined &&
+                                bdTypeSelection.value !== undefined
+                            "
+                            id="bdTypeFilterBtn"
+                            name="bdTypeFilter"
+                            ngbDropdownToggle
                         >
-                            {{ type.name }}
+                            {{
+                                bdTypeSelection === undefined ||
+                                bdTypeSelection.value === undefined
+                                    ? 'Geburtstagsart auswählen'
+                                    : bdTypeSelection.name
+                            }}
                         </button>
+                        <div
+                            ngbDropdownMenu
+                            aria-labelledby="dropdownBdTypeFilter"
+                        >
+                            <button
+                                class="dropdown-item"
+                                id="selectedBdTypeBtn"
+                                name="selectedBdTypeFilter"
+                                *ngFor="let type of bdTypes"
+                                (click)="bdTypeSelection = type; updateView()"
+                            >
+                                {{ type.name }}
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -278,7 +302,7 @@
             [viewDate]="viewDate"
             [weekStartsOn]="weekStartsOn"
             (eventClicked)="showDetails($event)"
-            (dayClicked)="dateClicked($event.day.date, modal)"
+            (dayClicked)="dateClicked($event.day.date, newEventModal)"
         ></mwl-calendar-month-view>
     </ng-container>
 
@@ -300,42 +324,68 @@
             [locale]="locale"
             [viewDate]="viewDate"
             [weekStartsOn]="weekStartsOn"
-            (eventClicked)="showDetails($event)"
-            (hourSegmentClicked)="dateClicked($event.date, modal)"
+            (eventClicked)="showDetails($event.event, detailsModal)"
+            (hourSegmentClicked)="dateClicked($event.date, newEventModal)"
         ></mwl-calendar-week-view>
     </ng-template>
 </div>
 
 <!-- Modal -->
-<ng-template #modal let-modal>
-    <div class="modal-body">
-        <h4>Welches Event möchten Sie anlegen?</h4>
-        <button
-            class="btn btn-link"
-            (click)="modal.close(); addEvent('new-course')"
-        >
-            Neuer Kurs</button
-        ><button
-            class="btn btn-link"
-            (click)="modal.close(); addEvent('new-holiday')"
-        >
-            Urlaub
-        </button>
-        <button
-            class="btn btn-link"
-            (click)="modal.close(); addEvent('new-consultation')"
-        >
-            Beratungstermin
-        </button>
-        <div class="row justify-content-end">
-            <button
-                type="button"
-                class="btn btn-outline-primary"
+<ng-template #newEventModal let-modal>
+    <div class="modal-header">
+        <h4 ngbAutofocus>
+            {{
+                authService.isLoggedIn
+                    ? 'Welches Event möchten sie anlegen?'
+                    : 'Ich möchte einen:'
+            }}
+        </h4>
+    </div>
+    <div class="modal-body row justify-content-between" style="margin: 0">
+        <ul class="list-unstyled">
+            <li
+                *ngFor="let event of getEventModalEntries()"
                 (click)="modal.close()"
-                style="margin: 16px 16px 0 0"
             >
-                Schließen
-            </button>
-        </div>
+                <button
+                    class="btn btn-link"
+                    style="font-size: 1.1rem"
+                    (click)="addEvent(event.type)"
+                >
+                    {{ event.name }}
+                </button>
+            </li>
+        </ul>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-outline-primary" (click)="modal.close()">
+            Schließen
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #detailsModal let-modal>
+    <div class="modal-header">
+        <h4 ngbAutofocus>{{ clickedEvent.title }}</h4>
+    </div>
+    <div class="modal-body">
+        <p>{{ clickedEvent.description }}</p>
+        <p>
+            <b> Abgehalten von: </b>
+            {{
+                clickedEvent.trainer.firstName +
+                    ' ' +
+                    clickedEvent.trainer.lastName
+            }}
+        </p>
+    </div>
+    <div class="modal-footer">
+        <button
+            type="button"
+            class="btn btn-outline-primary"
+            (click)="modal.close()"
+        >
+            Schließen
+        </button>
     </div>
 </ng-template>

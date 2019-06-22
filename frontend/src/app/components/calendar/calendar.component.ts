@@ -1,19 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { registerLocaleData } from '@angular/common';
+import { Router } from '@angular/router';
 import localeDe from '@angular/common/locales/de-AT';
 
 import { CalendarDateFormatter, CalendarView } from 'angular-calendar';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { BREAKPOINTS } from 'src/app/utils/Breakpoints';
+import { ClickedDateService } from 'src/app/services/clicked-date.service';
 import { CustomDateFormatter } from './CustomDateFormatter';
-import { Event } from '../../models/event';
+import { Event } from 'src/app/models/event';
 import { EventClient } from 'src/app/rest/event-client';
 import { EventImportService } from 'src/app/services/event-import.service';
 import { MetaEvent } from './MetaEvent';
 import { Trainer } from 'src/app/models/trainer';
 import { TrainerClient } from 'src/app/rest/trainer-client';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { Router } from '@angular/router';
+import { AuthenticationService } from 'src/app/services/authentication.service';
+import { UserDetails } from 'src/app/models/user-details';
+import { Authorities } from 'src/app/models/enum/authorities';
+import { SessionStorageService } from 'src/app/services/session-storage.service';
 
 /**
  * In order to display week days in German the locale data
@@ -38,18 +43,18 @@ export class CalendarComponent implements OnInit {
     dayStartHour = 8;
     dayStartMinute = 0;
     // list of all loaded events
-    allEvents: MetaEvent[] = [];
+    allEvents: Event[] = [];
     // list of all events relative to the applied filters
-    filteredEvents: MetaEvent[] = [];
+    filteredEvents: Event[] = [];
     hourSegments = 4;
     locale = 'de-AT';
     precision = 'minutes';
     view = CalendarView.Week;
     viewDate = new Date();
     weekStartsOn = 1;
-    private clickedDateTime: Date;
     // toggle between collapsed and open filter menu
     isCollapsed = true;
+    clickedEvent: Event;
 
     // filter specific content
 
@@ -59,6 +64,24 @@ export class CalendarComponent implements OnInit {
         { name: 'Orange', value: 'Orange' },
         { name: 'Erdgeschoss', value: 'GroundFloor' },
         { name: 'Kein Filter', value: undefined },
+    ];
+    visitorEventModalEntries = [
+        {
+            name: 'Beratungstermin vereinbaren',
+            type: 'consultation',
+        },
+        { name: 'Geburtstag buchen', type: 'birthday' },
+        { name: 'Raum mieten', type: 'rent' },
+    ];
+    trainerEventModalEntries = [
+        { name: 'Neuen Kurs', type: 'course' },
+        { name: 'Urlaub', type: 'holiday' },
+        {
+            name: 'Beratungstermin',
+            type: 'consultation',
+        },
+        { name: 'Geburtstag', type: 'birthday' },
+        // { name: 'Raummiete', type: 'rent' },
     ];
     eventTypes: any[] = [
         { name: 'Kurs', value: 'Course' },
@@ -75,6 +98,7 @@ export class CalendarComponent implements OnInit {
         { name: 'Malen Geburtstag', value: 'Painting' },
         { name: 'Kein Filter', value: undefined },
     ];
+
     trainerList: string[] = [];
     trainers: Trainer[] = [];
 
@@ -85,13 +109,22 @@ export class CalendarComponent implements OnInit {
     trainerSelection: string;
     minAgeFilter: number;
     maxAgeFilter: number;
+    // decides whether we show all events or only the ones that a trainer hosts by himself
+    // only (for admin/trainer)
+    isPersonalView: boolean;
+
+    // status of user
+    userStatus: Authorities;
 
     constructor(
         private eventClient: EventClient,
         private trainerClient: TrainerClient,
         private eventImport: EventImportService,
         private modalService: NgbModal,
-        private router: Router
+        private router: Router,
+        private dateService: ClickedDateService,
+        public authService: AuthenticationService,
+        private sessionService: SessionStorageService
     ) {
         if (screen.width < BREAKPOINTS.medium) {
             this.daysInWeek = 3;
@@ -101,53 +134,131 @@ export class CalendarComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.eventClient.getAllEvents().subscribe((data: Event[]) => {
+        // anyone who is not logged cannot see every event
+        if (this.authService.isLoggedIn === false) {
+            // set role (will affect filter options)
+            this.userStatus = Authorities.UNAUTHENTICATED;
+            this.eventTypeSelection = { name: 'Kurs', value: 'Course' };
+
+            this.eventClient
+                .getAllEvents_clientView()
+                .subscribe((data: Event[]) => {
+                    this.allEvents = this.eventImport.mapEventsToCalendar(data);
+                    this.filteredEvents = this.allEvents;
+                });
+        } else {
+            // if logged in, check role of user and show appropriate details (== extended view)
+            this.authService.getUserDetails().subscribe(
+                (auth: UserDetails) => {
+                    if (auth.roles.includes(Authorities.ADMIN)) {
+                        this.userStatus = Authorities.AUTHENTICATED;
+                        // admin start with 'all view' per default
+                        this.isPersonalView = false;
+
+                        this.eventClient
+                            .getAllEvents_adminView()
+                            .subscribe((data: Event[]) => {
+                                this.allEvents = this.eventImport.mapEventsToCalendar(
+                                    data
+                                );
+                                this.filteredEvents = this.allEvents;
+                            });
+                    } else if (auth.roles.includes(Authorities.TRAINER)) {
+                        this.userStatus = Authorities.AUTHENTICATED;
+                        // trainer start with 'personal events view' per default
+                        this.isPersonalView = true;
+                        const userID = this.sessionService.userId;
+
+                        this.eventClient
+                            .getAllEvents_trainerView(userID)
+                            .subscribe((data: Event[]) => {
+                                this.allEvents = this.eventImport.mapEventsToCalendar(
+                                    data
+                                );
+                                this.filteredEvents = this.allEvents;
+                            });
+                    }
+                },
+                (error: Error) => {
+                    console.log(error.message);
+                    this.authService.logout();
+                    this.router.navigateByUrl('/login');
+                }
+            );
+        }
+        /*         this.eventClient.getAllEvents().subscribe((data: Event[]) => {
             this.allEvents = this.eventImport.mapEventsToCalendar(data);
             this.filteredEvents = this.allEvents;
         });
 
-        this.trainerClient.getAll().subscribe((data: Trainer[]) => {
-            this.trainers = data;
+ */     this.trainerClient
+            .getAll()
+            .subscribe((data: Trainer[]) => {
+                this.trainers = data;
 
-            for (const trainer of this.trainers) {
-                const name = trainer.firstName + ' ' + trainer.lastName;
-                this.trainerList.push(name);
-            }
+                for (const trainer of this.trainers) {
+                    const name = trainer.firstName + ' ' + trainer.lastName;
+                    this.trainerList.push(name);
+                }
 
-            // explicit undefined value matches option 'reset' (if clicked selection is resetted)
-            this.trainerList.push(undefined);
-        });
+                // explicit undefined value matches option 'reset'
+                this.trainerList.push(undefined);
+            });
     }
 
-    showDetails(event: any) {
+    getEventModalEntries() {
+        if (this.authService.isLoggedIn) {
+            return this.trainerEventModalEntries;
+        } else {
+            return this.visitorEventModalEntries;
+        }
+    }
+
+    showDetails(event: Event, detailsModal: any) {
         console.warn(event);
-        alert('Implement showDetails()');
+
+        // a user only sees an event (like rent, birthday (of others))
+        // as reserved and will not be able to see further details
+        if (event.redacted === true) {
+            return;
+        }
+
+        if (event.eventType !== 'Rent') {
+            this.clickedEvent = event;
+            this.modalService.open(detailsModal, { size: 'lg' });
+        }
     }
 
-    dateClicked(date: Date, content: any) {
+    dateClicked(date: Date, newEventModal: any) {
         console.warn(date);
-        this.clickedDateTime = date;
-        this.modalService.open(content);
+        // if (date.valueOf() >= Date.now()) {
+        this.dateService.setDateTime(date);
+        this.modalService.open(newEventModal, { size: 'sm' });
+        // }
     }
 
     addEvent(type: string) {
         switch (type) {
-            case 'new-course':
-                this.router.navigateByUrl(
-                    '/course/add?date=' + this.clickedDateTime
-                );
+            case 'course':
+                this.router.navigateByUrl('/course/add');
                 break;
 
-            case 'new-holiday':
-                this.router.navigateByUrl(
-                    '/holiday/add?date=' + this.clickedDateTime
-                );
+            case 'holiday':
+                this.router.navigateByUrl('/holiday/add');
                 break;
-            case 'new-consultation':
-                this.router.navigateByUrl(
-                    '/consultation/add?date=' + this.clickedDateTime
-                );
+
+            case 'consultation':
+                this.router.navigateByUrl('/consultation/add');
                 break;
+
+            case 'rent':
+                this.router.navigateByUrl('/rent');
+                break;
+
+            case 'birthday':
+                this.router.navigateByUrl('/birthday/book');
+                break;
+
             default:
                 break;
         }
@@ -161,10 +272,56 @@ export class CalendarComponent implements OnInit {
         this.daysInWeek = daysInWeek;
     }
 
+    /**
+     * For authenticated users: change view of all events between 'complete data for all events'
+     * and a view where complete data is only shown for events that are held by the currently
+     * logged in trainer/admin.
+     */
+    public changeView(): void {
+        console.log(this.isPersonalView);
+        this.authService.getUserDetails().subscribe(
+            (status: UserDetails) => {
+                if (
+                    status.roles.includes(Authorities.ADMIN) ||
+                    status.roles.includes(Authorities.TRAINER)
+                ) {
+                    if (!this.isPersonalView) {
+                        this.eventClient
+                            .getAllEvents_adminView()
+                            .subscribe((data: Event[]) => {
+                                this.allEvents = this.eventImport.mapEventsToCalendar(
+                                    data
+                                );
+                                this.filteredEvents = this.allEvents;
+                            });
+                    } else {
+                        const userID = this.sessionService.userId;
+                        this.eventClient
+                            .getAllEvents_trainerView(userID)
+                            .subscribe((data: Event[]) => {
+                                this.allEvents = this.eventImport.mapEventsToCalendar(
+                                    data
+                                );
+                                this.filteredEvents = this.allEvents;
+                            });
+                    }
+                }
+            },
+            (error: Error) => {
+                console.log(error.message);
+                this.authService.logout();
+                this.router.navigateByUrl('/login');
+            }
+        );
+    }
+
+    /**
+     * Reset the list of all events and then apply each filter that has been specified.
+     */
     public updateView(): void {
         this.filteredEvents = this.allEvents;
 
-        this.filteredEvents = this.filteredEvents.filter((event: MetaEvent) => {
+        this.filteredEvents = this.filteredEvents.filter((event: Event) => {
             // vars are true if filter for this context was set in GUI
             const hasRoomFilter: boolean =
                 this.roomSelection !== undefined &&
@@ -183,31 +340,35 @@ export class CalendarComponent implements OnInit {
 
             // check if given filters satisfy given event properties
             // iff filter doesnt match (ret false) remove this elem from array
-
             if (hasRoomFilter) {
                 if (
                     this.roomSelection.value !==
-                    event.event.roomUses[0].room.toString()
+                    event.roomUses[0].room.toString()
                 ) {
                     return false;
                 }
+            }
+
+            /**
+             * Now check if this event is marked as reserved
+             * If yes, then we can not expect that any data except room and time
+             * are set.
+             * I.e. Stop filtering!
+             */
+            if (event.redacted) {
+                return true;
             }
 
             // this filter is not apllicable to events of type 'rent'
             // as rents have no assigned trainer (null)
             if (hasTrainerFilter) {
                 // if event without trainer then it is a rent, filter it
-                if (
-                    event.event.trainer === null ||
-                    event.event.trainer === undefined
-                ) {
+                if (event.trainer === null || event.trainer === undefined) {
                     return false;
                 }
 
                 const trainerNameOfEvent =
-                    event.event.trainer.firstName +
-                    ' ' +
-                    event.event.trainer.lastName;
+                    event.trainer.firstName + ' ' + event.trainer.lastName;
 
                 if (this.trainerSelection !== trainerNameOfEvent) {
                     return false;
@@ -216,8 +377,7 @@ export class CalendarComponent implements OnInit {
 
             if (hasTypeFilter) {
                 if (
-                    this.eventTypeSelection.value !==
-                    event.event.eventType.toString()
+                    this.eventTypeSelection.value !== event.eventType.toString()
                 ) {
                     return false;
                 }
@@ -226,14 +386,14 @@ export class CalendarComponent implements OnInit {
             if (hasCourseFilter) {
                 if (
                     this.minAgeFilter !== null &&
-                    event.event.minAge < this.minAgeFilter
+                    event.minAge < this.minAgeFilter
                 ) {
                     return false;
                 }
 
                 if (
                     this.maxAgeFilter !== null &&
-                    event.event.maxAge > this.maxAgeFilter
+                    event.maxAge > this.maxAgeFilter
                 ) {
                     return false;
                 }
@@ -241,7 +401,7 @@ export class CalendarComponent implements OnInit {
 
             // only possible if hasTypeSelection is set to 'Geburtstag'
             if (hasBirthdayTypeSelection) {
-                if (this.bdTypeSelection.value !== event.event.birthdayType) {
+                if (this.bdTypeSelection.value !== event.birthdayType) {
                     return false;
                 }
             }

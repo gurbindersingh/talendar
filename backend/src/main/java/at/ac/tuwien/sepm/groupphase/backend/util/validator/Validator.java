@@ -1,8 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend.util.validator;
 
 
-import at.ac.tuwien.sepm.groupphase.backend.enums.Room;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.CancelationException;
+import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidFileException;
+import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidFilePathException;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidEntityException;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Holiday;
@@ -12,7 +13,15 @@ import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -25,8 +34,12 @@ public class Validator {
     private String phoneRegex = "^[+]*[(]{0,1}[0-9]{1,5}[)]{0,1}[-\\s\\./0-9]*$";
     private String emailRegex =
         "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])";
+
+    private String cronRegex = "(0|15|30|45)/(0|15|30|45)\\s([0-9]|1[0-9]|2[0-3])/([0-9]|1[0-9]|2[0-3])\\s([1-9]|[1-2][0-9]|3[0-1])/([1-9]|[1-2][0-9]|3[0-1])\\s([1-9]|1[0-2])/([1-9]|1[0-2])\\s([1-9][0-9][0-9][0-9])/([1-9][0-9][0-9][0-9])\\s(true|false)\\s(O1|O2|O3|O4)\\s([0-9]|[1-9][0-9]|[1-9][0-9][0-9])\\s(Nie|nie|Nach|nach)\\s([0-9]|[1-9][0-9]|[1-9][0-9][0-9])\\s";
+
     private Pattern phonePattern = Pattern.compile(phoneRegex);
     private Pattern emailPattern = Pattern.compile(emailRegex);
+    private Pattern cronPattern = Pattern.compile(cronRegex);
 
 
     public void validateEvent(Event event) throws InvalidEntityException {
@@ -311,8 +324,15 @@ public class Validator {
         if(customer.getWantsEmail() == null){
             throw new InvalidEntityException("Ob Sie Werbung haben wollen wurde nicht gesetzt");
         }
-
     }
+
+
+    public void validateCronExpression(String cronExpression) throws InvalidEntityException {
+        if(cronExpression == null || cronExpression.isBlank() || !this.cronPattern.matcher(cronExpression).find()){
+            throw new InvalidEntityException("");
+        }
+    }
+
 
     private static Integer calculateAge(LocalDateTime birthDate) {
         LocalDateTime now = LocalDateTime.now();
@@ -416,6 +436,84 @@ public class Validator {
                 break;
             default:
                 throw new CancelationException("Irgendwas ist schiefgelaufen");
+        }
+    }
+
+    public void validateImageFile(MultipartFile file) throws InvalidFileException {
+        // max size is 10 MB
+        // 10 * 1 MB (size of file returned as bytes therefore 2^20 is performed to hop from bytes to megabytes)
+        long maxFileSize = 10 * (long)( Math.pow(2, 20));
+
+        if (file.isEmpty()) {
+            throw new InvalidFileException("Das Bild darf nicht leer sein");
+        }
+
+        if (file.getSize() > maxFileSize) {
+            throw new InvalidFileException("Maximale Groeße von 10 MB wurde überschritten");
+        }
+
+        // check what type of extension is specified
+        String mimeType = file.getContentType();
+
+        /**
+         * Simple static check for valid content type (for obvious errors validation is made faster)
+         */
+        if (mimeType == null) {
+            throw new InvalidFileException("Die Datei ist defekt. Kein Mime Type vorhanden");
+        } else if (!mimeType.startsWith("image/")) {
+            throw new InvalidFileException("Datei muss eine Bilddatei sein (JPG, JPEG, PNG)");
+        } else {
+            int endOfMimePrefix = mimeType.indexOf('/');
+            String extension = file.getContentType().substring(endOfMimePrefix + 1);
+
+            if (!extension.equals("jpeg") && !extension.equals("jpg") && !extension.equals("png")) {
+                throw new InvalidFileException("Erlaubte Bildtypen: JPG, JPEG, PNG");
+            }
+        }
+
+        // now also check the actual content (as extension can be manipulated)
+        try(InputStream inputStream = file.getInputStream()) {
+            if (ImageIO.read(inputStream) == null) {
+                throw new InvalidFileException("Die Datei is defekt und beinhaltet keine Bilddaten");
+            }
+        } catch(IOException e) {
+            throw new InvalidFileException("Die Datei ist defekt und konnte nicht gelesen werden");
+        }
+    }
+
+    public void checkFilepath(String folder, String fileName) throws InvalidFilePathException, InvalidFileException, FileNotFoundException {
+        File file = new File(folder + fileName);
+
+        // any '/' ar prohibited, to make it impossible to retrieve a file from a different folder
+        if (fileName.contains("/")) {
+            throw new InvalidFilePathException("the given filename may not be a relative or absolute path but only a simple filename");
+        }
+
+        if (!file.exists()) {
+            throw new FileNotFoundException("there is no file that can be referred to by the given filename: " + fileName);
+        }
+
+        if (file.isDirectory()) {
+            throw new InvalidFileException("the give filepath may not refer to a directory");
+        }
+
+        if (!file.canRead()) {
+            throw new InvalidFileException("requested file is not readable");
+        }
+
+        try {
+            /*
+             * simple validity check that stored file is indeed image (yet this property can be assumed
+             * as the server itself is responsible to assure this constraint when saving)
+             */
+            String contentType = Files.probeContentType(file.toPath());
+
+            if (!contentType.startsWith("image/")) {
+                throw new InvalidFileException("requested file is not an image");
+            }
+        }
+        catch(IOException e) {
+            throw new InvalidFileException("content type of file could not be detected");
         }
     }
 }

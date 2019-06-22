@@ -129,6 +129,10 @@ public class FakeData {
         trainer.setPhone(fakePhoneNumber());
         trainer.setFirstName(fakeFirstName());
         trainer.setLastName(fakeLastName());
+        List<String> birthdayTypes = new LinkedList<>();
+        birthdayTypes.add("Rocket");
+        trainer.setBirthdayTypes(birthdayTypes);
+        trainer.setPassword("password");
         trainer.setId(fakeID());
         trainer.setCreated(fakePastTimeAfter2000());
         boolean found = false;
@@ -229,6 +233,7 @@ public class FakeData {
         trainer.setPhone(fakePhoneNumber());
         trainer.setFirstName(fakeFirstName());
         trainer.setLastName(fakeLastName());
+        trainer.setPassword("password");
         trainer.setId(null);
         trainer.setCreated(null);
         trainer.setUpdated(null);

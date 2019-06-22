@@ -38,7 +38,7 @@ import java.util.Map;
  * Essentially there are 2 parts of security which have to be performed:
  * a) Let a User login and check credentials against known user accounts
  * n) Check JWT tokens which are sent along each request and check access rights
- *    for the requested resource!
+ * for the requested resource!
  *
  * Both parts are NOT performed by the same classes and does not happen in the same place!
  *
@@ -46,17 +46,17 @@ import java.util.Map;
  * a)
  * What Happens:
  * 1.)  Post a trainer leads to creation of User (account) (besides that trainer entity is created too)
- *      See User class: basically credentials and meta info (e.g. isAdmin)
+ * See User class: basically credentials and meta info (e.g. isAdmin)
  * 2.)  User login -> credentials are sent (username + password)
  *
- *      Controller received request -> SimpleHeaderTokenAuthenticationService  then called to authenticate
- *      where a AuthenticationManager is used (all automatic) but it needs a provider and this provider is
- *      registered here in the configure method (we use DaoAuthenticationProvider)
- *      after authentication SimpleHeaderTokenAuthenticationService creates the token
- *      (for the intermediate step which is done by the DAOProvider see CustomUserDetailsService)
+ * Controller received request -> SimpleHeaderTokenAuthenticationService  then called to authenticate
+ * where a AuthenticationManager is used (all automatic) but it needs a provider and this provider is
+ * registered here in the configure method (we use DaoAuthenticationProvider)
+ * after authentication SimpleHeaderTokenAuthenticationService creates the token
+ * (for the intermediate step which is done by the DAOProvider see CustomUserDetailsService)
  *
  * Classes: AuthenticationEndpoint, SimpleHeaderTokenAuthenticationService, @Bean DaoAuthenticationProvider
- *          CustomUserDetailsService, User, SecurityUserProfile
+ * CustomUserDetailsService, User, SecurityUserProfile
  * #################################################################################################
  * b)
  * One Note at the beginning:
@@ -68,21 +68,20 @@ import java.util.Map;
  * 2.)  register Filter
  * 3.)  Filter does what you would expect (extract the part of the request which is actually the token)
  * 4.)  retrieved token stored in Wrapper AuthenticationHeaderToken and this is passed to our Provider
- *      which is responsible for further processing
+ * which is responsible for further processing
  * 5.)  Provider returns AuthenticationHeaderToken (now not only consisting of token but also authorities)
- *      after SimpleHeaderTokenAuthenticationService had parsed the incoming JWT token (retrieve authorities etc)
- *      and validity of token had been verified.
+ * after SimpleHeaderTokenAuthenticationService had parsed the incoming JWT token (retrieve authorities etc)
+ * and validity of token had been verified.
  * 6.)  Now we have a Authorization Object with all data (AuthenticationHeaderToken is a wrapper for that)
  * 7.)  MAGIC TIME AGAIN: you ask how does knowing the encoded roles of the verified token lead to the
- *      protection of the routes?
- *      ==> in HeaderTokenAuthenticationFilter we call SecurityContextHolder.getContext().setAuthentication(authentication)
+ * protection of the routes?
+ * ==> in HeaderTokenAuthenticationFilter we call SecurityContextHolder.getContext().setAuthentication(authentication)
  *
- *      For the given SpringContext (thread based, i.e. each user is handled by own thread) we set temporarily
- *      a specific role as activated (i.e if authentication includes 'ADMIN' then we set the context to 'Admin')
+ * For the given SpringContext (thread based, i.e. each user is handled by own thread) we set temporarily
+ * a specific role as activated (i.e if authentication includes 'ADMIN' then we set the context to 'Admin')
  *
- *      e.g. After Filtering is over Context Is Set -> request is processed -> say URL is Admin restricted
- *      -> we have ADMIN set in our context -> allow request or iff not deny request
- *
+ * e.g. After Filtering is over Context Is Set -> request is processed -> say URL is Admin restricted
+ * -> we have ADMIN set in our context -> allow request or iff not deny request
  */
 
 @Configuration
@@ -90,25 +89,29 @@ import java.util.Map;
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 // security currently only enabled for these profiles (not for test profile)
 // production currently not a profile but will be added eventually
-@Profile({"production", "development"})
+@Profile({ "production", "development" })
 public class SecurityConfiguration {
 
 
     @Bean
     public ErrorAttributes errorAttributes() {
         return new DefaultErrorAttributes() {
-            public Map<String, Object> getErrorAttributes(RequestAttributes requestAttributes, boolean includeStackTrace) {
-                Map<String, Object> errorAttributes = super.getErrorAttributes((WebRequest) requestAttributes, includeStackTrace);
+            public Map<String, Object> getErrorAttributes(RequestAttributes requestAttributes,
+                                                          boolean includeStackTrace
+            ) {
+                Map<String, Object> errorAttributes =
+                    super.getErrorAttributes((WebRequest) requestAttributes, includeStackTrace);
                 errorAttributes.remove("exception");
                 return errorAttributes;
             }
         };
     }
 
+
     // security currently only enabled for these profiles (not for test profile)
     // production currently not a profile but will be added eventually
     @Configuration
-    @Profile({"production", "development"})
+    @Profile({ "production", "development" })
     @Order(SecurityProperties.BASIC_AUTH_ORDER)
     private static class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
@@ -143,17 +146,17 @@ public class SecurityConfiguration {
 
 
         /**
-         *  WHOLE HTTP SECURITY IS CONFIGURED (allowed routes, access restrictions)
+         * WHOLE HTTP SECURITY IS CONFIGURED (allowed routes, access restrictions)
          *
-         *  And very important!!!:
-         *  Here everything which is magic will be configured:
-         *  -) any restriction and 401 status comes from here (ok that's the obvious stuff)
+         * And very important!!!:
+         * Here everything which is magic will be configured:
+         * -) any restriction and 401 status comes from here (ok that's the obvious stuff)
          *
-         *  How does a request to any endpoint (e.g. holidayEndpoint gets verified)?
-         *  -)  a filter is registered!
-         *      therefore any incoming HTTP request will be pre processed by the specified
-         *      filter class.
-         *      This filter class (and other helper classes therein) does all the verification etc.
+         * How does a request to any endpoint (e.g. holidayEndpoint gets verified)?
+         * -)  a filter is registered!
+         * therefore any incoming HTTP request will be pre processed by the specified
+         * filter class.
+         * This filter class (and other helper classes therein) does all the verification etc.
          */
         @Override
         protected void configure(HttpSecurity http) throws Exception {
@@ -163,18 +166,25 @@ public class SecurityConfiguration {
                  * first some basic security setting, make it safer (apply standard sec and disable common sec breaches)
                  * ######################################################################################################
                  */
-                .csrf().disable()
-                .headers().frameOptions().sameOrigin().and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-
+                .csrf()
+                .disable()
+                .headers()
+                .frameOptions()
+                .sameOrigin()
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
 
                 /*
                  *   #########################################################################
                  *   specify the error status which is sent upon unsuccessful requests (401)
                  *   #########################################################################
                  */
-                .exceptionHandling().authenticationEntryPoint((req, res, aE) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED)).and()
-
+                .exceptionHandling()
+                .authenticationEntryPoint(
+                    (req, res, aE) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED))
+                .and()
 
                 /*
                  *  ###############################################################################
@@ -187,34 +197,40 @@ public class SecurityConfiguration {
                 .authorizeRequests()
                 // any delete op is only accesible for the admin
                 .antMatchers(HttpMethod.DELETE, "/**").hasRole("ADMIN")
+                // dsgvo information endpoint
+                .antMatchers(HttpMethod.GET, "/api/v1/talendar/info/**").hasRole("ADMIN")
+                // restricted view taht display any event only for admins
+                .antMatchers(HttpMethod.GET, "/api/v1/talendar/events/all/admin").hasAnyRole("ADMIN", "TRAINER")
+                .antMatchers(HttpMethod.GET, "/api/v1/talendar/events/all/trainer/**").hasRole("TRAINER")
+                // allowed by default anyway, but to make it more obvious, the view of events
+                // that can be seen by clients is explicitely permitted
+                .antMatchers(HttpMethod.GET, "/api/v1/talendar/events/all/client").permitAll()
                 // next two has to be allowed in order to have a free accessible authentication endpoint
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1/talendar/authentication").permitAll()
                 // now disable a couple of manipulating ops for normal users
+                .antMatchers(HttpMethod.POST, "/api/v1/talendar/upload/image/trainer").hasAnyRole("ADMIN", "TRAINER")
                 .antMatchers(HttpMethod.POST, "/api/v1/talendar/events/course").hasAnyRole("ADMIN", "TRAINER")
                 .antMatchers(HttpMethod.POST, "/api/v1/talendar/events/consultation").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1/talendar/events/rent").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1/talendar/events/birthday").permitAll()
+                .antMatchers(HttpMethod.PUT, "/api/v1/talendar/events/customers").permitAll()
                 .antMatchers(HttpMethod.PUT, "/api/v1/talendar/events").hasAnyRole("ADMIN", "TRAINER")
                 .antMatchers(HttpMethod.POST, "/api/v1/talendar/holiday").hasRole("TRAINER")
                 .antMatchers(HttpMethod.POST, "/api/v1/talendar/holidays").hasRole("TRAINER")
                 .antMatchers(HttpMethod.PUT, "/api/v1/talendar/trainers").hasRole("ADMIN")
                 .antMatchers(HttpMethod.POST, "/api/v1/talendar/trainers").hasRole("ADMIN")
-                /**
-                 * TODO:    consider securing the get Trainers/Events Access Point.
-                 *          even if we disallow showAllTrainer/Events page in frontend
-                 *          data is still exposable over the REST API...!!!
-                 */
 
                 // explicitly allow SWAGGER (because this is really a sage haven)
                 .antMatchers(HttpMethod.GET,
-                    //"/v2/api-docs",
-                    "/swagger-resources/**",
-                    "/webjars/springfox-swagger-ui/**",
-                    "/swagger-ui.html")
+                             //"/v2/api-docs",
+                             "/swagger-resources/**",
+                             "/webjars/springfox-swagger-ui/**",
+                             "/swagger-ui.html")
                 .permitAll()
 
                 // allow anything that has not been disabled by a more specific rule
+
                 .antMatchers(HttpMethod.GET, "/**").permitAll()
             ;
 
@@ -224,7 +240,7 @@ public class SecurityConfiguration {
              * and we but we are gods. (I.e each data operation is carried out by this application).
              * ###########################################################################################
              */
-            if (h2ConsolePath != null && h2AccessMatcher != null) {
+            if(h2ConsolePath != null && h2AccessMatcher != null) {
                 http
                     .authorizeRequests()
                     .antMatchers(h2ConsolePath + "/**").access(h2AccessMatcher);
@@ -246,25 +262,28 @@ public class SecurityConfiguration {
                  * Each Operation in respect to 'Retrieve Incoming JWT, CHECK It, Check Roles, Check Access'
                  * is carried out by Filter!!!
                  */
-                .addFilterBefore(new CustomHeaderTokenAuthenticationFilter(authenticationProvider), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new CustomHeaderTokenAuthenticationFilter(authenticationProvider),
+                                 UsernamePasswordAuthenticationFilter.class
+                );
         }
 
 
         /**
-         *  The authenticationManager does a lot itself, but we need to specify which provider should
-         *  be used for authentication purposes if we do not want to use the default (which we don't)
+         * The authenticationManager does a lot itself, but we need to specify which provider should
+         * be used for authentication purposes if we do not want to use the default (which we don't)
          *
-         *  We use the customized DaoAuthenticationProvider (see its Bean) for the login!
+         * We use the customized DaoAuthenticationProvider (see its Bean) for the login!
          */
-       @Override
-       protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        @Override
+        protected void configure(AuthenticationManagerBuilder auth) throws Exception {
             auth.authenticationProvider(authenticationProvider());
-       }
+        }
+
 
         @Bean
         @Override
         public AuthenticationManager authenticationManagerBean() throws Exception {
-             return super.authenticationManagerBean();
+            return super.authenticationManagerBean();
         }
 
 
@@ -273,8 +292,8 @@ public class SecurityConfiguration {
          * our repository (see IUserService and UserRepository)
          *
          * NOTE: DaoAuthenticationProvider needs some help:
-         *     -) against which entities should he perform the authentication check?
-         *        -> userDetailsService specifies this (retrieve User by email from repo)
+         * -) against which entities should he perform the authentication check?
+         * -> userDetailsService specifies this (retrieve User by email from repo)
          *
          * @return Instance thereof is returned.
          */
@@ -294,8 +313,7 @@ public class SecurityConfiguration {
             registry
                 .addMapping("/**")
                 .allowedOrigins("*")
-                .allowedMethods("PUT","POST","OPTION","GET");
+                .allowedMethods("PUT", "POST", "OPTION", "GET");
         }
     }
-
 }

@@ -17,6 +17,10 @@ public class Holiday {
     private Trainer trainer;
 
     @NotNull
+    private String title;
+    private String description;
+
+    @NotNull
     @Future
     private LocalDateTime holidayStart;
 
@@ -27,81 +31,107 @@ public class Holiday {
     public Holiday(){}
 
 
-    public Holiday (@NotNull Trainer trainer, @NotNull LocalDateTime holidayStart, @NotNull LocalDateTime holidayEnd) {
+    public Holiday (@NotNull Trainer trainer, @NotNull String title, String description, @NotNull LocalDateTime holidayStart, @NotNull LocalDateTime holidayEnd) {
         this.trainer = trainer;
+        this.title = title;
+        this.description = description;
         this.holidayStart = holidayStart;
         this.holidayEnd = holidayEnd;
     }
 
 
-    public Long getId () {
+    public Long getId() {
         return id;
     }
 
 
-    public void setId (Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
 
-    public Trainer getTrainer () {
+    public Trainer getTrainer() {
         return trainer;
     }
 
 
-    public void setTrainer (Trainer trainer) {
+    public void setTrainer(Trainer trainer) {
         this.trainer = trainer;
     }
 
 
-    public LocalDateTime getHolidayStart () {
+    public String getTitle() {
+        return title;
+    }
+
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+
+    public String getDescription() {
+        return description;
+    }
+
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+
+    public LocalDateTime getHolidayStart() {
         return holidayStart;
     }
 
 
-    public void setHolidayStart (LocalDateTime holidayStart) {
+    public void setHolidayStart(LocalDateTime holidayStart) {
         this.holidayStart = holidayStart;
     }
 
 
-    public LocalDateTime getHolidayEnd () {
+    public LocalDateTime getHolidayEnd() {
         return holidayEnd;
     }
 
 
-    public void setHolidayEnd (LocalDateTime holidayEnd) {
+    public void setHolidayEnd(LocalDateTime holidayEnd) {
         this.holidayEnd = holidayEnd;
     }
 
 
     @Override
-    public boolean equals (Object o) {
+    public boolean equals(Object o) {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
         Holiday holiday = (Holiday) o;
         return Objects.equals(id, holiday.id) &&
-            Objects.equals(trainer, holiday.trainer) &&
-            Objects.equals(holidayStart, holiday.holidayStart) &&
-            Objects.equals(holidayEnd, holiday.holidayEnd);
+               Objects.equals(trainer, holiday.trainer) &&
+               Objects.equals(title, holiday.title) &&
+               Objects.equals(description, holiday.description) &&
+               Objects.equals(holidayStart, holiday.holidayStart) &&
+               Objects.equals(holidayEnd, holiday.holidayEnd);
     }
 
 
     @Override
-    public int hashCode () {
-        return Objects.hash(id, trainer, holidayStart, holidayEnd);
+    public int hashCode() {
+        return Objects.hash(id, trainer, title, description, holidayStart, holidayEnd);
     }
 
 
     @Override
-    public String toString () {
+    public String toString() {
         return "Holiday{" +
-            "id=" + id +
-            ", trainerid=" + trainer.getId()+
-            ", trainerfirstname=" + trainer.getFirstName()+
-            ", trainerlastname=" + trainer.getLastName()+
-            ", holidayStart=" + holidayStart +
-            ", holidayEnd=" + holidayEnd +
-            '}';
+               "id=" + id +
+               ", trainerid=" + trainer.getId()+
+               ", trainerfirstname=" + trainer.getFirstName()+
+               ", trainerlastname=" + trainer.getLastName()+
+               ", title='" + title + '\'' +
+               ", description='" + description + '\'' +
+               ", holidayStart=" + holidayStart +
+               ", holidayEnd=" + holidayEnd +
+               '}';
     }
 }
 

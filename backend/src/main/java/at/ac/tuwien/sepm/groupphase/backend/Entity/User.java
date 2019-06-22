@@ -1,18 +1,35 @@
 package at.ac.tuwien.sepm.groupphase.backend.Entity;
 
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
 import javax.validation.constraints.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Entity
+@MappedSuperclass
+@Where(clause = "deleted <> true")
 public class User {
 
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false, updatable = false)
-    private Long id;
+    /**
+     * Minimal Personal Information
+     */
+    @NotBlank
+    @Column(nullable = false)
+    private String firstName;
+    @NotBlank
+    @Column(nullable = false)
+    private String lastName;
+    @NotNull
+    @Past
+    @Column(nullable = false)
+    private LocalDate birthday;
 
+    /**
+     * Credentials For User
+     */
     @NotBlank
     @Email
     @Column(nullable = false)
@@ -21,38 +38,74 @@ public class User {
     @Column(nullable = false, name = "password")
     private String password;
 
+    /**
+     * Meta Informations
+     */
     @NotNull
     private boolean admin;
     @NotNull
     private boolean deleted;
+    @NotNull
+    @Past
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime created;
+    @NotNull
+    @Past
+    @Column(nullable = false)
+    private LocalDateTime updated;
 
-    @OneToOne
-    private Trainer trainer;
 
-    public User() {}
+    public User() {
+    }
+
 
     public User(
-        @NotBlank @Email String email,
-        @NotBlank String password,
-        @NotNull boolean deleted,
-        @NotNull boolean admin,
-        Trainer trainer
-    ) {
+                @NotBlank String firstName,
+                @NotBlank String lastName,
+                @NotNull @Past LocalDate birthday,
+                @NotBlank @Email String email,
+                @NotBlank String password,
+                @NotNull @Past LocalDateTime created,
+                @NotNull @Past LocalDateTime updated
+    ) { this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthday = birthday;
         this.email = email;
         this.password = password;
-        this.deleted = deleted;
-        this.admin = admin;
-        this.trainer = trainer;
+        this.created = created;
+        this.updated = updated;
+        this.deleted = false;
+        this.admin = false;
     }
 
 
-    public Long getId() {
-        return id;
+    public String getFirstName() {
+        return firstName;
     }
 
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+
+    public String getLastName() {
+        return lastName;
+    }
+
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+
+    public LocalDate getBirthday() {
+        return birthday;
+    }
+
+
+    public void setBirthday(LocalDate birthday) {
+        this.birthday = birthday;
     }
 
 
@@ -76,13 +129,13 @@ public class User {
     }
 
 
-    public Trainer getTrainer() {
-        return trainer;
+    public boolean isAdmin() {
+        return admin;
     }
 
 
-    public void setTrainer(Trainer trainer) {
-        this.trainer = trainer;
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
     }
 
 
@@ -96,13 +149,29 @@ public class User {
     }
 
 
-    public boolean isAdmin() {
-        return admin;
+    @PreRemove
+    public void deleteUser() {
+        this.deleted = true;
     }
 
 
-    public void setAdmin(boolean admin) {
-        this.admin = admin;
+    public LocalDateTime getCreated() {
+        return created;
+    }
+
+
+    public void setCreated(LocalDateTime created) {
+        this.created = created;
+    }
+
+
+    public LocalDateTime getUpdated() {
+        return updated;
+    }
+
+
+    public void setUpdated(LocalDateTime updated) {
+        this.updated = updated;
     }
 
 
@@ -111,30 +180,39 @@ public class User {
         if(this == o) return true;
         if(!( o instanceof User )) return false;
         User user = (User) o;
-        return deleted == user.deleted &&
-               admin == user.admin &&
-               Objects.equals(id, user.id) &&
+        return admin == user.admin &&
+               deleted == user.deleted &&
+               Objects.equals(firstName, user.firstName) &&
+               Objects.equals(lastName, user.lastName) &&
+               Objects.equals(birthday, user.birthday) &&
                Objects.equals(email, user.email) &&
                Objects.equals(password, user.password) &&
-               Objects.equals(trainer, user.trainer);
+               Objects.equals(created, user.created) &&
+               Objects.equals(updated, user.updated);
     }
 
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, email, password, deleted, admin, trainer);
+        return Objects.hash(firstName, lastName, birthday, email, password, admin, deleted,
+                            created,
+                            updated
+        );
     }
 
 
     @Override
     public String toString() {
         return "User{" +
-               "id=" + id +
+               ", firstName='" + firstName + '\'' +
+               ", lastName='" + lastName + '\'' +
+               ", birthday=" + birthday +
                ", email='" + email + '\'' +
                ", password='" + password + '\'' +
                ", admin=" + admin +
                ", deleted=" + deleted +
-               ", trainer=" + trainer +
+               ", created=" + created +
+               ", updated=" + updated +
                '}';
     }
 }

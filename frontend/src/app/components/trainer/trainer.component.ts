@@ -1,14 +1,18 @@
-import { Component, OnInit, SimpleChanges, OnChanges } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { TrainerClient } from 'src/app/rest/trainer-client';
 import { Trainer } from 'src/app/models/trainer';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import {
     NgbDateNativeAdapter,
     NgbDateStruct,
     NgbDate,
+    NgbModal,
 } from '@ng-bootstrap/ng-bootstrap';
+
+import { ImageClient } from 'src/app/rest/image-client';
+import * as Croppie from 'croppie';
 
 @Component({
     selector: 'app-trainer',
@@ -23,10 +27,15 @@ export class TrainerComponent implements OnInit {
     birthday: NgbDateStruct;
     password: string;
     passwordRepeated: string;
+    binaryEncodedImage: any = null;
+    binaryEncodedCroppedImage: any = null;
 
     btnContextDescription: string;
+    pwPlaceholder: string;
+    pwRepeatPlaceholder: string;
     errorMsg: string;
     successMsg: string;
+
     birthdayOptionsColumn1: any = {
         Trockeneis: { selected: false, value: 'DryIce' },
         Raketen: { selected: false, value: 'Rocket' },
@@ -41,11 +50,18 @@ export class TrainerComponent implements OnInit {
     private isSaveMode: boolean;
     private currentDate: Date = new Date();
 
+    private formData: FormData = null;
+    private image: File;
+
+    private croppie: Croppie;
+
     constructor(
         private trainerClient: TrainerClient,
+        private imageClient: ImageClient,
         private route: ActivatedRoute,
         private location: Location,
-        private adapter: NgbDateNativeAdapter
+        private adapter: NgbDateNativeAdapter,
+        private modalService: NgbModal
     ) {}
 
     getBirthdayColumn1Keys() {
@@ -96,7 +112,10 @@ export class TrainerComponent implements OnInit {
     ngOnInit() {
         // check whether this site was loaded with a query param (edit) else
         // we are in save mode
+
         const id: number = this.route.snapshot.queryParams.id;
+        this.pwPlaceholder = 'Neues Passwort';
+        this.pwRepeatPlaceholder = 'Passwort wiederholen';
 
         if (id === undefined) {
             this.title = 'Trainer erstellen';
@@ -105,33 +124,45 @@ export class TrainerComponent implements OnInit {
         } else {
             this.title = 'Trainer Bearbeiten';
             this.btnContextDescription = 'Änderungen speichern';
+            this.pwPlaceholder += ' (Optional)';
             this.isSaveMode = false;
             this.trainerClient.getById(id).subscribe(
                 (data: Trainer) => {
-                    console.log(data);
                     // create ngb data model from trainer data and set bday in form
                     const loadedDate: Date = new Date(data.birthday);
-                    console.log(loadedDate);
                     const ngbDate: NgbDate = new NgbDate(
                         loadedDate.getFullYear(),
                         loadedDate.getUTCMonth() + 1,
                         loadedDate.getUTCDate()
                     );
-                    console.log(ngbDate);
                     this.birthday = ngbDate;
 
                     // mark active checkboxes of a trainer as selected
                     this.fillCheckboxes(data.birthdayTypes);
 
                     this.trainer = data;
+                    // load profile pic if picture (name of it) is associated with trainer
+                    if (this.trainer.picture != null) {
+                        this.imageClient
+                            .getProfilePicture(this.trainer.picture)
+                            .subscribe(
+                                // received data are octet stream (pure 'raw' binary data)
+                                (bytes: any) => {
+                                    const blob = new Blob([bytes]);
+                                    this.extractBinaryDataFromFile(blob, true);
+                                },
+                                (error) => {
+                                    // manual parsing required because (returntype is not json)
+                                    const info = JSON.parse(error);
+                                    console.log(
+                                        'profile picture could not be loaded: ' +
+                                            info.message
+                                    );
+                                }
+                            );
+                    }
                 },
                 (error: Error) => {
-                    /**
-                     * Even though this error situation should be very rare,
-                     * this is not the smoothest solution.
-                     * But what to do?!?
-                     * just stay here and continue with save made (imo not sensible too)
-                     */
                     this.errorMsg =
                         'Der ausgewählte Trainer konnte leider nicht geladen werden.';
                     this.location.back();
@@ -140,7 +171,7 @@ export class TrainerComponent implements OnInit {
         }
     }
 
-    public postTrainer(form: NgForm): void {
+    public submitForm(form: NgForm): void {
         const supervisedBirthdays: string[] = [];
         const allBirthdayOptions = Object.assign(
             {},
@@ -158,35 +189,26 @@ export class TrainerComponent implements OnInit {
 
         if (this.password !== this.passwordRepeated) {
             return;
-        } else {
+        }
+
+        if (this.password !== undefined && this.password !== '') {
             this.trainer.password = this.password;
         }
 
-        if (this.isSaveMode) {
-            this.trainerClient.postNewTrainer(this.trainer).subscribe(
-                (data: Trainer) => {
-                    console.log(data);
-                    this.successMsg =
-                        'Der Betreuer wurde erfolgreich gespeichert';
-                    form.reset();
-                },
-                (error: Error) => {
-                    this.errorMsg =
-                        'Der Betreuer konnte nicht angelegt werden: ' +
-                        error.message;
-                }
-            );
+        if (this.formData == null) {
+            // immediately pefrom request (PUT or POST dependant on state)
+            this.postData(form);
         } else {
-            this.trainerClient.update(this.trainer).subscribe(
-                (data: Trainer) => {
-                    console.log(data);
-                    this.successMsg =
-                        'Der Betreuer wurde erfolgreich aktualisiert';
+            // first post the selected image, if successful post trainer
+            this.imageClient.postProfilePicture(this.formData).subscribe(
+                (fileLocation: string) => {
+                    this.trainer.picture = fileLocation;
+                    this.postData(form);
                 },
-                (error: Error) => {
-                    this.errorMsg =
-                        'Der Betreuer konnte nicht erfolgreich aktualisiert werden: ' +
-                        error.message;
+                (error) => {
+                    // manual parsing required because this endpoint returns plain text (no json)
+                    const info = JSON.parse(error);
+                    this.errorMsg = info.message;
                 }
             );
         }
@@ -214,20 +236,67 @@ export class TrainerComponent implements OnInit {
         if (this.trainer.phone === undefined || this.trainer.phone === '') {
             return false;
         }
-        if (this.password === undefined || this.password === '') {
-            return false;
-        }
-        if (
-            this.passwordRepeated === undefined ||
-            this.passwordRepeated === ''
-        ) {
-            return false;
-        }
+        // whenever password fields are not equals disable submit
         if (this.password !== this.passwordRepeated) {
             return false;
         }
+        // in save mode pw has to be specified, in edit mode it may be unspecified (== no changes)
+        if (this.isSaveMode) {
+            if (this.password === undefined || this.password === '') {
+                return false;
+            }
+            if (
+                this.passwordRepeated === undefined ||
+                this.passwordRepeated === ''
+            ) {
+                return false;
+            }
+        }
+
         // todo add check for password as soon as there is a mechanism that supports passwords
         return true;
+    }
+
+    public onFileSelected(event: any, croppieModal: any): void {
+        const selected: File = event.target.files[0];
+
+        // when the file selection menu is closed without selection of file
+        if (selected == null) {
+            return;
+        }
+        this.image = selected;
+
+        this.extractBinaryDataFromFile(this.image, false);
+
+        this.modalService.open(croppieModal);
+
+        setTimeout(() => {
+            const img = document.getElementById('profilePicture');
+            this.croppie = new Croppie(img as HTMLImageElement, {
+                viewport: { width: 200, height: 200 },
+                boundary: { width: 250, height: 250 },
+                showZoomer: true,
+            });
+        }, 100);
+    }
+
+    public saveCropped() {
+        // this.croppie
+        this.croppie.bind({ url: '' });
+        this.croppie
+            .result({ type: 'blob', quality: 1, format: 'png' })
+            .then((image: Blob) => {
+                this.image = image as File;
+                this.extractBinaryDataFromFile(image, true);
+                this.formData = new FormData();
+                this.formData.append('file', this.image);
+            })
+            .catch((error) => {
+                console.log(error);
+                this.errorMsg =
+                    'Das Bild konnte leider nicht gespeichert werden. ' +
+                    'Bitte versuchen Sie es erneut.';
+            });
     }
 
     public clearInfoMsg(): void {
@@ -237,6 +306,42 @@ export class TrainerComponent implements OnInit {
 
     public cancel(): void {
         this.location.back();
+    }
+
+    /**
+     * Post the form data to server.
+     * In edit mode an update (PUT request) will be performed.
+     * In save mode a POST request will be performed.
+     */
+    private postData(form: NgForm): void {
+        if (this.isSaveMode) {
+            this.trainerClient.postNewTrainer(this.trainer).subscribe(
+                (data: Trainer) => {
+                    console.log(data);
+                    this.successMsg =
+                        'Der Betreuer wurde erfolgreich gespeichert';
+                    form.reset();
+                },
+                (error: Error) => {
+                    this.errorMsg =
+                        'Der Betreuer konnte nicht angelegt werden: ' +
+                        error.message;
+                }
+            );
+        } else {
+            this.trainerClient.update(this.trainer, this.password).subscribe(
+                (data: Trainer) => {
+                    console.log(data);
+                    this.successMsg =
+                        'Der Betreuer wurde erfolgreich aktualisiert';
+                },
+                (error: Error) => {
+                    this.errorMsg =
+                        'Der Betreuer konnte nicht erfolgreich aktualisiert werden: ' +
+                        error.message;
+                }
+            );
+        }
     }
 
     private fillCheckboxes(supervisedBirthdays: string[]): void {
@@ -255,6 +360,28 @@ export class TrainerComponent implements OnInit {
                 this.birthdayOptionsColumn2[option].selected = true;
             }
         }
+    }
+
+    /**
+     * This method can be used to extract the content of a file as binary data.
+     * I.e. <img src"..."> can display images given their binary representation.
+     *
+     * @param file the wrapper of the content. 'File' can be also used as param as
+     *             it extends Blob!
+     */
+    private extractBinaryDataFromFile(
+        file: Blob,
+        setCropperContainer: boolean
+    ): void {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = () => {
+            if (setCropperContainer) {
+                this.binaryEncodedCroppedImage = reader.result;
+            } else {
+                this.binaryEncodedImage = reader.result;
+            }
+        };
     }
 
     private transformToDate(date: NgbDateStruct): Date {

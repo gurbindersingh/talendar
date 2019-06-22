@@ -84,7 +84,9 @@
                 </div>
             </div>
             <div class="row">
-                <label class="col-lg-1" for="startTime" id="beginLabel">Von</label>
+                <label class="col-lg-1" for="startTime" id="beginLabel"
+                    >Von</label
+                >
                 <div class="form-group col-lg-4" id="startTime_css">
                     <ngb-timepicker
                         [(ngModel)]="startTime"
@@ -157,7 +159,7 @@
                     >
                 </div>
             </div>
-
+            <br />
             <div class="row" *ngIf="errorMsg">
                 <div class="col-sm-12">
                     <p class="alert alert-danger">
@@ -175,12 +177,9 @@
             <br />
             <div class="row justify-content-end">
                 <div class="col-lg-3">
-                    <label id="meetingPrice" class="form-group">
-                        (Preis €)</label
-                    >
+                    <label id="meetingPrice" class="form-group"> </label>
                 </div>
             </div>
-
             <div class="row justify-content-end">
                 <input
                     type="submit"
@@ -189,7 +188,21 @@
                     id="meetingSave"
                     value="Mieten"
                     (click)="postMeeting(meetingForm)"
+                    *ngIf="!loading"
                 />
+                <button
+                    class="btn btn-primary col-lg-3"
+                    type="button"
+                    *ngIf="loading"
+                    disabled
+                >
+                    <span
+                        class="spinner-border spinner-border-sm"
+                        role="status"
+                        aria-hidden="true"
+                    ></span>
+                    Loading...
+                </button>
             </div>
         </form>
     </div>
