@@ -255,6 +255,7 @@ public class FakeData {
         trainer.setId(null);
         trainer.setCreated(null);
         trainer.setUpdated(null);
+        trainer.setPassword("password123");
 
         trainer.setBirthdayTypes(randomBirthdayTypes());
         return trainer;

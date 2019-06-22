@@ -147,7 +147,7 @@ public class TestDataGenerator implements ApplicationRunner {
         for(int i = 0; i< 10; i++){
             try {
                 Trainer trainer = faker.fakeNewTrainerEntity();
-                trainerService.save(trainer, "password");
+                trainerService.save(trainer);
             }catch(ServiceException | ValidationException e){
                 //failure is fine
             }
