@@ -153,10 +153,10 @@
                             class="browser-default custom-select"
                             id="repeatAt"
                             name="repeatAt"
-                            [(ngModel)]="repeatModul"
+                            [(ngModel)]="selectedRepeatOption"
                         >
-                            <option *ngFor="let r of repeatEvery">{{
-                                r
+                            <option *ngFor="let option of repeatOptions">{{
+                                option
                             }}</option>
                         </select>
                     </div>
@@ -305,8 +305,8 @@
                             name="stopAfter"
                             [(ngModel)]="terminateModul"
                         >
-                            <option *ngFor="let t of terminateAfter">
-                                {{ t }}
+                            <option *ngFor="let option of terminateAfterOption">
+                                {{ option }}
                             </option>
                         </select>
                     </div>

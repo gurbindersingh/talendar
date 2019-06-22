@@ -33,9 +33,9 @@ export class CourseComponent implements OnInit {
     otherRoom1String: string;
     otherRoom2String: string;
 
-    repeatEvery = ['Nie', 'Jeden Tag', 'Jede Woche', 'Jeden Monat'];
-    terminateAfter = ['Nie', 'Nach'];
-    repeatModul: string;
+    repeatOptions = ['Nie', 'Jeden Tag', 'Jede Woche', 'Jeden Monat'];
+    terminateAfterOption = ['Nie', 'Nach'];
+    selectedRepeatOption: string;
     terminateModul: string;
     alleX: number;
     endedX: number;
@@ -101,8 +101,8 @@ export class CourseComponent implements OnInit {
         this.startTime = { hour: 13, minute: 0, second: 0 };
         this.endTime = { hour: 14, minute: 0, second: 0 };
         this.endOfApplicationTime = { hour: 13, minute: 0, second: 0 };
-        this.repeatModul = this.repeatEvery[0];
-        this.terminateModul = this.terminateAfter[0];
+        this.selectedRepeatOption = this.repeatOptions[0];
+        this.terminateModul = this.terminateAfterOption[0];
         this.alleX = 1;
         this.endedX = 1;
     }
@@ -176,7 +176,7 @@ export class CourseComponent implements OnInit {
     }
 
     public isRepeat(): boolean {
-        if (this.repeatModul === 'Nie') {
+        if (this.selectedRepeatOption === 'Nie') {
             return false;
         }
         return true;
@@ -187,8 +187,8 @@ export class CourseComponent implements OnInit {
             this.toggleOptions = true;
         } else {
             this.toggleOptions = false;
-            this.repeatModul = this.repeatEvery[0];
-            this.terminateModul = this.terminateAfter[0];
+            this.selectedRepeatOption = this.repeatOptions[0];
+            this.terminateModul = this.terminateAfterOption[0];
         }
     }
 
@@ -206,7 +206,7 @@ export class CourseComponent implements OnInit {
             this.startDate,
             this.endTime,
             this.toggleOptions,
-            this.repeatModul,
+            this.selectedRepeatOption,
             this.alleX,
             this.terminateModul,
             this.endedX
@@ -326,8 +326,8 @@ export class CourseComponent implements OnInit {
         this.endOfApplicationDate = null;
         this.startDate = null;
         this.toggleOptions = false;
-        this.repeatModul = this.repeatEvery[0];
-        this.terminateModul = this.terminateAfter[0];
+        this.selectedRepeatOption = this.repeatOptions[0];
+        this.terminateModul = this.terminateAfterOption[0];
         this.alleX = 1;
         this.endedX = 1;
     }
