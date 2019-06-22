@@ -22,15 +22,17 @@ public class InfoMail {
 
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private final EventMapper eventMapper;
+    private final MailData mailData;
 
-    public InfoMail (EventMapper eventMapper) {
+    public InfoMail (EventMapper eventMapper, MailData mailData) {
         this.eventMapper = eventMapper;
+        this.mailData = mailData;
     }
 
     public Properties createProps () {
         Properties props = System.getProperties();
-        String from = "testingsepmstuffqse25@gmail.com";
-        String password = "This!is!a!password!";
+        String from = mailData.getSenderMail();
+        String password = mailData.getSenderPassword();
         props.put("mail.smtp.user", from);
         props.put("mail.smtp.pwd", password);
         props.put("mail.smtp.host", "smtp.gmail.com");
@@ -42,9 +44,9 @@ public class InfoMail {
 
     public void sendAdminEventInfoMail(Event event, String subject, String type) throws EmailException {
         //TODO: Edit adminadresse to be the actual adminadresse.
-        String to = "admin@admin.admin";
-        String from = "testingsepmstuffqse25@gmail.com";
-        String password = "This!is!a!password!";
+        String to = mailData.getAdminMail();
+        String from = mailData.getSenderMail();
+        String password = mailData.getSenderPassword();
         String host = "smtp.gmail.com";
         Session session = Session.getDefaultInstance(createProps());
         try{
@@ -83,9 +85,9 @@ public class InfoMail {
 
     public void sendAdminTrainerInfoMail(Trainer trainer, String subject, String type) throws EmailException {
         //TODO: Edit adminadresse to be the actual adminadresse.
-        String to = "admin@admin.admin";
-        String from = "testingsepmstuffqse25@gmail.com";
-        String password = "This!is!a!password!";
+        String to = mailData.getAdminMail();
+        String from = mailData.getSenderMail();
+        String password = mailData.getSenderPassword();
         String host = "smtp.gmail.com";
         Session session = Session.getDefaultInstance(createProps());
         try{
@@ -126,8 +128,8 @@ public class InfoMail {
         for(int i = 0; i < event.getCustomers().size(); i++){
             CustomerDto customerDto = eventDto.getCustomerDtos().get(i);
             String to = customerDto.getEmail();
-            String from = "testingsepmstuffqse25@gmail.com";
-            String password = "This!is!a!password!";
+            String from = mailData.getSenderMail();
+            String password = mailData.getSenderPassword();
             String host = "smtp.gmail.com";
             Session session = Session.getDefaultInstance(createProps());
             try{
