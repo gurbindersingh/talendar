@@ -294,6 +294,7 @@
                     (pageChange)="updateListPage()"
                     [maxSize]="5"
                     [rotate]="true"
+                    *ngIf="dates.length > 12"
                 >
                     <ng-template ngbPaginationPrevious>
                         Zurück
