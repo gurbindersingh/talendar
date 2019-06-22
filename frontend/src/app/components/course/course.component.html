@@ -451,16 +451,16 @@
                         type="file"
                         class="custom-file-input"
                         id="fileUpload"
-                        (change)="onFileSelected($event)"
+                        (change)="onFileSelected($event, croppieModal)"
                         multiple
                     />
 
-                    <div *ngIf="files != null" id="allSelections">
+                    <div *ngIf="files.length != 0" id="allSelections">
                         <h6>Ausgewählte Files:</h6>
                         <ul class="list-unstyled">
                             <li *ngFor="let file of files; index as i">
                                 <div class="selection">
-                                    <p class="fileName">{{file.name}}</p>
+                                    <p class="fileName">{{ file.name }}</p>
                                     <button
                                         type="button"
                                         class="btn"
@@ -524,3 +524,45 @@
 </div>
 <br />
 <br />
+
+<ng-template #croppieModal let-modal>
+    <div class="modal-header">
+        <h5>Bild {{ numImg + 1 }} / {{ binaryEncodedImages.length }}</h5>
+    </div>
+    <div class="modal-body">
+        <img
+            [src]="binaryEncodedImages[numImg] | safeServerImage"
+            class="img-thumbnail"
+            id="profilePicture"
+        />
+    </div>
+    <div class="modal-footer">
+        <div *ngIf="numImg < binaryEncodedImages.length - 1">
+            <button
+                type="button"
+                class="btn btn-primary"
+                (click)="saveCropped(croppieModal); modal.close()"
+            >
+                Weiter
+            </button>
+        </div>
+        <div *ngIf="numImg == binaryEncodedImages.length - 1">
+            <button
+                type="button"
+                class="btn btn-primary"
+                (click)="finishCropping(); modal.close()"
+            >
+                Speichern
+            </button>
+        </div>
+        <div>
+            <button
+                type="button"
+                class="btn btn-danger"
+                (click)="cancel(); modal.close()"
+            >
+                Abbrechen
+            </button>
+        </div>
+    </div>
+</ng-template>

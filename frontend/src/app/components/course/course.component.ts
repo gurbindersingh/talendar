@@ -11,6 +11,10 @@ import { Trainer } from 'src/app/models/trainer';
 import { ActivatedRoute } from '@angular/router';
 import { CronMakerService } from 'src/app/services/cronMaker.service';
 import { SessionStorageService } from 'src/app/services/session-storage.service';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import * as Croppie from 'croppie';
+import { ImageClient } from 'src/app/rest/image-client';
+import { Observable } from 'rxjs';
 
 @Component({
     selector: 'app-course',
@@ -56,23 +60,34 @@ export class CourseComponent implements OnInit {
     greenRadioButton: RadioNodeList;
     radioButtonSelected = '';
 
+    numImg: number;
+    binaryEncodedImages: any[] = [];
+
     // selected files to upload for a course
-    files: File[] = null;
+    files: File[] = [];
+    croppedImages: Blob[] = [];
+
+    private croppie: Croppie;
+    promises: Promise<string>[] = [];
 
     private event: Event = new Event();
     private roomUse: RoomUse = new RoomUse();
     private trainer: Trainer = new Trainer();
     private dateTimeParser: DateTimeParserService;
 
+    private formDatas: FormData[] = [];
+
     private errorMsg: string;
     private successMsg: string;
 
     constructor(
         private eventClient: EventClient,
+        private imageClient: ImageClient,
         dateTimeParser: DateTimeParserService,
         private route: ActivatedRoute,
         cronMaker: CronMakerService,
-        private sessionService: SessionStorageService
+        private sessionService: SessionStorageService,
+        private modalService: NgbModal
     ) {
         this.cronMaker = cronMaker;
         this.dateTimeParser = dateTimeParser;
@@ -195,57 +210,110 @@ export class CourseComponent implements OnInit {
                 this.roomUse.roomOption = this.roomOption;
             }
             this.event.roomUses = [this.roomUse];
-
             this.loading = true;
-            this.eventClient.postNewEvent(this.event).subscribe(
-                (data: Event) => {
-                    console.log(data);
-                    this.successMsg =
-                        'Deine Reservierung wurde erfolgreich gespeichert';
-                    this.resetFormular();
-                    this.errorMsg = '';
-                    this.loading = false;
-                },
-                (error: Error) => {
-                    console.log(error);
-                    this.errorMsg = error.message;
-                    this.successMsg = '';
-                    this.loading = false;
-                }
-            );
+
+            console.log(this.formDatas.length);
+            console.log('DEBUGGGG!!:' + this.promises.length);
+
+            if (this.promises.length === 0) {
+                this.postData(form);
+            } else {
+                Promise.all(this.promises).then(
+                    (data: string[]) => {
+                        this.event.pictures = data;
+                        this.postData(form);
+                    },
+                    (error) => {
+                        /**
+                         *  manual parsing required because this endpoint
+                         *  returns plain text (no json)
+                         */
+                        const info = JSON.parse(error);
+                        this.errorMsg = info.message;
+                    }
+                );
+            }
         } else {
-            // TODO
-            this.eventClient.update(this.event).subscribe(
-                (data: Event) => {
-                    console.log(data);
-                    this.successMsg = 'Der Kurs wurde erfolgreich aktualisiert';
-                    this.errorMsg = '';
-                    this.loading = false;
-                },
-                (error: Error) => {
-                    console.log(error.message);
-                    this.errorMsg =
-                        'Der Kurs konnte nicht erfolgreich aktualisiert werden: ' +
-                        error.message;
-                    this.successMsg = '';
-                    this.loading = false;
-                }
-            );
+            this.postData(form);
         }
     }
 
-    public onFileSelected(event: any): void {
+    public onFileSelected(event: any, croppieModal: any): void {
         this.files = [];
-        for (const file of event.target.files) {
+        this.binaryEncodedImages = [];
+        this.formDatas = [];
+        for (let i = 0; i < event.target.files.length; i++) {
+            const file: File = event.target.files[i];
             this.files.push(file);
+            this.extractBinaryDataFromFile(file, i);
         }
+
+        this.numImg = 0;
+
+        this.startCroppie(croppieModal);
     }
 
     public removeFile(index: number): void {
-        console.log(index);
-        console.log('Start removing: ' + this.files.length);
-        this.files = this.files.splice(index, 1);
-        console.log('End: ' + this.files.length);
+        const newListFiles: File[] = [];
+        const newListFormData: FormData[] = [];
+        for (let i = 0; i < this.files.length; i++) {
+            if (i !== index) {
+                newListFiles.push(this.files[i]);
+                newListFormData.push(this.formDatas[i]);
+            }
+        }
+
+        if (newListFiles.length > 0) {
+            this.files = newListFiles;
+            this.formDatas = newListFormData;
+        } else {
+            this.files = [];
+            this.formDatas = [];
+        }
+    }
+
+    public saveCropped(croppieModal: any): void {
+        console.log('SAVE');
+        this.croppie.bind({ url: '' });
+        this.croppie
+            .result({ type: 'blob', quality: 1, format: 'png' })
+            .then((image: Blob) => {
+                this.croppedImages[this.numImg] = image as File;
+                this.formDatas.push(new FormData());
+                this.formDatas[this.numImg].append(
+                    'file',
+                    this.croppedImages[this.numImg]
+                );
+                this.promises.push(
+                    this.imageClient
+                        .postCoursePicture(this.formDatas[this.numImg])
+                        .toPromise()
+                );
+
+                if (this.numImg < this.binaryEncodedImages.length) {
+                    this.modalService.open(croppieModal);
+                    this.startCroppie(croppieModal);
+                }
+
+                this.numImg++;
+            })
+            .catch((error) => {
+                console.log(error);
+                this.errorMsg =
+                    'Das Bild konnte leider nicht gespeichert werden. ' +
+                    'Bitte versuchen Sie es erneut.';
+            });
+    }
+
+    public finishCropping(): void {
+        console.log('FINISH');
+    }
+
+    public cancel(): void {
+        this.files = [];
+        this.binaryEncodedImages = [];
+        this.croppedImages = [];
+        this.numImg = 0;
     }
 
     private resetFormular(): void {
@@ -341,5 +409,72 @@ export class CourseComponent implements OnInit {
     public clearInfoMsg(): void {
         this.errorMsg = undefined;
         this.successMsg = undefined;
+    }
+
+    private postData(form: NgForm): void {
+        if (this.isCreate) {
+            this.eventClient.postNewEvent(this.event).subscribe(
+                (data: Event) => {
+                    console.log(data);
+                    this.successMsg =
+                        'Deine Reservierung wurde erfolgreich gespeichert';
+                    this.resetFormular();
+                    this.errorMsg = '';
+                    this.loading = false;
+                },
+                (error: Error) => {
+                    console.log(error);
+                    this.errorMsg = error.message;
+                    this.successMsg = '';
+                    this.loading = false;
+                }
+            );
+        } else {
+            // TODO
+            this.eventClient.update(this.event).subscribe(
+                (data: Event) => {
+                    console.log(data);
+                    this.successMsg = 'Der Kurs wurde erfolgreich aktualisiert';
+                    this.errorMsg = '';
+                    this.loading = false;
+                },
+                (error: Error) => {
+                    console.log(error.message);
+                    this.errorMsg =
+                        'Der Kurs konnte nicht erfolgreich aktualisiert werden: ' +
+                        error.message;
+                    this.successMsg = '';
+                    this.loading = false;
+                }
+            );
+        }
+    }
+
+    private startCroppie(croppieModal: any): void {
+        this.modalService.open(croppieModal);
+
+        setTimeout(() => {
+            const img = document.getElementById('profilePicture');
+            this.croppie = new Croppie(img as HTMLImageElement, {
+                viewport: { width: 300, height: 168.75 },
+                boundary: { width: 330, height: 220 },
+                showZoomer: true,
+            });
+        }, 100);
+    }
+
+    /**
+     * This method can be used to extract the content of a file as binary data.
+     * I.e. <img src"..."> can display images given their binary representation.
+     *
+     * @param file the wrapper of the content. 'File' can be also used as param as
+     *             it extends Blob!
+     */
+    private extractBinaryDataFromFile(file: Blob, index: number): void {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = () => {
+            this.binaryEncodedImages[index] = reader.result;
+        };
     }
 }

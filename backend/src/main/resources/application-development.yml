@@ -22,6 +22,7 @@ storage:
     images:
       base: /resources/img/
       profile: profile/
+      course: course/
       defaultImg: default
 
 spring:

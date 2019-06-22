@@ -112,6 +112,8 @@ public class Event {
 
     @Column
     private Integer maxAge;
+    @Column
+    private String[] pictures;
 
 
     /*
@@ -143,7 +145,7 @@ public class Event {
     }
 
 
-    public Event (@NotBlank String name, @NotNull List<RoomUse> roomUses, @Past @NotNull LocalDateTime created, @Past @NotNull LocalDateTime updated, EventType eventType, Set<Customer> customers, Trainer trainer, int headcount, int ageToBe, String birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipants, String description, Integer minAge, Integer maxAge, boolean deleted) {
+    public Event (@NotBlank String name, @NotNull List<RoomUse> roomUses, @Past @NotNull LocalDateTime created, @Past @NotNull LocalDateTime updated, EventType eventType, Set<Customer> customers, Trainer trainer, int headcount, int ageToBe, String birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipants, String description, Integer minAge, Integer maxAge, String[] pictures, boolean deleted) {
         this.name = name;
         this.roomUses = roomUses;
         this.created = created;
@@ -160,6 +162,7 @@ public class Event {
         this.description = description;
         this.minAge = minAge;
         this.maxAge = maxAge;
+        this.pictures = pictures;
         this.deleted = deleted;
     }
 
@@ -334,6 +337,16 @@ public class Event {
     }
 
 
+    public String[] getPictures() {
+        return pictures;
+    }
+
+
+    public void setPictures(String[] pictures) {
+        this.pictures = pictures;
+    }
+
+
     public boolean isRedacted() {
         return redacted;
     }
@@ -385,7 +398,8 @@ public class Event {
                Objects.equals(maxParticipants, event.maxParticipants) &&
                Objects.equals(description, event.description) &&
                Objects.equals(minAge, event.minAge) &&
-               Objects.equals(maxAge, event.maxAge);
+               Objects.equals(maxAge, event.maxAge) &&
+               Objects.equals(pictures, event.pictures);
     }
 
 
@@ -393,7 +407,7 @@ public class Event {
     public int hashCode () {
         return Objects.hash(id, name, roomUses, created, updated, eventType, customers, trainer,
                             headcount, ageToBe, birthdayType, endOfApplication, price,
-                            maxParticipants, description, minAge, maxAge
+                            maxParticipants, description, minAge, maxAge, pictures
         );
     }
 
@@ -418,6 +432,7 @@ public class Event {
                ", description='" + description + '\'' +
                ", minAge=" + minAge +
                ", maxAge=" + maxAge +
+               ", pictures=" + pictures +
                ", redacted=" + redacted +
                ", hide=" + hide +
                '}';
