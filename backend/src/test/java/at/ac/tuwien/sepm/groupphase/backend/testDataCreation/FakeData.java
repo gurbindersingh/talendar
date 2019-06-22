@@ -106,6 +106,7 @@ public class FakeData {
         List<String> birthdayTypes = new LinkedList<>();
         birthdayTypes.add("Rocket");
         trainer.setBirthdayTypes(birthdayTypes);
+        trainer.setPassword("password");
         trainer.setId(fakeID());
         trainer.setCreated(fakePastTimeAfter2000());
         boolean found = false;
@@ -128,6 +129,10 @@ public class FakeData {
         trainer.setPhone(fakePhoneNumber());
         trainer.setFirstName(fakeFirstName());
         trainer.setLastName(fakeLastName());
+        List<String> birthdayTypes = new LinkedList<>();
+        birthdayTypes.add("Rocket");
+        trainer.setBirthdayTypes(birthdayTypes);
+        trainer.setPassword("password");
         trainer.setId(fakeID());
         trainer.setCreated(fakePastTimeAfter2000());
         boolean found = false;
@@ -194,6 +199,15 @@ public class FakeData {
         return karen;
     }
 
+    // birth not set, we dont know anything about min and maxAge of event
+    public Customer fakeCustomerForSignInEntity(){
+        Customer karen = fakeCustomerEntity();
+        karen.setChildName(fakeFirstName());
+        karen.setChildLastName(fakeLastName());
+        karen.setWantsEmail(true);
+        return karen;
+    }
+
 
     public RoomUse fakeRoomUseDto() {
         RoomUse roomUse = new RoomUse();
@@ -219,6 +233,7 @@ public class FakeData {
         trainer.setPhone(fakePhoneNumber());
         trainer.setFirstName(fakeFirstName());
         trainer.setLastName(fakeLastName());
+        trainer.setPassword("password");
         trainer.setId(null);
         trainer.setCreated(null);
         trainer.setUpdated(null);
@@ -235,6 +250,7 @@ public class FakeData {
         trainerDto.setPhone(fakePhoneNumber());
         trainerDto.setFirstName(fakeFirstName());
         trainerDto.setLastName(fakeLastName());
+        trainerDto.setPassword("password");
         trainerDto.setId(null);
         trainerDto.setCreated(null);
         trainerDto.setUpdated(null);
@@ -310,6 +326,23 @@ public class FakeData {
         course.setMinAge(5);
         course.setMaxAge(15);
         return course;
+    }
+
+
+    public Event fakeNewRent(){
+        Event rent = new Event();
+        rent.setEventType(EventType.Rent);
+        Set<Customer> customers = new HashSet<>();
+        Customer customer = fakeNewCustomerEntity();
+        customers.add(customer);
+        rent.setCustomers(customers);
+        RoomUse roomUse = fakeRoomUseDto();
+        roomUse.setId(null);
+        LinkedList<RoomUse> roomUses = new LinkedList<>();
+        roomUses.add(roomUse);
+        rent.setRoomUses(roomUses);
+        rent.setId(null);
+        return rent;
     }
 
 
@@ -393,6 +426,8 @@ public class FakeData {
         event.setCreated(null);
         event.setUpdated(null);
         event.setMinAge(5);
+        event.setPrice(2.0);
+        event.setMaxParticipants(20);
         event.setMaxAge(15);
         event.setEventType(EventType.Course);
         Trainer trainer = fakeTrainerEntity();

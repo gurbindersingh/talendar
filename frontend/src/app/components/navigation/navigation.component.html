@@ -1,4 +1,14 @@
 <nav class="navbar">
+    <div id="brand" class="">
+        <span id="image">
+            <img
+                src="https://u.jimcdn.com/cms/o/s346571bc7945c6e1/img/favicon.png?t=1517309910"
+                style="margin:7px 0"
+            />
+        </span>
+        <span id="text">Talentegarten</span>
+    </div>
+
     <div class="navbar-toggler" (click)="toggleMenu()">
         <i class="fas fa-bars"></i>
     </div>
@@ -6,14 +16,42 @@
     <div
         id="nav-items"
         class="navbar-nav overlay"
-        [ngClass]="{ 'vw-100': showMenu }"
+        [ngClass]="{ 'pop-out-menu': showMenu }"
     >
         <button class="close" (click)="toggleMenu()">
             <span>&times;</span>
         </button>
+
         <ul class="list-unstyled text-align-center">
-            <li class="nav-link" *ngFor="let nav of navLinks">
-                <a [routerLink]="nav.path"> {{ nav.name }} </a>
+            <li id="user-info">
+                <i class="fas fa-user fa-2x t-icon"></i>
+                <span *ngIf="user != null"> {{ user.email }} </span>
+            </li>
+
+            <li
+                class="nav-link"
+                *ngFor="let nav of contextNavLinks"
+                (click)="toggleMenu()"
+            >
+                <a [routerLink]="nav.path" routerLinkActive="active-link">
+                    {{ nav.name }}
+                </a>
+            </li>
+            <br />
+            <li
+                class="nav-link"
+                (click)="toggleMenu(); logout()"
+                *ngIf="isAccessible(logoutLink)"
+            >
+                <a [routerLink]="logoutLink.path"> {{ logoutLink.name }} </a>
+            </li>
+
+            <li
+                class="nav-link"
+                (click)="toggleMenu()"
+                *ngIf="isAccessible(loginLink)"
+            >
+                <a [routerLink]="loginLink.path"> {{ loginLink.name }} </a>
             </li>
         </ul>
     </div>

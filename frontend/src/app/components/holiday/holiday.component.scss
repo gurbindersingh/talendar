@@ -1,6 +1,16 @@
+@import '../../../../node_modules/bootstrap/scss/functions';
+@import '../../../../node_modules/bootstrap/scss/variables';
+@import '../../../../node_modules/bootstrap/scss/mixins/breakpoints';
+
 #d6p1 {
     padding-top: 6px;
 }
 #d6p2 {
     padding-top: 6px;
+}
+
+@include media-breakpoint-down(md) {
+    #submit {
+        justify-content: flex-end;
+    }
 }

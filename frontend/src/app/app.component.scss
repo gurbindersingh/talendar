@@ -1,24 +1,23 @@
-@import 'node_modules/bootstrap/scss/functions';
-@import 'node_modules/bootstrap/scss/variables';
-@import 'node_modules/bootstrap/scss/mixins/_breakpoints';
+@import '../../node_modules/bootstrap/scss/functions';
+@import '../../node_modules/bootstrap/scss/variables';
+@import '../../node_modules/bootstrap/scss/mixins/breakpoints';
 
-#app-container {
-    height: 100vh;
-    width: 100vw;
+#nav {
+    color: hsl(84, 48, 49);
+    background-color: hsl(120, 0, 13);
+}
+
+.has-mobile-header {
+    height: calc(100vh - 67px /* 64px is the height of the navbar on mobile */);
 }
 
 #content {
-    max-height: calc(100vh - 47px); // 47px is the height of the navbar on mobile
     overflow-x: hidden;
     overflow-y: auto;
 }
 
 @include media-breakpoint-up(xl) {
-    #nav {
-        height: 100vh;
-    }
-
-    #content {
-        max-height: 100vh;
+    .full-height {
+        height: 100vh !important;
     }
 }

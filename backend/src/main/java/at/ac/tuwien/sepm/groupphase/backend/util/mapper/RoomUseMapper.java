@@ -15,4 +15,5 @@ public interface RoomUseMapper {
 
     RoomUseDto entityToRoomUseDto(RoomUse roomUse);
 
+
 }

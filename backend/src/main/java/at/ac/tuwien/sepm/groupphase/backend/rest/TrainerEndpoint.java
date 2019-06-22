@@ -24,8 +24,7 @@ import java.util.stream.Collectors;
  * Therefore Spring will automatically map such an thrown exception to an appropriate HTTP response
  * status (i.e. the status which was specified in annotation)
  */
-
-
+@CrossOrigin(origins = { "http://localhost:4200", "http://localhost:8080" })
 @RestController
 @RequestMapping("/api/v1/talendar/trainers")
 public class TrainerEndpoint {
@@ -35,66 +34,74 @@ public class TrainerEndpoint {
     private final ITrainerService trainerService;
     private final TrainerMapper mapper;
 
+
     @Autowired
     public TrainerEndpoint(ITrainerService trainerService, TrainerMapper mapper) {
         this.trainerService = trainerService;
         this.mapper = mapper;
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")
     public TrainerDto getOneTrainerById(@PathVariable("id") Long id) throws BackendException {
         LOGGER.info("Incoming Request To Retrieve Trainer With ID {}", id);
 
         try {
             return mapper.entityToTrainerDto(trainerService.getById(id));
-        } catch(ServiceException e) {
+        }
+        catch(ServiceException e) {
             LOGGER.error("GET Request unsuccessful: " + e.getMessage(), e);
-            throw new BackendException("Internal Error In Backend", e);
-        } catch(NotFoundException e) {
+            throw new BackendException("Etwas ist leider am Server schiefgelaufen", e);
+        }
+        catch(NotFoundException e) {
             LOGGER.error("GET Request unsuccessful: " + e.getMessage(), e);
-            throw new BackendException("Trainer with id " + id + " does not exist", e);
+            throw new BackendException("Der gesuchte Trainer existiert nicht", e);
         }
     }
 
 
-
-    @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(method = RequestMethod.GET)
     public List<TrainerDto> getAllTrainers() throws BackendException {
         LOGGER.info("Incoming Request To Retrieve List Of All Trainers");
 
         try {
-            return trainerService.getAll().stream().map(mapper::entityToTrainerDto).collect(Collectors.toList());
-        } catch(ServiceException e) {
+            return trainerService.getAll()
+                                 .stream()
+                                 .map(mapper::entityToTrainerDto)
+                                 .collect(Collectors.toList());
+        }
+        catch(ServiceException e) {
             LOGGER.error("GET Request unsuccessful: " + e.getMessage(), e);
-            throw new BackendException("Internal Error In Backend", e);
+            throw new BackendException("Etwas ist leider am Server schiefgelaufen", e);
         }
     }
 
 
-    @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(method = RequestMethod.PUT)
     public TrainerDto updateTrainer(@RequestBody TrainerDto trainerDto) throws BackendException {
-        LOGGER.info("Incoming Request To Update An Existing Trainer With Id {}", trainerDto.getId());
+        LOGGER.info("Incoming Request To Update An Existing Trainer With Id {}",
+                    trainerDto.getId()
+        );
 
         try {
-            return mapper.entityToTrainerDto(trainerService.update(mapper.dtoToTrainerEntity(trainerDto)));
-        } catch(ServiceException e) {
+            return mapper.entityToTrainerDto(
+                trainerService.update(mapper.dtoToTrainerEntity(trainerDto)));
+        }
+        catch(ServiceException e) {
             LOGGER.error("PATCH Request unsuccessful: " + e.getMessage(), e);
-            throw new BackendException("Internal Error In Backend", e);
-        } catch(ValidationException e) {
+            throw new BackendException("Etwas ist leider am Server schiefgelaufen", e);
+        }
+        catch(ValidationException e) {
             LOGGER.error("PATCH Request unsuccessful " + e.getMessage(), e);
             throw new BackendException(e.getMessage(), e);
-        } catch(NotFoundException e) {
+        }
+        catch(NotFoundException e) {
             LOGGER.error("PATCH Request unsuccessful: " + e.getMessage(), e);
-            throw new BackendException("Trainer With Id " + trainerDto.getId() + " does not exist", e);
+            throw new BackendException(
+                "Es konnte nicht geupdated werden. Der Trainer existiert nicht", e);
         }
     }
 
 
-
-    @CrossOrigin(origins = "http://localhost:4200")
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     public TrainerDto createNewTrainer(@RequestBody TrainerDto trainerDto) throws BackendException {
@@ -105,9 +112,30 @@ public class TrainerEndpoint {
         } catch(ValidationException e) {
             LOGGER.error("POST Request unsuccessful: " + e.getMessage(), e);
             throw new BackendException(e.getMessage(), e);
-        } catch(ServiceException e) {
+        }
+        catch(ServiceException e) {
             LOGGER.error("POST Request unsuccessful: " + e.getMessage(), e);
-            throw new BackendException("Internal Error in Backend", e);
+            throw new BackendException("Etwas ist leider am Server schiefgelaufen", e);
+        }
+    }
+
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    @ResponseStatus(HttpStatus.OK)
+    public void deleteTrainer(@PathVariable("id") Long id) throws BackendException {
+        LOGGER.info("Incoming DELETE Trainer Request");
+
+        try {
+            trainerService.delete(id);
+        }
+        catch(NotFoundException e) {
+            LOGGER.error("DELETE Request unsuccessful: " + e.getMessage(), e);
+            throw new BackendException(
+                "Es konnte nicht gelöscht werden. Der Trainer existiert nicht", e);
+        }
+        catch(ServiceException e) {
+            LOGGER.error("DELETE Request unsuccessful: " + e.getMessage());
+            throw new BackendException("Etwas ist leider am Server schiefgelaufen", e);
         }
     }
 }

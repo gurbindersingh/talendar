@@ -1,5 +1,6 @@
 <h1 class="row justify-content-center">{{ title }}</h1>
 <hr />
+
 <div class="row">
     <div class="col-lg-3"></div>
     <div class="col-lg-6">
@@ -10,6 +11,37 @@
             #holidayForm
         >
             <div class="row">
+                <div class="form-group col-lg-12">
+                    <label for="name">Urlaubsname</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        [(ngModel)]="holidayName"
+                        name="holidayname"
+                        id="holidayname"
+                        placeholder="Urlaubsname"
+                        required
+                    />
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-lg-12">
+                    <label for="holidayDescription">Beschreibung</label>
+                    <textarea
+                        type="text"
+                        class="form-control"
+                        rows="4"
+                        name="descriptionTextarea"
+                        [(ngModel)]="holidayDescription"
+                        id="holidayDescription"
+                        ng-trim="false"
+                        maxlength="1024"
+                        placeholder="Beschreibung/Detaillinformation"
+                    ></textarea>
+                </div>
+            </div>
+
+            <div class="row">
                 <div class="col-lg-6" id="d6p1">
                     <label for="startdate" id="labelvon">Von</label>
                     <div class="input-group">
@@ -19,7 +51,7 @@
                             ngbDatepicker
                             #dstart="ngbDatepicker"
                             (click)="dstart.toggle()"
-                            placeholder="yyyy-mm-dd"
+                            placeholder="YYYY-MM-DD"
                             name="holidayStartDate"
                             [(ngModel)]="startDate"
                             required
@@ -50,7 +82,7 @@
                             ngbDatepicker
                             #dend="ngbDatepicker"
                             (click)="dend.toggle()"
-                            placeholder="yyyy-mm-dd"
+                            placeholder="YYYY-MM-DD"
                             name="holidayEndStart"
                             [(ngModel)]="endDate"
                             required
@@ -73,11 +105,10 @@
                 </div>
             </div>
 
-            
             <br />
 
             <div class="row">
-                <div class="col-lg-6">
+                <div class="col-lg">
                     <div class="custom-control custom-switch">
                         <input
                             name="toggler"
@@ -92,8 +123,6 @@
                         >
                     </div>
                 </div>
-
-                <div class="col-lg-4"></div>
             </div>
             <br />
 
@@ -123,10 +152,11 @@
                             </div>
                             <div class="col-lg-4">
                                 <input
-                                    value="1"
+                                    class="form-control"
                                     type="number"
                                     name="repeatAfterX"
                                     id="repeatAfterX"
+                                    [(ngModel)]="alleX"
                                 />
                             </div>
                         </div>
@@ -136,59 +166,62 @@
                     </div>
                 </div>
                 <br />
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="row">
-                            <div class="col-lg-5" *ngIf="isRepeat()">
-                                <label for="stopAfter">Ended</label>
-                                <select
-                                    class="browser-default custom-select"
-                                    id="stopAfter"
-                                    name="stopAfter"
-                                    [(ngModel)]="terminateModul"
-                                >
-                                    <option *ngFor="let t of terminateAfter">
-                                        {{ t }}
-                                    </option>
-                                </select>
-                            </div>
-                            <div class="col-lg-1" *ngIf="isTerminate()">
-                                <input
-                                    value="1"
-                                    type="number"
-                                    name="termAfter"
-                                    id="termAfter"
-                                />
-                            </div>
-                        </div>
+
+                <div class="row align-center-right" *ngIf="isRepeat()">
+                    <div class="col-lg-3">
+                        <label for="stopAfter">Ended</label>
                     </div>
-                    <div class="col-lg-4" *ngIf="isTerminate()" id="10p">
-                        <p>Tagen/Wochen/Monaten</p>
+
+                    <div class="col-lg-3 mb-1">
+                        <select
+                            class="browser-default custom-select"
+                            id="stopAfter"
+                            name="stopAfter"
+                            [(ngModel)]="terminateModul"
+                        >
+                            <option *ngFor="let t of terminateAfter">
+                                {{ t }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3" *ngIf="isTerminate()">
+                        <input
+                            class="form-control"
+                            type="number"
+                            name="termAfter"
+                            id="termAfter"
+                            [(ngModel)]="endedX"
+                        />
+                    </div>
+
+                    <div class="col-lg-3" *ngIf="isTerminate()">
+                        <label for="stopAfter">Wiederholungen</label>
                     </div>
                 </div>
             </div>
             <br />
+
             <div class="row" *ngIf="errorMsg">
-                    <div class="col-lg-6">
-                        <p class="alert alert-danger">
-                            {{ errorMsg }}
-                        </p>
-                    </div>
+                <div class="col-sm-12">
+                    <p class="alert alert-danger">
+                        {{ errorMsg }}
+                    </p>
                 </div>
-                <div class="row" *ngIf="successMsg">
-                    <div class="col-lg-6">
-                        <p class="alert alert-success">
-                            {{ successMsg }}
-                        </p>
-                    </div>
+            </div>
+            <div class="row" *ngIf="successMsg">
+                <div class="col-sm-12">
+                    <p class="alert alert-success">
+                        {{ successMsg }}
+                    </p>
                 </div>
-    
-            <div class="row">
-                <div class="col-lg-7"></div>
+            </div>
+            <div class="row" style="padding:0 15px" id="submit">
+                <div class="col-lg-6"></div>
                 <button
                     [disabled]="!isCompleted()"
                     class="btn btn-primary"
                     type="submit"
+                    style="margin-left:15px;"
                 >
                     Urlaub eintragen
                 </button>

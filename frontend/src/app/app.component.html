@@ -1,10 +1,23 @@
-<div class="container-fluid" id="app-container">
-    <div class="row">
-        <div class="col-xl-auto bg-dark text-light" id="nav">
+<div
+    id="app-container"
+    [ngClass]="{ 'container-fluid': authenticationService.isLoggedIn }"
+>
+    <div [ngClass]="{ row: authenticationService.isLoggedIn }">
+        <div
+            class="col-xl-auto"
+            id="nav"
+            *ngIf="authenticationService.isLoggedIn"
+        >
             <app-navigation></app-navigation>
         </div>
 
-        <div class="col-xl pb-3" id="content">
+        <div
+            class="col-xl pb-4 full-height"
+            id="content"
+            [ngClass]="{
+                'has-mobile-header': authenticationService.isLoggedIn
+            }"
+        >
             <router-outlet></router-outlet>
         </div>
     </div>

@@ -1,6 +1,5 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest.dto;
 
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
@@ -10,7 +9,6 @@ import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 public class EventDto {
 
@@ -32,7 +30,7 @@ public class EventDto {
     /*
         These Variables are used by non Rent Types
      */
-    @JsonIgnoreProperties("events")
+    @JsonIgnoreProperties({"events", "holidays"})
     private Trainer trainer;
 
     /*
@@ -66,6 +64,17 @@ public class EventDto {
         These Variables are Rent Specific
      */
 
+
+    /*
+        Signal whether this event comprises all informations
+        or is is just marked as redacted (any its data are reset)
+     */
+    private boolean redacted;
+    /*
+        Signals that this event may is displayed in a differnet way (less prioritized) or is even
+        hidden.
+     */
+    private boolean hide;
 
     public EventDto(){
 
@@ -264,6 +273,26 @@ public class EventDto {
     }
 
 
+    public boolean isRedacted() {
+        return redacted;
+    }
+
+
+    public void setRedacted(boolean redacted) {
+        this.redacted = redacted;
+    }
+
+
+    public boolean isHide() {
+        return hide;
+    }
+
+
+    public void setHide(boolean hide) {
+        this.hide = hide;
+    }
+
+
     public boolean isDeleted () {
         return deleted;
     }
@@ -325,6 +354,8 @@ public class EventDto {
             ", description='" + description + '\'' +
             ", minAge=" + minAge +
             ", maxAge=" + maxAge +
+               ", redacted=" + redacted +
+               ", hide=" + hide +
             '}';
     }
 }

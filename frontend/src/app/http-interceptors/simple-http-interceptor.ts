@@ -3,15 +3,26 @@ import {
     HttpInterceptor,
     HttpHandler,
     HttpEvent,
+    HttpErrorResponse,
+    HttpHeaders,
 } from '@angular/common/http';
 import { Observable, EMPTY, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { SessionStorageService } from '../services/session-storage-service';
+import { SessionStorageService } from '../services/session-storage.service';
 import { Injectable } from '@angular/core';
+import { AuthenticationService } from '../services/authentication.service';
+import { NotificationService } from '../services/notification.service';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class SimpleHttpInterceptor implements HttpInterceptor {
-    constructor(private sessionService: SessionStorageService) {}
+    constructor(
+        private sessionService: SessionStorageService,
+        private authenticationService: AuthenticationService,
+        private router: Router
+    ) {}
+
+    private doRenew = true;
 
     intercept(
         req: HttpRequest<any>,
@@ -19,22 +30,57 @@ export class SimpleHttpInterceptor implements HttpInterceptor {
     ): Observable<HttpEvent<any>> {
         {
             const token = this.sessionService.sessionToken;
+
             const authReq = req.clone({
                 headers: req.headers.set('Authorization', 'Bearer ' + token),
             });
 
+            const headers: HttpHeaders = authReq.headers;
+
+            if (
+                this.sessionService.loggedIn &&
+                this.sessionService.isOldToken &&
+                this.doRenew
+            ) {
+                console.log('Renew authentication\nOld Token: ' + token);
+                this.doRenew = false;
+
+                this.authenticationService.renewLogin(headers).subscribe(
+                    (data) => {
+                        console.log('Authentication successfully renewed');
+                        console.log(
+                            'New Tokens: ' + this.sessionService.sessionToken
+                        );
+                        this.doRenew = true;
+                    },
+                    (error: Error) => {
+                        console.log(
+                            'Authentication could not be renewed: ' +
+                                error.message
+                        );
+                        this.doRenew = true;
+                    }
+                );
+            }
+
+            console.log('Interceptor: Token = ' + token);
+
+            // check if token is expired, if yes, logout (which will notigy logout action)
+            if (token != null) {
+                const parsedToken = JSON.parse(atob(token.split('.')[1]));
+                if (parsedToken.exp < Date.now() / 1000) {
+                    this.authenticationService.logout();
+                }
+            }
+
             return next.handle(authReq).pipe(
-                catchError((error, caught) => {
-                    /**
-                     * What to do in error case actually?
-                     */
-                    console.log('Intercepting HTTP request caused exception');
+                catchError((error: HttpErrorResponse, caught) => {
+                    if (error.status === 401) {
+                        this.router.navigateByUrl('/login');
+                    }
                     throw error;
                 })
             );
-            /*catch((error, caught) => {
-                return Observable.throw(error);
-            }) as any; */
         }
     }
 }

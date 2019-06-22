@@ -1,0 +1,42 @@
+<h1 class="row justify-content-center">{{ title }}</h1>
+<hr />
+<div class="row">
+    <div class="col-lg-3"></div>
+    <div class="col-lg-6">
+        <div class="row">
+            <div class="col-lg-6">
+                <input
+                    class="form-control"
+                    [(ngModel)]="mail"
+                    placeholder="E-Mailadresse eingeben!"
+                />
+            </div>
+            <div class="col-lg-6">
+                <button (click)="downloadInfoPdf()" class="btn btn-primary">
+                    Pdf erstellen
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3"></div>
+</div>
+<br />
+<br />
+<div class="row">
+    <div class="col-lg-3"></div>
+    <div class="row" *ngIf="errorMsg">
+        <div class="col-lg-12">
+            <p class="alert alert-danger">
+                {{ errorMsg }}
+            </p>
+        </div>
+    </div>
+    <div class="row" *ngIf="successMsg">
+        <div class="col-lg-12">
+            <p class="alert alert-success">
+                {{ successMsg }}
+            </p>
+        </div>
+    </div>
+    <div class="col-lg-3"></div>
+</div>

@@ -2,64 +2,75 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import {
-    CalendarComponent,
-    ConsultationComponent,
     BirthdayComponent,
+    CalendarComponent,
+    CancelEventComponent,
+    ConsultationComponent,
     CourseComponent,
+    CourseViewComponent,
     HolidayComponent,
-    MeetingComponent,
+    RentComponent,
+    LoginComponent,
     TrainerComponent,
     TrainerListComponent,
 } from './components';
-import { CancelEventComponent } from './components/cancel-event/cancel-event.component';
-import { CourseViewComponent } from './components/course-view/course-view.component';
-
+import { CourseSignComponent } from './components/course-sign/course-sign.component';
+import { TrainerGuard } from './guards/trainer-guard';
+import { AuthenticatedGuard } from './guards/authenticated-guard';
+import { AdminGuard } from './guards/admin-guard';
+import { InfoComponent } from './components/info/info.component';
 
 const routes: Routes = [
+    { path: 'calendar', component: CalendarComponent },
+    { path: 'birthday/book', component: BirthdayComponent },
     {
-        path: '',
-        component: CalendarComponent,
-    },
-    {
-        path: 'holiday',
-        component: HolidayComponent,
-    },
-    {
-        path: 'consultation',
+        path: 'consultation/add',
         component: ConsultationComponent,
     },
     {
-        path: 'birthday',
-        component: BirthdayComponent,
-    },
-    {
-        path: 'course',
+        path: 'course/add',
         component: CourseComponent,
+        canActivate: [AuthenticatedGuard],
     },
+    { path: 'course/sign', component: CourseSignComponent },
     {
-        path: 'meeting',
-        component: MeetingComponent,
+        path: 'course/view',
+        component: CourseViewComponent,
+        canActivate: [AdminGuard],
     },
+    { path: 'event/cancel', component: CancelEventComponent },
     {
-        path: 'trainer',
+        path: 'holiday/add',
+        component: HolidayComponent,
+        canActivate: [TrainerGuard],
+    },
+    { path: 'rent', component: RentComponent },
+    {
+        path: 'trainer/add',
         component: TrainerComponent,
+        canActivate: [AdminGuard],
     },
     {
-        path: 'trainerList',
+        path: 'trainer/edit',
+        component: TrainerComponent,
+        canActivate: [AdminGuard],
+    },
+    {
+        path: 'trainer/list',
         component: TrainerListComponent,
+        canActivate: [AdminGuard],
     },
     {
-        path: '*',
-        component: CalendarComponent,
+        path: 'info',
+        component: InfoComponent,
+        canActivate: [AdminGuard],
     },
+    { path: 'login', component: LoginComponent },
     {
-        path: 'cancelEvent',
-        component: CancelEventComponent
+        // This catch-all route should always be the LAST!
+        path: '**',
+        redirectTo: 'calendar',
     },
-    {
-        path: 'courseView',
-        component: CourseViewComponent
-    }
 ];
 
 @NgModule({

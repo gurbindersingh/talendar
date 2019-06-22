@@ -11,7 +11,10 @@ import java.util.List;
 public interface ITrainerService {
 
     /**
-     * This method will save the given instance of trainer.
+     * This method will save the given instance of trainer and a user account for authentication will
+     * be created.
+     * Note: This method is handled as one atomic transaction. It can be assumed that after a successful
+     * operation a valid user account is associated with the trainer.
      *
      * @param trainer the given trainer to be saved
      * @return the persistently saved instance is returned
@@ -25,11 +28,21 @@ public interface ITrainerService {
      *
      * @param trainer the given trainer that holds the new values
      * @return the persistently saved and updated instance is returned
-     * @throws ServiceException will be thrown if any error occurs during data processing that leads to an unsuccessfula operation.
+     * @throws ServiceException will be thrown if any error occurs during data processing that leads to an unsuccessful operation.
      * @throws ValidationException will be thrown if the given instance has invalid properties. The cause will be reported.
      * @throws NotFoundException will be thrown if no entity exists which is referenced by the id of the submitted instance.
      */
     Trainer update(Trainer trainer) throws ServiceException, ValidationException, NotFoundException;
+
+    /**
+     * This method sets the trainer's deleted flag and identifying information to REDACTED or dummy values
+     *
+     * @param id the id of the trainer to delete
+     * @return this method has no return value
+     * @throws ServiceException will be thrown if any error occurs during data processing that leads to an unsuccessful operation.
+     * @throws NotFoundException will be thrown if no entity exists which is referenced by the id of the submitted instance.
+     */
+    void delete(Long id) throws ServiceException, NotFoundException;
 
     /**
      * This method returns an entity referenced by the given ID
