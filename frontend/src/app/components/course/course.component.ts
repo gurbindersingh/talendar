@@ -73,18 +73,18 @@ export class CourseComponent implements OnInit {
     private croppie: Croppie;
     promises: Promise<string>[] = [];
 
-    private event: Event = new Event();
+    event: Event = new Event();
     private roomUse: RoomUse = new RoomUse();
     private trainer: Trainer = new Trainer();
     private dateTimeParser: DateTimeParserService;
 
     private formDatas: FormData[] = [];
 
-    private errorMsg: string;
-    private successMsg: string;
+    errorMsg: string;
+    successMsg: string;
     private tags: Tag[] = [];
     private tagStringSelected: string;
-    private tagStrings: string[] = [];
+    tagStrings: string[] = [];
 
     constructor(
         private eventClient: EventClient,
@@ -123,7 +123,7 @@ export class CourseComponent implements OnInit {
                     console.log(error);
                 }
             );
-            for (var _i = 0; _i < this.tags.length; _i++) {
+            for (let _i = 0; _i < this.tags.length; _i++) {
                 this.tagStrings.push(this.tags[_i].tag);
             }
         } else {
@@ -149,7 +149,7 @@ export class CourseComponent implements OnInit {
                     console.log(error);
                 }
             );
-            for (var _i = 0; _i < this.tags.length; _i++) {
+            for (let _i = 0; _i < this.tags.length; _i++) {
                 this.tagStrings.push(this.tags[_i].tag);
             }
         }
@@ -484,9 +484,19 @@ export class CourseComponent implements OnInit {
 
         setTimeout(() => {
             const img = document.getElementById('profilePicture');
+            const boundaryWidth = 766;
+            const viewportWidth = boundaryWidth - 50;
+            const ratio = 16 / 9;
+
             this.croppie = new Croppie(img as HTMLImageElement, {
-                viewport: { width: 600, height: 337.75 },
-                boundary: { width: 630, height: 350 },
+                boundary: {
+                    width: boundaryWidth,
+                    height: boundaryWidth / ratio,
+                },
+                viewport: {
+                    width: viewportWidth,
+                    height: viewportWidth / ratio,
+                },
                 showZoomer: true,
             });
         }, 100);
