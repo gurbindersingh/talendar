@@ -39,3 +39,17 @@
     width: 182px;
     height: 182px;
 }
+
+.btn.btn-card {
+    background-color: hsl(0, 0, 95);
+    height: 47px;
+    width: 47px;
+}
+
+.btn.btn-card:hover {
+    background-color: hsl(0, 0, 85);
+}
+
+.button-icon {
+    font-size: 25px;
+}

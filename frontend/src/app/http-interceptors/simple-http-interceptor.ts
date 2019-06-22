@@ -76,7 +76,7 @@ export class SimpleHttpInterceptor implements HttpInterceptor {
             return next.handle(authReq).pipe(
                 catchError((error: HttpErrorResponse, caught) => {
                     if (error.status === 401) {
-                        this.router.navigate(['/login']);
+                        this.router.navigateByUrl('/login');
                     }
                     throw error;
                 })
