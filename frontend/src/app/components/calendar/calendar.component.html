@@ -212,6 +212,7 @@
     >
         <div
             *ngIf="
+                !isCollapsed &&
                 eventTypeSelection !== undefined &&
                 eventTypeSelection.name === 'Kurs'
             "
