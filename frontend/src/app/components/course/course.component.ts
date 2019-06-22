@@ -185,33 +185,6 @@ export class CourseComponent implements OnInit {
     }
 
     public postMeeting(form: NgForm): void {
-        if (this.isCreate) {
-            this.trainer.id = this.sessionService.userId;
-            this.event.eventType = EventType.Course;
-            this.event.trainer = this.trainer;
-
-            this.roomUse.begin = this.dateTimeParser.dateTimeToString(
-                this.startDate,
-                this.startTime
-            );
-            this.roomUse.end = this.dateTimeParser.dateTimeToString(
-                this.startDate,
-                this.endTime
-            );
-            this.roomUse.room = this.getSelectedRadioButtonRoom();
-
-            this.event.endOfApplication = this.dateTimeParser.dateTimeToString(
-                this.endOfApplicationDate,
-                this.endOfApplicationTime
-            );
-
-            if (this.toggleOptions) {
-                this.roomUse.cronExpression = this.getCron();
-                this.roomUse.roomOption = this.roomOption;
-            }
-            this.event.roomUses = [this.roomUse];
-            this.loading = true;
-
             console.log(this.formDatas.length);
             console.log('DEBUGGGG!!:' + this.promises.length);
 
@@ -233,10 +206,7 @@ export class CourseComponent implements OnInit {
                     }
                 );
             }
-        } else {
-            this.postData(form);
         }
-    }
 
     public onFileSelected(event: any, croppieModal: any): void {
         this.files = [];
@@ -413,6 +383,32 @@ export class CourseComponent implements OnInit {
 
     private postData(form: NgForm): void {
         if (this.isCreate) {
+            this.trainer.id = this.sessionService.userId;
+            this.event.eventType = EventType.Course;
+            this.event.trainer = this.trainer;
+
+            this.roomUse.begin = this.dateTimeParser.dateTimeToString(
+                this.startDate,
+                this.startTime
+            );
+            this.roomUse.end = this.dateTimeParser.dateTimeToString(
+                this.startDate,
+                this.endTime
+            );
+            this.roomUse.room = this.getSelectedRadioButtonRoom();
+
+            this.event.endOfApplication = this.dateTimeParser.dateTimeToString(
+                this.endOfApplicationDate,
+                this.endOfApplicationTime
+            );
+
+            if (this.toggleOptions) {
+                this.roomUse.cronExpression = this.getCron();
+                this.roomUse.roomOption = this.roomOption;
+            }
+            this.event.roomUses = [this.roomUse];
+            this.loading = true;
+
             this.eventClient.postNewEvent(this.event).subscribe(
                 (data: Event) => {
                     console.log(data);
