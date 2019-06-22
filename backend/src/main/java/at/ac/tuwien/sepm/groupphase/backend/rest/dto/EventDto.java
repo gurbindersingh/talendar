@@ -56,7 +56,7 @@ public class EventDto {
     private String description;
     private Integer minAge;
     private Integer maxAge;
-    private String[] pictures;
+    private List<String> pictures;
 
 
 
@@ -86,7 +86,7 @@ public class EventDto {
                     LocalDateTime created, LocalDateTime updated, List<CustomerDto> customerDtos,
                     Trainer trainer, int headcount, int ageToBe, String birthdayType,
                     LocalDateTime endOfApplication, Double price, Integer maxParticipants,
-                    String description, Integer minAge, Integer maxAge, String[] pictures,
+                    String description, Integer minAge, Integer maxAge, List<String> pictures,
                     boolean deleted
     ) {
         this.id = id;
@@ -281,12 +281,12 @@ public class EventDto {
     }
 
 
-    public String[] getPictures() {
+    public List<String> getPictures() {
         return pictures;
     }
 
 
-    public void setPictures(String[] pictures) {
+    public void setPictures(List<String> pictures) {
         this.pictures = pictures;
     }
 

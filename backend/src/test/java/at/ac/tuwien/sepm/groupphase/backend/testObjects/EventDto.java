@@ -56,7 +56,7 @@ public class EventDto {
     private String        description;
     private Integer       minAge;
     private Integer       maxAge;
-    private String[]      pictures;
+    private List<String>  pictures;
 
     /*
         These Variables are Rent Specific
@@ -85,7 +85,7 @@ public class EventDto {
                      String description,
                      Integer minAge,
                      Integer maxAge,
-                     String[] pictures
+                     List<String> pictures
     ) {
         this.id = id;
         this.eventType = eventType;
@@ -278,12 +278,12 @@ public class EventDto {
     }
 
 
-    public String[] getPictures() {
+    public List<String> getPictures() {
         return pictures;
     }
 
 
-    public void setPictures(String[] pictures) {
+    public void setPictures(List<String> pictures) {
         this.pictures = pictures;
     }
 

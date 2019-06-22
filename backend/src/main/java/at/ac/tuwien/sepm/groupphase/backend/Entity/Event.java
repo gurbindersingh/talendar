@@ -113,7 +113,8 @@ public class Event {
     @Column
     private Integer maxAge;
     @Column
-    private String[] pictures;
+    @ElementCollection
+    private List<String> pictures;
 
 
     /*
@@ -145,7 +146,7 @@ public class Event {
     }
 
 
-    public Event (@NotBlank String name, @NotNull List<RoomUse> roomUses, @Past @NotNull LocalDateTime created, @Past @NotNull LocalDateTime updated, EventType eventType, Set<Customer> customers, Trainer trainer, int headcount, int ageToBe, String birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipants, String description, Integer minAge, Integer maxAge, String[] pictures, boolean deleted) {
+    public Event (@NotBlank String name, @NotNull List<RoomUse> roomUses, @Past @NotNull LocalDateTime created, @Past @NotNull LocalDateTime updated, EventType eventType, Set<Customer> customers, Trainer trainer, int headcount, int ageToBe, String birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipants, String description, Integer minAge, Integer maxAge, List<String> pictures, boolean deleted) {
         this.name = name;
         this.roomUses = roomUses;
         this.created = created;
@@ -337,12 +338,12 @@ public class Event {
     }
 
 
-    public String[] getPictures() {
+    public List<String> getPictures() {
         return pictures;
     }
 
 
-    public void setPictures(String[] pictures) {
+    public void setPictures(List<String> pictures) {
         this.pictures = pictures;
     }
 

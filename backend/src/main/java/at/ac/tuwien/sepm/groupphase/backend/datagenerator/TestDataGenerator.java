@@ -22,7 +22,7 @@ public class TestDataGenerator implements ApplicationRunner {
 
     private Logger LOGGER = LoggerFactory.getLogger(TestDataGenerator.class);
 
-    private  FakeData faker;
+    private FakeData faker;
     private IEventService eventService;
     private IHolidayService holidayService;
     private ITrainerService trainerService;
