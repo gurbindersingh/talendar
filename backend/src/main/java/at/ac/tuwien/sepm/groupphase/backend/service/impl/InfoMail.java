@@ -1,7 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
+import at.ac.tuwien.sepm.groupphase.backend.Entity.AlgoCustomer;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
+import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.CustomerDto;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.EventDto;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
@@ -14,6 +16,9 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Properties;
 
@@ -151,6 +156,80 @@ public class InfoMail {
             }catch(MessagingException e){
                 throw new EmailException(" " + e.getMessage());
             }
+        }
+    }
+
+    public void marketingMail(AlgoCustomer algoCustomer, Event event) throws EmailException{
+        String to = algoCustomer.getEmail();
+        String from = "testingsepmstuffqse25@gmail.com";
+        String password = "This!is!a!password!";
+        String host = "smtp.gmail.com";
+        Session session = Session.getDefaultInstance(createProps());
+        String url = null;
+        String urlCancel = null;
+        try{
+            MimeMessage mimeMessage = new MimeMessage(session);
+            mimeMessage.setFrom(new InternetAddress(from));
+            mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
+            url = "http://localhost:4200/course/sign?id=" + event.getId();
+            urlCancel = "http://localhost:4200/cancelsubscription?email=" + algoCustomer.getEmail();
+            URL urll = null;
+            URL url2 = null;
+            try {
+                urll = new URL(url);
+                url2 = new URL(urlCancel);
+            }
+            catch(MalformedURLException e) {
+                throw new MessagingException("Malformed Url exception: " + e.getMessage(), e);
+            }
+            mimeMessage.setSubject("Angebote für Sie vom Talentengarten!");
+            mimeMessage.setText("Hallo " + algoCustomer.getAssociated().get(0).getFirstName() + " " + algoCustomer.getAssociated().get(0).getLastName() +
+                                "\n\nDas Event: " + event.getName() + ", dass am " +
+                                event.getRoomUses().get(0).getBegin().format(formatter) + " stattfindet könnte Sie interessieren!\n"
+                                + "Falls Sie sich anmelden wollen, klicken sie einfach auf diesen Link: " + urll + "\n\n\n"
+                                + "Falls sie kein Werbung mehr kriegen wollen, können Sie sich mittels diesen links abmelden: " + url2);
+            Transport transport = session.getTransport("smtp");
+            transport.connect(host, 587, from, password);
+            transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
+            transport.close();
+        }catch(MessagingException e){
+            throw new EmailException(e.getMessage());
+        }
+
+    }
+
+    public void birthdayMail(AlgoCustomer algoCustomer, LocalDateTime bday){
+        String to = algoCustomer.getEmail();
+        String from = "testingsepmstuffqse25@gmail.com";
+        String password = "This!is!a!password!";
+        String host = "smtp.gmail.com";
+        Session session = Session.getDefaultInstance(createProps());
+        try {
+            MimeMessage mimeMessage = new MimeMessage(session);
+            mimeMessage.setFrom(new InternetAddress(from));
+            mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
+            String urlCancel = "http://localhost:4200/cancelsubscription?email=" + algoCustomer.getEmail();
+            String urlBirthday = "http://localhost:4200/birthday/book";
+            URL url2 = null;
+            URL urlB = null;
+            try {
+                url2 = new URL(urlCancel);
+                urlB = new URL(urlBirthday);
+            }
+            catch(MalformedURLException e) {
+                throw new MessagingException("Malformed Url exception: " + e.getMessage(), e);
+            }
+            mimeMessage.setSubject("Sie haben bald ein Geburtstag in der Familie...");
+            mimeMessage.setText("Hallo " + algoCustomer.getAssociated().get(0).getFirstName() + " " + algoCustomer.getAssociated().get(0).getLastName() +
+                                "\n\nFeiern sie bei uns den Geburtstag am " + bday.format(formatter)
+                                + " Hier können Sie sich Anmelden: "  + urlBirthday + "\n\n\n"
+                                + "Falls sie kein Werbung mehr kriegen wollen, können Sie sich mittels diesen links abmelden: " + url2);
+            Transport transport = session.getTransport("smtp");
+            transport.connect(host, 587, from, password);
+            transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
+            transport.close();
+        }catch(MessagingException e){
+
         }
     }
 }

@@ -1,12 +1,16 @@
 package at.ac.tuwien.sepm.groupphase.backend.datagenerator;
 
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
+import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.service.ICustomerService;
 import at.ac.tuwien.sepm.groupphase.backend.service.IEventService;
 import at.ac.tuwien.sepm.groupphase.backend.service.IHolidayService;
 import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
+import org.apache.tomcat.jni.Local;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +18,8 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -26,7 +32,7 @@ public class TestDataGenerator implements ApplicationRunner {
     private IEventService eventService;
     private IHolidayService holidayService;
     private ITrainerService trainerService;
-
+    private ICustomerService customerService;
     // ENVIRONMENT SETUP DEFAULT
     private int NO_TRAINERS = 10;
     private int NO_COURSES = 50;
@@ -38,11 +44,12 @@ public class TestDataGenerator implements ApplicationRunner {
 
 
     @Autowired
-    public TestDataGenerator(FakeData fakeData, IEventService eventService, IHolidayService holidayService, ITrainerService trainerService) {
+    public TestDataGenerator(FakeData fakeData, IEventService eventService, IHolidayService holidayService, ITrainerService trainerService, ICustomerService customerService) {
         this.faker = fakeData;
         this.eventService = eventService;
         this.holidayService = holidayService;
         this.trainerService = trainerService;
+        this.customerService = customerService;
     }
 
 
@@ -132,6 +139,75 @@ public class TestDataGenerator implements ApplicationRunner {
             } catch(ValidationException | ServiceException e) {
                 // its a simulation, some add courses will fail, but that is okay
             }
+        }
+    }
+
+
+    public void fillDatabase(int count){
+        for(int i = 0; i< 10; i++){
+            try {
+                Trainer trainer = faker.fakeNewTrainerEntity();
+                trainerService.save(trainer);
+            }catch(ServiceException | ValidationException e){
+                //failure is fine
+            }
+        }
+        List<Trainer> trainers = new LinkedList<>();
+        try {
+            trainers = trainerService.getAll();
+        }catch(ServiceException e){
+            //
+        }
+        for(int i = count/5; i>0; i--){
+            try {
+                Event event = faker.fakeNewCourseEntity(trainers, 2);
+                System.out.println(event.toString2());
+                eventService.save(event);
+            }catch(ValidationException | ServiceException e){
+                //
+            }
+        }
+        List<Event> events = new LinkedList<>();
+        try {
+            events = eventService.getAllEvents();
+        }catch(ServiceException e){
+            //
+        }
+        for(int n = count; n > 0; n--){
+                Customer customer = faker.fakeNewCustomerEntity();
+                boolean found = false;
+                for(Event e: events
+                ) {
+                    if(faker.randomInt(1,100) < 50){
+                        customer.setId(null);
+                    }else{
+                        customer.setId((long)(faker.randomInt(1,100)));
+                    }
+                    if(customer.getId() == null) {
+                        if(e.getMinAge() != null && e.getMinAge() != null) {
+                            if(customer.getBirthOfChild().isAfter(
+                                LocalDateTime.now().minusYears(
+                                    e.getMaxAge())) &&
+                               customer.getBirthOfChild().isBefore(
+                                   LocalDateTime.now().minusYears(
+                                       e.getMinAge()))) {
+
+                                e.setCustomers(new LinkedHashSet<>());
+                                e.getCustomers().add(customer);
+                                try {
+                                    eventService.updateCustomers(e);
+                                    found = true;
+                                }
+                                catch(ValidationException | NotFoundException | ServiceException exc) {
+
+                                }
+                            }
+                        }
+                    }
+                }
+                if(found = false){
+                    n++;
+                }
         }
     }
 }

@@ -26,6 +26,7 @@ import { httpInterceptorProviders } from './http-interceptors';
 import { SessionStorageService } from './services/session-storage.service';
 import { SimpleHttpInterceptor } from './http-interceptors/simple-http-interceptor';
 import { TrainerClient } from './rest/trainer-client';
+import { TagClient } from './rest/tag-client';
 import { EventClient } from './rest/event-client';
 import { DateTimeParserService } from './services/date-time-parser.service';
 import { HolidayClient } from 'src/app/rest/holiday-client';
@@ -42,6 +43,8 @@ import { InfoComponent } from './components/info/info.component';
 import { InfoClient } from './rest/info-client';
 import { ImageClient } from './rest/image-client';
 import { SafeServerImagePipe } from './pipes/safe-server-image-pipe';
+import { TagComponent } from './components/tag/tag.component';
+import { CancelNewsletterComponent } from './components/cancel-newsletter/cancel-newsletter.component';
 
 @NgModule({
     declarations: [
@@ -52,6 +55,7 @@ import { SafeServerImagePipe } from './pipes/safe-server-image-pipe';
         HolidayComponent,
         RentComponent,
         NavigationComponent,
+        CancelNewsletterComponent,
         TrainerComponent,
         ConsultationComponent,
         TrainerListComponent,
@@ -62,6 +66,8 @@ import { SafeServerImagePipe } from './pipes/safe-server-image-pipe';
         LoginComponent,
         InfoComponent,
         SafeServerImagePipe,
+        TagComponent,
+        CancelNewsletterComponent,
     ],
     imports: [
         AppRoutingModule,
@@ -80,6 +86,7 @@ import { SafeServerImagePipe } from './pipes/safe-server-image-pipe';
         SessionStorageService,
         SimpleHttpInterceptor,
         TrainerClient,
+        TagClient,
         EventClient,
         DateTimeParserService,
         HolidayClient,
@@ -94,4 +101,4 @@ import { SafeServerImagePipe } from './pipes/safe-server-image-pipe';
     bootstrap: [AppComponent],
     entryComponents: [NgbdModalConfirm],
 })
-export class AppModule {}
+export class AppModule { }
