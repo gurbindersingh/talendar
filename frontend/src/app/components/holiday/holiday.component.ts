@@ -152,6 +152,8 @@ export class HolidayComponent implements OnInit {
             this.toggleOptions = false;
             this.repeatModul = this.repeatEvery[0];
             this.terminateModul = this.terminateAfter[0];
+            this.alleX = 1;
+            this.endedX = 1;
         }
     }
     public getCron(): string {

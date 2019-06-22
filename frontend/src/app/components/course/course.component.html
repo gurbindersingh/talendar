@@ -289,6 +289,7 @@
                             </div>
                             <div class="col-lg-4">
                                 <input
+                                    class="form-control"
                                     type="number"
                                     name="repeatAfterX"
                                     id="repeatAfterX"
@@ -410,34 +411,35 @@
                     </div>
                 </div>
                 <br />
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="row">
-                            <div class="col-lg-5" *ngIf="isRepeat()">
-                                <label for="stopAfter">Endet</label>
-                                <select
-                                    class="browser-default custom-select"
-                                    id="stopAfter"
-                                    name="stopAfter"
-                                    [(ngModel)]="terminateModul"
-                                >
-                                    <option *ngFor="let t of terminateAfter">
-                                        {{ t }}
-                                    </option>
-                                </select>
-                            </div>
-                            <div class="col-lg-1" *ngIf="isTerminate()">
-                                <input
-                                    type="number"
-                                    name="termAfter"
-                                    id="termAfter"
-                                    [(ngModel)]="endedX"
-                                />
-                            </div>
-                        </div>
+                <div class="row align-center-right" *ngIf="isRepeat()">
+                    <div class="col-lg-3">
+                        <label for="stopAfter">Ended</label>
                     </div>
-                    <div class="col-lg-4" *ngIf="isTerminate()" id="10p">
-                        <p>Wiederholungen</p>
+
+                    <div class="col-lg-3 mb-1">
+                        <select
+                            class="browser-default custom-select"
+                            id="stopAfter"
+                            name="stopAfter"
+                            [(ngModel)]="terminateModul"
+                        >
+                            <option *ngFor="let t of terminateAfter">
+                                {{ t }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-lg-3" *ngIf="isTerminate()">
+                        <input
+                            class="form-control"
+                            type="number"
+                            name="termAfter"
+                            id="termAfter"
+                            [(ngModel)]="endedX"
+                        />
+                    </div>
+
+                    <div class="col-lg-3" *ngIf="isTerminate()">
+                        <label for="stopAfter">Wiederholungen</label>
                     </div>
                 </div>
             </div>

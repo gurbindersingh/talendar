@@ -170,7 +170,8 @@ public class HolidayService implements IHolidayService {
 
 
             LOGGER.debug("Used Option: " + cronSplit[6]);
-            if(cronSplit[8]=="Nie"){
+            LOGGER.debug("Used Option: " + cronSplit[6]);
+            if(cronSplit[8].equals("Nie")){
                 endX = 1000;
             }
             if(toggle) {
