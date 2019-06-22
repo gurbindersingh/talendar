@@ -148,7 +148,7 @@
                             placeholder="{{ pwPlaceholder }}"
                             minlength="8"
                             autocomplete="new-password"
-                            required
+                            [required]="isSaveMode"
                         />
                     </div>
 
@@ -165,7 +165,7 @@
                             placeholder="{{ pwRepeatPlaceholder }}"
                             minlength="8"
                             autocomplete="new-password"
-                            required
+                            [required]="isSaveMode"
                         />
                     </div>
                 </div>

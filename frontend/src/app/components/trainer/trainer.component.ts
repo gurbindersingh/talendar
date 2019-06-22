@@ -45,8 +45,9 @@ export class TrainerComponent implements OnInit {
     birthdayOptionsColumn1: IBDayOptions[];
     birthdayOptionsColumn2: IBDayOptions[];
 
+    isSaveMode: boolean;
+
     // only used within component
-    private isSaveMode: boolean;
     private currentDate: Date = new Date();
 
     private formData: FormData = null;
