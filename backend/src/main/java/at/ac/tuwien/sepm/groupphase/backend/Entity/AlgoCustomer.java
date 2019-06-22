@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.Entity;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.LinkedList;
 import java.util.List;
 
 public class AlgoCustomer {
@@ -57,6 +58,7 @@ public class AlgoCustomer {
         this.moneySpent = moneySpent;
         Duration duration = Duration.between(LocalDateTime.now(), this.recency);
         this.recencyDays = duration.toDays();
+        this.marketed = new LinkedList<>();
     }
 
 

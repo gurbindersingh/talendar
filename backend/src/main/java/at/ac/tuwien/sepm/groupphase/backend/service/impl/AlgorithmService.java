@@ -11,11 +11,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cglib.core.Local;
+import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
+@Component
 public class AlgorithmService {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(EventService.class);
@@ -48,14 +50,21 @@ public class AlgorithmService {
         this.infoMail = infoMail;
     }
 
-    public void algorithm(){
-        List<AlgoCustomer> algoCustomers = pruneCustomers(customerRepository.findAll());
+    public void algorithm() throws EmailException{
+        LOGGER.info("Up/Cross Sell Algorithm Started");
+        LOGGER.info("Pruning Customers");
+        List<Customer> customers = customerRepository.findAll();
+        List<AlgoCustomer> algoCustomers = pruneCustomers(customers);
+        LOGGER.info("Updating ItemAffinities");
         updateFillItemAffinity(algoCustomers);
+        LOGGER.info("Calculating Favorite Tags");
         calcMostUsed(algoCustomers);
         if(algoCustomers.size()<50){
+            LOGGER.info("Small user base");
             pruneNotWilling(algoCustomers);
             simpleSet(algoCustomers);
         }else {
+            LOGGER.info("RFM Model in use for " + algoCustomers.size() + " customers");
             kmeansRFM = new KMeans(algoCustomers);
             algoCustomers = kmeansRFM.algoCustomers;
             pruneNotWilling(algoCustomers);
@@ -64,14 +73,22 @@ public class AlgorithmService {
         List<ItemAffinity> items = itemAffinityRepository.findAll();
         for(AlgoCustomer ac: algoCustomers
         ) {
-            sell(ac, events, items);
+            try {
+                if(validator.validAlgoCustomer(ac)) {
+                    sell(ac, events, items);
+                }else{
+                    LOGGER.info("Validation for customer " + ac.getEmail() + " failed");
+                }
+            }catch(EmailException e){
+                throw new EmailException(e.getMessage());
+            }
         }
         //eventRepository.findByEventTypeEqualsAndDeletedFalseAndRoomUses_BeginGreaterThanEqual(
         //            EventType.Course, LocalDateTime.now())
 
     }
 
-    private void sell(AlgoCustomer algoCustomer, List<Event> events, List<ItemAffinity> items){
+    private void sell(AlgoCustomer algoCustomer, List<Event> events, List<ItemAffinity> items) throws EmailException{
         Event toMarket = null;
         boolean birthday = false;
         LocalDateTime bday = null;
@@ -81,30 +98,36 @@ public class AlgorithmService {
                     birthday = true;
                     bday = c.getBirthOfChild();
                     algoCustomer.setBirthdayMarketed(true);
+                    break;
                 } else {
                     algoCustomer.setBirthdayMarketed(false);
                 }
             }
         }
         if((algoCustomer.getFrequencyCluster() + algoCustomer.getRecencyCluster() + algoCustomer.getMoneyCluster()) <= 2 ){
+            LOGGER.info("Upselling to customer " + algoCustomer.getEmail() + " with a loyalty of " + algoCustomer.getRecencyCluster()+ algoCustomer.getFrequencyCluster() + algoCustomer.getMoneyCluster());
              toMarket = findUpSell(algoCustomer, events, items);
         }else if((algoCustomer.getFrequencyCluster() + algoCustomer.getRecencyCluster() + algoCustomer.getMoneyCluster()) <= 4 ){
               if(algoCustomer.getRecencyDays() < 30){
+                  LOGGER.info("Crossselling to customer " + algoCustomer.getEmail() + " with a loyalty of " + algoCustomer.getRecencyCluster()+ algoCustomer.getFrequencyCluster() + algoCustomer.getMoneyCluster());
                   toMarket = findCrossSell(algoCustomer, events, items);
               }else{
+                  LOGGER.info("Upselling to customer " + algoCustomer.getEmail() + " with a loyalty of " + algoCustomer.getRecencyCluster()+ algoCustomer.getFrequencyCluster() + algoCustomer.getMoneyCluster());
                   toMarket = findUpSell(algoCustomer, events, items);
               }
         }else if((algoCustomer.getFrequencyCluster() + algoCustomer.getRecencyCluster() + algoCustomer.getMoneyCluster()) >= 5 ){
+             LOGGER.info("Crossselling to customer " + algoCustomer.getEmail() + " with a loyalty of " + algoCustomer.getRecencyCluster()+ algoCustomer.getFrequencyCluster() + algoCustomer.getMoneyCluster());
              toMarket = findCrossSell(algoCustomer, events, items);
         }
         try {
             if(birthday) {
+                LOGGER.info("Selling customer " + algoCustomer.getEmail() + " with a birthday on "+ bday + " on a birthday offer");
                 infoMail.birthdayMail(algoCustomer, bday);
             } else if(toMarket != null) {
                 infoMail.marketingMail(algoCustomer, toMarket);
             }
         }catch(EmailException e){
-
+            throw new EmailException(e.getMessage());
         }
     }
 
@@ -126,18 +149,20 @@ public class AlgorithmService {
         int iteration = 0;
         for(String s: event_tags
         ) {
-            for(int i = iteration; i < event_tags.size();i++)
+            for(int i = 0; i < event_tags.size();i++)
             {
                 if(s != event_tags.get(i)) {
                     int count = 0;
                     for(AlgoCustomer ac : algoCustomers
                     ) {
                         if(ac.getUsedTags().contains(s) && ac.getUsedTags().contains(event_tags.get(i))) {
+                            //LOGGER.debug("Count for tag " + s + " for customer " + ac.getEmail() + " was increased");
                             count++;
                         }
                     }
-                    double support = count/algoCustomers.size();
+                    double support = (double)(count)/(double)(algoCustomers.size());
                     ItemAffinity ins = new ItemAffinity(null,s,event_tags.get(i), support);
+                    LOGGER.info("Tag 1: " + ins.getItem1() + " Tag 2: " + ins.getItem2() + " Support: " + ins.getSupport());
                     itemAffinityRepository.save(ins);
                 }
             }
@@ -156,6 +181,11 @@ public class AlgorithmService {
                 }
             }
         }
+        for(String tag: tags
+
+        ) {
+            LOGGER.debug("Tag: " + tag  + " was used");
+        }
         return tags;
     }
 
@@ -164,76 +194,113 @@ public class AlgorithmService {
         List<AlgoCustomer> pruned = new LinkedList<>();
         for(Customer c: customerList
         ) {
-            if(!customerEmails.contains(c.getEmail())){
-                customerEmails.add(c.getEmail());
-                List<Customer> newCustomer = new LinkedList<>();
-                newCustomer.add(c);
-                List<Event> events = new LinkedList<>();
-                List<String> tags = new LinkedList<>();
-                double frequency = 0;
-                double money = 0;
-                LocalDateTime first = LocalDateTime.MAX;
-                LocalDateTime tmpR = LocalDateTime.MIN;
-                Duration durationMin = Duration.between(LocalDateTime.now(), tmpR);
-                for(Event e: c.getEvents()) {
-                    events.add(e);
+            if(c.getWantsEmail() != null) {
+                LOGGER.info("Processing Customer " + c.getEmail());
+                if(!customerEmails.contains(c.getEmail())) {
+                    customerEmails.add(c.getEmail());
+                    List<Customer> newCustomer = new LinkedList<>();
+                    newCustomer.add(c);
+                    List<Event> events = new LinkedList<>();
+                    List<String> tags = new LinkedList<>();
+                    double frequency = 0;
+                    double money = 0;
+                    LocalDateTime first = LocalDateTime.MAX;
+                    LocalDateTime tmpR = LocalDateTime.MIN;
+                    Duration durationMin = Duration.between(LocalDateTime.now(), tmpR);
+                    for(Event e : c.getEvents()) {
+                        if(e.getPrice() != null &&
+                           e.getEvent_tags() != null &&
+                           e.getRoomUses() != null && e.getName() != null) {
+                            LOGGER.info("Processing Event " +
+                                        e.getName() +
+                                        " for Customer " +
+                                        c.getEmail());
+                            events.add(e);
 
 
-                    LocalDateTime tmp = mostRecentUse(e.getRoomUses());
-                    if(tmp.isAfter(tmpR)) {
-                        tmpR = tmp;
-                    }
-
-                    frequency++;
-
-                    money += e.getPrice();
-                    if(!tags.contains(e.getEvent_tags())){
-                            tags.add(e.getEvent_tags());
-                    }
-
-
-                    LocalDateTime tmp2 = firstUse(e.getRoomUses());
-                    if(tmp2.isBefore(first)){
-                        first = tmp2;
-                    }
-                }
-                AlgoCustomer newAlgoCustomer = new AlgoCustomer(c.getEmail(),newCustomer, events, tags, tmpR, frequency, money);
-                if(c.getWantsEmail()){
-                    newAlgoCustomer.setWilling(true);
-                }
-                newAlgoCustomer.setFirst(first);
-                pruned.add(newAlgoCustomer);
-            }else{
-                for(AlgoCustomer ac: pruned) {
-                    if(c.getEmail() == ac.getEmail()){
-                        ac.getAssociated().add(c);
-                        if(c.getWantsEmail()){
-                            ac.setWilling(true);
-                        }
-                        for(Event e: c.getEvents()) {
-                            ac.getParitcipatedIn().add(e);
                             LocalDateTime tmp = mostRecentUse(e.getRoomUses());
-                            LocalDateTime first = firstUse(e.getRoomUses());
-                            if(tmp.isAfter(ac.getRecency())) {
-                                ac.setRecency(tmp);
-                            }
-                            if(first.isBefore(ac.getFirst())){
-                                ac.setFirst(first);
-                            }
-                            ac.setFrequency(ac.getFrequency()+1);
-
-                            ac.setMoneySpent(ac.getMoneySpent() + e.getPrice());
-
-                            if(!ac.getUsedTags().contains(e.getEvent_tags())){
-                                ac.getUsedTags().add(e.getEvent_tags());
+                            if(tmp.isAfter(tmpR)) {
+                                tmpR = tmp;
                             }
 
+                            frequency++;
+
+                            money += e.getPrice();
+                            if(!tags.contains(e.getEvent_tags())) {
+                                tags.add(e.getEvent_tags());
+                            }
+
+
+                            LocalDateTime tmp2 = firstUse(e.getRoomUses());
+                            if(tmp2.isBefore(first)) {
+                                first = tmp2;
+                            }
+                        }
+                    }
+                    AlgoCustomer newAlgoCustomer =
+                        new AlgoCustomer(c.getEmail(), newCustomer, events, tags, tmpR, frequency,
+                                         money
+                        );
+                    if(c.getWantsEmail()) {
+                        newAlgoCustomer.setWilling(true);
+                    }
+                    newAlgoCustomer.setFirst(first);
+                    pruned.add(newAlgoCustomer);
+                } else {
+                    LOGGER.debug("Customer " + c.getEmail() + " has been processed before");
+                    for(AlgoCustomer ac : pruned) {
+                        if(c.getEmail().equals(ac.getEmail())) {
+                            ac.getAssociated().add(c);
+                            if(c.getWantsEmail()) {
+                                ac.setWilling(true);
+                            }
+                            for(Event e : c.getEvents()) {
+                                if(e.getPrice() != null &&
+                                   e.getEvent_tags() != null &&
+                                   e.getRoomUses() != null && e.getName() != null) {
+                                    LOGGER.info("Processing Event " +
+                                                e.getName() +
+                                                " for Customer " +
+                                                c.getEmail());
+                                    ac.getParitcipatedIn().add(e);
+                                    LocalDateTime tmp = mostRecentUse(e.getRoomUses());
+                                    LocalDateTime first = firstUse(e.getRoomUses());
+                                    if(tmp.isAfter(ac.getRecency())) {
+                                        ac.setRecency(tmp);
+                                    }
+                                    if(first.isBefore(ac.getFirst())) {
+                                        ac.setFirst(first);
+                                    }
+                                    ac.setFrequency(ac.getFrequency() + 1);
+
+                                    ac.setMoneySpent(ac.getMoneySpent() + e.getPrice());
+
+                                    if(!ac.getUsedTags().contains(e.getEvent_tags())) {
+                                        ac.getUsedTags().add(e.getEvent_tags());
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
         }
-        return pruned;
+            LOGGER.info(pruned.size() + " customers available");
+            for(AlgoCustomer ac : pruned
+            ) {
+                LOGGER.info("Customer with email " +
+                            ac.getEmail() +
+                            " parsed participated in " +
+                            ac.getParitcipatedIn().size() +
+                            " events");
+                LOGGER.info("   used tags: ");
+                for(String s: ac.getUsedTags()
+                ) {
+                    LOGGER.info("       " + s);
+                }
+            }
+            return pruned;
+
     }
 
     public LocalDateTime mostRecentUse(List<RoomUse> roomUses){
@@ -296,18 +363,21 @@ public class AlgorithmService {
             LocalDateTime reference = LocalDateTime.MAX;
             for(Event e: possibleSells
             ) {
-                if(iteration == -1) {
-                    if(e.getEvent_tags().contains(algoCustomer.getFavoriteTag()) &&
-                       firstUse(e.getRoomUses()).isBefore(reference)) {
-                        reference = firstUse(e.getRoomUses());
-                        ret = e;
-                        found = true;
-                    }
-                }else{
-                    if(e.getEvent_tags().contains(tagChoices.get(iteration).getItem2()) && firstUse(e.getRoomUses()).isBefore(reference)){
-                        reference = firstUse(e.getRoomUses());
-                        ret = e;
-                        found = true;
+                if(e.getEvent_tags() != null) {
+                    if(iteration == -1) {
+                        if(e.getEvent_tags().contains(algoCustomer.getFavoriteTag()) &&
+                           firstUse(e.getRoomUses()).isBefore(reference)) {
+                            reference = firstUse(e.getRoomUses());
+                            ret = e;
+                            found = true;
+                        }
+                    } else {
+                        if(e.getEvent_tags().contains(tagChoices.get(iteration).getItem2()) &&
+                           firstUse(e.getRoomUses()).isBefore(reference)) {
+                            reference = firstUse(e.getRoomUses());
+                            ret = e;
+                            found = true;
+                        }
                     }
                 }
             }
@@ -341,12 +411,13 @@ public class AlgorithmService {
                 }
             }
             iteration++;
-            if(tagChoices.size() < iteration){
-                found = true;
+            if(tagChoices.size() <= iteration){
+                break;
             }
             if(tagChoices.get(iteration).getSupport() < 0.2){
-                found = true;
+                break;
             }
+
         }
         return ret;
     }
@@ -368,7 +439,10 @@ public class AlgorithmService {
         for(Event e: events
         ) {
             if(firstUse(e.getRoomUses()).isBefore(LocalDateTime.now().plusMonths(3)) && LocalDateTime.now().isBefore(e.getEndOfApplication().minusDays(2))){
-                if(ageExists(algoCustomer, e) && !containsName(algoCustomer.getParitcipatedIn(), e) && !algoCustomer.getMarketed().contains(e) && (e.getCustomers().size() < e.getMaxParticipants())){
+                if(ageExists(algoCustomer, e) &&
+                   !containsName(algoCustomer.getParitcipatedIn(), e) &&
+                   !algoCustomer.getMarketed().contains(e) &&
+                   (e.getCustomers().size() < e.getMaxParticipants())){
                     ret.add(e);
                 }
             }
@@ -410,11 +484,11 @@ public class AlgorithmService {
         int day = localDateTime.getDayOfYear();
         int dayNow = LocalDateTime.now().getDayOfYear();
         if(day < 30){
-            if(((day+365) - dayNow) < 30){
+            if(((day+365) - dayNow) < 30 && ((day + 365) - dayNow) > 0){
                 return true;
             }
         }else{
-            if((day - dayNow) < 30){
+            if((day - dayNow) < 30 && (day - dayNow) > 0){
                 return true;
             }
         }

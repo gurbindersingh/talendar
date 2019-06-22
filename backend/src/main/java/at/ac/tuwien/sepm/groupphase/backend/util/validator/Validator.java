@@ -424,4 +424,15 @@ public class Validator {
             throw new InvalidEntityException("Ein Tag kann nicht leer sein");
         }
     }
+
+    public boolean validAlgoCustomer(AlgoCustomer algoCustomer){
+        if(algoCustomer.getEmail() == null
+        || algoCustomer.getAssociated() == null
+        || algoCustomer.getParitcipatedIn() == null
+        || algoCustomer.getFavoriteTag() == null
+        || algoCustomer.getUsedTags() == null){
+            return false;
+        }
+        return true;
+    }
 }

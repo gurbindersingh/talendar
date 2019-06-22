@@ -29,7 +29,7 @@ public class Customer {
     private String firstName;
     @NotBlank
     private String lastName;
-    @ManyToMany(mappedBy = "customers" )
+    @ManyToMany(mappedBy = "customers", fetch = FetchType.EAGER )
     @JsonIgnoreProperties("customers")
     private Set<Event> events;
 

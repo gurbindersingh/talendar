@@ -1,10 +1,14 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.algorithmClasses;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.AlgoCustomer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.*;
 
 public class KMeans {
 
+    private static Logger LOGGER = LoggerFactory.getLogger(KMeans.class);
     public List<AlgoCustomer> algoCustomers;
     public DoubleCluster[] recencyCluster;
     public DoubleCluster[] frequencyCluster;
@@ -14,13 +18,14 @@ public class KMeans {
 
 
     public KMeans(List<AlgoCustomer> algoCustomers){
+        LOGGER.info("KMeans started");
         this.algoCustomers = algoCustomers;
         clusterCustomerKMeans(3, 100);
 
     }
 
     public void clusterCustomerKMeans(int k, int iterations){
-
+        LOGGER.info("k = " + k + " with " + iterations + " iterations");
         recencyCluster = new DoubleCluster[k];
         frequencyCluster = new DoubleCluster[k];
         moneyCluster = new DoubleCluster[k];
@@ -61,10 +66,13 @@ public class KMeans {
 
         for(int i = 0; i<k; i++){
             clusterCentersRecency[i] = randomBetween(mostRecent, earliest, 1.25 );
+            recencyCluster[i] = new DoubleCluster();
             recencyCluster[i].setRepresentative(clusterCentersRecency[i]);
             clusterCenterMoney[i] = randomBetween(minMoney, maxMoney, 1.25);
+            moneyCluster[i] = new DoubleCluster();
             moneyCluster[i].setRepresentative(clusterCenterMoney[i]);
             clusterCenterFrequency[i] = randomBetween(minFrequency, maxFrequency, 1.25);
+            frequencyCluster[i] = new DoubleCluster();
             frequencyCluster[i].setRepresentative(clusterCenterFrequency[i]);
         }
 
@@ -80,17 +88,17 @@ public class KMeans {
                 double closestMoneyVal = Double.MAX_VALUE;
 
                 for(int index = 0; index < k; index++){
-                   if(Math.abs(recencyCluster[i].getMean() - ac.getRecencyDays())< closestRecencyVal){
-                       closestRecency = i;
-                       closestRecencyVal = Math.abs(recencyCluster[i].getMean()-ac.getRecencyDays());
+                   if(Math.abs(recencyCluster[index].getMean() - ac.getRecencyDays())< closestRecencyVal){
+                       closestRecency = index;
+                       closestRecencyVal = Math.abs(recencyCluster[index].getMean()-ac.getRecencyDays());
                    }
-                    if(Math.abs(frequencyCluster[i].getMean() - ac.getFrequency())< closestFrequencyVal){
-                        closestFrequency = i;
-                        closestFrequencyVal = Math.abs(frequencyCluster[i].getMean()-ac.getFrequency());
+                    if(Math.abs(frequencyCluster[index].getMean() - ac.getFrequency())< closestFrequencyVal){
+                        closestFrequency = index;
+                        closestFrequencyVal = Math.abs(frequencyCluster[index].getMean()-ac.getFrequency());
                     }
-                    if(Math.abs(moneyCluster[i].getMean() -ac.getMoneySpent())< closestMoneyVal){
-                        closestMoney = i;
-                        closestMoneyVal = Math.abs(moneyCluster[i].getMean() - ac.getMoneySpent());
+                    if(Math.abs(moneyCluster[index].getMean() -ac.getMoneySpent())< closestMoneyVal){
+                        closestMoney = index;
+                        closestMoneyVal = Math.abs(moneyCluster[index].getMean() - ac.getMoneySpent());
                     }
                 }
 
@@ -120,6 +128,7 @@ public class KMeans {
             }
 
         }
+        LOGGER.info("Finishing up clusters");
         sortClusters();
         assignMembers(k);
         createOverallClusters(k);
@@ -153,11 +162,20 @@ public class KMeans {
     }
 
     private void createOverallClusters(int k){
-        overallRanking = new DoubleCluster[(k-1)*3];
+        overallRanking = new DoubleCluster[(k-1)*3+1];
+        for(int i = 0; i<(k-1)*3+1; i++){
+            overallRanking[i] = new DoubleCluster();
+            overallRanking[i].setRanking(i);
+        }
         for(int i = 0; i<k; i++){
+
             for(AlgoCustomer ac: recencyCluster[i].getMembers()
             ) {
-                overallRanking[ac.getRecencyCluster() + ac.getFrequencyCluster() + ac.getMoneyCluster()].addMember(ac);
+
+                overallRanking[ac.getRecencyCluster() +
+                               ac.getFrequencyCluster() +
+                               ac.getMoneyCluster()
+                    ].addMember(ac);
             }
 
         }

@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service.algorithmClasses;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.AlgoCustomer;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class DoubleCluster {
@@ -11,6 +12,9 @@ public class DoubleCluster {
     private int ranking;
     private double representative;
 
+    public DoubleCluster(){
+        this.members = new LinkedList<>();
+    }
     public DoubleCluster(
         List<AlgoCustomer> members,
         double mean,

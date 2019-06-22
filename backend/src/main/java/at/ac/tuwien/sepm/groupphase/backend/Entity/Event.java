@@ -400,4 +400,24 @@ public class Event {
                '}';
     }
 
+    public String toString2 () {
+        return "Event{" +
+               "id=" + id +
+               ", name='" + name + '\'' +
+               ", roomUses=" + roomUses +
+               ", created=" + created +
+               ", updated=" + updated +
+               ", eventType=" + eventType +
+               ", headcount=" + headcount +
+               ", ageToBe=" + ageToBe +
+               ", birthdayType=" + birthdayType +
+               ", endOfApplication=" + endOfApplication +
+               ", price=" + price +
+               ", maxParticipants=" + maxParticipants +
+               ", description='" + description + '\'' +
+               ", minAge=" + minAge +
+               ", maxAge=" + maxAge +
+               ", tags=" + event_tags +
+               '}';
+    }
 }

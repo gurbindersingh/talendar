@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.schedule;
 
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.BackendException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
+import at.ac.tuwien.sepm.groupphase.backend.service.impl.AlgorithmService;
 import com.itextpdf.text.DocumentException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -14,13 +15,16 @@ public class ScheduleCaller {
     private ParticipantsList participantsList;
     private RedactInactiveUsers redactInactiveUsers;
     private RedactInactiveTrainers redactInactiveTrainers;
+    private AlgorithmService algorithmService;
 
     public ScheduleCaller (ParticipantsList participantsList,
                            RedactInactiveUsers redactInactiveUsers,
-                           RedactInactiveTrainers redactInactiveTrainers){
+                           RedactInactiveTrainers redactInactiveTrainers,
+                           AlgorithmService algorithmService){
         this.participantsList = participantsList;
         this.redactInactiveUsers = redactInactiveUsers;
         this.redactInactiveTrainers = redactInactiveTrainers;
+        this.algorithmService = algorithmService;
     }
 
 
@@ -41,5 +45,10 @@ public class ScheduleCaller {
     @Scheduled(cron = "0 0 0 1 * ?")
     public void callMonthly() throws BackendException {
         redactInactiveTrainers.redact();
+    }
+
+    @Scheduled(cron = "0 0 3 ? * MON")
+    public void callAlgorithm()throws EmailException{
+        algorithmService.algorithm();
     }
 }
