@@ -17,6 +17,14 @@ spring:
       use-new-id-generator-mappings: true
   profiles:
     active: development
+  servlet:
+    multipart:
+        enabled: true
+        # this is a hard limit, the actual restriction by the service/validator may be stricter
+        max-file-size: 20MB
+        max-request-size: 20MB
+
+
 
 security:
   basic:

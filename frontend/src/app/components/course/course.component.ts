@@ -10,6 +10,7 @@ import { RoomUse } from 'src/app/models/roomUse';
 import { Trainer } from 'src/app/models/trainer';
 import { ActivatedRoute } from '@angular/router';
 import { CronMakerService } from 'src/app/services/cronMaker.service';
+import { SessionStorageService } from 'src/app/services/session-storage.service';
 
 @Component({
     selector: 'app-course',
@@ -67,7 +68,8 @@ export class CourseComponent implements OnInit {
         private eventClient: EventClient,
         dateTimeParser: DateTimeParserService,
         private route: ActivatedRoute,
-        cronMaker: CronMakerService
+        cronMaker: CronMakerService,
+        private sessionService: SessionStorageService
     ) {
         this.cronMaker = cronMaker;
         this.dateTimeParser = dateTimeParser;
@@ -166,7 +168,7 @@ export class CourseComponent implements OnInit {
 
     public postMeeting(form: NgForm): void {
         if (this.isCreate) {
-            this.trainer.id = 1;
+            this.trainer.id = this.sessionService.userId;
             this.event.eventType = EventType.Course;
             this.event.trainer = this.trainer;
 

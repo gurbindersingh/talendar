@@ -2,6 +2,7 @@ import {
     HttpClient,
     HttpErrorResponse,
     HttpParams,
+    HttpHeaders,
 } from '@angular/common/http';
 
 import { environment } from '../../environments/environment';
@@ -26,36 +27,76 @@ export abstract class RestClient {
     protected get<T>(
         onError: (error: HttpErrorResponse) => void,
         url?: string,
-        params?: any
+        params?: any,
+        headers?: any,
+        responseType?: any
     ): Observable<T> {
-        return this.request('get', onError, url, params);
+        return this.request(
+            'get',
+            onError,
+            url,
+            params,
+            null,
+            headers,
+            responseType
+        );
     }
 
     protected post<T>(
         onError: (error: HttpErrorResponse) => void,
         url: string,
         body: any,
-        params?: any
+        params?: any,
+        headers?: any,
+        responseType?: any
     ): Observable<T> {
-        return this.request('post', onError, url, params, body);
+        return this.request(
+            'post',
+            onError,
+            url,
+            params,
+            body,
+            headers,
+            responseType
+        );
     }
 
     protected put<T>(
         onError: (error: HttpErrorResponse) => void,
         url: string,
         body: any,
-        params?: any
+        params?: any,
+        headers?: any,
+        responseType?: any
     ): Observable<T> {
-        return this.request('put', onError, url, params, body);
+        return this.request(
+            'put',
+            onError,
+            url,
+            params,
+            body,
+            headers,
+            responseType
+        );
     }
 
     protected patch<T>(
         onError: (error: HttpErrorResponse) => void,
         url: string,
         body: any,
-        params?: any
+        params?: any,
+        headers?: any,
+        responseType?: any
     ): Observable<T> {
-        return this.request('patch', onError, url, params, body);
+        return this.request(
+            'patch',
+            onError,
+            url,
+            params,
+            body,
+            headers,
+            responseType
+        );
     }
 
     protected delete<T>(
@@ -73,11 +114,18 @@ export abstract class RestClient {
         onError: (error: HttpErrorResponse) => void,
         url?: string,
         params?: any,
-        body?: any
+        body?: any,
+        headers?: any,
+        responseType?: any
     ): Observable<T> {
         const fullUrl = url ? this.baseUrl + url : this.baseUrl;
         return this.httpClient
-            .request<T>(method, fullUrl, { body, params })
+            .request<T>(method, fullUrl, {
+                body,
+                params,
+                headers,
+                responseType,
+            })
             .pipe(
                 share(),
                 catchError((response: HttpErrorResponse) => {
@@ -88,14 +136,5 @@ export abstract class RestClient {
                         : response;
                 })
             );
-
-        /* .catch((response: HttpErrorResponse) => {
-                console.log(`Request to ${fullUrl} failed:`, response);
-                return Observable.throw(
-                    response.status && response.error
-                        ? response.error
-                        : response
-                );
-            }); */
     }
 }

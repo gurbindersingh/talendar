@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { TrainerClient } from '../../rest/trainer-client';
 import { Trainer } from '../../models/trainer';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ImageClient } from 'src/app/rest/image-client';
 
 @Component({
     selector: 'ngbd-modal-confirm',
@@ -66,7 +67,7 @@ export class NgbdModalConfirm {
 })
 export class TrainerListComponent implements OnInit {
     title = 'Trainerliste';
-    private trainerList: Trainer[] = [];
+    trainerList: Trainer[] = [];
     filteredTrainerList: Trainer[] = [];
     trainerListPage: Trainer[] = [];
     currentPage = 1;
@@ -74,8 +75,11 @@ export class TrainerListComponent implements OnInit {
 
     constructor(
         private trainerClient: TrainerClient,
+        private imageClient: ImageClient,
         private modalService: NgbModal
     ) {}
+
+    binaryEncodedImages: any[] = [];
 
     ngOnInit() {
         console.log('Init Trainer List');
@@ -84,6 +88,30 @@ export class TrainerListComponent implements OnInit {
                 this.trainerList = list;
                 this.filteredTrainerList = this.trainerList;
                 this.updateListPage();
+                this.binaryEncodedImages = new Array(this.trainerList.length);
+
+                for (let i = 0; i < this.trainerList.length; i++) {
+                    const trainer: Trainer = this.trainerList[i];
+                    if (trainer.picture != null) {
+                        this.imageClient
+                            .getProfilePicture(trainer.picture)
+                            .subscribe(
+                                // received data are octet stream (pure 'raw' binary data)
+                                (bytes: any) => {
+                                    const blob = new Blob([bytes]);
+                                    this.extractBinaryDataFromFile(blob, i);
+                                },
+                                (error) => {
+                                    // manual parsing required because (returntype is not json)
+                                    const info = JSON.parse(error);
+                                    console.log(
+                                        'profile picture could not be loaded: ' +
+                                            info.message
+                                    );
+                                }
+                            );
+                    }
+                }
             },
             (error) => {
                 console.error(error);
@@ -120,7 +148,7 @@ export class TrainerListComponent implements OnInit {
         this.updateListPage();
     }
 
-    open(trainer: Trainer) {
+    open(trainer: Trainer, index: number) {
         const modalRef = this.modalService.open(NgbdModalConfirm);
         modalRef.componentInstance.trainer = trainer;
         modalRef.result.then(() => {
@@ -129,11 +157,26 @@ export class TrainerListComponent implements OnInit {
             this.trainerClient.deleteTrainer(trainer.id).subscribe(
                 () => {
                     this.ngOnInit();
+                    this.binaryEncodedImages[index] = null;
                 },
                 (error) => {
                     console.log(error);
                 }
             );
         });
+    }
+    /**
+     * This method can be used to extract the content of a file as binary data.
+     * I.e. <img src"..."> can display images given their binary representation.
+     *
+     * @param file the wrapper of the content. 'File' can be also used as param as
+     *             it extends Blob!
+     */
+    private extractBinaryDataFromFile(file: Blob, index: number): void {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = () => {
+            this.binaryEncodedImages[index] = reader.result;
+        };
     }
 }

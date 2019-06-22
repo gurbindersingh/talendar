@@ -1,7 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.*;
-import at.ac.tuwien.sepm.groupphase.backend.enums.BirthdayType;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import at.ac.tuwien.sepm.groupphase.backend.enums.Room;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
@@ -11,7 +10,6 @@ import at.ac.tuwien.sepm.groupphase.backend.persistence.EventRepository;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.HolidayRepository;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.RoomUseRepository;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
-import at.ac.tuwien.sepm.groupphase.backend.rest.dto.CustomerDto;
 import at.ac.tuwien.sepm.groupphase.backend.service.IEventService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.CancelationException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
@@ -19,12 +17,9 @@ import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.Validator;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidEntityException;
-import org.apache.tomcat.jni.Local;
-import org.aspectj.weaver.ast.Not;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
 
 import org.slf4j.Logger;
@@ -36,9 +31,6 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import javax.sql.rowset.serial.SerialException;
-import javax.validation.Valid;
-import javax.validation.Validation;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDateTime;
@@ -55,14 +47,15 @@ public class EventService implements IEventService {
     private final TrainerRepository trainerRepository;
     private final HolidayRepository holidayRepository;
     private final InfoMail infoMail;
+    private final MailData mailData;
 
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 
     @Autowired
-    public EventService (EventRepository eventRepository, Validator validator,
-                         RoomUseRepository roomUseRepository, TrainerRepository trainerRepository,
-                         HolidayRepository holidayRepository, InfoMail infoMail
+    public EventService(EventRepository eventRepository, Validator validator,
+                        RoomUseRepository roomUseRepository, TrainerRepository trainerRepository,
+                        HolidayRepository holidayRepository, InfoMail infoMail, MailData mailData
     ) {
         this.eventRepository = eventRepository;
         this.validator = validator;
@@ -70,6 +63,7 @@ public class EventService implements IEventService {
         this.trainerRepository = trainerRepository;
         this.holidayRepository = holidayRepository;
         this.infoMail = infoMail;
+        this.mailData = mailData;
     }
 
 
@@ -101,44 +95,47 @@ public class EventService implements IEventService {
 
         switch(event.getEventType()) {
             case Birthday:
-                  try {
-                      validator.validateEvent(event);
+                try {
+                    validator.validateEvent(event);
 
 
-                      event = synchRoomUses(event);
-                      event = synchCustomers(event);
-                      event.setTrainer(findTrainerForBirthday(event.getRoomUses(), event.getBirthdayType()));
-                      validator.validateTrainer(event.getTrainer());
+                    event = synchRoomUses(event);
+                    event = synchCustomers(event);
+                    event.setTrainer(
+                        findTrainerForBirthday(event.getRoomUses(), event.getBirthdayType()));
+                    validator.validateTrainer(event.getTrainer());
 
 
-                      try {
-                          isAvailable(event.getRoomUses());
-                      }
-                      catch(TimeNotAvailableException e) {
-                          throw new ValidationException(
-                              e.getMessage(),
-                              e
-                          );
-                      }
+                    try {
+                        isAvailable(event.getRoomUses());
+                    }
+                    catch(TimeNotAvailableException e) {
+                        throw new ValidationException(
+                            e.getMessage(),
+                            e
+                        );
+                    }
 
-                      event = eventRepository.save(event);
-                      eventRepository.flush();
+                    event = eventRepository.save(event);
+                    eventRepository.flush();
 
-                      for(Customer c: event.getCustomers()
-                      ) {
-                          sendCancelationMail(c.getEmail(), event, c);
-                      }
-                      LOGGER.info("Sending information mail to admin");
-                      infoMail.sendAdminEventInfoMail(event, "Neuer Geburtstag", "newEvent");
-                      return event;
-                  }
-                  catch(InvalidEntityException e) {
-                      throw new ValidationException(e.getMessage(), e);
-                  }catch(TrainerNotAvailableException e){
-                      throw new ServiceException(e.getMessage(),e);
-                  }catch(EmailException e){
-                      throw new ValidationException("" + e.getMessage(), e);
-                  }
+                    for(Customer c : event.getCustomers()
+                    ) {
+                        sendCancelationMail(c.getEmail(), event, c);
+                    }
+                    LOGGER.info("Sending information mail to admin");
+                    infoMail.sendAdminEventInfoMail(event, "Neuer Geburtstag", "newEvent");
+                    return event;
+                }
+                catch(InvalidEntityException e) {
+                    throw new ValidationException(e.getMessage(), e);
+                }
+                catch(TrainerNotAvailableException e) {
+                    throw new ServiceException(e.getMessage(), e);
+                }
+                catch(EmailException e) {
+                    throw new ValidationException("" + e.getMessage(), e);
+                }
             case Course:
                 try {
                     validator.validateEvent(event);
@@ -150,10 +147,12 @@ public class EventService implements IEventService {
 
                     RoomUse roomUse = event.getRoomUses().get(0);
 
-                    if(roomUse.getCronExpression() != null && !roomUse.getCronExpression().isBlank()){
-                        try{
+                    if(roomUse.getCronExpression() != null &&
+                       !roomUse.getCronExpression().isBlank()) {
+                        try {
                             validator.validateCronExpression(roomUse.getCronExpression());
-                        } catch(InvalidEntityException ie){
+                        }
+                        catch(InvalidEntityException ie) {
                             LOGGER.error("Invalid cron expression!");
                             throw new ServiceException("", ie);
                         }
@@ -179,7 +178,10 @@ public class EventService implements IEventService {
                                     break;
                                 }
                                 catch(TimeNotAvailableException e) {
-                                    LOGGER.info(i + ". alternative Room: " + roomPriority.get(i) + " -> is not available.");
+                                    LOGGER.info(i +
+                                                ". alternative Room: " +
+                                                roomPriority.get(i) +
+                                                " -> is not available.");
                                     if(i + 1 == roomPriority.size()) {
                                         LOGGER.info("All rooms not available");
                                         throw new ValidationException(
@@ -195,9 +197,10 @@ public class EventService implements IEventService {
                         }
                     } else {
 
-                        try{
+                        try {
                             isAvailable(event.getRoomUses());
-                        } catch(TimeNotAvailableException te){
+                        }
+                        catch(TimeNotAvailableException te) {
                             throw new ValidationException(te.getMessage(), te);
                         }
                     }
@@ -205,10 +208,11 @@ public class EventService implements IEventService {
                     LOGGER.info("Get RoomUses before saving:" + event.getRoomUses());
 
 
-                    try{
+                    try {
                         LOGGER.info("Sending information mail to admin");
                         infoMail.sendAdminEventInfoMail(event, "Neuer Kurs", "newEvent");
-                    }catch(EmailException e){
+                    }
+                    catch(EmailException e) {
 
                     }
                     return eventRepository.save(event);
@@ -278,13 +282,12 @@ public class EventService implements IEventService {
                 }
                 catch(EmailException e) {
                     throw new ValidationException(
-                        "Something went wrong while attempting to send an email: " + e.getMessage(),
+                        "Beim Versenden des E-Mails ist ein Fehler aufgetreten: " + e.getMessage(),
                         e
                     );
                 }
                 catch(TrainerNotAvailableException e) {
                     throw new ValidationException(
-                        "The specified trainer is not available during the allocated time frame" +
                         e.getMessage(),
                         e
                     );
@@ -295,36 +298,35 @@ public class EventService implements IEventService {
     }
 
 
-
-    private List<Room> createPriorityRoomList(Integer roomOption, Room room){
+    private List<Room> createPriorityRoomList(Integer roomOption, Room room) {
         List<Room> roomPriority = new LinkedList<>();
 
         roomPriority.add(room);  //default: only one rooom
 
-        switch(roomOption){
+        switch(roomOption) {
             case 1:
-                if(room == Room.Green){
+                if(room == Room.Green) {
                     roomPriority.add(Room.Orange);
-                } else if (room == Room.Orange){
+                } else if(room == Room.Orange) {
                     roomPriority.add(Room.Green);
                 } else {
                     roomPriority.add(Room.Green);
                 }
                 break;
             case 2:
-                if(room == Room.Green){
+                if(room == Room.Green) {
                     roomPriority.add(Room.GroundFloor);
-                } else if (room == Room.Orange){
+                } else if(room == Room.Orange) {
                     roomPriority.add(Room.GroundFloor);
                 } else {
                     roomPriority.add(Room.Orange);
                 }
                 break;
             case 3:
-                if(room == Room.Green){
+                if(room == Room.Green) {
                     roomPriority.add(Room.Orange);
                     roomPriority.add(Room.GroundFloor);
-                } else if(room == Room.Orange){
+                } else if(room == Room.Orange) {
                     roomPriority.add(Room.Green);
                     roomPriority.add(Room.GroundFloor);
                 } else {
@@ -344,21 +346,22 @@ public class EventService implements IEventService {
                     roomPriority.add(Room.Green);
                 }
                 break;
-
-
         }
-
 
 
         return roomPriority;
     }
 
-    private List<RoomUse> cronExpressionToRoomUsesList (Event event) throws ServiceException {
+
+    private List<RoomUse> cronExpressionToRoomUsesList(Event event) throws ServiceException {
         LOGGER.info("Cron expression will be resolved now!");
 
         LinkedList<RoomUse> resultList = new LinkedList<>();
 
-        if(event.getRoomUses() == null || event.getRoomUses().size() != 1 || event.getRoomUses().get(0).getCronExpression() == null || event.getRoomUses().get(0).getCronExpression().isBlank()){
+        if(event.getRoomUses() == null ||
+           event.getRoomUses().size() != 1 ||
+           event.getRoomUses().get(0).getCronExpression() == null ||
+           event.getRoomUses().get(0).getCronExpression().isBlank()) {
             LOGGER.info("Cant resolve cron expression. It is missing.");
             return event.getRoomUses();
         }
@@ -374,51 +377,49 @@ public class EventService implements IEventService {
             String[] cronSplit = originRoomUse.getCronExpression().split(" ");
 
 
-
-
             //Turn CronExpression Into a StartDateTime and EndDatetime and add to the correct list
-            String startMonth = (cronSplit[3].split("/"))[0];
-            if(startMonth.length()<2){
+            String startMonth = ( cronSplit[3].split("/") )[0];
+            if(startMonth.length() < 2) {
                 startMonth = "0" + startMonth;
             }
-            String endMonth = (cronSplit[3].split("/"))[1];
-            if(endMonth.length()<2){
+            String endMonth = ( cronSplit[3].split("/") )[1];
+            if(endMonth.length() < 2) {
                 endMonth = "0" + endMonth;
             }
-            String startDay = (cronSplit[2].split("/"))[0];
-            if(startDay.length()<2){
+            String startDay = ( cronSplit[2].split("/") )[0];
+            if(startDay.length() < 2) {
                 startDay = "0" + startDay;
             }
-            String endDay = (cronSplit[2].split("/"))[1];
-            if(endDay.length()<2){
+            String endDay = ( cronSplit[2].split("/") )[1];
+            if(endDay.length() < 2) {
                 endDay = "0" + endDay;
             }
-            String startMinute = (cronSplit[0].split("/"))[0];
-            if(startMinute.length()<2){
+            String startMinute = ( cronSplit[0].split("/") )[0];
+            if(startMinute.length() < 2) {
                 startMinute = "0" + startMinute;
             }
-            String endMinute = (cronSplit[0].split("/"))[1];
-            if(endMinute.length()<2){
+            String endMinute = ( cronSplit[0].split("/") )[1];
+            if(endMinute.length() < 2) {
                 endMinute = "0" + endMinute;
             }
-            String startHour = (cronSplit[1].split("/"))[0];
-            if(startHour.length()<2){
+            String startHour = ( cronSplit[1].split("/") )[0];
+            if(startHour.length() < 2) {
                 startHour = "0" + startHour;
             }
-            String endHour = (cronSplit[1].split("/"))[1];
-            if(endHour.length()<2){
+            String endHour = ( cronSplit[1].split("/") )[1];
+            if(endHour.length() < 2) {
                 endHour = "0" + endHour;
             }
 
 
             String startTime = "T" + startHour + ":" + startMinute + ":00";
-            String endTime = "T" + endHour + ":" +  endMinute + ":00";
+            String endTime = "T" + endHour + ":" + endMinute + ":00";
 
-            String startDate = (cronSplit[4].split("/"))[0] + "-" + startMonth + "-" + startDay;
-            String endDate = (cronSplit[4].split("/"))[1] + "-" + endMonth + "-" + endDay;
+            String startDate = ( cronSplit[4].split("/") )[0] + "-" + startMonth + "-" + startDay;
+            String endDate = ( cronSplit[4].split("/") )[1] + "-" + endMonth + "-" + endDay;
 
-            startLocalDateTimes.add(LocalDateTime.parse(startDate+startTime));
-            endLocalDateTimes.add(LocalDateTime.parse(endDate+endTime));
+            startLocalDateTimes.add(LocalDateTime.parse(startDate + startTime));
+            endLocalDateTimes.add(LocalDateTime.parse(endDate + endTime));
 
 
             LOGGER.info("startLocalDateTimes:" + startLocalDateTimes);
@@ -433,9 +434,8 @@ public class EventService implements IEventService {
             LocalDateTime endLast = endLocalDateTimes.getLast();
 
 
-
             LOGGER.debug("Used Option: " + cronSplit[6]);
-            if(cronSplit[8].equals("Nie")){
+            if(cronSplit[8].equals("Nie")) {
                 endX = 1000;
             }
             if(toggle) {
@@ -445,7 +445,8 @@ public class EventService implements IEventService {
                     if(cronSplit[6].equals("O1")) {
                         i = 1000;
                     } else if(cronSplit[6].equals("O2")) {
-                        if(startLast.plusDays(repeatX).isAfter(startLocalDateTimes.getFirst().plusYears(2))) {
+                        if(startLast.plusDays(repeatX)
+                                    .isAfter(startLocalDateTimes.getFirst().plusYears(2))) {
                             i = 1000;
                         } else {
                             startLast = startLast.plusDays(repeatX);
@@ -454,7 +455,8 @@ public class EventService implements IEventService {
                             endLocalDateTimes.add(endLast);
                         }
                     } else if(cronSplit[6].equals("O3")) {
-                        if(startLast.plusDays(repeatX).isAfter(startLocalDateTimes.getFirst().plusYears(2))) {
+                        if(startLast.plusDays(repeatX)
+                                    .isAfter(startLocalDateTimes.getFirst().plusYears(2))) {
                             i = 1000;
                         } else {
                             startLast = startLast.plusWeeks(repeatX);
@@ -464,7 +466,8 @@ public class EventService implements IEventService {
                         }
                     } else {
 
-                        if(startLast.plusDays(repeatX).isAfter(startLocalDateTimes.getFirst().plusYears(2))) {
+                        if(startLast.plusDays(repeatX)
+                                    .isAfter(startLocalDateTimes.getFirst().plusYears(2))) {
                             i = 1000;
                         } else {
                             startLast = startLast.plusMonths(repeatX);
@@ -482,7 +485,7 @@ public class EventService implements IEventService {
 
             //Create RoomUses
 
-            for(int i = 0; i < startLocalDateTimes.size(); i++){
+            for(int i = 0; i < startLocalDateTimes.size(); i++) {
                 RoomUse roomUse = new RoomUse();
 
                 roomUse.setRoom(originRoomUse.getRoom());
@@ -493,13 +496,12 @@ public class EventService implements IEventService {
             }
 
 
-
             return resultList;
-        } catch(Exception e) {
+        }
+        catch(Exception e) {
             throw new ServiceException(e);
         }
     }
-
 
 
     @Override
@@ -515,8 +517,9 @@ public class EventService implements IEventService {
             throw new ServiceException("Error while performing a data access operation", dae);
         }
 
-        if(result != null){
-            LOGGER.info("Event with id found: " + result);
+        if(result != null) {
+            LOGGER.info(
+                "Event with id found: ");  //result gives null pointer exception because of trainer is null
             return result;
         } else {
             throw new NotFoundException("The event with id " + id + " does not exist");
@@ -557,7 +560,8 @@ public class EventService implements IEventService {
         //sleep 1 millisecond so update is in past(constraint in event)
         try {
             TimeUnit.MILLISECONDS.sleep(1);
-        }catch(InterruptedException e){
+        }
+        catch(InterruptedException e) {
             throw new ServiceException("Internal Server error", e);
         }
 
@@ -582,7 +586,7 @@ public class EventService implements IEventService {
             throw new ServiceException("", dae);
         }
 
-        if(customerToAddOrRemove == null){
+        if(customerToAddOrRemove == null) {
             LOGGER.error("Customer is null");
             throw new ServiceException("", null);
         }
@@ -596,7 +600,10 @@ public class EventService implements IEventService {
 
             // validate new customer
             try {
-                this.validator.validateCustomerForCourseSign(customerToAddOrRemove, event.getMinAge(), event.getMaxAge(), event.getEndOfApplication());
+                this.validator.validateCustomerForCourseSign(customerToAddOrRemove,
+                                                             event.getMinAge(), event.getMaxAge(),
+                                                             event.getEndOfApplication()
+                );
             }
             catch(InvalidEntityException ve) {
                 LOGGER.error("Invalid Customer to add");
@@ -612,7 +619,7 @@ public class EventService implements IEventService {
                 if(greatestEmailId == null) {
                     greatestEmailId = x.getEmailId();
                 }
-                if(x.getEmailId() > greatestEmailId.intValue()){
+                if(x.getEmailId() > greatestEmailId.intValue()) {
                     greatestEmailId = x.getEmailId();
                 }
                 customerListWithNewCustomer.add(x);
@@ -633,7 +640,8 @@ public class EventService implements IEventService {
             events.add(event);
             customerToAddOrRemove.setEvents(events);
 
-            if(customerListWithNewCustomer.add(customerToAddOrRemove)) { //if new customer to add dont exist in persisted customer list then update
+            if(customerListWithNewCustomer.add(
+                customerToAddOrRemove)) { //if new customer to add dont exist in persisted customer list then update
                 event.setCustomers(customerListWithNewCustomer);
 
                 mergeEvent(persistedEvent, event);
@@ -663,16 +671,19 @@ public class EventService implements IEventService {
             Set<Customer> customerSet = new HashSet<>();
             boolean customerToRemoveFound = false;
 
-            for(Customer x : persistedEvent.getCustomers()){
-                if(!(x.getEmailId().intValue() == customerToAddOrRemove.getEmailId().intValue())){
+            for(Customer x : persistedEvent.getCustomers()) {
+                if(!( x.getEmailId().intValue() ==
+                      customerToAddOrRemove.getEmailId().intValue()
+                )) {
                     customerSet.add(x);
-                } else{
+                } else {
                     customerToRemoveFound = true;
                 }
             }
 
-            if(!customerToRemoveFound){
-                LOGGER.error("Customer with email id " + customerToAddOrRemove.getEmailId() + " not found");
+            if(!customerToRemoveFound) {
+                LOGGER.error(
+                    "Customer with email id " + customerToAddOrRemove.getEmailId() + " not found");
                 throw new ServiceException("", null);
             }
 
@@ -700,7 +711,6 @@ public class EventService implements IEventService {
     }
 
 
-
     @Override
     public List<Event> getAllEvents() throws ServiceException {
         LOGGER.info("Try to retrieve list of all events");
@@ -715,9 +725,45 @@ public class EventService implements IEventService {
     }
 
 
+    @Override
+    public List<Event> getClientView(List<Event> events) {
+        events.forEach((Event event) -> {
+            // for rents, consultations and birthdays we remove linked data and mark is as reserved
+            if(event.getEventType() != EventType.Course) {
+                event.setRedacted(true);
+                event.setId(-1l);
+                event.setEventType(null);
+                event.setBirthdayType(null);
+                event.setCustomers(null);
+                event.setDescription("");
+                event.setName("Reserviert");
+                event.setTrainer(null);
+                event.setMaxAge(null);
+                event.setPrice(null);
+            }
+        });
+        return events;
+    }
+
+
+    @Override
+    public List<Event> getTrainerView(List<Event> events, Long id) {
+        events.forEach((Event event) -> {
+            // any rent (not hosted by any trainer) and any event that is not hosted by the given
+            // give meta information that this event may is displayed different
+            if(event.getEventType() == EventType.Rent || event.getTrainer().getId() != id) {
+                event.setHide(true);
+                event.setName("Reserviert");
+            }
+        });
+        return events;
+    }
+
+
     @Transactional
     @Override
-    public Event update(Event event) throws ValidationException, NotFoundException, ServiceException{
+    public Event update(Event event) throws ValidationException, NotFoundException,
+                                            ServiceException {
         LocalDateTime timeOfUpdate = LocalDateTime.now();
 
         Optional<Event> queryResult;
@@ -726,45 +772,49 @@ public class EventService implements IEventService {
         switch(event.getEventType()) {
             case Course:
                 try {
-                   this.validator.validateCourseForUpdate(event);
-                } catch(InvalidEntityException ve) {
-                   throw new ValidationException(ve.getMessage(), ve);
+                    this.validator.validateCourseForUpdate(event);
+                }
+                catch(InvalidEntityException ve) {
+                    throw new ValidationException(ve.getMessage(), ve);
                 }
 
                 try {
 
                     Event eventFromDb = this.eventRepository.findByIdAndDeletedFalse(event.getId());
-                    if(eventFromDb == null){
-                        LOGGER.error("Event with id " + event.getId() + " not found, maybe deleted");
+                    if(eventFromDb == null) {
+                        LOGGER.error(
+                            "Event with id " + event.getId() + " not found, maybe deleted");
                         throw new NotFoundException("");
                     }
-                    if(eventFromDb.getCustomers().size() > event.getMaxParticipants()){
-                        throw new ValidationException("Es sind schon mehr angemeldet als Ihrer Eingabe bei maximale Teilnehmerzahl", null);
+                    if(eventFromDb.getCustomers().size() > event.getMaxParticipants()) {
+                        throw new ValidationException(
+                            "Es sind schon mehr angemeldet als Ihrer Eingabe bei maximale Teilnehmerzahl",
+                            null
+                        );
                     }
 
 
-
-                    if(event.getCustomers() != null){
+                    if(event.getCustomers() != null) {
                         Set<Customer> customers = new HashSet<>();
-                        for(Customer x : event.getCustomers()){
+                        for(Customer x : event.getCustomers()) {
                             x.setId(null);
                             customers.add(x);
                         }
                         event.setCustomers(customers);
                     }
 
-                   queryResult = this.eventRepository.findById(event.getId());
-                   if(queryResult.isPresent()){
-                       LOGGER.debug("Course with id found");
-                       currentEvent = queryResult.get();
-                       event.setUpdated(timeOfUpdate);
-                       return mergeEvent(currentEvent, event);
-                   } else{
-                       LOGGER.error("Event with id " + event.getId() + " not found");
-                       throw new NotFoundException("");
-                   }
-
-                } catch(DataAccessException dae){
+                    queryResult = this.eventRepository.findById(event.getId());
+                    if(queryResult.isPresent()) {
+                        LOGGER.debug("Course with id found");
+                        currentEvent = queryResult.get();
+                        event.setUpdated(timeOfUpdate);
+                        return mergeEvent(currentEvent, event);
+                    } else {
+                        LOGGER.error("Event with id " + event.getId() + " not found");
+                        throw new NotFoundException("");
+                    }
+                }
+                catch(DataAccessException dae) {
                     LOGGER.error("Error: " + dae);
                     throw new ServiceException("", dae);
                 }
@@ -791,15 +841,14 @@ public class EventService implements IEventService {
 
 
     @Override
-    public List<Event> getAllFutureCourses(){
+    public List<Event> getAllFutureCourses() {
         return eventRepository.findByEventTypeEqualsAndDeletedFalse(EventType.Course);
     }
 
 
-    private void setAutoGeneratedName (Event event) {
+    private void setAutoGeneratedName(Event event) {
         if(event.getCustomers() == null || event.getRoomUses() == null) {
-        }
-        else if(event.getEventType() == EventType.Rent) {
+        } else if(event.getEventType() == EventType.Rent) {
             for(Customer customer : event.getCustomers()) {
                 for(RoomUse roomUse : event.getRoomUses()) {
                     event.setName(EventType.Rent +
@@ -819,11 +868,12 @@ public class EventService implements IEventService {
     public void deleteEvent(Long id) {
         Event event = eventRepository.getOne(id);
         eventRepository.deleteThisEvent(id);
-        if(event!=null){
+        if(event != null) {
             try {
                 infoMail.sendAdminEventInfoMail(event, "Event storniert", "deleteEvent");
                 infoMail.informCustomers(event);
-            }catch(EmailException e){
+            }
+            catch(EmailException e) {
                 LOGGER.error("Unable to send InfoMail to admin about deleted event");
             }
         }
@@ -832,25 +882,26 @@ public class EventService implements IEventService {
 
     @Override
     public void cancelEvent(Long id) throws ValidationException {
-        try{
+        try {
             Event event = eventRepository.getOne(id);
             if(event.getEventType() != EventType.Course) {
                 validator.validateCancelation(event);
-            }else{
+            } else {
                 eventRepository.deleteThisEvent(id);
             }
-        }catch(CancelationException e){
+        }
+        catch(CancelationException e) {
             LOGGER.error("Cancelation was ordered too late");
             throw new ValidationException(e.getMessage(), e);
         }
         eventRepository.deleteThisEvent(id);
-
-
     }
 
 
-    public Trainer findTrainerForBirthday(List<RoomUse> roomUses, String birthdayType) throws TrainerNotAvailableException{
-        List<Trainer> appropriateTrainers = trainerRepository.findByBirthdayTypes(birthdayType);;
+    public Trainer findTrainerForBirthday(List<RoomUse> roomUses, String birthdayType) throws
+                                                                                       TrainerNotAvailableException {
+        List<Trainer> appropriateTrainers = trainerRepository.findByBirthdayTypes(birthdayType);
+        ;
         Collections.shuffle(appropriateTrainers);
         for(Trainer t : appropriateTrainers) {
             try {
@@ -867,7 +918,7 @@ public class EventService implements IEventService {
     }
 
 
-    public Event synchRoomUses (Event event) {
+    public Event synchRoomUses(Event event) {
         for(RoomUse x : event.getRoomUses()) {
             x.setEvent(event);
         }
@@ -875,18 +926,21 @@ public class EventService implements IEventService {
     }
 
 
-    public Event synchCustomers(Event event){
+    public Event synchCustomers(Event event) {
         Set<Event> events = new HashSet<>();
         events.add(event);
-        for(Customer x: event.getCustomers()){
+        for(Customer x : event.getCustomers()) {
             x.setEvents(events);
         }
         return event;
     }
 
 
-    public void trainerAvailable(Trainer trainer, List<RoomUse> roomUses)throws TrainerNotAvailableException{
-        List<RoomUse> trainersEvents = roomUseRepository.findByEvent_Trainer_IdAndBeginGreaterThanEqualAndEvent_DeletedFalse(trainer.getId(), LocalDateTime.now());
+    public void trainerAvailable(Trainer trainer, List<RoomUse> roomUses) throws
+                                                                          TrainerNotAvailableException {
+        List<RoomUse> trainersEvents =
+            roomUseRepository.findByEvent_Trainer_IdAndBeginGreaterThanEqualAndEvent_DeletedFalse(
+                trainer.getId(), LocalDateTime.now());
         List<Holiday> trainerHoliday = holidayRepository.findByTrainer_Id(trainer.getId());
 
         for(RoomUse x : roomUses) {
@@ -900,7 +954,7 @@ public class EventService implements IEventService {
                    x.getEnd().isEqual(db.getEnd()) ||
                    x.getBegin().isEqual(db.getBegin())) {
                     throw new TrainerNotAvailableException(
-                        "The specified trainer is not available for the allocated time frame");
+                        "Der/die ausgewählte Trainer/in ist während der ausgewählten Zeit nicht verfügbar");
                 }
             }
             for(Holiday db : trainerHoliday) {
@@ -913,20 +967,23 @@ public class EventService implements IEventService {
                    x.getEnd().isEqual(db.getHolidayEnd()) ||
                    x.getBegin().isEqual(db.getHolidayStart())) {
                     throw new TrainerNotAvailableException(
-                        "The specified trainer is not available for the allocated time frame");
+                        "Der/die ausgewählte Trainer/in ist während der ausgewählten Zeit nicht verfügbar");
                 }
             }
         }
     }
 
 
-    public void isAvailable (List<RoomUse> roomUseList) throws TimeNotAvailableException {
+    public void isAvailable(List<RoomUse> roomUseList) throws TimeNotAvailableException {
         LOGGER.info("Check if Roomuses are available");
         LocalDateTime now = LocalDateTime.now();
         List<RoomUse> dbRooms = roomUseRepository.findByBeginGreaterThanEqualAndDeletedFalse(now);
         for(RoomUse x : roomUseList) {
             for(RoomUse db : dbRooms) {
-                LOGGER.info("Database row begin: " + db.getBegin() +  " vs to insert begin: " + x.getBegin());
+                LOGGER.info("Database row begin: " +
+                            db.getBegin() +
+                            " vs to insert begin: " +
+                            x.getBegin());
                 if(x.getRoom() == db.getRoom()) {
                     if(x.getBegin().isAfter(db.getBegin()) &&
                        x.getBegin().isBefore(db.getEnd()) ||
@@ -938,68 +995,76 @@ public class EventService implements IEventService {
                        x.getEnd().isEqual(db.getEnd()) ||
                        x.getBegin().isEqual(db.getBegin())) {
                         throw new TimeNotAvailableException(
-                            "Von " + x.getBegin() + " bis " + x.getEnd() + " ist der Raum " + x.getRoom() + " belegt");
+                            "Von " +
+                            x.getBegin() +
+                            " bis " +
+                            x.getEnd() +
+                            " ist der Raum " +
+                            x.getRoom() +
+                            " belegt");
                     }
                 }
-
-
             }
         }
         LOGGER.info("All roomuses are available");
     }
 
 
-    public void sendCancelationMail(String email, Event event, Customer customer) throws EmailException {
-            String to = email;
-            String from = "testingsepmstuffqse25@gmail.com";
-            String password = "This!is!a!password!";
-            String host = "smtp.gmail.com";
-            Properties props = System.getProperties();
-            props.put("mail.smtp.user", from);
-            props.put("mail.smtp.pwd", password);
-            props.put("mail.smtp.host", "smtp.gmail.com");
-            props.put("mail.smtp.port", "587");
-            props.put("mail.smtp.starttls.enable","true");
-            props.put("mail.smtp.auth", "true");
-            Session session = Session.getDefaultInstance(props);
+    public void sendCancelationMail(String email, Event event, Customer customer) throws
+                                                                                  EmailException {
+        String to = email;
+        String from = mailData.getSenderMail();
+        String password = mailData.getSenderPassword();
+        String host = "smtp.gmail.com";
+        Properties props = System.getProperties();
+        props.put("mail.smtp.user", from);
+        props.put("mail.smtp.pwd", password);
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.auth", "true");
+        Session session = Session.getDefaultInstance(props);
 
-            try{
-                MimeMessage mimeMessage = new MimeMessage(session);
-                mimeMessage.setFrom(new InternetAddress(from));
-                mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
+        try {
+            MimeMessage mimeMessage = new MimeMessage(session);
+            mimeMessage.setFrom(new InternetAddress(from));
+            mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
 
-                switch(event.getEventType()){
-                    case Rent:
-                        mimeMessage.setSubject("Sie haben erfolgreich einen Raum bei uns gemietet");
-                        break;
-                    case Course:
-                        mimeMessage.setSubject("Sie haben sich erfolgreich angemeldet");
-                        break;
-                    case Consultation:
-                        mimeMessage.setSubject("Sie haben erfolgreich einen Beratungstermin erstellt");
-                        break;
-                    default:
-                        mimeMessage.setSubject("Sie haben erfolgreich einen Geburtstag erstellt");
-                        break;
-                }
-                mimeMessage.setText(createCancelationMessage(event, customer));
-                Transport transport = session.getTransport("smtp");
-                transport.connect(host, 587, from, password);
-                transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
-                transport.close();
-
-
-            }catch(MessagingException e){
-                throw new EmailException(" " + e.getMessage());
+            switch(event.getEventType()) {
+                case Rent:
+                    mimeMessage.setSubject("Sie haben erfolgreich einen Raum bei uns gemietet");
+                    break;
+                case Course:
+                    mimeMessage.setSubject("Sie haben sich erfolgreich angemeldet");
+                    break;
+                case Consultation:
+                    mimeMessage.setSubject("Sie haben erfolgreich einen Beratungstermin erstellt");
+                    break;
+                default:
+                    mimeMessage.setSubject("Sie haben erfolgreich einen Geburtstag erstellt");
+                    break;
             }
+            mimeMessage.setText(createCancelationMessage(event, customer));
+            Transport transport = session.getTransport("smtp");
+            transport.connect(host, 587, from, password);
+            transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
+            transport.close();
+        }
+        catch(MessagingException e) {
+            throw new EmailException(" " + e.getMessage());
+        }
     }
 
 
-    private String createCancelationMessage(Event event, Customer customer) throws MessagingException {
+    private String createCancelationMessage(Event event, Customer customer) throws
+                                                                            MessagingException {
 
         String url;
-        if(event.getEventType() == EventType.Course){
-            url = "http://localhost:4200/event/cancel?id=" + event.getId() + "&emailId=" + customer.getEmailId();
+        if(event.getEventType() == EventType.Course) {
+            url = "http://localhost:4200/event/cancel?id=" +
+                  event.getId() +
+                  "&emailId=" +
+                  customer.getEmailId();
         } else {
             url = "http://localhost:4200/event/cancel?id=" + event.getId();
         }
@@ -1014,12 +1079,17 @@ public class EventService implements IEventService {
         String msg = "";
 
         msg += "Hallo " + customer.getFirstName() + " " + customer.getLastName() + "!\n\n";
-        switch(event.getEventType()){
+        switch(event.getEventType()) {
             case Rent:
                 RoomUse roomForRent = event.getRoomUses().get(0);
                 msg += "Hiermit bestätigen wir das Sie erfolgreich einen Raum gemietet haben.\n\n";
                 msg += "Raum " + translateEnumToGerman(roomForRent.getRoom()) + "\n";
-                msg += "Von " + roomForRent.getBegin().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + " bis " + roomForRent.getEnd().format(DateTimeFormatter.ofPattern("HH:mm")) + "\n\n";
+                msg += "Von " +
+                       roomForRent.getBegin()
+                                  .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) +
+                       " bis " +
+                       roomForRent.getEnd().format(DateTimeFormatter.ofPattern("HH:mm")) +
+                       "\n\n";
                 msg +=
                     "\nFalls Sie dieses Event stornieren wollen, klicken Sie bitte einfach auf diesen link: \n";
                 break;
@@ -1031,20 +1101,40 @@ public class EventService implements IEventService {
                 break;
             case Consultation:
                 RoomUse roomForConsultation = event.getRoomUses().get(0);
-                msg += "Hiermit bestätigen wir das Sie erfolgreich einen Beratungstermin erstellt haben.\n\n";
+                msg +=
+                    "Hiermit bestätigen wir das Sie erfolgreich einen Beratungstermin erstellt haben.\n\n";
                 msg += "Raum " + translateEnumToGerman(roomForConsultation.getRoom()) + "\n";
-                msg += "Von " + roomForConsultation.getBegin().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + " bis " + roomForConsultation.getEnd().format(DateTimeFormatter.ofPattern("HH:mm")) + "\n";
-                msg += "Trainer " + event.getTrainer().getFirstName() + " " + event.getTrainer().getLastName() + "\n";
+                msg += "Von " +
+                       roomForConsultation.getBegin()
+                                          .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) +
+                       " bis " +
+                       roomForConsultation.getEnd().format(DateTimeFormatter.ofPattern("HH:mm")) +
+                       "\n";
+                msg += "Trainer " +
+                       event.getTrainer().getFirstName() +
+                       " " +
+                       event.getTrainer().getLastName() +
+                       "\n";
                 msg +=
                     "\nFalls Sie dieses Event stornieren wollen, klicken Sie bitte einfach auf diesen link: \n";
                 break;
             default:
-                msg += "Hiermit bestätigen wir das Sie erfolgreich einen Geburtstag bei uns erstellt haben.\n\n";
+                msg +=
+                    "Hiermit bestätigen wir das Sie erfolgreich einen Geburtstag bei uns erstellt haben.\n\n";
                 RoomUse roomForBirthDay = event.getRoomUses().get(0);
                 msg += "Art " + translateBirthDayTypeToGerman(event.getBirthdayType()) + "\n";
                 msg += "Raum " + translateEnumToGerman(roomForBirthDay.getRoom()) + "\n";
-                msg += "Von " + roomForBirthDay.getBegin().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) + " bis " + roomForBirthDay.getEnd().format(DateTimeFormatter.ofPattern("HH:mm")) + "\n";
-                msg += "Trainer " + event.getTrainer().getFirstName() + " " + event.getTrainer().getLastName() + "\n";
+                msg += "Von " +
+                       roomForBirthDay.getBegin()
+                                      .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) +
+                       " bis " +
+                       roomForBirthDay.getEnd().format(DateTimeFormatter.ofPattern("HH:mm")) +
+                       "\n";
+                msg += "Trainer " +
+                       event.getTrainer().getFirstName() +
+                       " " +
+                       event.getTrainer().getLastName() +
+                       "\n";
                 msg +=
                     "\nFalls Sie dieses Event stornieren wollen, klicken Sie bitte einfach auf diesen link: \n";
                 break;
@@ -1056,8 +1146,9 @@ public class EventService implements IEventService {
         return msg;
     }
 
-    private static String translateEnumToGerman(Room room){
-        switch(room){
+
+    private static String translateEnumToGerman(Room room) {
+        switch(room) {
             case GroundFloor:
                 return "Erdgeschoss";
             case Green:
@@ -1066,8 +1157,9 @@ public class EventService implements IEventService {
         return "Orange";
     }
 
-    private static String translateBirthDayTypeToGerman(String birthdayType){
-        switch(birthdayType){
+
+    private static String translateBirthDayTypeToGerman(String birthdayType) {
+        switch(birthdayType) {
             case "Rocket":
                 return "Raketen Geburtstag";
             case "Photo":
@@ -1081,8 +1173,8 @@ public class EventService implements IEventService {
     }
 
 
-    private String translateEnumWithArtikel(EventType eventType){
-        switch (eventType){
+    private String translateEnumWithArtikel(EventType eventType) {
+        switch(eventType) {
             case Birthday:
                 return "ein Geburtstag";
             case Consultation:

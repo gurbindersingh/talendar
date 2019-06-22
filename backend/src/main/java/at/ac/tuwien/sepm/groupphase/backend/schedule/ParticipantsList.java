@@ -4,7 +4,11 @@ import at.ac.tuwien.sepm.groupphase.backend.exceptions.BackendException;
 import at.ac.tuwien.sepm.groupphase.backend.rest.EventEndpoint;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.CustomerDto;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.EventDto;
+import at.ac.tuwien.sepm.groupphase.backend.service.IEventService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
+import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
+import at.ac.tuwien.sepm.groupphase.backend.service.impl.MailData;
+import at.ac.tuwien.sepm.groupphase.backend.util.mapper.EventMapper;
 import com.lowagie.text.*;
 import com.lowagie.text.Font;
 import com.lowagie.text.Header;
@@ -33,6 +37,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 @Component
 public class ParticipantsList {
@@ -43,13 +48,17 @@ public class ParticipantsList {
                                                             .withLocale(
                                                                 Locale.forLanguageTag("German"));
 
-    private final EventEndpoint eventEndpoint;
+    private final IEventService eventService;
+    private final EventMapper eventMapper;
+    private final MailData mailData;
 
 
     @Autowired
 
-    public ParticipantsList(EventEndpoint eventEndpoint) {
-        this.eventEndpoint = eventEndpoint;
+    public ParticipantsList(IEventService eventService, EventMapper eventMapper, MailData mailData) {
+        this.eventService = eventService;
+        this.eventMapper = eventMapper;
+        this.mailData = mailData;
     }
 
 
@@ -61,7 +70,8 @@ public class ParticipantsList {
         try {
 
             LOGGER.info("Fetching EventList");
-            List<EventDto> eventList = eventEndpoint.getAllEvents();
+            List<EventDto> eventList =  eventService.getAllEvents().stream().map(eventMapper::entityToEventDto).collect(
+                Collectors.toList());
 
             LOGGER.info(
                 "Filtering EventList for Events that need to have a participationList sent");
@@ -136,7 +146,7 @@ public class ParticipantsList {
             }
             LOGGER.info("Participation Lists sent out successfully.");
         }
-        catch(BackendException e) {
+        catch(ServiceException e) {
             LOGGER.error(e.getMessage(), e);
             throw new BackendException(e.getMessage(), e);
         }
@@ -147,8 +157,8 @@ public class ParticipantsList {
                                                                                             EmailException,
                                                                                             IOException {
         LOGGER.info("Creating Email with participationList");
-        String from = "testingsepmstuffqse25@gmail.com";
-        String password = "This!is!a!password!";
+        String from = mailData.getSenderMail();
+        String password = mailData.getSenderPassword();
         String host = "smtp.gmail.com";
         Properties props = System.getProperties();
         props.put("mail.smtp.user", from);
@@ -497,8 +507,8 @@ public class ParticipantsList {
     ) throws IOException, EmailException {
 
         LOGGER.info("Creating Email with participationList");
-        String from = "testingsepmstuffqse25@gmail.com";
-        String password = "This!is!a!password!";
+        String from = mailData.getSenderMail();
+        String password = mailData.getSenderPassword();
         String host = "smtp.gmail.com";
         Properties props = System.getProperties();
         props.put("mail.smtp.user", from);

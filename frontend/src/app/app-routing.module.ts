@@ -51,6 +51,11 @@ const routes: Routes = [
         canActivate: [AdminGuard],
     },
     {
+        path: 'trainer/edit',
+        component: TrainerComponent,
+        canActivate: [AdminGuard],
+    },
+    {
         path: 'trainer/list',
         component: TrainerListComponent,
         canActivate: [AdminGuard],

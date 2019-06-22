@@ -1,9 +1,5 @@
 <header id="trainerListHeader">
     <h1 class="row justify-content-center">{{ title }}</h1>
-    <button type="button" class="btn" [routerLink]="['/trainer/add']">
-        <i class="fas fa-user-plus fa-3x"></i>
-    </button>
-
     <hr />
 </header>
 
@@ -35,45 +31,79 @@
     <div class="col-md-3"></div>
 </div>
 
-<div *ngFor="let trainer of trainerListPage">
-    <div class="card border-dark mb-2 flex-row flex-wrap">
+<div *ngFor="let trainer of trainerListPage; index as i">
+    <div class="card border-dark mb-2 flex-row flex-wrap" id="card">
         <div class="card-header bg-secondary" id="cardLeft">
-            Here goes the profil picture
+            <div
+                *ngIf="
+                    binaryEncodedImages[i + (currentPage - 1) * itemsPerPage] !=
+                    null
+                "
+                id="profilePicContainer"
+            >
+                <img
+                    [src]="
+                        binaryEncodedImages[
+                            i + (currentPage - 1) * itemsPerPage
+                        ] | safeServerImage
+                    "
+                    id="profilePicture"
+                    class="img-fluid"
+                />
+            </div>
+            <div
+                *ngIf="
+                    binaryEncodedImages[i + (currentPage - 1) * itemsPerPage] ==
+                    null
+                "
+                class="mx-auto d-block"
+            >
+                <i class="fas fa-user-alt fa-7x"></i>
+            </div>
         </div>
         <div class="card-block" id="cardMiddle">
             <div class="card-body" id="cardBody">
-                <h4 class="card-title" id="cardHeader">
+                <h4 class="card-title mt-3" id="cardHeader">
                     {{ trainer.firstName }} {{ trainer.lastName }}
                 </h4>
 
-                <hr />
-                <p clas="card-text" id="cardContent">
+                <p clas="card-text" id="cardContent" style="font-size: 1.1rem">
                     Telefonnummer: {{ trainer.phone }}<br />
                     Email: {{ trainer.email }} <br />
                     Geburtstag: {{ trainer.birthday }}
                 </p>
             </div>
         </div>
-        <div class="card-footer flex-column" id="cardRight">
+        <div
+            class="card-footer flex-column"
+            id="cardRight"
+            style="background-color: white"
+        >
             <!-- for more details admin can go to profile site of trainer (same infos, plus trainer related content like hosted events) -->
-            <div class="mb-4 mt-2">
-                <button type="button" class="btn">
-                    <i class="fas fa-user fa-2x"></i>
+            <div class="mb-1 mt-1">
+                <button type="button" class="btn btn-card">
+                    <i class="fas fa-user button-icon"></i>
                 </button>
             </div>
             <!-- -->
             <div
-                class="mb-4 mt-2"
-                [routerLink]="['/trainer/add']"
+                class="mb-1 mt-1"
+                [routerLink]="['/trainer/edit']"
                 [queryParams]="{ id: trainer.id }"
             >
-                <button type="button" class="btn">
-                    <i class="fas fa-pencil-alt fa-2x"></i>
+                <button type="button" class="btn btn-card">
+                    <i class="fas fa-pencil-alt button-icon"></i>
                 </button>
             </div>
-            <div>
-                <button type="button" class="btn" (click)="open(trainer)">
-                    <i class="fas fa-trash fa-2x"></i>
+            <div class="mb-1 mt-1">
+                <button
+                    type="button"
+                    class="btn btn-card"
+                    (click)="
+                        open(trainer, i + (currentPage - 1) * itemsPerPage)
+                    "
+                >
+                    <i class="fas fa-trash button-icon"></i>
                 </button>
             </div>
         </div>

@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.User;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.HolidayRepository;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Holiday;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
@@ -56,6 +57,7 @@ public class HolidayService implements IHolidayService {
         }
 
         try {
+            holiday.setTrainer(trainerRepository.getOne(holiday.getTrainer().getId()));
             return holidayRepository.save(holiday);
         } catch(Exception e) {
             throw new ServiceException(e);
@@ -97,7 +99,7 @@ public class HolidayService implements IHolidayService {
             LOGGER.error("attempt to save holidays with trainer that doesnt exist");
             throw new ValidationException(e.getMessage(), e);
         }
-        Trainer trainer = trainerRepository.getOne(holidaysDto.getTrainerid());
+        Trainer trainer = (Trainer)trainerRepository.getOne(holidaysDto.getTrainerid());
         LOGGER.info("Trainer is: " + trainer);
         try {
             //Create LinkedLists and split cronExpression
@@ -168,7 +170,8 @@ public class HolidayService implements IHolidayService {
 
 
             LOGGER.debug("Used Option: " + cronSplit[6]);
-            if(cronSplit[8]=="Nie"){
+            LOGGER.debug("Used Option: " + cronSplit[6]);
+            if(cronSplit[8].equals("Nie")){
                 endX = 1000;
             }
             if(toggle) {
@@ -215,7 +218,8 @@ public class HolidayService implements IHolidayService {
             //Create HolidayList out of Start and End lists + trainerId
             LOGGER.info("Trainerid is: " + holidaysDto.getTrainerid());
             for(int i = 0; i < startLocalDateTimes.size(); i++){
-                Holiday h = new Holiday(trainer, startLocalDateTimes.get(i), endLocalDateTimes.get(i));
+                Holiday h = new Holiday(trainer, holidaysDto.getTitle(), holidaysDto.getDescription(),
+                                        startLocalDateTimes.get(i), endLocalDateTimes.get(i));
                 resultList.add(h);
             }
 
