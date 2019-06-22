@@ -273,8 +273,9 @@
             </div>
             <br />
             <br />
-            <div class="main">
-                <h1 #datesSection>Termine</h1>
+            <p #datesSection></p>
+            <ng-template [ngIf]="canSignIn">
+                <h1>Termine</h1>
                 <hr />
                 <br />
                 <div
@@ -301,7 +302,7 @@
                     </ng-template>
                     <ng-template ngbPaginationNext> Weiter </ng-template>
                 </ngb-pagination>
-            </div>
+            </ng-template>
         </form>
     </div>
     <div class="col-lg-3"></div>
