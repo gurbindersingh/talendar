@@ -7,6 +7,7 @@ import at.ac.tuwien.sepm.groupphase.backend.rest.dto.EventDto;
 import at.ac.tuwien.sepm.groupphase.backend.service.IEventService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
+import at.ac.tuwien.sepm.groupphase.backend.service.impl.MailData;
 import at.ac.tuwien.sepm.groupphase.backend.util.mapper.EventMapper;
 import com.lowagie.text.*;
 import com.lowagie.text.Font;
@@ -49,13 +50,15 @@ public class ParticipantsList {
 
     private final IEventService eventService;
     private final EventMapper eventMapper;
+    private final MailData mailData;
 
 
     @Autowired
 
-    public ParticipantsList(IEventService eventService, EventMapper eventMapper) {
+    public ParticipantsList(IEventService eventService, EventMapper eventMapper, MailData mailData) {
         this.eventService = eventService;
         this.eventMapper = eventMapper;
+        this.mailData = mailData;
     }
 
 
@@ -154,8 +157,8 @@ public class ParticipantsList {
                                                                                             EmailException,
                                                                                             IOException {
         LOGGER.info("Creating Email with participationList");
-        String from = "testingsepmstuffqse25@gmail.com";
-        String password = "This!is!a!password!";
+        String from = mailData.getSenderMail();
+        String password = mailData.getSenderPassword();
         String host = "smtp.gmail.com";
         Properties props = System.getProperties();
         props.put("mail.smtp.user", from);
@@ -504,8 +507,8 @@ public class ParticipantsList {
     ) throws IOException, EmailException {
 
         LOGGER.info("Creating Email with participationList");
-        String from = "testingsepmstuffqse25@gmail.com";
-        String password = "This!is!a!password!";
+        String from = mailData.getSenderMail();
+        String password = mailData.getSenderPassword();
         String host = "smtp.gmail.com";
         Properties props = System.getProperties();
         props.put("mail.smtp.user", from);
