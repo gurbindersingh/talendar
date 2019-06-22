@@ -17,6 +17,8 @@ export class LoginComponent implements OnInit {
     email: string;
     password: string;
 
+    errorMsg: string;
+
     ngOnInit() {}
 
     /**
@@ -32,6 +34,8 @@ export class LoginComponent implements OnInit {
             },
             (error: Error) => {
                 console.log('Login After Request Failure: ' + error.message);
+                this.errorMsg =
+                    'Die verwendeten Anmeldedaten konnten keinem Konto zugeordnet werden';
             }
         );
     }
