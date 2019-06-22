@@ -47,6 +47,7 @@ public class EventService implements IEventService {
     private final TrainerRepository trainerRepository;
     private final HolidayRepository holidayRepository;
     private final InfoMail infoMail;
+    private final MailData mailData;
 
     private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -54,7 +55,7 @@ public class EventService implements IEventService {
     @Autowired
     public EventService (EventRepository eventRepository, Validator validator,
                          RoomUseRepository roomUseRepository, TrainerRepository trainerRepository,
-                         HolidayRepository holidayRepository, InfoMail infoMail
+                         HolidayRepository holidayRepository, InfoMail infoMail, MailData mailData
     ) {
         this.eventRepository = eventRepository;
         this.validator = validator;
@@ -62,6 +63,7 @@ public class EventService implements IEventService {
         this.trainerRepository = trainerRepository;
         this.holidayRepository = holidayRepository;
         this.infoMail = infoMail;
+        this.mailData = mailData;
     }
 
 
@@ -975,8 +977,8 @@ public class EventService implements IEventService {
 
     public void sendCancelationMail(String email, Event event, Customer customer) throws EmailException {
             String to = email;
-            String from = "testingsepmstuffqse25@gmail.com";
-            String password = "This!is!a!password!";
+            String from = mailData.getSenderMail();
+            String password = mailData.getSenderPassword();
             String host = "smtp.gmail.com";
             Properties props = System.getProperties();
             props.put("mail.smtp.user", from);
