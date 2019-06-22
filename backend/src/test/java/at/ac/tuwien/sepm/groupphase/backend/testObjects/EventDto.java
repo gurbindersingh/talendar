@@ -56,6 +56,7 @@ public class EventDto {
     private String        description;
     private Integer       minAge;
     private Integer       maxAge;
+    private List<String>  pictures;
 
     /*
         These Variables are Rent Specific
@@ -83,7 +84,8 @@ public class EventDto {
                      Integer maxParticipants,
                      String description,
                      Integer minAge,
-                     Integer maxAge
+                     Integer maxAge,
+                     List<String> pictures
     ) {
         this.id = id;
         this.eventType = eventType;
@@ -102,6 +104,7 @@ public class EventDto {
         this.description = description;
         this.minAge = minAge;
         this.maxAge = maxAge;
+        this.pictures = pictures;
     }
 
 
@@ -275,6 +278,16 @@ public class EventDto {
     }
 
 
+    public List<String> getPictures() {
+        return pictures;
+    }
+
+
+    public void setPictures(List<String> pictures) {
+        this.pictures = pictures;
+    }
+
+
     @Override
     public boolean equals (Object o) {
         if(this == o) return true;
@@ -296,7 +309,9 @@ public class EventDto {
                Objects.equals(maxParticipants, eventDto.maxParticipants) &&
                Objects.equals(description, eventDto.description) &&
                Objects.equals(minAge, eventDto.minAge) &&
-               Objects.equals(maxAge, eventDto.maxAge);
+               Objects.equals(maxAge, eventDto.maxAge) &&
+               Objects.equals(pictures, eventDto.pictures);
+
     }
 
 
@@ -318,7 +333,8 @@ public class EventDto {
                             maxParticipants,
                             description,
                             minAge,
-                            maxAge
+                            maxAge,
+                            pictures
         );
     }
 
@@ -343,6 +359,7 @@ public class EventDto {
                ", description='" + description + '\'' +
                ", minAge=" + minAge +
                ", maxAge=" + maxAge +
+               ", pictures=" + pictures +
                '}';
     }
 }

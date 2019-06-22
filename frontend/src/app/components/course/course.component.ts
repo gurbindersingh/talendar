@@ -11,6 +11,13 @@ import { Trainer } from 'src/app/models/trainer';
 import { ActivatedRoute } from '@angular/router';
 import { CronMakerService } from 'src/app/services/cronMaker.service';
 import { SessionStorageService } from 'src/app/services/session-storage.service';
+import { Tag } from 'src/app/models/tag';
+import { TagClient } from 'src/app/rest/tag-client';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import * as Croppie from 'croppie';
+import { ImageClient } from 'src/app/rest/image-client';
+import { Observable } from 'rxjs';
+import { threadId } from 'worker_threads';
 
 @Component({
     selector: 'app-course',
@@ -26,9 +33,9 @@ export class CourseComponent implements OnInit {
     otherRoom1String: string;
     otherRoom2String: string;
 
-    repeatEvery = ['Nie', 'Jeden Tag', 'Jede Woche', 'Jeden Monat'];
-    terminateAfter = ['Nie', 'Nach'];
-    repeatModul: string;
+    repeatOptions = ['Nie', 'Jeden Tag', 'Jede Woche', 'Jeden Monat'];
+    terminateAfterOption = ['Nie', 'Nach'];
+    selectedRepeatOption: string;
     terminateModul: string;
     alleX: number;
     endedX: number;
@@ -56,28 +63,46 @@ export class CourseComponent implements OnInit {
     greenRadioButton: RadioNodeList;
     radioButtonSelected = '';
 
-    private event: Event = new Event();
+    numImg: number;
+    binaryEncodedImages: any[] = [];
+
+    // selected files to upload for a course
+    files: File[] = [];
+    croppedImages: Blob[] = [];
+
+    private croppie: Croppie;
+    promises: Promise<string>[] = [];
+
+    event: Event = new Event();
     private roomUse: RoomUse = new RoomUse();
     private trainer: Trainer = new Trainer();
     private dateTimeParser: DateTimeParserService;
 
-    private errorMsg: string;
-    private successMsg: string;
+    private formDatas: FormData[] = [];
+
+    errorMsg: string;
+    successMsg: string;
+    private tags: Tag[] = [];
+    private tagStringSelected: string;
+    tagStrings: string[] = [];
 
     constructor(
         private eventClient: EventClient,
+        private imageClient: ImageClient,
         dateTimeParser: DateTimeParserService,
         private route: ActivatedRoute,
         cronMaker: CronMakerService,
-        private sessionService: SessionStorageService
+        private sessionService: SessionStorageService,
+        private tagClient: TagClient,
+        private modalService: NgbModal
     ) {
         this.cronMaker = cronMaker;
         this.dateTimeParser = dateTimeParser;
         this.startTime = { hour: 13, minute: 0, second: 0 };
         this.endTime = { hour: 14, minute: 0, second: 0 };
         this.endOfApplicationTime = { hour: 13, minute: 0, second: 0 };
-        this.repeatModul = this.repeatEvery[0];
-        this.terminateModul = this.terminateAfter[0];
+        this.selectedRepeatOption = this.repeatOptions[0];
+        this.terminateModul = this.terminateAfterOption[0];
         this.alleX = 1;
         this.endedX = 1;
     }
@@ -90,6 +115,17 @@ export class CourseComponent implements OnInit {
             this.btnText = 'Erstellen';
             this.saveMode = true;
             this.isCreate = true;
+            this.tagClient.getAll().subscribe(
+                (tagList: Tag[]) => {
+                    this.tags = tagList;
+                },
+                (error) => {
+                    console.log(error);
+                }
+            );
+            for (let _i = 0; _i < this.tags.length; _i++) {
+                this.tagStrings.push(this.tags[_i].tag);
+            }
         } else {
             this.title = 'Kurs bearbeiten';
             this.btnText = 'Bearbeiten';
@@ -105,6 +141,17 @@ export class CourseComponent implements OnInit {
                         'Der ausgewählte Trainer konnte leider nicht geladen werden.';
                 }
             );
+            this.tagClient.getAll().subscribe(
+                (tagList: Tag[]) => {
+                    this.tags = tagList;
+                },
+                (error) => {
+                    console.log(error);
+                }
+            );
+            for (let _i = 0; _i < this.tags.length; _i++) {
+                this.tagStrings.push(this.tags[_i].tag);
+            }
         }
     }
 
@@ -129,7 +176,7 @@ export class CourseComponent implements OnInit {
     }
 
     public isRepeat(): boolean {
-        if (this.repeatModul === 'Nie') {
+        if (this.selectedRepeatOption === 'Nie') {
             return false;
         }
         return true;
@@ -140,8 +187,8 @@ export class CourseComponent implements OnInit {
             this.toggleOptions = true;
         } else {
             this.toggleOptions = false;
-            this.repeatModul = this.repeatEvery[0];
-            this.terminateModul = this.terminateAfter[0];
+            this.selectedRepeatOption = this.repeatOptions[0];
+            this.terminateModul = this.terminateAfterOption[0];
         }
     }
 
@@ -159,7 +206,7 @@ export class CourseComponent implements OnInit {
             this.startDate,
             this.endTime,
             this.toggleOptions,
-            this.repeatModul,
+            this.selectedRepeatOption,
             this.alleX,
             this.terminateModul,
             this.endedX
@@ -167,68 +214,101 @@ export class CourseComponent implements OnInit {
     }
 
     public postMeeting(form: NgForm): void {
-        if (this.isCreate) {
-            this.trainer.id = this.sessionService.userId;
-            this.event.eventType = EventType.Course;
-            this.event.trainer = this.trainer;
+        console.log(this.formDatas.length);
+        console.log('DEBUGGGG!!:' + this.promises.length);
 
-            this.roomUse.begin = this.dateTimeParser.dateTimeToString(
-                this.startDate,
-                this.startTime
-            );
-            this.roomUse.end = this.dateTimeParser.dateTimeToString(
-                this.startDate,
-                this.endTime
-            );
-            this.roomUse.room = this.getSelectedRadioButtonRoom();
-
-            this.event.endOfApplication = this.dateTimeParser.dateTimeToString(
-                this.endOfApplicationDate,
-                this.endOfApplicationTime
-            );
-
-            if (this.toggleOptions) {
-                this.roomUse.cronExpression = this.getCron();
-                this.roomUse.roomOption = this.roomOption;
-            }
-            this.event.roomUses = [this.roomUse];
-
-            this.loading = true;
-            this.eventClient.postNewEvent(this.event).subscribe(
-                (data: Event) => {
-                    console.log(data);
-                    this.successMsg =
-                        'Deine Reservierung wurde erfolgreich gespeichert';
-                    this.resetFormular();
-                    this.errorMsg = '';
-                    this.loading = false;
-                },
-                (error: Error) => {
-                    console.log(error);
-                    this.errorMsg = error.message;
-                    this.successMsg = '';
-                    this.loading = false;
-                }
-            );
+        if (this.promises.length === 0) {
+            this.postData(form);
         } else {
-            // TODO
-            this.eventClient.update(this.event).subscribe(
-                (data: Event) => {
-                    console.log(data);
-                    this.successMsg = 'Der Kurs wurde erfolgreich aktualisiert';
-                    this.errorMsg = '';
-                    this.loading = false;
+            console.log('Post pictures');
+            Promise.all(this.promises).then(
+                (data: string[]) => {
+                    this.event.pictures = data;
+                    this.postData(form);
                 },
-                (error: Error) => {
-                    console.log(error.message);
-                    this.errorMsg =
-                        'Der Kurs konnte nicht erfolgreich aktualisiert werden: ' +
-                        error.message;
-                    this.successMsg = '';
-                    this.loading = false;
+                (error) => {
+                    /**
+                     *  manual parsing required because this endpoint
+                     *  returns plain text (no json)
+                     */
+                    const info = JSON.parse(error);
+                    this.errorMsg = info.message;
                 }
             );
         }
+    }
+
+    public onFileSelected(event: any, croppieModal: any): void {
+        this.files = [];
+        this.binaryEncodedImages = [];
+        this.formDatas = [];
+        for (let i = 0; i < event.target.files.length; i++) {
+            const file: File = event.target.files[i];
+            this.files.push(file);
+            this.extractBinaryDataFromFile(file, i);
+        }
+
+        this.numImg = 0;
+
+        this.startCroppie(croppieModal);
+    }
+
+    public removeFile(index: number): void {
+        const newListFiles: File[] = [];
+        const newListFormData: FormData[] = [];
+        for (let i = 0; i < this.files.length; i++) {
+            if (i !== index) {
+                newListFiles.push(this.files[i]);
+                newListFormData.push(this.formDatas[i]);
+            }
+        }
+
+        if (newListFiles.length > 0) {
+            this.files = newListFiles;
+            this.formDatas = newListFormData;
+        } else {
+            this.files = [];
+            this.formDatas = [];
+        }
+    }
+
+    public saveCropped(croppieModal: any): void {
+        console.log('SAVE');
+        this.croppie.bind({ url: '' });
+        this.croppie
+            .result({ type: 'blob', quality: 1, format: 'png' })
+            .then((image: Blob) => {
+                this.croppedImages[this.numImg] = image as File;
+                this.formDatas.push(new FormData());
+                this.formDatas[this.numImg].append(
+                    'file',
+                    this.croppedImages[this.numImg]
+                );
+                this.promises.push(
+                    this.imageClient
+                        .postCoursePicture(this.formDatas[this.numImg])
+                        .toPromise()
+                );
+
+                if (this.numImg < this.binaryEncodedImages.length - 1) {
+                    this.startCroppie(croppieModal);
+                }
+
+                this.numImg++;
+            })
+            .catch((error) => {
+                console.log(error);
+                this.errorMsg =
+                    'Das Bild konnte leider nicht gespeichert werden. ' +
+                    'Bitte versuchen Sie es erneut.';
+            });
+    }
+
+    public cancel(): void {
+        this.files = [];
+        this.binaryEncodedImages = [];
+        this.croppedImages = [];
+        this.numImg = 0;
     }
 
     private resetFormular(): void {
@@ -241,8 +321,8 @@ export class CourseComponent implements OnInit {
         this.endOfApplicationDate = null;
         this.startDate = null;
         this.toggleOptions = false;
-        this.repeatModul = this.repeatEvery[0];
-        this.terminateModul = this.terminateAfter[0];
+        this.selectedRepeatOption = this.repeatOptions[0];
+        this.terminateModul = this.terminateAfterOption[0];
         this.alleX = 1;
         this.endedX = 1;
     }
@@ -255,6 +335,9 @@ export class CourseComponent implements OnInit {
     }
 
     public isCompleted(): boolean {
+        if (this.event.tag === undefined || this.event.tag === '') {
+            return false;
+        }
         if (this.event.name === undefined || this.event.name === '') {
             return false;
         }
@@ -324,5 +407,108 @@ export class CourseComponent implements OnInit {
     public clearInfoMsg(): void {
         this.errorMsg = undefined;
         this.successMsg = undefined;
+    }
+
+    private postData(form: NgForm): void {
+        if (this.isCreate) {
+            this.trainer.id = this.sessionService.userId;
+            this.event.eventType = EventType.Course;
+            this.event.trainer = this.trainer;
+
+            this.roomUse.begin = this.dateTimeParser.dateTimeToString(
+                this.startDate,
+                this.startTime
+            );
+            this.roomUse.end = this.dateTimeParser.dateTimeToString(
+                this.startDate,
+                this.endTime
+            );
+            this.roomUse.room = this.getSelectedRadioButtonRoom();
+
+            this.event.endOfApplication = this.dateTimeParser.dateTimeToString(
+                this.endOfApplicationDate,
+                this.endOfApplicationTime
+            );
+
+            if (this.toggleOptions) {
+                this.roomUse.cronExpression = this.getCron();
+                this.roomUse.roomOption = this.roomOption;
+            }
+            this.event.roomUses = [this.roomUse];
+            this.loading = true;
+
+            this.eventClient.postNewEvent(this.event).subscribe(
+                (data: Event) => {
+                    console.log(data);
+                    this.successMsg =
+                        'Deine Reservierung wurde erfolgreich gespeichert';
+                    this.resetFormular();
+                    this.errorMsg = '';
+                    this.loading = false;
+                },
+                (error: Error) => {
+                    console.log(error);
+                    this.errorMsg = error.message;
+                    this.successMsg = '';
+                    this.loading = false;
+                }
+            );
+        } else {
+            // TODO
+            this.eventClient.update(this.event).subscribe(
+                (data: Event) => {
+                    console.log(data);
+                    this.successMsg = 'Der Kurs wurde erfolgreich aktualisiert';
+                    this.errorMsg = '';
+                    this.loading = false;
+                },
+                (error: Error) => {
+                    console.log(error.message);
+                    this.errorMsg =
+                        'Der Kurs konnte nicht erfolgreich aktualisiert werden: ' +
+                        error.message;
+                    this.successMsg = '';
+                    this.loading = false;
+                }
+            );
+        }
+    }
+
+    private startCroppie(croppieModal: any): void {
+        this.modalService.open(croppieModal, { size: 'lg' });
+
+        setTimeout(() => {
+            const img = document.getElementById('profilePicture');
+            const boundaryWidth = 766;
+            const viewportWidth = boundaryWidth - 50;
+            const ratio = 16 / 9;
+
+            this.croppie = new Croppie(img as HTMLImageElement, {
+                boundary: {
+                    width: boundaryWidth,
+                    height: boundaryWidth / ratio,
+                },
+                viewport: {
+                    width: viewportWidth,
+                    height: viewportWidth / ratio,
+                },
+                showZoomer: true,
+            });
+        }, 100);
+    }
+
+    /**
+     * This method can be used to extract the content of a file as binary data.
+     * I.e. <img src"..."> can display images given their binary representation.
+     *
+     * @param file the wrapper of the content. 'File' can be also used as param as
+     *             it extends Blob!
+     */
+    private extractBinaryDataFromFile(file: Blob, index: number): void {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = () => {
+            this.binaryEncodedImages[index] = reader.result;
+        };
     }
 }

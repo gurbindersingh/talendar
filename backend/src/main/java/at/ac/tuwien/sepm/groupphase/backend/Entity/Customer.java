@@ -21,6 +21,7 @@ public class Customer {
     private Long id;
     @NotBlank
     @Email
+    @Column(name = "email")
     private String email;
     @NotBlank
     private String phone;
@@ -28,7 +29,7 @@ public class Customer {
     private String firstName;
     @NotBlank
     private String lastName;
-    @ManyToMany(mappedBy = "customers" )
+    @ManyToMany(mappedBy = "customers", fetch = FetchType.EAGER )
     @JsonIgnoreProperties("customers")
     private Set<Event> events;
 
@@ -44,7 +45,7 @@ public class Customer {
     @Column
     private LocalDateTime birthOfChild;
 
-    @Column
+    @Column(name = "wants_email")
     private Boolean wantsEmail;
 
 

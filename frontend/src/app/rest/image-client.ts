@@ -29,6 +29,21 @@ export class ImageClient extends RestClient {
         );
     }
 
+    public postCoursePicture(data: FormData): Observable<string> {
+        return super.post(
+            (error: HttpErrorResponse) => {
+                console.log(
+                    'HTTP POST Course Pictures Failed: ' + error.message
+                );
+            },
+            '/image/course',
+            data,
+            null,
+            null,
+            'text'
+        );
+    }
+
     public getProfilePicture(fileName: string): Observable<any> {
         return super.get(
             (error: HttpErrorResponse) => {
@@ -37,6 +52,18 @@ export class ImageClient extends RestClient {
                 );
             },
             '/image/trainer',
+            { name: fileName },
+            null,
+            'arraybuffer'
+        );
+    }
+
+    public getCoursePicture(fileName: string): Observable<any> {
+        return super.get(
+            (error: HttpErrorResponse) => {
+                console.log('HTTP GET Course Picture Failed: ' + error.message);
+            },
+            '/image/course',
             { name: fileName },
             null,
             'arraybuffer'

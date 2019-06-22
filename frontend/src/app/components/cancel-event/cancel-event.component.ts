@@ -34,7 +34,7 @@ export class CancelEventComponent implements OnInit {
         private eventClient: EventClient,
         private route: ActivatedRoute,
         private router: Router
-    ) {}
+    ) { }
 
     ngOnInit() {
         const id: number = this.route.snapshot.queryParams.id;

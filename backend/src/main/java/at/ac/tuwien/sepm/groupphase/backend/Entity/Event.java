@@ -65,6 +65,8 @@ public class Event {
     @Column
     private boolean deleted;
 
+    @Column
+    private String event_tags;
     /*
         These Variables are used by non Rent Types
      */
@@ -112,6 +114,10 @@ public class Event {
 
     @Column
     private Integer maxAge;
+    @Column
+    @ElementCollection
+    private List<String> pictures;
+
 
 
     /*
@@ -143,7 +149,7 @@ public class Event {
     }
 
 
-    public Event (@NotBlank String name, @NotNull List<RoomUse> roomUses, @Past @NotNull LocalDateTime created, @Past @NotNull LocalDateTime updated, EventType eventType, Set<Customer> customers, Trainer trainer, int headcount, int ageToBe, String birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipants, String description, Integer minAge, Integer maxAge, boolean deleted) {
+    public Event (@NotBlank String name, @NotNull List<RoomUse> roomUses, @Past @NotNull LocalDateTime created, @Past @NotNull LocalDateTime updated, EventType eventType, Set<Customer> customers, Trainer trainer, int headcount, int ageToBe, String birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipants, String description, Integer minAge, Integer maxAge, List<String> pictures, boolean deleted, String event_tags) {
         this.name = name;
         this.roomUses = roomUses;
         this.created = created;
@@ -160,7 +166,19 @@ public class Event {
         this.description = description;
         this.minAge = minAge;
         this.maxAge = maxAge;
+        this.pictures = pictures;
         this.deleted = deleted;
+        this.event_tags = event_tags;
+    }
+
+
+    public String getEvent_tags() {
+        return event_tags;
+    }
+
+
+    public void setEvent_tags(String event_tags) {
+        this.event_tags = event_tags;
     }
 
 
@@ -334,6 +352,16 @@ public class Event {
     }
 
 
+    public List<String> getPictures() {
+        return pictures;
+    }
+
+
+    public void setPictures(List<String> pictures) {
+        this.pictures = pictures;
+    }
+
+
     public boolean isRedacted() {
         return redacted;
     }
@@ -385,7 +413,8 @@ public class Event {
                Objects.equals(maxParticipants, event.maxParticipants) &&
                Objects.equals(description, event.description) &&
                Objects.equals(minAge, event.minAge) &&
-               Objects.equals(maxAge, event.maxAge);
+               Objects.equals(maxAge, event.maxAge) &&
+               Objects.equals(pictures, event.pictures);
     }
 
 
@@ -393,7 +422,7 @@ public class Event {
     public int hashCode () {
         return Objects.hash(id, name, roomUses, created, updated, eventType, customers, trainer,
                             headcount, ageToBe, birthdayType, endOfApplication, price,
-                            maxParticipants, description, minAge, maxAge
+                            maxParticipants, description, minAge, maxAge, pictures
         );
     }
 
@@ -418,8 +447,31 @@ public class Event {
                ", description='" + description + '\'' +
                ", minAge=" + minAge +
                ", maxAge=" + maxAge +
+               ", pictures=" + pictures +
                ", redacted=" + redacted +
                ", hide=" + hide +
+               ", tags=" + event_tags +
+               '}';
+    }
+
+    public String toString2 () {
+        return "Event{" +
+               "id=" + id +
+               ", name='" + name + '\'' +
+               ", roomUses=" + roomUses +
+               ", created=" + created +
+               ", updated=" + updated +
+               ", eventType=" + eventType +
+               ", headcount=" + headcount +
+               ", ageToBe=" + ageToBe +
+               ", birthdayType=" + birthdayType +
+               ", endOfApplication=" + endOfApplication +
+               ", price=" + price +
+               ", maxParticipants=" + maxParticipants +
+               ", description='" + description + '\'' +
+               ", minAge=" + minAge +
+               ", maxAge=" + maxAge +
+               ", tags=" + event_tags +
                '}';
     }
 }

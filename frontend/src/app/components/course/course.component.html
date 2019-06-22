@@ -112,7 +112,7 @@
                     />
                 </div>
             </div>
-            <br />
+
             <div *ngIf="isCreate">
                 <div class="row">
                     <div
@@ -241,9 +241,27 @@
                         >
                     </div>
                 </div>
+                <br />
+                <div class="row">
+                    <label for="tagSelect" class="customer-control-label"
+                        >Keyword Auswählen</label
+                    >
+                    <select
+                        class="form-control"
+                        name="tagSelect"
+                        id="tagSelect"
+                        [(ngModel)]="event.tag"
+                        required
+                    >
+                        <option
+                            *ngFor="let string of tagStrings"
+                            [value]="string"
+                        >
+                            {{ string }}
+                        </option>
+                    </select>
+                </div>
             </div>
-
-            <br />
 
             <div class="row" *ngIf="isRoomChoosed()">
                 <div class="col-lg">
@@ -261,8 +279,8 @@
                         >
                     </div>
                 </div>
+                <br />
             </div>
-            <br />
 
             <div *ngIf="toggleOptions">
                 <div class="row">
@@ -272,10 +290,10 @@
                             class="browser-default custom-select"
                             id="repeatAt"
                             name="repeatAt"
-                            [(ngModel)]="repeatModul"
+                            [(ngModel)]="selectedRepeatOption"
                         >
-                            <option *ngFor="let r of repeatEvery">{{
-                                r
+                            <option *ngFor="let option of repeatOptions">{{
+                                option
                             }}</option>
                         </select>
                     </div>
@@ -424,8 +442,8 @@
                             name="stopAfter"
                             [(ngModel)]="terminateModul"
                         >
-                            <option *ngFor="let t of terminateAfter">
-                                {{ t }}
+                            <option *ngFor="let option of terminateAfterOption">
+                                {{ option }}
                             </option>
                         </select>
                     </div>
@@ -444,6 +462,42 @@
                     </div>
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <label class="custom-file-label" for="fileUpload"
+                        >Fotos hochladen
+                    </label>
+                    <input
+                        type="file"
+                        class="custom-file-input"
+                        id="fileUpload"
+                        (change)="onFileSelected($event, croppieModal)"
+                        multiple
+                    />
+
+                    <div *ngIf="files.length != 0" id="allSelections">
+                        <h6>Ausgewählte Files:</h6>
+                        <ul class="list-unstyled">
+                            <li *ngFor="let file of files; index as i">
+                                <div class="selection">
+                                    <p class="fileName">{{ file.name }}</p>
+                                    <button
+                                        type="button"
+                                        class="btn"
+                                        (click)="removeFile(i)"
+                                    >
+                                        <i
+                                            class="fileDelete fas fa-minus-circle"
+                                        ></i>
+                                    </button>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
             <br />
             <div class="row" *ngIf="errorMsg">
                 <div class="col-sm-12">
@@ -491,3 +545,45 @@
 </div>
 <br />
 <br />
+
+<ng-template #croppieModal let-modal>
+    <div class="modal-header">
+        <h5>Bild {{ numImg + 1 }} / {{ binaryEncodedImages.length }}</h5>
+    </div>
+    <div class="modal-body">
+        <img
+            [src]="binaryEncodedImages[numImg] | safeServerImage"
+            class="img-thumbnail"
+            id="profilePicture"
+        />
+    </div>
+    <div class="modal-footer">
+        <div *ngIf="numImg < binaryEncodedImages.length - 1">
+            <button
+                type="button"
+                class="btn btn-primary"
+                (click)="saveCropped(croppieModal); modal.close()"
+            >
+                Weiter
+            </button>
+        </div>
+        <div *ngIf="numImg == binaryEncodedImages.length - 1">
+            <button
+                type="button"
+                class="btn btn-primary"
+                (click)="saveCropped(croppieModal); modal.close()"
+            >
+                Speichern
+            </button>
+        </div>
+        <div>
+            <button
+                type="button"
+                class="btn btn-danger"
+                (click)="cancel(); modal.close()"
+            >
+                Abbrechen
+            </button>
+        </div>
+    </div>
+</ng-template>

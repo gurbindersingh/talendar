@@ -11,6 +11,7 @@ public class StorageProperties {
     // properties read from application yaml file
     private String base;
     private String profile;
+    private String course;
     private String defaultImg;
 
 
@@ -48,6 +49,15 @@ public class StorageProperties {
     }
 
 
+    public String getCourse() {
+        return course;
+    }
+
+
+    public void setCourse(String course) {
+        this.course = course;
+    }
+
     /*
      *  Custom getters for concatenated paths
      */
@@ -60,5 +70,9 @@ public class StorageProperties {
 
     public String getProfileImgFolder() {
         return base + profile;
+    }
+
+    public String getCourseImgFolder() {
+        return base + course;
     }
 }

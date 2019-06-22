@@ -835,6 +835,7 @@ public class EventService implements IEventService {
         persisted.setMinAge(newVersion.getMinAge());
         persisted.setMaxAge(newVersion.getMaxAge());
         persisted.setPrice(newVersion.getPrice());
+        persisted.setPictures(newVersion.getPictures());
         persisted.setUpdated(newVersion.getUpdated());
         return persisted;
     }

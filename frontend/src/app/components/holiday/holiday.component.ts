@@ -23,9 +23,14 @@ export class HolidayComponent implements OnInit {
     title = 'Neuen Urlaub einrichten';
     toggleOptions = false;
 
-    repeatEvery = ['Nie', 'Jeden Tag', 'Jede Woche', 'Jeden Monat'];
-    terminateAfter = ['Nie', 'Nach'];
-    repeatModul: string;
+    repeatOptions = [
+        { label: 'Nie', value: '' },
+        { label: 'Jeden Tag', value: 'Tage' },
+        { label: 'Jede Woche', value: 'Wochen' },
+        { label: 'Jeden Monat', value: 'Monate' },
+    ];
+    terminateAfterOption = ['Nie', 'Nach'];
+    selectedRepeatOption: string;
     terminateModul: string;
     holidayName: string;
     holidayDescription: string;
@@ -56,8 +61,8 @@ export class HolidayComponent implements OnInit {
         this.dateTimeParser = dateTimeParser;
         this.startTime = { hour: 13, minute: 30, second: 0 };
         this.endTime = { hour: 14, minute: 30, second: 0 };
-        this.repeatModul = this.repeatEvery[0];
-        this.terminateModul = this.terminateAfter[0];
+        this.selectedRepeatOption = this.repeatOptions[0].value;
+        this.terminateModul = this.terminateAfterOption[0];
         this.alleX = 1;
         this.endedX = 1;
     }
@@ -140,7 +145,7 @@ export class HolidayComponent implements OnInit {
     }
 
     public isRepeat(): boolean {
-        if (this.repeatModul === 'Nie') {
+        if (this.selectedRepeatOption === 'Nie') {
             return false;
         }
         return true;
@@ -150,8 +155,8 @@ export class HolidayComponent implements OnInit {
             this.toggleOptions = true;
         } else {
             this.toggleOptions = false;
-            this.repeatModul = this.repeatEvery[0];
-            this.terminateModul = this.terminateAfter[0];
+            this.selectedRepeatOption = this.repeatOptions[0].value;
+            this.terminateModul = this.terminateAfterOption[0];
             this.alleX = 1;
             this.endedX = 1;
         }
@@ -163,7 +168,7 @@ export class HolidayComponent implements OnInit {
             this.endDate,
             this.endTime,
             this.toggleOptions,
-            this.repeatModul,
+            this.selectedRepeatOption,
             this.alleX,
             this.terminateModul,
             this.endedX

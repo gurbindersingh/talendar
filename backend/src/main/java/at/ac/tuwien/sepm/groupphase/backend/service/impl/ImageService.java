@@ -31,10 +31,10 @@ public class ImageService implements IImageService {
     }
 
     @Override
-    public String save(MultipartFile file) throws ServiceException, ValidationException {
+    public String save(MultipartFile file, String folder) throws ServiceException, ValidationException {
         LOGGER.info("Prepare save of new image: {}", file);
         // intermediate directory where the file will be saved (used for creation of new file)
-        File directory = new File(System.getProperty("user.dir") + storageProperties.getProfileImgFolder());
+        File directory = new File(System.getProperty("user.dir") + folder);
         LocalDate date = LocalDate.now();
         File newFile;
 
@@ -69,27 +69,27 @@ public class ImageService implements IImageService {
 
 
     @Override
-    public InputStream get(String filename) throws ServiceException, FileNotFoundException {
+    public InputStream get(String filename, String folder) throws ServiceException, FileNotFoundException {
         LOGGER.info("Try to retrieve requested image with name: " + filename);
-        String folder = System.getProperty("user.dir") + storageProperties.getProfileImgFolder();
+        String path = System.getProperty("user.dir") + folder;
 
         try {
-            validator.checkFilepath(folder, filename);
+            validator.checkFilepath(path, filename);
         }
         catch(InvalidFilePathException | InvalidFileException e) {
             throw new ServiceException(e.getMessage(), e);
         }
 
-        File found = new File(folder + filename);
+        File found = new File(path + filename);
         return new FileInputStream(found);
     }
 
 
     @Override
-    public void delete(String fileName) throws FileDeletionException {
+    public void delete(String fileName, String folder) throws FileDeletionException {
         LOGGER.info("Try to delete image with name: " + fileName);
-        String folder = System.getProperty("user.dir") + storageProperties.getProfileImgFolder();
-        File toBeDeleted = new File(folder + fileName);
+        String path = System.getProperty("user.dir") + folder;
+        File toBeDeleted = new File(path + fileName);
 
         if (!toBeDeleted.exists()) {
             throw new FileDeletionException("there is no file that is referenced by the given name");
@@ -98,7 +98,7 @@ public class ImageService implements IImageService {
         // performs additional checks upon the filename (no relative paths, indeed image)
         // assure that only files/images within oour pre defined folder can be deleted
         try {
-            validator.checkFilepath(folder, fileName);
+            validator.checkFilepath(path, fileName);
         }
         catch(InvalidFilePathException | InvalidFileException | FileNotFoundException e) {
           throw new FileDeletionException(e);

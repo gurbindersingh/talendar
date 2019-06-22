@@ -127,64 +127,72 @@
             <br />
 
             <div *ngIf="toggleOptions">
-                <div class="row">
-                    <div class="col-lg-6">
+                <div class="row align-items-end">
+                    <div class="col-6">
                         <label for="repeatAt">Wiederhohlen</label>
                         <select
                             class="browser-default custom-select"
                             id="repeatAt"
                             name="repeatAt"
-                            [(ngModel)]="repeatModul"
+                            [(ngModel)]="selectedRepeatOption"
                         >
-                            <option *ngFor="let r of repeatEvery">{{
-                                r
-                            }}</option>
+                            <option
+                                *ngFor="let option of repeatOptions"
+                                [value]="option.value"
+                            >
+                                {{ option.label }}
+                            </option>
                         </select>
                     </div>
-                    <div class="col-lg-4"></div>
+                    <p
+                        class="mb-2 col-auto"
+                        *ngIf="selectedRepeatOption !== ''"
+                    >
+                        Alle
+                    </p>
+                    <input
+                        class="form-control col-2"
+                        type="number"
+                        name="repeatAfterX"
+                        id="repeatAfterX"
+                        [(ngModel)]="alleX"
+                        *ngIf="selectedRepeatOption !== ''"
+                    />
+                    <p
+                        class="mb-2 col-auto"
+                        *ngIf="selectedRepeatOption !== ''"
+                    >
+                        {{ selectedRepeatOption }}
+                    </p>
                 </div>
                 <br />
-                <div class="row" *ngIf="isRepeat()">
-                    <div class="col-lg-6">
-                        <div class="row">
-                            <div class="col-lg-2">
-                                <label for="repeatAfterX">Alle</label>
-                            </div>
-                            <div class="col-lg-4">
-                                <input
-                                    class="form-control"
-                                    type="number"
-                                    name="repeatAfterX"
-                                    id="repeatAfterX"
-                                    [(ngModel)]="alleX"
-                                />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <p>Tage/Wochen/Monate wiederholen</p>
-                    </div>
-                </div>
+                <div
+                    class="row align-items-center"
+                    *ngIf="selectedRepeatOption !== ''"
+                ></div>
                 <br />
 
-                <div class="row align-center-right" *ngIf="isRepeat()">
-                    <div class="col-lg-3">
-                        <label for="stopAfter">Ended</label>
-                    </div>
+                <div
+                    class="row align-items-center"
+                    *ngIf="selectedRepeatOption !== ''"
+                >
+                    <p class="col-auto px-1 mb-0">
+                        Ended
+                    </p>
 
-                    <div class="col-lg-3 mb-1">
+                    <div class="col-3">
                         <select
                             class="browser-default custom-select"
                             id="stopAfter"
                             name="stopAfter"
                             [(ngModel)]="terminateModul"
                         >
-                            <option *ngFor="let t of terminateAfter">
-                                {{ t }}
+                            <option *ngFor="let option of terminateAfterOption">
+                                {{ option }}
                             </option>
                         </select>
                     </div>
-                    <div class="col-lg-3" *ngIf="isTerminate()">
+                    <div class="col-3" *ngIf="isTerminate()">
                         <input
                             class="form-control"
                             type="number"
@@ -194,9 +202,9 @@
                         />
                     </div>
 
-                    <div class="col-lg-3" *ngIf="isTerminate()">
-                        <label for="stopAfter">Wiederholungen</label>
-                    </div>
+                    <p class="col-auto px-1 mb-0" *ngIf="isTerminate()">
+                        Wiederholungen
+                    </p>
                 </div>
             </div>
             <br />
@@ -215,7 +223,11 @@
                     </p>
                 </div>
             </div>
-            <div class="row" style="padding:0 15px" id="submit">
+            <div
+                class="row justify-content-end"
+                style="padding:0 15px"
+                id="submit"
+            >
                 <div class="col-lg-6"></div>
                 <button
                     [disabled]="!isCompleted()"

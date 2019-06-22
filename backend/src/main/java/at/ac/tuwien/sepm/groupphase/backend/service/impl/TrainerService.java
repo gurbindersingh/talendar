@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
+import at.ac.tuwien.sepm.groupphase.backend.configuration.properties.StorageProperties;
 import at.ac.tuwien.sepm.groupphase.backend.configuration.properties.UserAccountConfigurationProperties;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
@@ -40,12 +41,13 @@ public class TrainerService implements ITrainerService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserAccountConfigurationProperties userAccountConfigurationProperties;
+    private final StorageProperties storageProperties;
 
 
     @Autowired
     public TrainerService(TrainerRepository trainerRepository, Validator validator,
                           EventService eventService, ImageService imageService, InfoMail infoMail, PasswordEncoder passwordEncoder,
-                          UserAccountConfigurationProperties userAccountConfigurationProperties
+                          UserAccountConfigurationProperties userAccountConfigurationProperties, StorageProperties storageProperties
     ) {
         this.trainerRepository = trainerRepository;
         this.eventService = eventService;
@@ -54,6 +56,7 @@ public class TrainerService implements ITrainerService {
         this.infoMail = infoMail;
         this.passwordEncoder = passwordEncoder;
         this.userAccountConfigurationProperties = userAccountConfigurationProperties;
+        this.storageProperties = storageProperties;
     }
 
 
@@ -129,7 +132,7 @@ public class TrainerService implements ITrainerService {
             // if new Picture differs from existent, delete the old old picture
             if (currentVersion.getPicture() != null && !currentVersion.getPicture().equals(trainer.getPicture())) {
                 try {
-                    imageService.delete(currentVersion.getPicture());
+                    imageService.delete(currentVersion.getPicture(), storageProperties.getProfileImgFolder());
                 }
                 catch(FileDeletionException e) {
                     // not a critical error but should be logged
@@ -179,7 +182,7 @@ public class TrainerService implements ITrainerService {
             // clean up and remove image of this trainer
             if (currentVersion.getPicture() != null) {
                 try {
-                    imageService.delete(currentVersion.getPicture());
+                    imageService.delete(currentVersion.getPicture(), storageProperties.getProfileImgFolder());
                     currentVersion.setPicture(null);
                 }
                 catch(FileDeletionException e) {

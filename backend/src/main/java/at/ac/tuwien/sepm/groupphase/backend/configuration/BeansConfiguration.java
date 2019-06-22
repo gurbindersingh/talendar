@@ -1,10 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.configuration;
 
-import at.ac.tuwien.sepm.groupphase.backend.util.mapper.CustomerMapper;
-import at.ac.tuwien.sepm.groupphase.backend.util.mapper.EventMapper;
-import at.ac.tuwien.sepm.groupphase.backend.util.mapper.RoomUseMapper;
-import at.ac.tuwien.sepm.groupphase.backend.util.mapper.HolidayMapper;
-import at.ac.tuwien.sepm.groupphase.backend.util.mapper.TrainerMapper;
+import at.ac.tuwien.sepm.groupphase.backend.util.mapper.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -54,6 +50,11 @@ public class BeansConfiguration {
         return roomUseMapper;
     }
 
+    @Bean
+    public TagMapper createTagMapper(){
+        TagMapper tagMapper = TagMapper.INSTANCE;
+        return tagMapper;
+    }
 
     /***
      *  Encoder used for spring security related process'

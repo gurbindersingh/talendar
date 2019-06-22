@@ -485,19 +485,21 @@ public class Validator {
         File file = new File(folder + fileName);
 
         // any '/' ar prohibited, to make it impossible to retrieve a file from a different folder
-        if (fileName.contains("/")) {
-            throw new InvalidFilePathException("the given filename may not be a relative or absolute path but only a simple filename");
+        if(fileName.contains("/")) {
+            throw new InvalidFilePathException(
+                "the given filename may not be a relative or absolute path but only a simple filename");
         }
 
-        if (!file.exists()) {
-            throw new FileNotFoundException("there is no file that can be referred to by the given filename: " + fileName);
+        if(!file.exists()) {
+            throw new FileNotFoundException(
+                "there is no file that can be referred to by the given filename: " + fileName);
         }
 
-        if (file.isDirectory()) {
+        if(file.isDirectory()) {
             throw new InvalidFileException("the give filepath may not refer to a directory");
         }
 
-        if (!file.canRead()) {
+        if(!file.canRead()) {
             throw new InvalidFileException("requested file is not readable");
         }
 
@@ -508,12 +510,29 @@ public class Validator {
              */
             String contentType = Files.probeContentType(file.toPath());
 
-            if (!contentType.startsWith("image/")) {
+            if(!contentType.startsWith("image/")) {
                 throw new InvalidFileException("requested file is not an image");
             }
         }
         catch(IOException e) {
             throw new InvalidFileException("content type of file could not be detected");
         }
+    }
+
+    public void validateTag(Tag tag) throws InvalidEntityException{
+        if(tag.getTag() == null || tag.getTag().isBlank() || tag.getTag().equals("")){
+            throw new InvalidEntityException("Ein Tag kann nicht leer sein");
+        }
+    }
+
+    public boolean validAlgoCustomer(AlgoCustomer algoCustomer){
+        if(algoCustomer.getEmail() == null
+        || algoCustomer.getAssociated() == null
+        || algoCustomer.getParitcipatedIn() == null
+        || algoCustomer.getFavoriteTag() == null
+        || algoCustomer.getUsedTags() == null){
+            return false;
+        }
+        return true;
     }
 }

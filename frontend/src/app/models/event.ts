@@ -3,6 +3,7 @@ import { RoomUse } from './roomUse';
 import { Customer } from './customer';
 import { EventType } from './enum/eventType';
 import { CalendarEvent } from 'calendar-utils';
+import { Tag } from './tag';
 
 export class Event implements CalendarEvent {
     // From CalenderEvent
@@ -10,8 +11,8 @@ export class Event implements CalendarEvent {
     start: Date;
     end?: Date;
     title: string;
-    color?: import ('calendar-utils').EventColor;
-    actions?: import ('calendar-utils').EventAction[];
+    color?: import('calendar-utils').EventColor;
+    actions?: import('calendar-utils').EventAction[];
     allDay?: boolean;
     cssClass?: string;
     resizable?: { beforeStart?: boolean; afterEnd?: boolean };
@@ -37,8 +38,10 @@ export class Event implements CalendarEvent {
     description: string;
     minAge: number;
     maxAge: number;
+    pictures: string[];
     // signals whether the data of this event had been reset for pricacy reasons
     redacted: boolean;
     // signals that this event shall be displayed subordinate to other events
     hide: boolean;
+    tag: string;
 }

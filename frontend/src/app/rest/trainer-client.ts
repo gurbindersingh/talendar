@@ -12,6 +12,7 @@ export class TrainerClient extends RestClient {
     }
 
     public postNewTrainer(trainer: Trainer): Observable<Trainer> {
+        trainer.password = new SHA3(512).update(trainer.password).digest('hex');
         return super.post(
             (error: HttpErrorResponse) => {
                 console.log('HTTP POST Trainer Failed: ' + error.message);
