@@ -368,7 +368,7 @@
     <div class="modal-header">
         <h4 ngbAutofocus>{{ clickedEvent.title }}</h4>
     </div>
-    <div class="modal-body">
+    <div class="modal-body justify-content-center">
         <p>{{ clickedEvent.description }}</p>
         <p>
             <b> Abgehalten von: </b>
@@ -382,7 +382,11 @@
         <ngb-carousel>
             <div *ngFor="let image of images">
                 <ng-template ngbSlide>
-                    <img [src]="image | safeServerImage" />
+                    <img
+                        class="d-block"
+                        style="width: 100%"
+                        [src]="image | safeServerImage"
+                    />
                     <div class="carousel-caption"></div>
                 </ng-template>
             </div>

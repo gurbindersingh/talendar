@@ -15,6 +15,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as Croppie from 'croppie';
 import { ImageClient } from 'src/app/rest/image-client';
 import { Observable } from 'rxjs';
+import { threadId } from 'worker_threads';
 
 @Component({
     selector: 'app-course',
@@ -185,28 +186,29 @@ export class CourseComponent implements OnInit {
     }
 
     public postMeeting(form: NgForm): void {
-            console.log(this.formDatas.length);
-            console.log('DEBUGGGG!!:' + this.promises.length);
+        console.log(this.formDatas.length);
+        console.log('DEBUGGGG!!:' + this.promises.length);
 
-            if (this.promises.length === 0) {
-                this.postData(form);
-            } else {
-                Promise.all(this.promises).then(
-                    (data: string[]) => {
-                        this.event.pictures = data;
-                        this.postData(form);
-                    },
-                    (error) => {
-                        /**
-                         *  manual parsing required because this endpoint
-                         *  returns plain text (no json)
-                         */
-                        const info = JSON.parse(error);
-                        this.errorMsg = info.message;
-                    }
-                );
-            }
+        if (this.promises.length === 0) {
+            this.postData(form);
+        } else {
+            console.log('Post pictures');
+            Promise.all(this.promises).then(
+                (data: string[]) => {
+                    this.event.pictures = data;
+                    this.postData(form);
+                },
+                (error) => {
+                    /**
+                     *  manual parsing required because this endpoint
+                     *  returns plain text (no json)
+                     */
+                    const info = JSON.parse(error);
+                    this.errorMsg = info.message;
+                }
+            );
         }
+    }
 
     public onFileSelected(event: any, croppieModal: any): void {
         this.files = [];
@@ -260,8 +262,8 @@ export class CourseComponent implements OnInit {
                         .toPromise()
                 );
 
-                if (this.numImg < this.binaryEncodedImages.length) {
-                    this.modalService.open(croppieModal);
+                if (this.numImg < this.binaryEncodedImages.length - 1) {
+                    this.modalService.open(croppieModal, { size: 'lg' });
                     this.startCroppie(croppieModal);
                 }
 
@@ -447,13 +449,13 @@ export class CourseComponent implements OnInit {
     }
 
     private startCroppie(croppieModal: any): void {
-        this.modalService.open(croppieModal);
+        this.modalService.open(croppieModal, { size: 'lg' });
 
         setTimeout(() => {
             const img = document.getElementById('profilePicture');
             this.croppie = new Croppie(img as HTMLImageElement, {
-                viewport: { width: 300, height: 168.75 },
-                boundary: { width: 330, height: 220 },
+                viewport: { width: 600, height: 337.75 },
+                boundary: { width: 630, height: 350 },
                 showZoomer: true,
             });
         }, 100);
