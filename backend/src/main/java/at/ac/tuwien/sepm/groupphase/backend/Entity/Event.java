@@ -66,7 +66,7 @@ public class Event {
     private boolean deleted;
 
     @Column
-    private String event_tags;
+    private String eventTags;
     /*
         These Variables are used by non Rent Types
      */
@@ -149,7 +149,7 @@ public class Event {
     }
 
 
-    public Event (@NotBlank String name, @NotNull List<RoomUse> roomUses, @Past @NotNull LocalDateTime created, @Past @NotNull LocalDateTime updated, EventType eventType, Set<Customer> customers, Trainer trainer, int headcount, int ageToBe, String birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipants, String description, Integer minAge, Integer maxAge, List<String> pictures, boolean deleted, String event_tags) {
+    public Event (@NotBlank String name, @NotNull List<RoomUse> roomUses, @Past @NotNull LocalDateTime created, @Past @NotNull LocalDateTime updated, EventType eventType, Set<Customer> customers, Trainer trainer, int headcount, int ageToBe, String birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipants, String description, Integer minAge, Integer maxAge, List<String> pictures, boolean deleted, String eventTags) {
         this.name = name;
         this.roomUses = roomUses;
         this.created = created;
@@ -168,17 +168,17 @@ public class Event {
         this.maxAge = maxAge;
         this.pictures = pictures;
         this.deleted = deleted;
-        this.event_tags = event_tags;
+        this.eventTags = eventTags;
     }
 
 
-    public String getEvent_tags() {
-        return event_tags;
+    public String getEventTags() {
+        return eventTags;
     }
 
 
-    public void setEvent_tags(String event_tags) {
-        this.event_tags = event_tags;
+    public void setEventTags(String eventTags) {
+        this.eventTags = eventTags;
     }
 
 
@@ -450,7 +450,7 @@ public class Event {
                ", pictures=" + pictures +
                ", redacted=" + redacted +
                ", hide=" + hide +
-               ", tags=" + event_tags +
+               ", tags=" + eventTags +
                '}';
     }
 
@@ -471,7 +471,7 @@ public class Event {
                ", description='" + description + '\'' +
                ", minAge=" + minAge +
                ", maxAge=" + maxAge +
-               ", tags=" + event_tags +
+               ", tags=" + eventTags +
                '}';
     }
 }

@@ -118,14 +118,15 @@ export class CourseComponent implements OnInit {
             this.tagClient.getAll().subscribe(
                 (tagList: Tag[]) => {
                     this.tags = tagList;
+                    for (let _i = 0; _i < this.tags.length; _i++) {
+                        this.tagStrings.push(this.tags[_i].tag);
+                        console.log(this.tagStrings);
+                    }
                 },
                 (error) => {
                     console.log(error);
                 }
             );
-            for (let _i = 0; _i < this.tags.length; _i++) {
-                this.tagStrings.push(this.tags[_i].tag);
-            }
         } else {
             this.title = 'Kurs bearbeiten';
             this.btnText = 'Bearbeiten';
@@ -144,14 +145,14 @@ export class CourseComponent implements OnInit {
             this.tagClient.getAll().subscribe(
                 (tagList: Tag[]) => {
                     this.tags = tagList;
+                    for (let _i = 0; _i < this.tags.length; _i++) {
+                        this.tagStrings.push(this.tags[_i].tag);
+                    }
                 },
                 (error) => {
                     console.log(error);
                 }
             );
-            for (let _i = 0; _i < this.tags.length; _i++) {
-                this.tagStrings.push(this.tags[_i].tag);
-            }
         }
     }
 
@@ -335,7 +336,7 @@ export class CourseComponent implements OnInit {
     }
 
     public isCompleted(): boolean {
-        if (this.event.tag === undefined || this.event.tag === '') {
+        if (this.saveMode && (this.event.tag === undefined || this.event.tag === '')) {
             return false;
         }
         if (this.event.name === undefined || this.event.name === '') {

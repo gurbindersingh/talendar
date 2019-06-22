@@ -6,11 +6,9 @@ import at.ac.tuwien.sepm.groupphase.backend.persistence.*;
 import at.ac.tuwien.sepm.groupphase.backend.service.algorithmClasses.KMeans;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.Validator;
-import org.apache.logging.log4j.util.PropertySource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
@@ -209,7 +207,7 @@ public class AlgorithmService {
                     Duration durationMin = Duration.between(LocalDateTime.now(), tmpR);
                     for(Event e : c.getEvents()) {
                         if(e.getPrice() != null &&
-                           e.getEvent_tags() != null &&
+                           e.getEventTags() != null &&
                            e.getRoomUses() != null && e.getName() != null) {
                             LOGGER.info("Processing Event " +
                                         e.getName() +
@@ -226,8 +224,8 @@ public class AlgorithmService {
                             frequency++;
 
                             money += e.getPrice();
-                            if(!tags.contains(e.getEvent_tags())) {
-                                tags.add(e.getEvent_tags());
+                            if(!tags.contains(e.getEventTags())) {
+                                tags.add(e.getEventTags());
                             }
 
 
@@ -256,7 +254,7 @@ public class AlgorithmService {
                             }
                             for(Event e : c.getEvents()) {
                                 if(e.getPrice() != null &&
-                                   e.getEvent_tags() != null &&
+                                   e.getEventTags() != null &&
                                    e.getRoomUses() != null && e.getName() != null) {
                                     LOGGER.info("Processing Event " +
                                                 e.getName() +
@@ -275,8 +273,8 @@ public class AlgorithmService {
 
                                     ac.setMoneySpent(ac.getMoneySpent() + e.getPrice());
 
-                                    if(!ac.getUsedTags().contains(e.getEvent_tags())) {
-                                        ac.getUsedTags().add(e.getEvent_tags());
+                                    if(!ac.getUsedTags().contains(e.getEventTags())) {
+                                        ac.getUsedTags().add(e.getEventTags());
                                     }
                                 }
                             }
@@ -331,11 +329,11 @@ public class AlgorithmService {
             HashMap<String, Integer> tagUsage = new HashMap<>();
             for(Event e: algoCustomer.getParitcipatedIn()
             ) {
-                if(tagUsage.containsKey(e.getEvent_tags())){
-                    int previous = tagUsage.get(e.getEvent_tags());
-                    tagUsage.replace(e.getEvent_tags(), previous+1);
+                if(tagUsage.containsKey(e.getEventTags())){
+                    int previous = tagUsage.get(e.getEventTags());
+                    tagUsage.replace(e.getEventTags(), previous + 1);
                 }else{
-                    tagUsage.put(e.getEvent_tags(), 1);
+                    tagUsage.put(e.getEventTags(), 1);
                 }
 
             }
@@ -363,16 +361,16 @@ public class AlgorithmService {
             LocalDateTime reference = LocalDateTime.MAX;
             for(Event e: possibleSells
             ) {
-                if(e.getEvent_tags() != null) {
+                if(e.getEventTags() != null) {
                     if(iteration == -1) {
-                        if(e.getEvent_tags().contains(algoCustomer.getFavoriteTag()) &&
+                        if(e.getEventTags().contains(algoCustomer.getFavoriteTag()) &&
                            firstUse(e.getRoomUses()).isBefore(reference)) {
                             reference = firstUse(e.getRoomUses());
                             ret = e;
                             found = true;
                         }
                     } else {
-                        if(e.getEvent_tags().contains(tagChoices.get(iteration).getItem2()) &&
+                        if(e.getEventTags().contains(tagChoices.get(iteration).getItem2()) &&
                            firstUse(e.getRoomUses()).isBefore(reference)) {
                             reference = firstUse(e.getRoomUses());
                             ret = e;
@@ -404,7 +402,7 @@ public class AlgorithmService {
 
             for(Event e : possibleSells
             ) {
-                if(e.getEvent_tags().contains(tagChoices.get(iteration).getItem2()) && firstUse(e.getRoomUses()).isBefore(reference)){
+                if(e.getEventTags().contains(tagChoices.get(iteration).getItem2()) && firstUse(e.getRoomUses()).isBefore(reference)){
                     reference = firstUse(e.getRoomUses());
                     ret = e;
                     found = true;

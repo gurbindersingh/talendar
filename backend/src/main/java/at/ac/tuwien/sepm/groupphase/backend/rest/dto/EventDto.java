@@ -25,7 +25,9 @@ public class EventDto {
     private LocalDateTime updated;
     @JsonIgnoreProperties("eventDtos")
     private List<CustomerDto> customerDtos = new LinkedList<>();
+    private String eventTags;
     private boolean deleted;
+
 
     /*
         These Variables are used by non Rent Types
@@ -86,7 +88,7 @@ public class EventDto {
                     LocalDateTime created, LocalDateTime updated, List<CustomerDto> customerDtos,
                     Trainer trainer, int headcount, int ageToBe, String birthdayType,
                     LocalDateTime endOfApplication, Double price, Integer maxParticipants,
-                    String description, Integer minAge, Integer maxAge, List<String> pictures,
+                    String description, Integer minAge, Integer maxAge, List<String> pictures, String eventTags,
                     boolean deleted
     ) {
         this.id = id;
@@ -107,6 +109,7 @@ public class EventDto {
         this.minAge = minAge;
         this.maxAge = maxAge;
         this.pictures = pictures;
+        this.eventTags = eventTags;
         this.deleted = deleted;
     }
 
@@ -118,6 +121,16 @@ public class EventDto {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+
+    public String getEventTags() {
+        return eventTags;
+    }
+
+
+    public void setEventTags(String eventTags) {
+        this.eventTags = eventTags;
     }
 
 
@@ -343,7 +356,8 @@ public class EventDto {
                Objects.equals(description, eventDto.description) &&
                Objects.equals(minAge, eventDto.minAge) &&
                Objects.equals(maxAge, eventDto.maxAge) &&
-               Objects.equals(pictures, eventDto.pictures);
+               Objects.equals(pictures, eventDto.pictures) &&
+               Objects.equals(eventTags, eventDto.eventTags);
     }
 
 
@@ -351,7 +365,7 @@ public class EventDto {
     public int hashCode() {
         return Objects.hash(id, eventType, name, roomUses, created, updated, customerDtos, trainer,
                             headcount, ageToBe, birthdayType, endOfApplication, price,
-                            maxParticipants, description, minAge, maxAge, pictures
+                            maxParticipants, description, minAge, maxAge, pictures, eventTags
         );
     }
 
@@ -376,6 +390,7 @@ public class EventDto {
                ", description='" + description + '\'' +
                ", minAge=" + minAge +
                ", maxAge=" + maxAge +
+               ",, eventTags=" + eventTags +
                ", pictures=" + pictures +
                ", redacted=" + redacted +
                ", hide=" + hide +
