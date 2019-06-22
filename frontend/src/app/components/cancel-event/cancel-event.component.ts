@@ -109,7 +109,6 @@ export class CancelEventComponent implements OnInit {
                 }
             );
         }
-
         if (this.event === null || this.event === undefined) {
             this.title = 'Fehler 404';
             this.textBox = 'Dieser Ereignis existiert nicht in der Datenbank';

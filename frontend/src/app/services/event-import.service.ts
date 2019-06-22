@@ -15,9 +15,26 @@ export class EventImportService {
         for (const event of events) {
             const roomOfEvent: RoomUse[] = event.roomUses;
 
-            event.start = new Date(roomOfEvent[0].begin);
-            event.end = new Date(roomOfEvent[0].end);
-            event.title = event.name;
+            if (roomOfEvent.length > 1) {
+                let i = 0;
+                for (const roomUse of roomOfEvent) {
+                    if (i === 0) {
+                        event.start = new Date(roomUse.begin);
+                        event.end = new Date(roomUse.end);
+                        event.title = event.name;
+                    } else {
+                        const event2 = Object.assign({}, event);
+                        event2.roomUses = [];
+                        event2.roomUses.push(roomUse);
+                        events.push(event2);
+                    }
+                    i++;
+                }
+            } else {
+                event.start = new Date(roomOfEvent[0].begin);
+                event.end = new Date(roomOfEvent[0].end);
+                event.title = event.name;
+            }
 
             // Calendar Events' specific properties (style, assigned actions etc)
             // this set up is not completed -> consider what has to be set...
