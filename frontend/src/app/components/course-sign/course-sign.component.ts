@@ -39,6 +39,10 @@ export class CourseSignComponent implements OnInit {
     dates: string[];
     times: string[];
 
+    currentPage: number;
+    itemsPerPage: number;
+    datesListPage: string[] = [];
+
     date: NgbDateStruct;
     time: NgbTimeStruct;
     birthOfChild: NgbDateStruct;
@@ -56,11 +60,24 @@ export class CourseSignComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.currentPage = 1;
+        this.itemsPerPage = 12;
         this.id = this.route.snapshot.queryParams.id;
         this.loading = false;
         this.event.customerDtos = []; // needed
         this.getEventFromBackendById(this.id);
         this.canSignIn = true;
+    }
+
+    updateListPage(page?: number): void {
+        this.datesListPage = this.dates.slice(
+            (this.currentPage - 1) * this.itemsPerPage,
+            this.currentPage * this.itemsPerPage
+        );
+    }
+
+    public scroll(el: HTMLElement) {
+        el.scrollIntoView();
     }
 
     public getEventFromBackendById(id: number): void {
@@ -82,6 +99,7 @@ export class CourseSignComponent implements OnInit {
                         roomUse.room
                     );
                 }
+                this.updateListPage();
             },
             (error: Error) => {
                 this.errorMsg =

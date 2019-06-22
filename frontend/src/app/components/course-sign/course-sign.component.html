@@ -78,12 +78,13 @@
                         <div id="labelCourseName" class="col-lg-6">
                             Termine:
                         </div>
-                    </div>
-
-                    <div class="row" *ngFor="let date of dates">
-                        <div class="col border-top">
-                            <p>{{ date }}</p>
-                        </div>
+                        <button
+                            mat-raised-button
+                            (click)="scroll(datesSection)"
+                            class="col-lg-2 btn btn-light"
+                        >
+                            Hier klicken
+                        </button>
                     </div>
                 </div>
             </div>
@@ -270,9 +271,40 @@
                     </p>
                 </div>
             </div>
+            <br />
+            <br />
+            <p #datesSection></p>
+            <ng-template [ngIf]="canSignIn">
+                <h1>Termine</h1>
+                <hr />
+                <br />
+                <div
+                    class="flex-row flex-wrap"
+                    *ngFor="let date of datesListPage"
+                >
+                    <div class="col border-bottom">
+                        <p>{{ date }}</p>
+                    </div>
+                </div>
+                <br />
+                <ngb-pagination
+                    class="d-flex justify-content-center"
+                    [(page)]="currentPage"
+                    [pageSize]="itemsPerPage"
+                    [collectionSize]="dates.length"
+                    (pageChange)="updateListPage()"
+                    [maxSize]="5"
+                    [rotate]="true"
+                    *ngIf="dates.length > 12"
+                >
+                    <ng-template ngbPaginationPrevious>
+                        Zurück
+                    </ng-template>
+                    <ng-template ngbPaginationNext> Weiter </ng-template>
+                </ngb-pagination>
+            </ng-template>
         </form>
     </div>
     <div class="col-lg-3"></div>
 </div>
-<br />
 <br />
