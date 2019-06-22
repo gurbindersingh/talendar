@@ -60,6 +60,7 @@ public class AuthenticationEndpoint {
      */
     @RequestMapping(method = RequestMethod.GET)
     public AuthenticationToken authenticate(@RequestHeader(value = HttpHeaders.AUTHORIZATION) String authorizationHeader) {
+        LOGGER.info("Incoming Request To Renew Authentication");
         return authenticationService.renewAuthentication(
             authorizationHeader.substring(AuthenticationConstants.TOKEN_PREFIX.length()).trim());
     }

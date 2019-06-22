@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 import { UserDetails } from '../models/user-details';
 import { NotificationService } from './notification.service';
 import { SHA3 } from 'sha3';
+import { HttpHeaders } from '@angular/common/http';
 
 @Injectable({
     providedIn: 'root',
@@ -47,6 +48,14 @@ export class AuthenticationService {
                     this.notificationService.notifyLogin();
                 })
             );
+    }
+
+    renewLogin(header: HttpHeaders): Observable<void> {
+        return this.authenticationClient.renewAuthentication(header).pipe(
+            map((response) => {
+                this.sessionStorageService.setLoggedIn(response);
+            })
+        );
     }
 
     logout(): void {
