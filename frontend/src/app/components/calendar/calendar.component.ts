@@ -19,6 +19,8 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 import { UserDetails } from 'src/app/models/user-details';
 import { Authorities } from 'src/app/models/enum/authorities';
 import { SessionStorageService } from 'src/app/services/session-storage.service';
+import { promise } from 'protractor';
+import { ImageClient } from 'src/app/rest/image-client';
 
 /**
  * In order to display week days in German the locale data
@@ -57,10 +59,7 @@ export class CalendarComponent implements OnInit {
     isCollapsed = true;
     clickedEvent: Event;
 
-    images = [1, 2, 3, 4].map(
-        () => `https://picsum.photos/900/500?random&t=${Math.random()}`
-    );
-
+    images: any[] = [];
     // filter specific content
 
     // filterable values
@@ -123,6 +122,7 @@ export class CalendarComponent implements OnInit {
 
     constructor(
         private eventClient: EventClient,
+        private imageCLient: ImageClient,
         private trainerClient: TrainerClient,
         private eventImport: EventImportService,
         private modalService: NgbModal,
@@ -221,6 +221,27 @@ export class CalendarComponent implements OnInit {
 
     showDetails(event: Event, detailsModal: any) {
         console.warn(event);
+
+        console.log(event.pictures);
+
+        this.images = [];
+        const promises: Promise<string>[] = [];
+
+        if (event.pictures != null) {
+            for (const picture of event.pictures) {
+                promises.push(
+                    this.imageCLient.getCoursePicture(picture).toPromise()
+                );
+            }
+
+            Promise.all(promises).then((data: string[]) => {
+                this.images = new Array(data.length);
+                for (let i = 0; i < data.length; i++) {
+                    const blob = new Blob([data[i]]);
+                    this.extractBinaryDataFromFile(blob, i);
+                }
+            });
+        }
 
         // a user only sees an event (like rent, birthday (of others))
         // as reserved and will not be able to see further details
@@ -413,5 +434,21 @@ export class CalendarComponent implements OnInit {
 
             return true;
         });
+    }
+
+    /**
+     * This method can be used to extract the content of a file as binary data.
+     * I.e. <img src"..."> can display images given their binary representation.
+     *
+     * @param file the wrapper of the content. 'File' can be also used as param as
+     *             it extends Blob!
+     * @param index the place where this data shall be inserted in the given data source
+     */
+    private extractBinaryDataFromFile(file: Blob, index: number): void {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onloadend = () => {
+            this.images[index] = reader.result;
+        };
     }
 }

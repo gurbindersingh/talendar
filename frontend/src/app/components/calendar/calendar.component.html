@@ -378,18 +378,16 @@
                     clickedEvent.trainer.lastName
             }}
         </p>
-    </div>
 
-    <ngb-carousel>
-        <ng-template ngbSlide>
-            <img [src]="images[0]" />
-            <div class="carousel-caption"></div>
-        </ng-template>
-        <ng-template ngbSlide>
-            <img [src]="images[1]" />
-            <div class="carousel-caption"></div>
-        </ng-template>
-    </ngb-carousel>
+        <ngb-carousel>
+            <div *ngFor="let image of images">
+                <ng-template ngbSlide>
+                    <img [src]="image | safeServerImage" />
+                    <div class="carousel-caption"></div>
+                </ng-template>
+            </div>
+        </ngb-carousel>
+    </div>
 
     <div class="modal-footer">
         <button
