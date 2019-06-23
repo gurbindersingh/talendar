@@ -42,15 +42,10 @@ export class SimpleHttpInterceptor implements HttpInterceptor {
                 this.sessionService.isOldToken &&
                 this.doRenew
             ) {
-                console.log('Renew authentication\nOld Token: ' + token);
                 this.doRenew = false;
 
                 this.authenticationService.renewLogin(headers).subscribe(
                     (data) => {
-                        console.log('Authentication successfully renewed');
-                        console.log(
-                            'New Tokens: ' + this.sessionService.sessionToken
-                        );
                         this.doRenew = true;
                     },
                     (error: Error) => {
@@ -62,8 +57,6 @@ export class SimpleHttpInterceptor implements HttpInterceptor {
                     }
                 );
             }
-
-            console.log('Interceptor: Token = ' + token);
 
             // check if token is expired, if yes, logout (which will notigy logout action)
             if (token != null) {

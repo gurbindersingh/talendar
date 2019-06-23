@@ -26,7 +26,7 @@ export class AuthenticationService {
         if (this.sessionStorageService.loggedIn === false) {
             return null;
         } else {
-            console.log(this.sessionStorageService.sessionToken);
+            
             return this.authenticationClient.userDetails(
                 this.sessionStorageService.sessionToken
             );
