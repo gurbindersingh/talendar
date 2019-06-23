@@ -185,6 +185,13 @@
                     style="padding-right: 15px"
                 >
                     <button
+                        class="btn btn-light mr-2"
+                        (click)="goBack()"
+                        *ngIf="!auth.isLoggedIn"
+                    >
+                        Abbrechen
+                    </button>
+                    <button
                         type="submit"
                         class="btn btn-primary"
                         [disabled]="!isCompleted()"

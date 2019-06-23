@@ -5,6 +5,7 @@ import { EventClient } from '../../rest/event-client';
 import { RoomUse } from 'src/app/models/roomUse';
 import { Customer } from 'src/app/models/customer';
 import { EventType } from '../../models/enum/eventType';
+import { AuthenticationService } from 'src/app/services/authentication.service';
 import {
     NgbDateStruct,
     NgbTimeStruct,
@@ -63,7 +64,8 @@ export class BirthdayComponent implements OnInit {
 
     constructor(
         private eventClient: EventClient,
-        private clickedDateService: ClickedDateService
+        private clickedDateService: ClickedDateService,
+        public auth: AuthenticationService
     ) {
         const date = this.clickedDateService.getDate();
         const time = this.clickedDateService.getTime();
@@ -76,10 +78,6 @@ export class BirthdayComponent implements OnInit {
         this.loading = false;
         this.successMsg = '';
         this.errorMsg = '';
-    }
-
-    goBack() {
-        window.history.back();
     }
 
     postBirthday(form: NgForm) {
@@ -118,6 +116,10 @@ export class BirthdayComponent implements OnInit {
                 this.successMsg = '';
             }
         );
+    }
+
+    public goBack(): void {
+        window.history.back();
     }
 
     public getEndDate(date: NgbTimeStruct): number {

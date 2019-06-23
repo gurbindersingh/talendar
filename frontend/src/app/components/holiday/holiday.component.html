@@ -8,6 +8,7 @@
             class="container-fluid"
             novalidate
             (ngSubmit)="postHoliday(holiday)"
+            (change)="clearInfoMsg()"
             #holidayForm
         >
             <div class="row">
@@ -138,7 +139,7 @@
                         >
                             <option
                                 *ngFor="let option of repeatOptions"
-                                [value]="option.value"
+                                [value]="option.label"
                             >
                                 {{ option.label }}
                             </option>

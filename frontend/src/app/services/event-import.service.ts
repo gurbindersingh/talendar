@@ -6,11 +6,72 @@ import { RoomUse } from '../models/roomUse';
 
 import * as Colors from '../utils/Colors';
 import { Room } from '../models/enum/room';
+import { Holiday } from '../models/holiday';
 
 @Injectable({
     providedIn: 'root',
 })
 export class EventImportService {
+    public mapAndAddHolidaysToEvents(
+        events: Event[],
+        holidays: Holiday[]
+    ): Event[] {
+        for (const holiday of holidays) {
+            const event = new Event();
+            event.name = holiday.title;
+            event.title =
+                event.name +
+                ' ' +
+                holiday.trainer.firstName +
+                ' ' +
+                holiday.trainer.lastName;
+            event.description = holiday.description;
+            event.start = new Date(holiday.holidayStart);
+            event.end = new Date(holiday.holidayEnd);
+            event.eventType = EventType.Holiday;
+            event.color = Colors.Holiday;
+            events.push(event);
+            event.cssClass = 't-event-color';
+        }
+        return events;
+    }
+
+    // All holidays which are not from admin will get no name, only the information who created this
+    public mapAndAddHolidaysToEventsById(
+        events: Event[],
+        holidays: Holiday[],
+        id: number
+    ): Event[] {
+        for (const holiday of holidays) {
+            const event = new Event();
+            if (holiday.trainer.id === id) {
+                event.title =
+                    holiday.title +
+                    ' ' +
+                    holiday.trainer.firstName +
+                    ' ' +
+                    holiday.trainer.lastName;
+                event.description = holiday.description;
+                event.color = Colors.Holiday;
+                event.name = holiday.title;
+            } else {
+                event.title =
+                    holiday.trainer.firstName + ' ' + holiday.trainer.lastName;
+                event.description =
+                    holiday.trainer.firstName + ' ' + holiday.trainer.lastName;
+                event.name =
+                    holiday.trainer.firstName + ' ' + holiday.trainer.lastName;
+                event.color = Colors.HolidaySecondary;
+            }
+            event.start = new Date(holiday.holidayStart);
+            event.end = new Date(holiday.holidayEnd);
+            event.eventType = EventType.Holiday;
+            events.push(event);
+            event.cssClass = 't-event-color';
+        }
+        return events;
+    }
+
     public mapEventsToCalendar(events: Event[]) {
         for (const event of events) {
             const roomOfEvent: RoomUse[] = event.roomUses;

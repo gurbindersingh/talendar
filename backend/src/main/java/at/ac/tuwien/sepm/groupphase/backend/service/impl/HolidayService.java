@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.User;
+import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.HolidayRepository;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Holiday;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.LinkedList;
+import java.util.List;
 
 
 @Service
@@ -36,6 +38,38 @@ public class HolidayService implements IHolidayService {
         this.holidayRepository = holidayRepository;
         this.trainerRepository = trainerRepository;
         this.validate = validate;
+    }
+
+
+    @Override
+    public LinkedList<Holiday> getAllHolidaysByTrainerId(Long id) throws ServiceException,
+                                                                         NotFoundException {
+        LOGGER.info("Get all holidays by trainer id " + id);
+        if(!this.trainerRepository.existsById(id)){
+            InvalidEntityException e = new InvalidEntityException("Trainer existiert nicht!");
+            LOGGER.error("No trainer found when searching for all holidays by trainer id");
+            throw new NotFoundException(e.getMessage(), e);
+        }
+        LinkedList<Holiday> result = new LinkedList<>();
+        List<Holiday> db = holidayRepository.findByTrainer_Id(id);
+        for(int i = 0; i < db.size(); i++){
+            result.add(db.get(i));
+        }
+        LOGGER.info("" + result);
+        return result;
+    }
+
+
+    @Override
+    public LinkedList<Holiday> getAllHolidays() throws ServiceException, NotFoundException {
+
+        LinkedList<Holiday> result = new LinkedList<>();
+        List<Holiday> db = holidayRepository.findAll();
+        for(int i = 0; i < db.size(); i++){
+            result.add(db.get(i));
+        }
+        LOGGER.info("" + result);
+        return result;
     }
 
 

@@ -66,7 +66,7 @@ export class EventClient extends RestClient {
     public getAllEvents_trainerView(id: number): Observable<Event[]> {
         return super.get((error: HttpErrorResponse) => {
             console.log(
-                'HTTP GET All Events (For Admin) Failed: ' + error.message
+                'HTTP GET All Events (For trainer) Failed: ' + error.message
             );
         }, '/all/trainer/' + id);
     }
