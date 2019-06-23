@@ -1,12 +1,10 @@
 package at.ac.tuwien.sepm.groupphase.backend.testDataCreation;
 
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.enums.Room;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
+import at.ac.tuwien.sepm.groupphase.backend.rest.dto.TagDto;
 import at.ac.tuwien.sepm.groupphase.backend.testObjects.CustomerDto;
 import at.ac.tuwien.sepm.groupphase.backend.testObjects.EventDto;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.testObjects.TrainerDto;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import com.github.javafaker.Faker;
@@ -93,6 +91,46 @@ public class FakeData {
                                                  Date.valueOf(LocalDate.now().minusYears(min))
                                         )
                                         .toInstant(), ZoneId.systemDefault());
+    }
+
+    private String[] tagsCreator() {
+        String[] arr = {"Math", "Science", "Expirements", "Dance", "Painting", "Art", "Programming"};
+        return arr;
+    }
+
+
+    /**
+            Fake Entities And Dtos
+     */
+
+    public List<Tag> getFakedTags() {
+        List<Tag> tags = new LinkedList<>();
+        String[] names = tagsCreator();
+
+        for (String name: names) {
+            Tag tag = new Tag();
+            tag.setTag(name);
+            tags.add(tag);
+        }
+        return tags;
+    }
+
+    public Tag fakeRandomTagEntity() {
+        String[] names = tagsCreator();
+        int i = randomInt(0,tagsCreator().length);
+
+        Tag tag = new Tag();
+        tag.setTag(names[i]);
+        return tag;
+    }
+
+    public TagDto fakeRandomTagDto() {
+        String[] names = tagsCreator();
+        int i = randomInt(0,tagsCreator().length - 1);
+
+        TagDto tag = new TagDto();
+        tag.setTag(names[i]);
+        return tag;
     }
 
 

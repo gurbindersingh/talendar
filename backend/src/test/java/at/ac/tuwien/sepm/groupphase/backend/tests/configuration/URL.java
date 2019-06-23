@@ -19,6 +19,7 @@ public class URL {
     public static final String HOLIDAY = "/api/v1/talendar/holiday";
     public static final String HOLIDAYS = "/api/v1/talendar/holidays";
     public static final String UPLOAD = "/api/v1/talendar/upload";
+    public static final String TAGS = "/api/v1/talendar/tags";
 
     public static final String POST_COURSE = EVENT + "/course";
     public static final String POST_RENT = EVENT + "/rent";
