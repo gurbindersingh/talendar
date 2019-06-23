@@ -228,13 +228,6 @@ public class EventEndpoint {
     */
 
 
-    @GetMapping
-    public List<EventDto> getAllFutureCourses() {
-        LOGGER.info("Incoming GET Request for all future Courses");
-        return eventMapper.entityListToEventDtoList(eventService.getAllFutureCourses());
-    }
-
-
     /**
      *  A simple wrapper for the post of a event.
      *  This code hat been 1:1 part of the former 'createNewEvent' method, but we had
