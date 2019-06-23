@@ -13,6 +13,7 @@ import org.apache.tomcat.jni.Local;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.*;
 
@@ -204,7 +205,23 @@ public class FakeData {
         return Room.GroundFloor;
     }
 
+    public CustomerDto fakeCustomerForSignIn() {
+        CustomerDto karen = new CustomerDto();
+        karen.setId(null);
+        karen.setEmailId(1);
+        karen.setEmail(fakeEmail());
+        karen.setPhone(fakePhoneNumber());
+        karen.setFirstName(fakeFirstName());
+        karen.setLastName(fakeLastName());
+        karen.setChildName(fakeFirstName());
+        karen.setChildLastName(fakeLastName());
+        karen.setBirthOfChild(LocalDateTime.of(fakeAgeAsLocalDate(6,8), LocalTime.now()));
+        karen.setWantsEmail(false);
+        return karen;
+    }
 
+    // NOTE maybe you have to update these fakers, testDto had not been updated for a long time,
+    // and some properties have not been set in this method
     public CustomerDto fakeCustomer() {
         CustomerDto karen = new CustomerDto();
         karen.setId(fakeID());
