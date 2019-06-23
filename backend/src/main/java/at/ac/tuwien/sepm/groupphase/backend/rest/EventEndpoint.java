@@ -203,31 +203,6 @@ public class EventEndpoint {
     }
 
 
-    /*
-    @GetMapping
-    @RequestMapping(value = "/trainer/{id}", method = RequestMethod.GET)
-    @ResponseStatus(HttpStatus.OK)
-    public List<EventDto> getAllEvents (@PathVariable Long id) throws BackendException {
-        /*
-         * Pass the JWT to this method to authenticate the caller
-         * and authorize the access to the corresponding resources.
-         * *//*
-        LOGGER.info("Incoming GET Request for all Events");
-        try {
-            return this.eventService.getAllEvents(id)
-                                    .stream()
-                                    .map(eventMapper::entityToEventDto)
-                                    .collect(
-                                        Collectors.toList());
-            // return new ArrayList<EventDto>();
-        }
-        catch(ServiceException | ValidationException e) {
-            throw new BackendException(e.getMessage(), e);
-        }
-    }
-    */
-
-
     @GetMapping
     public List<EventDto> getAllFutureCourses() {
         LOGGER.info("Incoming GET Request for all future Courses");
@@ -260,15 +235,6 @@ public class EventEndpoint {
             throw new ServiceException("Es konnten keine zukünftigen Events geladen werden.", e);
         }
     }
-
-
-    // Todo probably not needed
-    @GetMapping(value = "/all/future/client")
-    public List<EventDto> getAllFutureEventsForClient() {
-        LOGGER.info("Incoming GET Request for all future Courses For Client");
-        return null;
-    }
-
 
 
     /**
