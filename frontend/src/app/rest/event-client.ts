@@ -34,7 +34,7 @@ export class EventClient extends RestClient {
                 break;
         }
 
-        console.log(JSON.stringify(event));
+        
         return super.post(
             (error: HttpErrorResponse) => {
                 console.log('HTTP POST Birthday Failed: ' + error.message);

@@ -268,7 +268,7 @@ export class TrainerComponent implements OnInit {
 
         this.extractBinaryDataFromFile(this.image, false);
 
-        this.modalService.open(croppieModal);
+        this.modalService.open(croppieModal, { backdrop: 'static' });
 
         setTimeout(() => {
             const img = document.getElementById('profilePicture');
@@ -285,8 +285,6 @@ export class TrainerComponent implements OnInit {
     }
 
     public saveCropped() {
-        // this.croppie
-        this.croppie.bind({ url: '' });
         this.croppie
             .result({ type: 'blob', quality: 1, format: 'png' })
             .then((image: Blob) => {
@@ -296,7 +294,6 @@ export class TrainerComponent implements OnInit {
                 this.formData.append('file', this.image);
             })
             .catch((error) => {
-                console.log(error);
                 this.errorMsg =
                     'Das Bild konnte leider nicht gespeichert werden. ' +
                     'Bitte versuchen Sie es erneut.';
@@ -321,7 +318,6 @@ export class TrainerComponent implements OnInit {
         if (this.isSaveMode) {
             this.trainerClient.postNewTrainer(this.trainer).subscribe(
                 (data: Trainer) => {
-                    console.log(data);
                     this.successMsg =
                         'Der Betreuer wurde erfolgreich gespeichert';
                     form.reset();
@@ -335,7 +331,6 @@ export class TrainerComponent implements OnInit {
         } else {
             this.trainerClient.update(this.trainer, this.password).subscribe(
                 (data: Trainer) => {
-                    console.log(data);
                     this.successMsg =
                         'Der Betreuer wurde erfolgreich aktualisiert';
                 },

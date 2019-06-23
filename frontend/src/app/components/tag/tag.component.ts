@@ -25,7 +25,7 @@ export class TagComponent implements OnInit {
     this.tagDto.tag = this.tag;
     this.tagClient.postTag(this.tagDto).subscribe(
       (data: Tag) => {
-        console.log(data);
+        
         this.successMsg =
           'Der Tag wurde erfolgreich gespeichert';
         form.reset();

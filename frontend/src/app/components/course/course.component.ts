@@ -120,11 +120,11 @@ export class CourseComponent implements OnInit {
                     this.tags = tagList;
                     for (let _i = 0; _i < this.tags.length; _i++) {
                         this.tagStrings.push(this.tags[_i].tag);
-                        console.log(this.tagStrings);
+                        
                     }
                 },
                 (error) => {
-                    console.log(error);
+                    
                 }
             );
         } else {
@@ -134,7 +134,7 @@ export class CourseComponent implements OnInit {
             this.isCreate = false;
             this.eventClient.getEventById(id).subscribe(
                 (data: Event) => {
-                    console.log(data);
+                    
                     this.event = data;
                 },
                 (error: Error) => {
@@ -150,7 +150,7 @@ export class CourseComponent implements OnInit {
                     }
                 },
                 (error) => {
-                    console.log(error);
+                    
                 }
             );
         }
@@ -215,13 +215,10 @@ export class CourseComponent implements OnInit {
     }
 
     public postMeeting(form: NgForm): void {
-        console.log(this.formDatas.length);
-        console.log('DEBUGGGG!!:' + this.promises.length);
-
         if (this.promises.length === 0) {
             this.postData(form);
         } else {
-            console.log('Post pictures');
+            
             Promise.all(this.promises).then(
                 (data: string[]) => {
                     this.event.pictures = data;
@@ -242,6 +239,7 @@ export class CourseComponent implements OnInit {
     public onFileSelected(event: any, croppieModal: any): void {
         this.files = [];
         this.binaryEncodedImages = [];
+        this.promises = [];
         this.formDatas = [];
         for (let i = 0; i < event.target.files.length; i++) {
             const file: File = event.target.files[i];
@@ -274,8 +272,6 @@ export class CourseComponent implements OnInit {
     }
 
     public saveCropped(croppieModal: any): void {
-        console.log('SAVE');
-        this.croppie.bind({ url: '' });
         this.croppie
             .result({ type: 'blob', quality: 1, format: 'png' })
             .then((image: Blob) => {
@@ -298,7 +294,7 @@ export class CourseComponent implements OnInit {
                 this.numImg++;
             })
             .catch((error) => {
-                console.log(error);
+                
                 this.errorMsg =
                     'Das Bild konnte leider nicht gespeichert werden. ' +
                     'Bitte versuchen Sie es erneut.';
@@ -309,6 +305,7 @@ export class CourseComponent implements OnInit {
         this.files = [];
         this.binaryEncodedImages = [];
         this.croppedImages = [];
+        this.promises = [];
         this.numImg = 0;
     }
 
@@ -336,7 +333,10 @@ export class CourseComponent implements OnInit {
     }
 
     public isCompleted(): boolean {
-        if (this.saveMode && (this.event.tag === undefined || this.event.tag === '')) {
+        if (
+            this.saveMode &&
+            (this.event.tag === undefined || this.event.tag === '')
+        ) {
             return false;
         }
         if (this.event.name === undefined || this.event.name === '') {
@@ -440,7 +440,7 @@ export class CourseComponent implements OnInit {
 
             this.eventClient.postNewEvent(this.event).subscribe(
                 (data: Event) => {
-                    console.log(data);
+                    
                     this.successMsg =
                         'Deine Reservierung wurde erfolgreich gespeichert';
                     this.resetFormular();
@@ -448,7 +448,7 @@ export class CourseComponent implements OnInit {
                     this.loading = false;
                 },
                 (error: Error) => {
-                    console.log(error);
+                    
                     this.errorMsg = error.message;
                     this.successMsg = '';
                     this.loading = false;
@@ -458,13 +458,13 @@ export class CourseComponent implements OnInit {
             // TODO
             this.eventClient.update(this.event).subscribe(
                 (data: Event) => {
-                    console.log(data);
+                    
                     this.successMsg = 'Der Kurs wurde erfolgreich aktualisiert';
                     this.errorMsg = '';
                     this.loading = false;
                 },
                 (error: Error) => {
-                    console.log(error.message);
+                    
                     this.errorMsg =
                         'Der Kurs konnte nicht erfolgreich aktualisiert werden: ' +
                         error.message;
@@ -476,7 +476,10 @@ export class CourseComponent implements OnInit {
     }
 
     private startCroppie(croppieModal: any): void {
-        this.modalService.open(croppieModal, { size: 'lg' });
+        this.modalService.open(croppieModal, {
+            size: 'lg',
+            backdrop: 'static',
+        });
 
         setTimeout(() => {
             const img = document.getElementById('profilePicture');

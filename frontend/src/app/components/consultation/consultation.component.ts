@@ -64,7 +64,6 @@ export class ConsultationComponent implements OnInit {
     }
 
     ngOnInit() {
-        console.log('Init Trainer List');
         this.trainerClient.getAll().subscribe(
             (list: Trainer[]) => {
                 this.trainers = list;
@@ -77,12 +76,10 @@ export class ConsultationComponent implements OnInit {
 
     public postConsultation(form: NgForm): void {
         if (this.roomString === 'Raum auswählen') {
-            console.log('Ein Raum muss ausgewählt werden');
             this.errorMsg = 'Ein Raum muss ausgewählt werden';
             return;
         }
         if (this.trainerString === 'Trainer auswählen') {
-            console.log('Ein Trainer muss ausgewählt werden');
             this.errorMsg = 'Ein/e Trainer/in muss ausgewählt werden';
             return;
         }
@@ -105,12 +102,10 @@ export class ConsultationComponent implements OnInit {
 
         this.eventClient.postNewEvent(this.event).subscribe(
             (data: Event) => {
-                console.log(data);
                 this.successMsg =
                     'Deine Reservierung wurde erfolgreich gespeichert';
             },
             (error) => {
-                console.log(error.message);
                 this.errorMsg =
                     'Deine Reservierung konnte nicht angelegt werden: ' +
                     error.message;

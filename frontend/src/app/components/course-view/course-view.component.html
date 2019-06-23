@@ -102,6 +102,7 @@
             <!-- for more details admin can go to profile site of trainer (same infos, plus trainer related content like hosted events) -->
 
             <button
+                *ngIf="event.eventType == 'Course'"
                 type="button"
                 class="btn btn-card mb-2"
                 ngbTooltip="Bearbeiten"
@@ -113,6 +114,7 @@
             </button>
 
             <button
+                *ngIf="role == 'ADMIN'"
                 type="button"
                 class="btn btn-danger"
                 (click)="deleteCourse(event.id)"

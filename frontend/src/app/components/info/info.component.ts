@@ -19,7 +19,7 @@ export class InfoComponent implements OnInit {
         this.clearInfoMsg();
         this.infoClient.getPdf(this.mail).subscribe(
             (response: any) => {
-                console.log(response);
+                
                 const file = new Blob([response], { type: 'application/pdf' });
                 const link = window.URL.createObjectURL(file);
                 const paw = window.open(link);
@@ -27,7 +27,7 @@ export class InfoComponent implements OnInit {
                     'Das PDF konnte erfolgreich erstellt und geöffnet werden.';
             },
             (error: Error) => {
-                console.log(error);
+                
                 this.errorMsg =
                     'Es konnten am Server keine Kunden gefunden werden,' +
                     ' die diese E-Mail-Adresse haben';
