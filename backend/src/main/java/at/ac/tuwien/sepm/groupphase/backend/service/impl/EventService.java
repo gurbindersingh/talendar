@@ -68,7 +68,7 @@ public class EventService implements IEventService {
 
 
     @Override
-    public Event save(Event event) throws ValidationException, ServiceException {
+    public Event save(Event event) throws ValidationException, ServiceException, EmailException, NotFoundException {
         LOGGER.info("Prepare to save new Event");
         LocalDateTime now = LocalDateTime.now();
         event.setCreated(now);
@@ -131,10 +131,10 @@ public class EventService implements IEventService {
                     throw new ValidationException(e.getMessage(), e);
                 }
                 catch(TrainerNotAvailableException e) {
-                    throw new ServiceException(e.getMessage(), e);
+                    throw new NotFoundException(e.getMessage(), e);
                 }
                 catch(EmailException e) {
-                    throw new ValidationException("" + e.getMessage(), e);
+                    throw new EmailException("" + e.getMessage());
                 }
             case Course:
                 try {
