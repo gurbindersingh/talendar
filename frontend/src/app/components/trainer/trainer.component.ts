@@ -268,7 +268,7 @@ export class TrainerComponent implements OnInit {
 
         this.extractBinaryDataFromFile(this.image, false);
 
-        this.modalService.open(croppieModal);
+        this.modalService.open(croppieModal, { backdrop: 'static' });
 
         setTimeout(() => {
             const img = document.getElementById('profilePicture');
@@ -285,8 +285,6 @@ export class TrainerComponent implements OnInit {
     }
 
     public saveCropped() {
-        // this.croppie
-        this.croppie.bind({ url: '' });
         this.croppie
             .result({ type: 'blob', quality: 1, format: 'png' })
             .then((image: Blob) => {
