@@ -6,6 +6,7 @@ import at.ac.tuwien.sepm.groupphase.backend.Entity.Tag;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.service.*;
+import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
 import org.apache.tomcat.jni.Local;
@@ -174,7 +175,7 @@ public class TestDataGenerator implements ApplicationRunner {
                 Event event = faker.fakeNewCourseEntity(trainers, 2);
                 System.out.println(event.toString2());
                 eventService.save(event);
-            }catch(ValidationException | ServiceException e){
+            }catch(ValidationException | ServiceException |EmailException e){
                 //
             }
         }

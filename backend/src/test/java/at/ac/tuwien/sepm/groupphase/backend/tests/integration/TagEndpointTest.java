@@ -65,12 +65,10 @@ public class TagEndpointTest {
         tag.setTag("");
 
         HttpEntity<TagDto> request = new HttpEntity<>(tag);
-        assertThrows(HttpClientErrorException.class, () -> {
-            ResponseEntity<TagDto>
+        ResponseEntity<TagDto>
                 response = REST_TEMPLATE.postForEntity(URL.BASE + port + URL.TAGS, request, TagDto.class);
+        assertThat(response.getStatusCode(), is(HttpStatus.BAD_REQUEST));
 
-            assertThat(response.getStatusCode(), is(HttpStatus.BAD_REQUEST));
-        });
     }
 
     @Test

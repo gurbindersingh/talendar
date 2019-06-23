@@ -55,7 +55,7 @@ public class AlgorithmTests {
 
     @Test
     public void big_Run(){
-        testDataGenerator.fillDatabase(300);
+        testDataGenerator.fillDatabase(80);
         try {
             algorithmService.algorithm();
         }catch(EmailException e){
