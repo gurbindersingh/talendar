@@ -18,4 +18,20 @@ export class HolidayClient extends RestClient {
             holiday
         );
     }
+
+    public getAllHolidays_trainerView(id: number): Observable<Holiday[]> {
+        return super.get((error: HttpErrorResponse) => {
+            console.log(
+                'HTTP GET All Holidays (For trainer) Failed: ' + error.message
+            );
+        }, '/' + id);
+    }
+
+    public getAllHolidays_adminView(): Observable<Holiday[]> {
+        return super.get((error: HttpErrorResponse) => {
+            console.log(
+                'HTTP GET All Holidays (For trainer) Failed: ' + error.message
+            );
+        });
+    }
 }

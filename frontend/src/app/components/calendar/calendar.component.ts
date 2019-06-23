@@ -23,6 +23,8 @@ import { promise } from 'protractor';
 import { ImageClient } from 'src/app/rest/image-client';
 import { Room } from 'src/app/models/enum/room';
 import { NotificationService } from 'src/app/services/notification.service';
+import { HolidayClient } from 'src/app/rest/holiday-client';
+import { Holiday } from 'src/app/models/holiday';
 
 /**
  * In order to display week days in German the locale data
@@ -127,6 +129,7 @@ export class CalendarComponent implements OnInit {
 
     constructor(
         private eventClient: EventClient,
+        private holidayClient: HolidayClient,
         private imageCLient: ImageClient,
         private trainerClient: TrainerClient,
         private eventImport: EventImportService,
@@ -172,11 +175,21 @@ export class CalendarComponent implements OnInit {
 
                         this.eventClient
                             .getAllEvents_adminView()
-                            .subscribe((data: Event[]) => {
+                            .subscribe((event: Event[]) => {
                                 this.allEvents = this.eventImport.mapEventsToCalendar(
-                                    data
+                                    event
                                 );
-                                this.filteredEvents = this.allEvents;
+                                const userID = this.sessionService.userId;
+                                this.holidayClient
+                                    .getAllHolidays_adminView()
+                                    .subscribe((holiday: Holiday[]) => {
+                                        this.allEvents = this.eventImport.mapAndAddHolidaysToEventsById(
+                                            this.allEvents,
+                                            holiday,
+                                            userID
+                                        );
+                                        this.filteredEvents = this.allEvents;
+                                    });
                             });
                     } else if (auth.roles.includes(Authorities.TRAINER)) {
                         this.userStatus = Authorities.AUTHENTICATED;
@@ -186,11 +199,19 @@ export class CalendarComponent implements OnInit {
 
                         this.eventClient
                             .getAllEvents_trainerView(userID)
-                            .subscribe((data: Event[]) => {
+                            .subscribe((event: Event[]) => {
                                 this.allEvents = this.eventImport.mapEventsToCalendar(
-                                    data
+                                    event
                                 );
-                                this.filteredEvents = this.allEvents;
+                                this.holidayClient
+                                    .getAllHolidays_trainerView(userID)
+                                    .subscribe((holiday: Holiday[]) => {
+                                        this.allEvents = this.eventImport.mapAndAddHolidaysToEvents(
+                                            this.allEvents,
+                                            holiday
+                                        );
+                                        this.filteredEvents = this.allEvents;
+                                    });
                             });
                     }
                 },
@@ -326,6 +347,7 @@ export class CalendarComponent implements OnInit {
      */
     public changeView(): void {
         console.log(this.isPersonalView);
+        const userID = this.sessionService.userId;
         this.authService.getUserDetails().subscribe(
             (status: UserDetails) => {
                 if (
@@ -333,23 +355,60 @@ export class CalendarComponent implements OnInit {
                     status.roles.includes(Authorities.TRAINER)
                 ) {
                     if (!this.isPersonalView) {
-                        this.eventClient
-                            .getAllEvents_adminView()
-                            .subscribe((data: Event[]) => {
-                                this.allEvents = this.eventImport.mapEventsToCalendar(
-                                    data
-                                );
-                                this.filteredEvents = this.allEvents;
-                            });
+                        if (status.roles.includes(Authorities.ADMIN)) {
+                            console.log('FUCK HERE IAM');
+                            this.eventClient
+                                .getAllEvents_adminView()
+                                .subscribe((event: Event[]) => {
+                                    this.allEvents = this.eventImport.mapEventsToCalendar(
+                                        event
+                                    );
+                                    this.holidayClient
+                                        .getAllHolidays_adminView()
+                                        .subscribe((holiday: Holiday[]) => {
+                                            this.allEvents = this.eventImport.mapAndAddHolidaysToEventsById(
+                                                this.allEvents,
+                                                holiday,
+                                                userID
+                                            );
+                                            this.filteredEvents = this.allEvents;
+                                        });
+                                });
+                        } else {
+                            console.log('FUCK HERE IAMtrainer');
+                            this.eventClient
+                                .getAllEvents_adminView()
+                                .subscribe((data: Event[]) => {
+                                    this.allEvents = this.eventImport.mapEventsToCalendar(
+                                        data
+                                    );
+                                    this.holidayClient
+                                        .getAllHolidays_trainerView(userID)
+                                        .subscribe((holiday: Holiday[]) => {
+                                            this.allEvents = this.eventImport.mapAndAddHolidaysToEvents(
+                                                this.allEvents,
+                                                holiday
+                                            );
+                                            this.filteredEvents = this.allEvents;
+                                        });
+                                });
+                        }
                     } else {
-                        const userID = this.sessionService.userId;
                         this.eventClient
                             .getAllEvents_trainerView(userID)
                             .subscribe((data: Event[]) => {
                                 this.allEvents = this.eventImport.mapEventsToCalendar(
                                     data
                                 );
-                                this.filteredEvents = this.allEvents;
+                                this.holidayClient
+                                    .getAllHolidays_trainerView(userID)
+                                    .subscribe((holiday: Holiday[]) => {
+                                        this.allEvents = this.eventImport.mapAndAddHolidaysToEvents(
+                                            this.allEvents,
+                                            holiday
+                                        );
+                                        this.filteredEvents = this.allEvents;
+                                    });
                             });
                     }
                 }

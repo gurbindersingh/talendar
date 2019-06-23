@@ -18,6 +18,11 @@ export const Holiday = {
     secondary: '#db5461',
 };
 
+export const HolidaySecondary = {
+    primary: '#FBD0D5',
+    secondary: '#FBD0D5',
+};
+
 export const Rent = {
     primary: '#A997DF',
     secondary: '#A997DF',
