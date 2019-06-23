@@ -25,6 +25,7 @@ import { Room } from 'src/app/models/enum/room';
 import { NotificationService } from 'src/app/services/notification.service';
 import { HolidayClient } from 'src/app/rest/holiday-client';
 import { Holiday } from 'src/app/models/holiday';
+import { EventType } from 'src/app/models/enum/eventType';
 
 /**
  * In order to display week days in German the locale data
@@ -443,6 +444,20 @@ export class CalendarComponent implements OnInit {
                 hasTypeFilter &&
                 this.bdTypeSelection !== undefined &&
                 this.bdTypeSelection.value !== undefined;
+
+            if (
+                !hasRoomFilter &&
+                !hasTrainerFilter &&
+                !hasTypeFilter &&
+                !hasCourseFilter &&
+                !hasBirthdayTypeSelection
+            ) {
+                return true;
+            }
+
+            if (event.eventType === EventType.Holiday) {
+                return false;
+            }
 
             // check if given filters satisfy given event properties
             // iff filter doesnt match (ret false) remove this elem from array
