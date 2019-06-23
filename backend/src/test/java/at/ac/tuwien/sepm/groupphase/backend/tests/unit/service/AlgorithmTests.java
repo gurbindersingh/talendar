@@ -5,6 +5,7 @@ import at.ac.tuwien.sepm.groupphase.backend.datagenerator.TestDataGenerator;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
 import at.ac.tuwien.sepm.groupphase.backend.service.impl.AlgorithmService;
 import at.ac.tuwien.sepm.groupphase.backend.service.impl.InfoMail;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -13,10 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import javax.validation.constraints.Email;
-
-import static io.restassured.RestAssured.when;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -55,7 +52,7 @@ public class AlgorithmTests {
 
     @Test
     public void big_Run(){
-        testDataGenerator.fillDatabase(80);
+        testDataGenerator.fillDatabase(100);
         try {
             algorithmService.algorithm();
         }catch(EmailException e){

@@ -158,6 +158,8 @@ public class Trainer extends User {
                ", birthdayTypes=" + birthdayTypes +
                ", holidays=" + holidays +
                ", picture=" + picture +
+               ", firstname=" + getFirstName() +
+               ", lastname=" + getLastName() +
                '}';
     }
 }

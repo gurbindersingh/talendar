@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.tests.unit.service;
 
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.User;
+import at.ac.tuwien.sepm.groupphase.backend.datagenerator.TestDataGenerator;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.testDataCreation.FakeData;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
@@ -41,6 +42,9 @@ public class TrainerServiceTest {
 
     @Autowired
     private static FakeData trainerFaker = new FakeData();
+
+    @Autowired
+    private TestDataGenerator testDataGenerator;
 
     /**
      * PREPARE Trainer Instances Used For Testing Of Service Layer (INCLUDING VALIDATION TEST)
@@ -253,4 +257,6 @@ public class TrainerServiceTest {
                      () -> validator.validateTrainer(INVALID_TRAINER_FUTURE_UPDATE_TIME)
         );
     }
+
+
 }

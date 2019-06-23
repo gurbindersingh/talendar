@@ -20,7 +20,7 @@ import { SessionStorageService } from 'src/app/services/session-storage.service'
     styleUrls: ['./holiday.component.scss'],
 })
 export class HolidayComponent implements OnInit {
-    title = 'Neuen Urlaub einrichten';
+    title = 'Neuen Urlaub eintragen';
     toggleOptions = false;
 
     repeatOptions = [
