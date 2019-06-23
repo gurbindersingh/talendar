@@ -7,6 +7,7 @@ import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.util.mapper.TrainerMapper;
+import org.aspectj.weaver.ast.Not;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ public class TrainerEndpoint {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")
-    public TrainerDto getOneTrainerById(@PathVariable("id") Long id) throws BackendException {
+    public TrainerDto getOneTrainerById(@PathVariable("id") Long id) throws ServiceException, NotFoundException {
         LOGGER.info("Incoming Request To Retrieve Trainer With ID {}", id);
 
         try {
@@ -50,17 +51,17 @@ public class TrainerEndpoint {
         }
         catch(ServiceException e) {
             LOGGER.error("GET Request unsuccessful: " + e.getMessage(), e);
-            throw new BackendException("Etwas ist leider am Server schiefgelaufen", e);
+            throw new ServiceException("Etwas ist leider am Server schiefgelaufen", e);
         }
         catch(NotFoundException e) {
             LOGGER.error("GET Request unsuccessful: " + e.getMessage(), e);
-            throw new BackendException("Der gesuchte Trainer existiert nicht", e);
+            throw new NotFoundException("Der gesuchte Trainer existiert nicht", e);
         }
     }
 
 
     @RequestMapping(method = RequestMethod.GET)
-    public List<TrainerDto> getAllTrainers() throws BackendException {
+    public List<TrainerDto> getAllTrainers() throws ServiceException {
         LOGGER.info("Incoming Request To Retrieve List Of All Trainers");
 
         try {
@@ -71,13 +72,13 @@ public class TrainerEndpoint {
         }
         catch(ServiceException e) {
             LOGGER.error("GET Request unsuccessful: " + e.getMessage(), e);
-            throw new BackendException("Etwas ist leider am Server schiefgelaufen", e);
+            throw new ServiceException("Etwas ist leider am Server schiefgelaufen", e);
         }
     }
 
 
     @RequestMapping(method = RequestMethod.PUT)
-    public TrainerDto updateTrainer(@RequestBody TrainerDto trainerDto) throws BackendException {
+    public TrainerDto updateTrainer(@RequestBody TrainerDto trainerDto) throws ServiceException, ValidationException, NotFoundException {
         LOGGER.info("Incoming Request To Update An Existing Trainer With Id {}",
                     trainerDto.getId()
         );
@@ -88,15 +89,15 @@ public class TrainerEndpoint {
         }
         catch(ServiceException e) {
             LOGGER.error("PATCH Request unsuccessful: " + e.getMessage(), e);
-            throw new BackendException("Etwas ist leider am Server schiefgelaufen", e);
+            throw new ServiceException("Etwas ist leider am Server schiefgelaufen", e);
         }
         catch(ValidationException e) {
             LOGGER.error("PATCH Request unsuccessful " + e.getMessage(), e);
-            throw new BackendException(e.getMessage(), e);
+            throw new ValidationException(e.getMessage(), e);
         }
         catch(NotFoundException e) {
             LOGGER.error("PATCH Request unsuccessful: " + e.getMessage(), e);
-            throw new BackendException(
+            throw new NotFoundException(
                 "Es konnte nicht geupdated werden. Der Trainer existiert nicht", e);
         }
     }
@@ -104,25 +105,25 @@ public class TrainerEndpoint {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public TrainerDto createNewTrainer(@RequestBody TrainerDto trainerDto) throws BackendException {
+    public TrainerDto createNewTrainer(@RequestBody TrainerDto trainerDto) throws ValidationException, ServiceException {
         LOGGER.info("Incoming POST Trainer Request");
 
         try {
             return mapper.entityToTrainerDto(trainerService.save(mapper.dtoToTrainerEntity(trainerDto)));
         } catch(ValidationException e) {
             LOGGER.error("POST Request unsuccessful: " + e.getMessage(), e);
-            throw new BackendException(e.getMessage(), e);
+            throw new ValidationException(e.getMessage(), e);
         }
         catch(ServiceException e) {
             LOGGER.error("POST Request unsuccessful: " + e.getMessage(), e);
-            throw new BackendException("Etwas ist leider am Server schiefgelaufen", e);
+            throw new ServiceException("Etwas ist leider am Server schiefgelaufen", e);
         }
     }
 
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
-    public void deleteTrainer(@PathVariable("id") Long id) throws BackendException {
+    public void deleteTrainer(@PathVariable("id") Long id) throws NotFoundException, ServiceException {
         LOGGER.info("Incoming DELETE Trainer Request");
 
         try {
@@ -130,12 +131,12 @@ public class TrainerEndpoint {
         }
         catch(NotFoundException e) {
             LOGGER.error("DELETE Request unsuccessful: " + e.getMessage(), e);
-            throw new BackendException(
+            throw new NotFoundException(
                 "Es konnte nicht gelöscht werden. Der Trainer existiert nicht", e);
         }
         catch(ServiceException e) {
             LOGGER.error("DELETE Request unsuccessful: " + e.getMessage());
-            throw new BackendException("Etwas ist leider am Server schiefgelaufen", e);
+            throw new ServiceException("Etwas ist leider am Server schiefgelaufen", e);
         }
     }
 }

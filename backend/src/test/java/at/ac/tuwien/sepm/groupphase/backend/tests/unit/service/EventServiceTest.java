@@ -13,6 +13,7 @@ import at.ac.tuwien.sepm.groupphase.backend.persistence.RoomUseRepository;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.IEventService;
 import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;
+import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
 import at.ac.tuwien.sepm.groupphase.backend.testDataCreation.FakeData;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
@@ -48,6 +49,7 @@ public class EventServiceTest {
 
     @Autowired
     private Validator validator;
+
     @Autowired
     private static FakeData faker = new FakeData();
 
@@ -96,7 +98,8 @@ public class EventServiceTest {
 
 
     @Test
-    public void updateCustomerInEvent() throws NotFoundException, ServiceException, ValidationException {
+    public void updateCustomerInEvent() throws NotFoundException, ServiceException, ValidationException,
+                                               EmailException {
 
         Event event = eventService.save(VALID_INCOMING_COURSE);
 
@@ -138,7 +141,7 @@ public class EventServiceTest {
 
 
     @Test
-    public void updateCustomerAndThenSignOff_inEvent() throws NotFoundException, ServiceException, ValidationException {
+    public void updateCustomerAndThenSignOff_inEvent() throws NotFoundException, ServiceException, ValidationException, EmailException {
 
         Event event = eventService.save(VALID_INCOMING_COURSE);
 
@@ -163,7 +166,7 @@ public class EventServiceTest {
 
 
     @Test
-    public void updateTwoCustomersAndThenSignOffTwo_InEvent() throws NotFoundException, ServiceException, ValidationException {
+    public void updateTwoCustomersAndThenSignOffTwo_InEvent() throws NotFoundException, ServiceException, ValidationException, EmailException {
 
         Event event = eventService.save(VALID_INCOMING_COURSE);
 
@@ -235,7 +238,7 @@ public class EventServiceTest {
     }
 
     @Test
-    public void updateEvent_changedName() throws NotFoundException, ServiceException, ValidationException {
+    public void updateEvent_changedName() throws NotFoundException, ServiceException, ValidationException, EmailException {
         String newName = "newNameGuaranteed";
 
         Event savedEvent = eventService.save(VALID_INCOMING_COURSE);
@@ -247,7 +250,7 @@ public class EventServiceTest {
     }
 
     @Test
-    public void updateEvent_changedPrice() throws NotFoundException, ServiceException, ValidationException {
+    public void updateEvent_changedPrice() throws NotFoundException, ServiceException, ValidationException, EmailException {
         Double newPrice = 6.2;
 
         Event savedEvent = eventService.save(VALID_INCOMING_COURSE);
@@ -259,7 +262,7 @@ public class EventServiceTest {
     }
 
     @Test
-    public void updateEvent_changedMaxParticipant() throws NotFoundException, ServiceException, ValidationException {
+    public void updateEvent_changedMaxParticipant() throws NotFoundException, ServiceException, ValidationException, EmailException {
         Integer newMaxParticipant = 5;
 
         Event savedEvent = eventService.save(VALID_INCOMING_COURSE);
@@ -272,7 +275,7 @@ public class EventServiceTest {
     }
 
     @Test
-    public void updateEvent_changedMinAgeAndMaxAge() throws NotFoundException, ServiceException, ValidationException {
+    public void updateEvent_changedMinAgeAndMaxAge() throws NotFoundException, ServiceException, ValidationException, EmailException {
         Integer newMinAge = VALID_INCOMING_COURSE.getMinAge()+1;
         Integer newMaxAge = VALID_INCOMING_COURSE.getMaxAge()+1;
 

@@ -25,6 +25,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.LinkedList;
 import java.util.List;
 
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -225,5 +226,30 @@ public class TrainerEndpointTest {
             );
         List<TrainerDto> results = responseListOfAllTrainers.getBody();
         assertThat(results.size(), equalTo(1));
+    }
+
+    @Test
+    public void save_then_delete_trainer() {
+        TrainerDto trainer = fakeData.fakeTrainerDto();
+        trainer.setId(null);
+        trainer.setUpdated(null);
+        trainer.setCreated(null);
+        HttpEntity<TrainerDto> request = new HttpEntity<>(trainer);
+        ResponseEntity<TrainerDto> response =
+            REST_TEMPLATE.exchange(URL.BASE + port + URL.TRAINER, HttpMethod.POST, request,
+                                   TrainerDto.class
+            );
+        TrainerDto trainerResponse = response.getBody();
+        assertThat(response.getStatusCode(), equalTo(HttpStatus.CREATED));
+        assertNotNull(trainerResponse);
+        assertNotNull(trainerResponse.getId());
+        given().when()
+               .delete(URL.BASE + port + URL.TRAINER + "/" + trainerResponse.getId())
+               .then()
+               .statusCode(200);
+        given().when()
+               .get(URL.BASE + port + URL.TRAINER + "/" + trainerResponse.getId())
+               .then()
+               .statusCode(404);
     }
 }

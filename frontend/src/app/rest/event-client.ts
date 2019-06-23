@@ -4,10 +4,15 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Event } from '../models/event';
 import { Observable } from 'rxjs';
 import { EventType } from '../models/enum/eventType';
+import { Authorities } from '../models/enum/authorities';
+import { SessionStorageService } from '../services/session-storage.service';
 
 @Injectable()
 export class EventClient extends RestClient {
-    constructor(httpClient: HttpClient) {
+    constructor(
+        httpClient: HttpClient,
+        private sessionService: SessionStorageService
+    ) {
         super('events', httpClient);
     }
 
@@ -74,10 +79,30 @@ export class EventClient extends RestClient {
         }, '/all/client');
     }
 
-    public getAllFutureCourses(): Observable<Event[]> {
-        return super.get((error: HttpErrorResponse) => {
-            console.log('HTTP GET All Future Courses Failed ' + error.message);
-        }, '');
+    public getAllFutureEvents(role: Authorities): Observable<Event[]> {
+        if (role.includes(Authorities.ADMIN)) {
+            return super.get((error: HttpErrorResponse) => {
+                console.log(
+                    'HTTP GET All Future Courses For Admin Failed ' +
+                        error.message
+                );
+            }, '/all/future/admin');
+        } else if (role.includes(Authorities.TRAINER)) {
+            const id = this.sessionService.userId;
+
+            return super.get((error: HttpErrorResponse) => {
+                console.log(
+                    'HTTP GET All Future Courses For Trainer Failed ' +
+                        error.message
+                );
+            }, '/all/future/trainer/' + id);
+        } else {
+            return super.get((error: HttpErrorResponse) => {
+                console.log(
+                    'HTTP GET All Future Courses Failed ' + error.message
+                );
+            }, '/all/future/client');
+        }
     }
 
     public getEventById(id: number): Observable<Event> {

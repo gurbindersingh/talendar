@@ -35,10 +35,10 @@ public class TagService implements ITagService {
         LOGGER.info("Tag wird gespeichert");
         try {
             validator.validateTag(tag);
-            return tagRepository.save(tag);
         }catch(InvalidEntityException e){
             throw new ValidationException(e.getMessage(), e);
         }
+        return tagRepository.save(tag);
     }
 
     @Override

@@ -39,7 +39,7 @@ export class NavigationComponent implements OnInit {
             restriction: Authorities.AUTHENTICATED,
         },
         {
-            name: 'Raum Mieten',
+            name: 'Raum mieten',
             path: 'rent',
             restriction: Authorities.NONE,
         },
@@ -56,7 +56,7 @@ export class NavigationComponent implements OnInit {
         {
             name: 'Alle Kurse anzeigen',
             path: 'course/view',
-            restriction: Authorities.ADMIN,
+            restriction: Authorities.TRAINER,
         },
     ];
 

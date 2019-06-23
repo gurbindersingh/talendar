@@ -2,6 +2,7 @@ package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.TrainerNotAvailableException;
+import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
@@ -9,7 +10,7 @@ import java.util.List;
 
 
 public interface IEventService {
-    Event save (Event event) throws ValidationException, ServiceException;
+    Event save (Event event) throws ValidationException, ServiceException, EmailException, NotFoundException;
 
     List<Event> getAllEvents(Long trainerId) throws ValidationException, ServiceException;
 
@@ -33,6 +34,8 @@ public interface IEventService {
      */
     List<Event> getTrainerView(List<Event> events, Long id);
 
+    List<Event> filterTrainerEvents(List<Event> events, Long id);
+
     /**
      *
      * @param event with the new customer to add. when customer id is null then a sign in is happening, otherwise a sign off
@@ -51,6 +54,8 @@ public interface IEventService {
     Event getEventById(Long id) throws ServiceException, NotFoundException;;
 
     List<Event> getAllFutureCourses();
+
+    List<Event> getAllFutureEvents() throws ServiceException;
 
     Event update(Event event) throws ValidationException, NotFoundException, ServiceException;
 }

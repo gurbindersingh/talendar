@@ -37,6 +37,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 public class EventService implements IEventService {
@@ -68,7 +69,7 @@ public class EventService implements IEventService {
 
 
     @Override
-    public Event save(Event event) throws ValidationException, ServiceException {
+    public Event save(Event event) throws ValidationException, ServiceException, EmailException, NotFoundException {
         LOGGER.info("Prepare to save new Event");
         LocalDateTime now = LocalDateTime.now();
         event.setCreated(now);
@@ -131,10 +132,10 @@ public class EventService implements IEventService {
                     throw new ValidationException(e.getMessage(), e);
                 }
                 catch(TrainerNotAvailableException e) {
-                    throw new ServiceException(e.getMessage(), e);
+                    throw new NotFoundException(e.getMessage(), e);
                 }
                 catch(EmailException e) {
-                    throw new ValidationException("" + e.getMessage(), e);
+                    throw new EmailException("" + e.getMessage());
                 }
             case Course:
                 try {
@@ -215,7 +216,9 @@ public class EventService implements IEventService {
                     catch(EmailException e) {
 
                     }
-                    return eventRepository.save(event);
+                    event = eventRepository.save(event);
+                    eventRepository.flush();
+                    return event;
                 }
                 catch(InvalidEntityException e) {
                     throw new ValidationException(e.getMessage(), e);
@@ -268,7 +271,6 @@ public class EventService implements IEventService {
                     }
                     event = eventRepository.save(event);
                     eventRepository.flush();
-                    System.out.println(event.getId());
                     for(Customer c : event.getCustomers()
                     ) {
                         sendCancelationMail(c.getEmail(), event, c);
@@ -760,6 +762,22 @@ public class EventService implements IEventService {
     }
 
 
+    @Override
+    public List<Event> filterTrainerEvents(List<Event> events, Long id
+    ) {
+        return events.stream().filter((Event event) -> {
+            if (event.getEventType() == EventType.Rent) {
+                return false;
+            }
+            if (!event.getTrainer().getId().equals(id)) {
+                return false;
+            }
+
+            return true;
+        }).collect(Collectors.toList());
+    }
+
+
     @Transactional
     @Override
     public Event update(Event event) throws ValidationException, NotFoundException,
@@ -844,6 +862,21 @@ public class EventService implements IEventService {
     @Override
     public List<Event> getAllFutureCourses() {
         return eventRepository.findByEventTypeEqualsAndDeletedFalse(EventType.Course);
+    }
+
+
+    @Override
+    public List<Event> getAllFutureEvents() throws ServiceException {
+        LOGGER.info("Try to retrieve list of all futre events");
+        List<Event> events;
+
+        try {
+            events = eventRepository.findByDeletedFalseAndRoomUses_BeginGreaterThanEqual(LocalDateTime.now());
+        } catch(DataAccessException e) {
+            throw new ServiceException("Error while performing a get all data access operation", e);
+        }
+
+        return events;
     }
 
 

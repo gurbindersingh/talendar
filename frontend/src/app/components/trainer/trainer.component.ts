@@ -272,9 +272,13 @@ export class TrainerComponent implements OnInit {
 
         setTimeout(() => {
             const img = document.getElementById('profilePicture');
+            const boundarySize = 466;
             this.croppie = new Croppie(img as HTMLImageElement, {
-                viewport: { width: 200, height: 200 },
-                boundary: { width: 250, height: 250 },
+                boundary: { width: boundarySize, height: boundarySize },
+                viewport: {
+                    width: boundarySize - 50,
+                    height: boundarySize - 50,
+                },
                 showZoomer: true,
             });
         }, 100);

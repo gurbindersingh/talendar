@@ -38,7 +38,7 @@ const routes: Routes = [
     {
         path: 'course/view',
         component: CourseViewComponent,
-        canActivate: [AdminGuard],
+        canActivate: [TrainerGuard],
     },
     { path: 'event/cancel', component: CancelEventComponent },
     {
@@ -69,21 +69,22 @@ const routes: Routes = [
     },
     { path: 'login', component: LoginComponent },
     {
-        path: 'tag', component: TagComponent
+        path: 'tag',
+        component: TagComponent,
     },
     {
-        path: 'cancelsubscription', component: CancelNewsletterComponent
+        path: 'cancelsubscription',
+        component: CancelNewsletterComponent,
     },
     {
         // This catch-all route should always be the LAST!
         path: '**',
         redirectTo: 'calendar',
     },
-
 ];
 
 @NgModule({
     imports: [RouterModule.forRoot(routes)],
     exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
