@@ -102,6 +102,9 @@
                     (click)="
                         open(trainer, i + (currentPage - 1) * itemsPerPage)
                     "
+                    [disabled]="
+                        !isDeletionAllowed(i + (currentPage - 1) * itemsPerPage)
+                    "
                 >
                     <i class="fas fa-trash button-icon"></i>
                 </button>
