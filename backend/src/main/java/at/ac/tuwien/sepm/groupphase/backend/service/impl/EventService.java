@@ -215,7 +215,9 @@ public class EventService implements IEventService {
                     catch(EmailException e) {
 
                     }
-                    return eventRepository.save(event);
+                    event = eventRepository.save(event);
+                    eventRepository.flush();
+                    return event;
                 }
                 catch(InvalidEntityException e) {
                     throw new ValidationException(e.getMessage(), e);
@@ -268,7 +270,6 @@ public class EventService implements IEventService {
                     }
                     event = eventRepository.save(event);
                     eventRepository.flush();
-                    System.out.println(event.getId());
                     for(Customer c : event.getCustomers()
                     ) {
                         sendCancelationMail(c.getEmail(), event, c);

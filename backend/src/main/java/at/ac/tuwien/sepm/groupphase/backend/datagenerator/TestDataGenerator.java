@@ -1,10 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.datagenerator;
 
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Tag;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.persistence.EventRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.*;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
@@ -32,6 +30,9 @@ public class TestDataGenerator implements ApplicationRunner {
     private IHolidayService holidayService;
     private ITrainerService trainerService;
     private ICustomerService customerService;
+
+    @Autowired
+    private EventRepository eventRepository;
     private ITagService tagService;
     // ENVIRONMENT SETUP DEFAULT
     private int NO_TRAINERS = 10;
@@ -175,7 +176,7 @@ public class TestDataGenerator implements ApplicationRunner {
                 Event event = faker.fakeNewCourseEntity(trainers, 2);
                 System.out.println(event.toString2());
                 eventService.save(event);
-            }catch(ValidationException | ServiceException |EmailException e){
+            }catch(ValidationException | ServiceException |EmailException | NotFoundException e){
                 //
             }
         }
@@ -220,6 +221,40 @@ public class TestDataGenerator implements ApplicationRunner {
                 if(found = false){
                     n++;
                 }
+        }
+    }
+
+    public void addOldCustomer(String email){
+        for(int i = 0; i< 10; i++){
+            try {
+                Trainer trainer = faker.fakeNewTrainerEntity();
+                trainerService.save(trainer);
+            }catch(ServiceException | ValidationException e){
+                //failure is fine
+            }
+        }
+        List<Trainer> trainers = new LinkedList<>();
+        try {
+            trainers = trainerService.getAll();
+        }catch(ServiceException e){
+            //
+        }
+        Customer customer = faker.fakeNewCustomerEntity();
+        customer.setEmail(email);
+        customer.setId(null);
+        Event event = faker.fakeNewBirthdayEntity(trainers, 1);
+        event.setCustomers(new LinkedHashSet<>());
+        event.getCustomers().add(customer);
+        for(RoomUse ru: event.getRoomUses()
+        ) {
+            ru.setBegin(LocalDateTime.now().minusYears(1));
+            ru.setEnd(LocalDateTime.now().minusYears(1).plusHours(1));
+        }
+
+        try {
+           eventService.save(event);
+        }catch(ValidationException | ServiceException |EmailException | NotFoundException e){
+            //
         }
     }
 }
