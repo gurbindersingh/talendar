@@ -24,17 +24,26 @@ export class CourseViewComponent implements OnInit {
     currentPage = 1;
     itemsPerPage = 10;
     title = 'Kursansicht';
-    searchPlaceholder = 'Nach einem Kurs suchen...';
+    searchPlaceholder = 'Nach einem Event suchen...';
     filter = '';
 
     eventTypeSelection: { name: string; value: string } = undefined;
     isPersonalView: boolean;
 
-    eventTypes: any[] = [
+    eventTypes: any[];
+
+    eventTypesAdmin: any[] = [
         { name: 'Kurs', value: 'Course' },
         { name: 'Beratung', value: 'Consultation' },
         { name: 'Geburtstag', value: 'Birthday' },
         { name: 'Miete', value: 'Rent' },
+        { name: 'Kein Filter', value: undefined },
+    ];
+
+    eventTypesTrainer: any[] = [
+        { name: 'Kurs', value: 'Course' },
+        { name: 'Beratung', value: 'Consultation' },
+        { name: 'Geburtstag', value: 'Birthday' },
         { name: 'Kein Filter', value: undefined },
     ];
 
@@ -79,6 +88,23 @@ export class CourseViewComponent implements OnInit {
             );
         } else {
             this.filteredEventList = this.eventList;
+        }
+
+        if (this.eventTypeSelection.value !== undefined) {
+            if (this.eventTypeSelection.value === 'Course') {
+                this.searchPlaceholder = 'Nach einem Kurs suchen...';
+            }
+            if (this.eventTypeSelection.value === 'Consultation') {
+                this.searchPlaceholder = 'Nach einer Beratung suchen...';
+            }
+            if (this.eventTypeSelection.value === 'Birthday') {
+                this.searchPlaceholder = 'Nach einem Geburtstag suchen...';
+            }
+            if (this.eventTypeSelection.value === 'Rent') {
+                this.searchPlaceholder = 'Nach Mieten suchen...';
+            }
+        } else {
+            this.searchPlaceholder = 'Nach einem Event suchen...';
         }
 
         this.filteredEventList = this.filteredEventList.filter(
@@ -129,8 +155,10 @@ export class CourseViewComponent implements OnInit {
                 if (userDetails.roles.includes(Authorities.ADMIN)) {
                     this.role = Authorities.ADMIN;
                     this.isPersonalView = false;
+                    this.eventTypes = this.eventTypesAdmin;
                 } else if (userDetails.roles.includes(Authorities.TRAINER)) {
                     this.role = Authorities.TRAINER;
+                    this.eventTypes = this.eventTypesTrainer;
                 }
 
                 // load view with only personel events, admins can change to diff view later
