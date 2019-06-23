@@ -8,6 +8,7 @@
             class="container-fluid"
             novalidate
             (ngSubmit)="postHoliday(holiday)"
+            (change)="clearInfoMsg()"
             #holidayForm
         >
             <div class="row">

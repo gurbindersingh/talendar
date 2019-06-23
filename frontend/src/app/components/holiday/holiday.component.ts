@@ -95,12 +95,15 @@ export class HolidayComponent implements OnInit {
             this.holidayClient.postNewHoliday(this.holiday).subscribe(
                 (data: Holiday) => {
                     console.log(data);
+                    this.resetFormular();
                     this.successMsg =
                         'Der Urlaub wurde erfolgreich gespeichert';
+                    this.errorMsg = '';
                 },
                 (error: Error) => {
                     console.log(error);
                     this.errorMsg = error.message;
+                    this.successMsg = '';
                 }
             );
         } else {
@@ -110,12 +113,26 @@ export class HolidayComponent implements OnInit {
                     console.log(data);
                     this.successMsg =
                         'Die Urlaube wurde erfolgreich gespeichert';
+                    this.errorMsg = '';
+                    this.resetFormular();
                 },
                 (error: Error) => {
                     console.log(error);
                     this.errorMsg = error.message;
+                    this.successMsg = '';
                 }
             );
+        }
+    }
+
+
+    private resetFormular(): void {
+        this.holidayName = undefined;
+        this.holidayDescription = undefined;
+        this.startDate = undefined;
+        this.endDate = undefined;
+        if (this.toggleOptions) {
+            this.togg();
         }
     }
 
