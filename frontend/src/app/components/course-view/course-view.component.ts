@@ -58,6 +58,7 @@ export class CourseViewComponent implements OnInit {
 
     public deleteCourse(id: number): void {
         console.log('Deleting Course with id ' + id);
+
         this.filteredEventList = this.filteredEventList.filter(
             (event) => event.id !== id
         );
