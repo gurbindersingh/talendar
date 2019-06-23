@@ -2,6 +2,9 @@ import { Component, OnInit, EventEmitter } from '@angular/core';
 import { EventClient } from '../../rest/event-client';
 import { Event } from '../../models/event';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Authorities } from 'src/app/models/enum/authorities';
+import { AuthenticationService } from 'src/app/services/authentication.service';
+import { UserDetails } from 'src/app/models/user-details';
 
 @Component({
     selector: 'app-course-view',
@@ -11,7 +14,8 @@ import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 export class CourseViewComponent implements OnInit {
     constructor(
         private eventClient: EventClient,
-        private modalService: NgbModal
+        private modalService: NgbModal,
+        private authenticationService: AuthenticationService
     ) {}
 
     eventList: Event[] = [];
@@ -20,7 +24,23 @@ export class CourseViewComponent implements OnInit {
     currentPage = 1;
     itemsPerPage = 10;
     title = 'Kursansicht';
+    searchPlaceholder = 'Nach einem Kurs suchen...';
+    filter = '';
+
+    eventTypeSelection: { name: string; value: string } = undefined;
+    isPersonalView: boolean;
+
+    eventTypes: any[] = [
+        { name: 'Kurs', value: 'Course' },
+        { name: 'Beratung', value: 'Consultation' },
+        { name: 'Geburtstag', value: 'Birthday' },
+        { name: 'Miete', value: 'Rent' },
+        { name: 'Kein Filter', value: undefined },
+    ];
+
     private selectedEvent: Event;
+
+    private role: Authorities;
 
     openModal(event: Event, name: string) {
         this.selectedEvent = event;
@@ -45,9 +65,9 @@ export class CourseViewComponent implements OnInit {
         );
     }
 
-    filterList(pValue: string) {
+    filterList() {
         // Think about splitting up the string at white spaces
-        const searchString = pValue
+        const searchString = this.filter
             .replace(/^\s+/, '') // Remove whitespaces at the start of the string
             .replace(/\s+$/, '') // Remove whitespaces at the end
             .replace(/\s{2,}/g, ' ') // Remove subsequent whitespaces
@@ -60,12 +80,34 @@ export class CourseViewComponent implements OnInit {
         } else {
             this.filteredEventList = this.eventList;
         }
+
+        this.filteredEventList = this.filteredEventList.filter(
+            (event: Event) => {
+                if (this.eventTypeSelection.value === undefined) {
+                    return true;
+                }
+                return (
+                    this.eventTypeSelection.value === event.eventType.toString()
+                );
+            }
+        );
+
         this.updateListPage();
     }
 
-    ngOnInit() {
-        console.log('Init Event List');
-        this.eventClient.getAllFutureCourses().subscribe(
+    /**
+     * This method is invoked when switching the toggle.
+     * Can only be performed by admin.
+     */
+    changeView(): void {
+        let roleSpecificView: Authorities;
+        if (this.isPersonalView) {
+            roleSpecificView = Authorities.TRAINER;
+        } else {
+            roleSpecificView = Authorities.ADMIN;
+        }
+
+        this.eventClient.getAllFutureEvents(roleSpecificView).subscribe(
             (courses: Event[]) => {
                 this.eventList = courses;
                 this.filteredEventList = this.eventList;
@@ -75,5 +117,35 @@ export class CourseViewComponent implements OnInit {
                 console.log(error);
             }
         );
+    }
+
+    ngOnInit() {
+        console.log('Init Event List');
+
+        // pre init role of this user
+        this.authenticationService
+            .getUserDetails()
+            .subscribe((userDetails: UserDetails) => {
+                if (userDetails.roles.includes(Authorities.ADMIN)) {
+                    this.role = Authorities.ADMIN;
+                    this.isPersonalView = false;
+                } else if (userDetails.roles.includes(Authorities.TRAINER)) {
+                    this.role = Authorities.TRAINER;
+                }
+
+                // load view with only personel events, admins can change to diff view later
+                this.eventClient
+                    .getAllFutureEvents(Authorities.TRAINER)
+                    .subscribe(
+                        (courses: Event[]) => {
+                            this.eventList = courses;
+                            this.filteredEventList = this.eventList;
+                            this.updateListPage();
+                        },
+                        (error) => {
+                            console.log(error);
+                        }
+                    );
+            });
     }
 }

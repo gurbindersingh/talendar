@@ -202,6 +202,8 @@ public class SecurityConfiguration {
                 // restricted view taht display any event only for admins
                 .antMatchers(HttpMethod.GET, "/api/v1/talendar/events/all/admin").hasAnyRole("ADMIN", "TRAINER")
                 .antMatchers(HttpMethod.GET, "/api/v1/talendar/events/all/trainer/**").hasRole("TRAINER")
+                .antMatchers(HttpMethod.GET, "/api/v1/talendar/events/all/future/admin").hasRole("ADMIN")
+                .antMatchers(HttpMethod.GET, "/api/v1/talendar/events/all/trainer/**").hasAnyRole("ADMIN", "TRAINER")
                 // allowed by default anyway, but to make it more obvious, the view of events
                 // that can be seen by clients is explicitely permitted
                 .antMatchers(HttpMethod.GET, "/api/v1/talendar/events/all/client").permitAll()

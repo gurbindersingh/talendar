@@ -232,6 +232,42 @@ public class EventEndpoint {
         return eventMapper.entityListToEventDtoList(eventService.getAllFutureCourses());
     }
 
+    @GetMapping(value = "/all/future/admin")
+    public List<EventDto> getAllFutureEventsForAdmin() throws ServiceException {
+        LOGGER.info("Incoming GET Request for all future Courses Of Admin (All View)");
+
+        try {
+            return eventService.getAllFutureEvents().stream().map(eventMapper::entityToEventDto).collect(
+                Collectors.toList());
+        } catch(ServiceException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new ServiceException("Es konnten keine zukünftigen Events geladen werden.", e);
+        }
+    }
+
+    @GetMapping(value = "/all/future/trainer/{id}")
+    public List<EventDto> getAllFutureEventsForTrainer(@PathVariable("id") Long id) throws ServiceException{
+        LOGGER.info("Incoming GET Request for all future Courses For Trainer");
+
+        try {
+            List<Event> events = eventService.getAllFutureEvents();
+            events = eventService.filterTrainerEvents(events, id);
+            return events.stream().map(eventMapper::entityToEventDto).collect(Collectors.toList());
+        } catch(ServiceException e) {
+            LOGGER.error(e.getMessage(), e);
+            throw new ServiceException("Es konnten keine zukünftigen Events geladen werden.", e);
+        }
+    }
+
+
+    // Todo probably not needed
+    @GetMapping(value = "/all/future/client")
+    public List<EventDto> getAllFutureEventsForClient() {
+        LOGGER.info("Incoming GET Request for all future Courses For Client");
+        return null;
+    }
+
+
 
     /**
      *  A simple wrapper for the post of a event.

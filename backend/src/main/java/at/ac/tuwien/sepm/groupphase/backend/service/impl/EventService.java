@@ -37,6 +37,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 public class EventService implements IEventService {
@@ -760,6 +761,22 @@ public class EventService implements IEventService {
     }
 
 
+    @Override
+    public List<Event> filterTrainerEvents(List<Event> events, Long id
+    ) {
+        return events.stream().filter((Event event) -> {
+            if (event.getEventType() == EventType.Rent) {
+                return false;
+            }
+            if (!event.getTrainer().getId().equals(id)) {
+                return false;
+            }
+
+            return true;
+        }).collect(Collectors.toList());
+    }
+
+
     @Transactional
     @Override
     public Event update(Event event) throws ValidationException, NotFoundException,
@@ -844,6 +861,21 @@ public class EventService implements IEventService {
     @Override
     public List<Event> getAllFutureCourses() {
         return eventRepository.findByEventTypeEqualsAndDeletedFalse(EventType.Course);
+    }
+
+
+    @Override
+    public List<Event> getAllFutureEvents() throws ServiceException {
+        LOGGER.info("Try to retrieve list of all futre events");
+        List<Event> events;
+
+        try {
+            events = eventRepository.findByDeletedFalseAndRoomUses_BeginGreaterThanEqual(LocalDateTime.now());
+        } catch(DataAccessException e) {
+            throw new ServiceException("Error while performing a get all data access operation", e);
+        }
+
+        return events;
     }
 
 

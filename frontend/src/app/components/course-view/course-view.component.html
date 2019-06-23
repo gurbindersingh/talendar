@@ -18,21 +18,68 @@
 </div>
 
 <!-- Search Bar -->
-<div class="input-group justify-content-center mb-3">
-    <div class="col-md-3"></div>
-    <div class="input-group-prepend">
-        <span class="input-group-text" id="basic-addon1"
-            ><i class="fas fa-search"></i
-        ></span>
+<div class="row justify-content-center align-items-center">
+    <div *ngIf="role == 'ADMIN'" class="custom-control custom-switch pb-3 mr-3">
+        <input
+            name="toggler"
+            type="checkbox"
+            class="custom-control-input"
+            id="eventView"
+            [(ngModel)]="isPersonalView"
+            (input)="changeView()"
+        />
+        <label class="custom-control-label" for="eventView"
+            >Nur eigene Events anzeigen</label
+        >
     </div>
-    <input
-        type="text"
-        class="form-control"
-        placeholder="Nach einen Kurs suchen ..."
-        #filter
-        (keyup)="filterList(filter.value)"
-    />
-    <div class="col-md-3"></div>
+    <div class="input-group w-auto mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1"
+                ><i class="fas fa-search"></i
+            ></span>
+        </div>
+        <input
+            type="text"
+            class="form-control"
+            placeholder="{{ searchPlaceholder }}"
+            [(ngModel)]="filter"
+            (keyup)="filterList()"
+        />
+    </div>
+    <div ngbDropdown class="pb-3 mx-2">
+        <button
+            class="col-auto btn"
+            [class.btn-outline-primary]="
+                eventTypeSelection === undefined ||
+                eventTypeSelection.value === undefined
+            "
+            [class.btn-primary]="
+                eventTypeSelection !== undefined &&
+                eventTypeSelection.value !== undefined
+            "
+            id="eventtypeFilterBtn"
+            name="eventtypeFilter"
+            ngbDropdownToggle
+        >
+            {{
+                eventTypeSelection === undefined ||
+                eventTypeSelection.value === undefined
+                    ? 'Eventtyp auswählen'
+                    : eventTypeSelection.name
+            }}
+        </button>
+        <div ngbDropdownMenu>
+            <button
+                class="dropdown-item"
+                id="selectedEventtypeBtn"
+                name="selectedEventtypeFilter"
+                *ngFor="let type of eventTypes"
+                (click)="eventTypeSelection = type; filterList()"
+            >
+                {{ type.name }}
+            </button>
+        </div>
+    </div>
 </div>
 
 <div *ngFor="let event of eventListPage">

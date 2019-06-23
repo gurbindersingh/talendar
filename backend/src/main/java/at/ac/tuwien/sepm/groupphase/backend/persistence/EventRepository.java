@@ -31,4 +31,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     void deleteThisEvent(@Param("id")Long id);
 
     List<Event> findByRoomUses_BeginGreaterThanEqualAndDeletedFalse(LocalDateTime time);
+
+    List<Event> findByDeletedFalseAndRoomUses_BeginGreaterThanEqual(LocalDateTime time);
 }

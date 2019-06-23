@@ -33,6 +33,8 @@ public interface IEventService {
      */
     List<Event> getTrainerView(List<Event> events, Long id);
 
+    List<Event> filterTrainerEvents(List<Event> events, Long id);
+
     /**
      *
      * @param event with the new customer to add. when customer id is null then a sign in is happening, otherwise a sign off
@@ -51,6 +53,8 @@ public interface IEventService {
     Event getEventById(Long id) throws ServiceException, NotFoundException;;
 
     List<Event> getAllFutureCourses();
+
+    List<Event> getAllFutureEvents() throws ServiceException;
 
     Event update(Event event) throws ValidationException, NotFoundException, ServiceException;
 }
