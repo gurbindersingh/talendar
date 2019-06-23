@@ -112,7 +112,7 @@ export class CourseComponent implements OnInit {
 
         if (id === undefined) {
             this.title = 'Kurs eintragen';
-            this.btnText = 'Erstellen';
+            this.btnText = 'Kurs eintragen';
             this.saveMode = true;
             this.isCreate = true;
             this.tagClient.getAll().subscribe(
