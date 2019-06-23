@@ -31,83 +31,91 @@
     <div class="col-md-3"></div>
 </div>
 
-<div
-    class="card shadow-sm mb-3 flex-row "
-    id="card"
-    *ngFor="let trainer of trainerListPage; index as i"
->
+<div class="d-flex flex-wrap">
     <div
-        class="bg-secondary p-auto d-flex align-items-center justify-content-center"
-        id="cardLeft"
+        class="card shadow-sm m-2 flex-row flex-grow-1"
+        id="card"
+        *ngFor="let trainer of trainerListPage; index as i"
     >
         <div
-            *ngIf="
-                binaryEncodedImages[i + (currentPage - 1) * itemsPerPage] !=
-                null
-            "
-            id="profilePicContainer"
+            class="bg-secondary p-auto d-flex align-items-center justify-content-center"
+            id="cardLeft"
         >
-            <img
-                [src]="
-                    binaryEncodedImages[i + (currentPage - 1) * itemsPerPage]
-                        | safeServerImage
+            <div
+                *ngIf="
+                    binaryEncodedImages[i + (currentPage - 1) * itemsPerPage] !=
+                    null
                 "
-                id="profilePicture"
-                class="img-fluid rounded"
-            />
+                id="profilePicContainer"
+            >
+                <img
+                    [src]="
+                        binaryEncodedImages[
+                            i + (currentPage - 1) * itemsPerPage
+                        ] | safeServerImage
+                    "
+                    id="profilePicture"
+                    class="img-fluid rounded"
+                />
+            </div>
+            <div
+                *ngIf="
+                    binaryEncodedImages[i + (currentPage - 1) * itemsPerPage] ==
+                    null
+                "
+                class="mx-auto d-block"
+            >
+                <i class="fas fa-user-alt fa-7x"></i>
+            </div>
+        </div>
+        <div class="card-body" id="cardMiddle">
+            <h4 class="card-title mt-3" id="cardHeader">
+                {{ trainer.firstName }} {{ trainer.lastName }}
+            </h4>
+
+            <p clas="card-text" id="cardContent" style="font-size: 1.1rem">
+                Telefonnummer: {{ trainer.phone }}<br />
+                Email: {{ trainer.email }} <br />
+                Geburtstag: {{ trainer.birthday }}
+            </p>
         </div>
         <div
-            *ngIf="
-                binaryEncodedImages[i + (currentPage - 1) * itemsPerPage] ==
-                null
-            "
-            class="mx-auto d-block"
+            class="d-flex flex-column justify-content-around py-1 m-3 mr-4"
+            id="cardRight"
         >
-            <i class="fas fa-user-alt fa-7x"></i>
+            <!-- for more details admin can go to profile site of trainer (same infos, plus trainer related content like hosted events) -->
+
+            <button
+                type="button"
+                class="btn btn-card"
+                ngbTooltip="Bearbeiten"
+                placement="left"
+                [routerLink]="['/trainer/edit']"
+                [queryParams]="{ id: trainer.id }"
+            >
+                <i class="fas fa-pencil-alt button-icon"></i>
+            </button>
+
+            <button
+                type="button"
+                class="btn btn-danger"
+                (click)="delete(trainer, i + (currentPage - 1) * itemsPerPage)"
+                ngbTooltip="Löschen"
+                placement="left"
+            >
+                <i class="fas fa-trash button-icon"></i>
+            </button>
         </div>
     </div>
-    <div class="card-body" id="cardMiddle">
-        <h4 class="card-title mt-3" id="cardHeader">
-            {{ trainer.firstName }} {{ trainer.lastName }}
-        </h4>
-
-        <p clas="card-text" id="cardContent" style="font-size: 1.1rem">
-            Telefonnummer: {{ trainer.phone }}<br />
-            Email: {{ trainer.email }} <br />
-            Geburtstag: {{ trainer.birthday }}
-        </p>
-    </div>
     <div
-        class="d-flex flex-column justify-content-around py-1 m-3 mr-4"
-        id="cardRight"
-    >
-        <!-- for more details admin can go to profile site of trainer (same infos, plus trainer related content like hosted events) -->
-
-        <button
-            type="button"
-            class="btn btn-card"
-            ngbTooltip="Bearbeiten"
-            placement="left"
-            [routerLink]="['/trainer/edit']"
-            [queryParams]="{ id: trainer.id }"
-        >
-            <i class="fas fa-pencil-alt button-icon"></i>
-        </button>
-
-        <button
-            type="button"
-            class="btn btn-danger"
-            (click)="open(trainer, i + (currentPage - 1) * itemsPerPage)"
-            ngbTooltip="Löschen"
-            placement="left"
-        >
-            <i class="fas fa-trash button-icon"></i>
-        </button>
-    </div>
+        class="card shadow-sm m-2 flex-row py-1 flex-grow-1"
+        *ngIf="trainerListPage.length % 2 === 1 && trainerListPage.length > 1"
+        style="opacity: 0"
+    ></div>
 </div>
 
 <ngb-pagination
-    class="d-flex justify-content-center"
+    class="d-flex justify-content-center mt-2"
     [(page)]="currentPage"
     [pageSize]="itemsPerPage"
     [collectionSize]="filteredTrainerList.length"

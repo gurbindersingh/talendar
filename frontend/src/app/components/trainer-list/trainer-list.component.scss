@@ -11,6 +11,10 @@ $card-height: 184px;
     flex-grow: 1;
 }
 
+.card {
+    flex-basis: 640px;
+}
+
 #cardLeft {
     height: $card-height;
     width: $card-height;
