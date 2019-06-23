@@ -95,7 +95,10 @@ export class CourseViewComponent implements OnInit {
             this.filteredEventList = this.eventList;
         }
 
-        if (this.eventTypeSelection.value !== undefined) {
+        if (
+            this.eventTypeSelection != undefined &&
+            this.eventTypeSelection.value !== undefined
+        ) {
             if (this.eventTypeSelection.value === 'Course') {
                 this.searchPlaceholder = 'Nach einem Kurs suchen...';
             }
@@ -114,7 +117,10 @@ export class CourseViewComponent implements OnInit {
 
         this.filteredEventList = this.filteredEventList.filter(
             (event: Event) => {
-                if (this.eventTypeSelection.value === undefined) {
+                if (
+                    this.eventTypeSelection === undefined ||
+                    this.eventTypeSelection.value === undefined
+                ) {
                     return true;
                 }
                 return (
