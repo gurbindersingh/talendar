@@ -14,6 +14,8 @@ import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.IEventService;
 import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
+import at.ac.tuwien.sepm.groupphase.backend.service.impl.EventService;
+import at.ac.tuwien.sepm.groupphase.backend.service.impl.InfoMail;
 import at.ac.tuwien.sepm.groupphase.backend.testDataCreation.FakeData;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
@@ -22,6 +24,9 @@ import org.apache.tomcat.jni.Local;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -44,14 +49,20 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 public class EventServiceTest {
 
+
+    @Mock
+    private InfoMail infoMail;
+
     @Autowired
-    private IEventService eventService;
+    @InjectMocks
+    private EventService eventService;
 
     @Autowired
     private Validator validator;
 
     @Autowired
     private static FakeData faker = new FakeData();
+
 
     @Autowired
     private ITrainerService trainerService;
@@ -78,6 +89,7 @@ public class EventServiceTest {
 
     @BeforeEach
     public void init(){
+        MockitoAnnotations.initMocks(this);
         VALID_INCOMING_BIRTHDAY = faker.fakeNewBirthdayEntity();
         VALID_INCOMING_BIRTHDAY_B = faker.fakeNewBirthdayEntity();
         VALID_INCOMING_COURSE = faker.fakeNewCourseEntity();

@@ -402,10 +402,13 @@ public class AlgorithmService {
 
             for(Event e : possibleSells
             ) {
-                if(e.getEventTags().contains(tagChoices.get(iteration).getItem2()) && firstUse(e.getRoomUses()).isBefore(reference)){
-                    reference = firstUse(e.getRoomUses());
-                    ret = e;
-                    found = true;
+                if(e.getEventTags() != null && e.getRoomUses() != null) {
+                    if(e.getEventTags().contains(tagChoices.get(iteration).getItem2()) &&
+                       firstUse(e.getRoomUses()).isBefore(reference)) {
+                        reference = firstUse(e.getRoomUses());
+                        ret = e;
+                        found = true;
+                    }
                 }
             }
             iteration++;

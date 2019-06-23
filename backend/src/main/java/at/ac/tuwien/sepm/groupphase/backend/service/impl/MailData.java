@@ -13,7 +13,7 @@ public class MailData {
     public MailData () {
         this.adminMail = "davedude341@gmail.com";
         this.adminPassword = "";
-        this.senderMail = "qse252019testing@gmail.com";
+        this.senderMail = "testingsepmstuffqse25@gmail.com";
         this.senderPassword = "This!is!a!password!";
     }
 
