@@ -2,6 +2,8 @@ package at.ac.tuwien.sepm.groupphase.backend.Entity;
 
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
@@ -114,8 +116,10 @@ public class Event {
 
     @Column
     private Integer maxAge;
+
     @Column
     @ElementCollection
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<String> pictures;
 
 

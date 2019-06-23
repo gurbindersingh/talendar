@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -32,12 +34,12 @@ public class TagEndpoint {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TagDto save(@RequestBody TagDto tagDto) throws BackendException{
+    public TagDto save(@RequestBody TagDto tagDto) throws ValidationException {
         try {
             return tagMapper.tagEntityToTagDto(this.tagService.save(tagMapper.tagDtoToTagEntity(tagDto)));
         }catch(ValidationException e){
             LOGGER.error("Speicher von der Tag " + tagDto + " war ungültig");
-            throw new BackendException(e.getMessage(), e);
+            throw new ValidationException(e.getMessage(), e);
         }
     }
 
