@@ -472,4 +472,8 @@ export class CalendarComponent implements OnInit {
             this.images[index] = reader.result;
         };
     }
+
+    public routeToCourseSign(): void {
+        this.router.navigateByUrl('/course/sign?id=' + this.clickedEvent.id);
+    }
 }

@@ -397,12 +397,15 @@
     </div>
 
     <div class="modal-footer">
+        <button type="button" class="btn btn-light" (click)="modal.close()">
+            Schließen
+        </button>
         <button
             type="button"
-            class="btn btn-outline-primary"
-            (click)="modal.close()"
+            class="btn btn-primary"
+            (click)="modal.close(); routeToCourseSign()"
         >
-            Schließen
+            Anmelden
         </button>
     </div>
 </ng-template>
