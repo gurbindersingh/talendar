@@ -69,7 +69,7 @@ public class EventService implements IEventService {
 
 
     @Override
-    public Event save(Event event) throws ValidationException, ServiceException {
+    public Event save(Event event) throws ValidationException, ServiceException, EmailException, NotFoundException {
         LOGGER.info("Prepare to save new Event");
         LocalDateTime now = LocalDateTime.now();
         event.setCreated(now);
@@ -132,10 +132,10 @@ public class EventService implements IEventService {
                     throw new ValidationException(e.getMessage(), e);
                 }
                 catch(TrainerNotAvailableException e) {
-                    throw new ServiceException(e.getMessage(), e);
+                    throw new NotFoundException(e.getMessage(), e);
                 }
                 catch(EmailException e) {
-                    throw new ValidationException("" + e.getMessage(), e);
+                    throw new EmailException("" + e.getMessage());
                 }
             case Course:
                 try {
@@ -216,7 +216,9 @@ public class EventService implements IEventService {
                     catch(EmailException e) {
 
                     }
-                    return eventRepository.save(event);
+                    event = eventRepository.save(event);
+                    eventRepository.flush();
+                    return event;
                 }
                 catch(InvalidEntityException e) {
                     throw new ValidationException(e.getMessage(), e);
@@ -269,7 +271,6 @@ public class EventService implements IEventService {
                     }
                     event = eventRepository.save(event);
                     eventRepository.flush();
-                    System.out.println(event.getId());
                     for(Customer c : event.getCustomers()
                     ) {
                         sendCancelationMail(c.getEmail(), event, c);

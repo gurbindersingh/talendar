@@ -8,10 +8,12 @@ import at.ac.tuwien.sepm.groupphase.backend.persistence.RoomUseRepository;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.EventDto;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.RoomUseDto;
 import at.ac.tuwien.sepm.groupphase.backend.service.IEventService;
+import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.util.mapper.EventMapper;
 import at.ac.tuwien.sepm.groupphase.backend.util.mapper.RoomUseMapper;
+import org.aspectj.weaver.ast.Not;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,25 +47,25 @@ public class EventEndpoint {
 
     @RequestMapping(value = "/course", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public EventDto createNewCourse(@RequestBody EventDto eventDto) throws ValidationException, ServiceException {
+    public EventDto createNewCourse(@RequestBody EventDto eventDto) throws ValidationException, ServiceException, EmailException, NotFoundException {
         return postEvent(eventDto);
     }
 
     @RequestMapping(value = "/birthday", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public EventDto createNewBirthday(@RequestBody EventDto eventDto) throws ValidationException, ServiceException {
+    public EventDto createNewBirthday(@RequestBody EventDto eventDto) throws ValidationException, ServiceException, EmailException, NotFoundException{
         return postEvent(eventDto);
     }
 
     @RequestMapping(value = "/consultation", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public EventDto createNewConsultation(@RequestBody EventDto eventDto) throws ValidationException, ServiceException {
+    public EventDto createNewConsultation(@RequestBody EventDto eventDto) throws ValidationException, ServiceException, EmailException, NotFoundException{
         return postEvent(eventDto);
     }
 
     @RequestMapping(value = "/rent" ,method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public EventDto createNewRent(@RequestBody EventDto eventDto) throws ValidationException, ServiceException {
+    public EventDto createNewRent(@RequestBody EventDto eventDto) throws ValidationException, ServiceException, EmailException, NotFoundException {
         return postEvent(eventDto);
     }
 
@@ -277,7 +279,8 @@ public class EventEndpoint {
      *
      *  To avoid code repetition, the actual logic (which is always the same) had been extracted!
      */
-    private EventDto postEvent(EventDto eventDto)  throws ValidationException, ServiceException {
+    private EventDto postEvent(EventDto eventDto)  throws ValidationException, ServiceException,
+                                                          EmailException, NotFoundException {
         LOGGER.info("Incoming POST Request for an Event with type: " + eventDto.toString());
         try {
             return eventMapper.entityToEventDto(

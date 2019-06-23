@@ -69,10 +69,10 @@ export class CalendarComponent implements OnInit {
 
     // filterable values
     rooms: any[] = [
+        { name: 'Kein Filter', value: undefined },
         { name: 'Grün', value: 'Green' },
         { name: 'Orange', value: 'Orange' },
         { name: 'Erdgeschoss', value: 'GroundFloor' },
-        { name: 'Kein Filter', value: undefined },
     ];
     visitorEventModalEntries = [
         {
@@ -93,19 +93,19 @@ export class CalendarComponent implements OnInit {
         // { name: 'Raummiete', type: 'rent' },
     ];
     eventTypes: any[] = [
+        { name: 'Kein Filter', value: undefined },
         { name: 'Kurs', value: 'Course' },
         { name: 'Beratung', value: 'Consultation' },
         { name: 'Geburtstag', value: 'Birthday' },
         { name: 'Miete', value: 'Rent' },
-        { name: 'Kein Filter', value: undefined },
     ];
     bdTypes: any[] = [
+        { name: 'Kein Filter', value: undefined },
         { name: 'Trockeneis Geburtstag', value: 'DryIce' },
         { name: 'Raketen Geburtstag', value: 'Rocket' },
         { name: 'Superhelden Geburtstag', value: 'Superhero' },
         { name: 'Photo Geburtstag', value: 'Photo' },
         { name: 'Malen Geburtstag', value: 'Painting' },
-        { name: 'Kein Filter', value: undefined },
     ];
 
     trainerList: string[] = [];
@@ -211,13 +211,13 @@ export class CalendarComponent implements OnInit {
             .subscribe((data: Trainer[]) => {
                 this.trainers = data;
 
+                this.trainerList.push(undefined);
                 for (const trainer of this.trainers) {
                     const name = trainer.firstName + ' ' + trainer.lastName;
                     this.trainerList.push(name);
                 }
 
                 // explicit undefined value matches option 'reset'
-                this.trainerList.push(undefined);
             });
     }
 
