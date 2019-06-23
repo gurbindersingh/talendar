@@ -22,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
+import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -286,17 +287,85 @@ public class EventEndpointTest {
 
 
     @Test
-    void updateEventCustomers() {
-    }
-
-
-    @Test
     void cancelEvent() {
+        FakeData fakeData = new FakeData();
+        EventDto course = fakeData.fakeCourse();
+
+        TrainerDto trainer = fakeData.fakeTrainerDto();
+        trainer.setId(null);
+        trainer.setUpdated(null);
+        trainer.setCreated(null);
+        HttpEntity<TrainerDto> trequest = new HttpEntity<>(trainer);
+        ResponseEntity<TrainerDto> tresponse = REST_TEMPLATE.exchange(URL.BASE + port + URL.TRAINER,
+                                                                      HttpMethod.POST,
+                                                                      trequest,
+                                                                      TrainerDto.class
+        );
+        TrainerDto trainerResponse = tresponse.getBody();
+        System.out.println(trainerResponse);
+
+        course.setId(null);
+        course.setUpdated(null);
+        course.setCreated(null);
+        course.setTrainer(trainerResponse);
+        course.setCustomerDtos(null);
+        HttpEntity<EventDto> request = new HttpEntity<>(course);
+        System.out.println(request.toString());
+        ResponseEntity<EventDto> response =
+            REST_TEMPLATE.exchange(URL.BASE + port + URL.POST_COURSE,
+                                   HttpMethod.POST,
+                                   request,
+                                   EventDto.class
+            );
+        EventDto courseResponse = response.getBody();
+
+        assertNotNull(courseResponse);
+        System.out.println(courseResponse);
+        assertNotNull(courseResponse.getId());
+
+        given().when()
+               .delete(URL.BASE + port + URL.EVENT + "/" + courseResponse.getId())
+               .then()
+               .statusCode(200);
     }
 
 
     @Test
     void getEventById() {
+        FakeData fakeData = new FakeData();
+        EventDto course = fakeData.fakeCourse();
+
+        TrainerDto trainer = fakeData.fakeTrainerDto();
+        trainer.setId(null);
+        trainer.setUpdated(null);
+        trainer.setCreated(null);
+        HttpEntity<TrainerDto> trequest = new HttpEntity<>(trainer);
+        ResponseEntity<TrainerDto> tresponse = REST_TEMPLATE.exchange(URL.BASE + port + URL.TRAINER,
+                                                                      HttpMethod.POST,
+                                                                      trequest,
+                                                                      TrainerDto.class
+        );
+        TrainerDto trainerResponse = tresponse.getBody();
+        System.out.println(trainerResponse);
+
+        course.setId(null);
+        course.setUpdated(null);
+        course.setCreated(null);
+        course.setTrainer(trainerResponse);
+        course.setCustomerDtos(null);
+
+        int courseId = given().contentType("application/json")
+                        .body(course)
+                        .when()
+                        .post(URL.BASE + port + URL.POST_COURSE)
+                        .then()
+                        .extract()
+                        .path("id");
+
+        given().when()
+               .get(URL.BASE + port + URL.EVENT + "/" + courseId)
+               .then()
+               .statusCode(200);
     }
 
 
