@@ -7,7 +7,7 @@ import { Room } from 'src/app/models/enum/room';
 import { EventType } from 'src/app/models/enum/eventType';
 import { EventClient } from 'src/app/rest/event-client';
 import { DateTimeParserService } from 'src/app/services/date-time-parser.service';
-
+import { AuthenticationService } from 'src/app/services/authentication.service';
 import { NgbDateStruct, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { ClickedDateService } from 'src/app/services/clicked-date.service';
 
@@ -41,7 +41,8 @@ export class RentComponent implements OnInit {
     constructor(
         private eventClient: EventClient,
         dateTimeParser: DateTimeParserService,
-        private clickedDateService: ClickedDateService
+        private clickedDateService: ClickedDateService,
+        public auth: AuthenticationService
     ) {
         const date = this.clickedDateService.getDate();
         const time = this.clickedDateService.getTime();
@@ -105,6 +106,10 @@ export class RentComponent implements OnInit {
 
     public groundFloorSelected(): void {
         this.radioButtonSelected = 'Erdgeschoss';
+    }
+
+    public goBack(): void {
+        window.history.back();
     }
 
     public getSelectedRadioButtonRoom(): Room {

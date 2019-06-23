@@ -17,6 +17,7 @@ import {
 } from '@ng-bootstrap/ng-bootstrap';
 import { ClickedDateService } from 'src/app/services/clicked-date.service';
 import { DateTimeParserService } from 'src/app/services/date-time-parser.service';
+import { AuthenticationService } from 'src/app/services/authentication.service';
 
 @Component({
     selector: 'app-consultation',
@@ -50,7 +51,8 @@ export class ConsultationComponent implements OnInit {
         private eventClient: EventClient,
         dateTimeParser: DateTimeParserService,
         private parserFormatter: NgbDateParserFormatter,
-        private clickedDateService: ClickedDateService
+        private clickedDateService: ClickedDateService,
+        public auth: AuthenticationService
     ) {
         this.dateTimeParser = dateTimeParser;
         const date = this.clickedDateService.getDate();
@@ -116,6 +118,10 @@ export class ConsultationComponent implements OnInit {
                     error.message;
             }
         );
+    }
+
+    public goBack(): void {
+        window.history.back();
     }
 
     public changeSortOrderRoom(room: string): void {

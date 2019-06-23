@@ -169,9 +169,16 @@
                 </div>
                 <br />
                 <div class="row justify-content-end">
+                    <button
+                        class="btn btn-light mr-2"
+                        (click)="goBack()"
+                        *ngIf="!auth.isLoggedIn"
+                    >
+                        Abbrechen
+                    </button>
                     <input
                         type="submit"
-                        class="btn btn-primary col-lg-3"
+                        class="btn btn-primary col-lg-4"
                         [disabled]="!isComplete()"
                         id="birthdaySave"
                         value="Geburtstag eintragen"
