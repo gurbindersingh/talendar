@@ -49,6 +49,7 @@ public class EventServiceTest {
 
     @Autowired
     private Validator validator;
+
     @Autowired
     private static FakeData faker = new FakeData();
 

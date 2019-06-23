@@ -65,8 +65,8 @@ public class FakeData {
 
     public LocalDateTime fakeFutureTime() {
         return LocalDateTime.ofInstant(faker.date()
-                                            .between(Date.valueOf("2019-06-01"),
-                                                     Date.valueOf("2030-01-01")
+                                            .between(Date.valueOf(LocalDateTime.now().toLocalDate()),
+                                                     Date.valueOf(LocalDateTime.now().plusYears(3).toLocalDate())
                                             )
                                             .toInstant(), ZoneId.systemDefault());
     }

@@ -4,6 +4,7 @@ import at.ac.tuwien.sepm.groupphase.backend.exceptions.BackendException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
 import at.ac.tuwien.sepm.groupphase.backend.service.impl.AlgorithmService;
 import com.lowagie.text.DocumentException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +19,7 @@ public class ScheduleCaller {
     private GarbageImageCollector garbageImageCollector;
     private AlgorithmService algorithmService;
 
+    @Autowired
     public ScheduleCaller (ParticipantsList participantsList,
                            RedactInactiveUsers redactInactiveUsers,
                            RedactInactiveTrainers redactInactiveTrainers,
