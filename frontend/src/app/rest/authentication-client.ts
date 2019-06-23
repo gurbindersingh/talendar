@@ -21,7 +21,7 @@ export class AuthenticationClient extends RestClient {
     ): Observable<AuthenticationResponse> {
         return this.post(
             (error: HttpErrorResponse) => {
-                console.log(error.message);
+                
             },
             '',
             authenticationData
@@ -30,7 +30,7 @@ export class AuthenticationClient extends RestClient {
 
     public userDetails(token: string): Observable<UserDetails> {
         return this.get((error: HttpErrorResponse) => {
-            console.log(error.message);
+            
         }, '/info');
     }
 
@@ -39,7 +39,7 @@ export class AuthenticationClient extends RestClient {
     ): Observable<AuthenticationResponse> {
         return this.get(
             (error: HttpErrorResponse) => {
-                console.log(error.message);
+                
             },
             '',
             null,

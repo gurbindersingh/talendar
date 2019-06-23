@@ -102,17 +102,17 @@ export class BirthdayComponent implements OnInit {
             this.customer.lastName +
             ' am ' +
             this.event.roomUses[0].begin;
-        console.log('Passing Data to Rest Client');
+        
         this.eventClient.postNewEvent(this.event).subscribe(
             (data: Event) => {
-                console.log(data);
+                
                 this.loading = false;
                 this.successMsg = 'Geburtstag wurde erfolgreich gebucht';
                 this.errorMsg = '';
                 this.clearFormular();
             },
             (error) => {
-                console.log(error);
+                
                 this.loading = false;
                 this.errorMsg = '' + error.message;
                 this.successMsg = '';

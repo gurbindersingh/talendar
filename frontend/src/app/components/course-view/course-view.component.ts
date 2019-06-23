@@ -57,15 +57,14 @@ export class CourseViewComponent implements OnInit {
     }
 
     public deleteCourse(id: number): void {
-        console.log('Deleting Course with id ' + id);
-
+        
         this.filteredEventList = this.filteredEventList.filter(
             (event) => event.id !== id
         );
         this.updateListPage();
         this.eventClient.cancelEvent(id).subscribe(
             (result) => {
-                console.log(result);
+                
                 this.ngOnInit();
             },
             (error) => console.log(error)
@@ -151,13 +150,13 @@ export class CourseViewComponent implements OnInit {
                 this.updateListPage();
             },
             (error) => {
-                console.log(error);
+                
             }
         );
     }
 
     ngOnInit() {
-        console.log('Init Event List');
+        
 
         // pre init role of this user
         this.authenticationService
@@ -182,7 +181,7 @@ export class CourseViewComponent implements OnInit {
                             this.updateListPage();
                         },
                         (error) => {
-                            console.log(error);
+                            
                         }
                     );
             });

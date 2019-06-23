@@ -43,10 +43,10 @@ export class CancelEventComponent implements OnInit {
             this.textBox = 'Sie hätten dieser Seite garnicht erreichen sollen';
             this.valid = false;
         } else {
-            console.log('Getting event with id ' + id);
+            
             this.eventClient.getEventById(id).subscribe(
                 (data: Event) => {
-                    console.log('Got event with id ' + data.id);
+                    
                     this.event = data;
 
                     const eType = data.eventType as EventType;
@@ -57,7 +57,7 @@ export class CancelEventComponent implements OnInit {
                         const emailId = Number(
                             this.route.snapshot.queryParams.emailId
                         );
-                        console.log(data.customerDtos);
+                        
 
                         this.signOff = true;
                         let emailIdFound = false;
@@ -105,7 +105,7 @@ export class CancelEventComponent implements OnInit {
                     this.title = 'Fehler 404';
                     this.textBox = 'UPS, da ist was schief gelaufen';
                     this.valid = false;
-                    console.log(error);
+                    
                 }
             );
         }
@@ -114,7 +114,7 @@ export class CancelEventComponent implements OnInit {
             this.textBox = 'Dieser Ereignis existiert nicht in der Datenbank';
             this.valid = false;
         } else {
-            console.log('Got event with id ' + this.event.id);
+            
             this.title = 'Hallo!';
             this.textBox = 'Wollen sie wirklich stornieren?';
             this.valid = true;
@@ -136,19 +136,19 @@ export class CancelEventComponent implements OnInit {
                         this.errorMsg = '';
                         this.valid = false;
                     } else {
-                        console.log(data);
+                        
                         this.errorMsg = 'Etwas ist schief gelaufen';
                         this.successMsg = '';
                     }
                 },
                 (error: Error) => {
-                    console.log(error);
+                    
                     this.errorMsg = 'Etwas ist schief gelaufen';
                     this.successMsg = '';
                 }
             );
         } else {
-            console.log('ree', id);
+            
             this.eventClient.cancelEvent(id).subscribe(
                 () => {
                     this.successMsg = 'Ihr Event wurde erfolgreich storniert';
@@ -156,7 +156,7 @@ export class CancelEventComponent implements OnInit {
                     this.valid = false;
                 },
                 (error: Error) => {
-                    console.log(error.message);
+                    
                     this.errorMsg =
                         'Ihr Event konnte nicht storniert werden: ' +
                         error.message;

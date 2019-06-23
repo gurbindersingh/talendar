@@ -120,11 +120,11 @@ export class CourseComponent implements OnInit {
                     this.tags = tagList;
                     for (let _i = 0; _i < this.tags.length; _i++) {
                         this.tagStrings.push(this.tags[_i].tag);
-                        console.log(this.tagStrings);
+                        
                     }
                 },
                 (error) => {
-                    console.log(error);
+                    
                 }
             );
         } else {
@@ -134,7 +134,7 @@ export class CourseComponent implements OnInit {
             this.isCreate = false;
             this.eventClient.getEventById(id).subscribe(
                 (data: Event) => {
-                    console.log(data);
+                    
                     this.event = data;
                 },
                 (error: Error) => {
@@ -150,7 +150,7 @@ export class CourseComponent implements OnInit {
                     }
                 },
                 (error) => {
-                    console.log(error);
+                    
                 }
             );
         }
@@ -218,7 +218,7 @@ export class CourseComponent implements OnInit {
         if (this.promises.length === 0) {
             this.postData(form);
         } else {
-            console.log('Post pictures');
+            
             Promise.all(this.promises).then(
                 (data: string[]) => {
                     this.event.pictures = data;
@@ -294,7 +294,7 @@ export class CourseComponent implements OnInit {
                 this.numImg++;
             })
             .catch((error) => {
-                console.log(error);
+                
                 this.errorMsg =
                     'Das Bild konnte leider nicht gespeichert werden. ' +
                     'Bitte versuchen Sie es erneut.';
@@ -440,7 +440,7 @@ export class CourseComponent implements OnInit {
 
             this.eventClient.postNewEvent(this.event).subscribe(
                 (data: Event) => {
-                    console.log(data);
+                    
                     this.successMsg =
                         'Deine Reservierung wurde erfolgreich gespeichert';
                     this.resetFormular();
@@ -448,7 +448,7 @@ export class CourseComponent implements OnInit {
                     this.loading = false;
                 },
                 (error: Error) => {
-                    console.log(error);
+                    
                     this.errorMsg = error.message;
                     this.successMsg = '';
                     this.loading = false;
@@ -458,13 +458,13 @@ export class CourseComponent implements OnInit {
             // TODO
             this.eventClient.update(this.event).subscribe(
                 (data: Event) => {
-                    console.log(data);
+                    
                     this.successMsg = 'Der Kurs wurde erfolgreich aktualisiert';
                     this.errorMsg = '';
                     this.loading = false;
                 },
                 (error: Error) => {
-                    console.log(error.message);
+                    
                     this.errorMsg =
                         'Der Kurs konnte nicht erfolgreich aktualisiert werden: ' +
                         error.message;

@@ -37,7 +37,7 @@ export class CancelNewsletterComponent implements OnInit {
         this.successMsg = 'Ihr Abonnement wurde erfolgreich storniert';
       },
       (error: Error) => {
-        console.log(error.message);
+        
         this.errorMsg =
           'Ihr Abonnement konnte nicht storniert werden ' +
           error.message;
