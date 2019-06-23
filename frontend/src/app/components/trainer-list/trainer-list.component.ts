@@ -172,11 +172,15 @@ export class TrainerListComponent implements OnInit {
         this.updateListPage();
     }
 
-    open(trainer: Trainer, index: number) {
+    delete(trainer: Trainer, index: number) {
         const modalRef = this.modalService.open(NgbdModalConfirm);
         modalRef.componentInstance.trainer = trainer;
         modalRef.result.then(() => {
             // on close
+            this.filteredTrainerList = this.filteredTrainerList.filter(
+                (elem) => elem.id !== trainer.id
+            );
+            this.updateListPage();
             console.log('Trying to DELETE Trainer with id ' + trainer.id);
             this.trainerClient.deleteTrainer(trainer.id).subscribe(
                 () => {

@@ -78,53 +78,60 @@
     </div>
 </div>
 
-<div
-    class="card shadow-sm mb-2 flex-row py-1"
-    *ngFor="let event of eventListPage; let i = index"
->
-    <div class="card-body" id="cardBody">
-        <h4 class="card-title" id="cardHeader">
-            {{ eventListPage[i].name }}
-        </h4>
-
-        <p class="card-text" id="cardContent">
-            Max Teilnehmer: {{ eventListPage[i].maxParticipants }}<br />
-            Anmeldefrist: {{ eventListPage[i].endOfApplication }} <br />
-            Kostet: {{ eventListPage[i].price }}
-        </p>
-    </div>
-
+<div class="d-flex flex-wrap">
     <div
-        class="d-flex flex-column justify-content-around py-1 m-3 mr-4"
-        id="cardRight"
+        class="card shadow-sm m-2 flex-row py-1 flex-grow-1"
+        *ngFor="let event of eventListPage; let i = index"
     >
-        <!-- for more details admin can go to profile site of trainer (same infos, plus trainer related content like hosted events) -->
+        <div class="card-body" id="cardBody">
+            <h4 class="card-title" id="cardHeader">
+                {{ eventListPage[i].name }}
+            </h4>
 
-        <button
-            type="button"
-            class="btn btn-card mb-2"
-            ngbTooltip="Bearbeiten"
-            placement="left"
-            [routerLink]="['/course/add']"
-            [queryParams]="{ id: event.id }"
-        >
-            <i class="fas fa-pencil-alt button-icon"></i>
-        </button>
+            <p class="card-text" id="cardContent">
+                Max Teilnehmer: {{ eventListPage[i].maxParticipants }}<br />
+                Anmeldefrist: {{ eventListPage[i].endOfApplication }} <br />
+                Kostet: {{ eventListPage[i].price }}
+            </p>
+        </div>
 
-        <button
-            type="button"
-            class="btn btn-danger"
-            (click)="deleteCourse(event.id)"
-            ngbTooltip="Löschen"
-            placement="left"
+        <div
+            class="d-flex flex-column justify-content-around py-1 m-3 mr-4"
+            id="cardRight"
         >
-            <i class="fas fa-trash button-icon"></i>
-        </button>
+            <!-- for more details admin can go to profile site of trainer (same infos, plus trainer related content like hosted events) -->
+
+            <button
+                type="button"
+                class="btn btn-card mb-2"
+                ngbTooltip="Bearbeiten"
+                placement="left"
+                [routerLink]="['/course/add']"
+                [queryParams]="{ id: event.id }"
+            >
+                <i class="fas fa-pencil-alt button-icon"></i>
+            </button>
+
+            <button
+                type="button"
+                class="btn btn-danger"
+                (click)="deleteCourse(event.id)"
+                ngbTooltip="Löschen"
+                placement="left"
+            >
+                <i class="fas fa-trash button-icon"></i>
+            </button>
+        </div>
     </div>
+    <div
+        class="card shadow-sm m-2 flex-row py-1 flex-grow-1"
+        *ngIf="eventListPage.length % 2 === 1 && eventListPage.length > 1"
+        style="opacity: 0"
+    ></div>
 </div>
 
 <ngb-pagination
-    class="d-flex justify-content-center"
+    class="d-flex justify-content-center mt-2"
     [(page)]="currentPage"
     [pageSize]="itemsPerPage"
     [collectionSize]="filteredEventList.length"
