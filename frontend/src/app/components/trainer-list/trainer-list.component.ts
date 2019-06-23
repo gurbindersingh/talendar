@@ -3,6 +3,10 @@ import { TrainerClient } from '../../rest/trainer-client';
 import { Trainer } from '../../models/trainer';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ImageClient } from 'src/app/rest/image-client';
+import { AuthenticationService } from 'src/app/services/authentication.service';
+import { UserDetails } from 'src/app/models/user-details';
+import { Authorities } from 'src/app/models/enum/authorities';
+import { SessionStorageService } from 'src/app/services/session-storage.service';
 
 @Component({
     selector: 'ngbd-modal-confirm',
@@ -73,16 +77,33 @@ export class TrainerListComponent implements OnInit {
     currentPage = 1;
     itemsPerPage = 10;
 
+    private trainerIdsToHtmlElem: number[] = [];
+    private role: Authorities;
+
     constructor(
         private trainerClient: TrainerClient,
         private imageClient: ImageClient,
-        private modalService: NgbModal
+        private modalService: NgbModal,
+        private authenticationService: AuthenticationService,
+        private sessionService: SessionStorageService
     ) {}
 
     binaryEncodedImages: any[] = [];
 
     ngOnInit() {
         console.log('Init Trainer List');
+
+        // pre init role of this user
+        this.authenticationService
+            .getUserDetails()
+            .subscribe((userDetails: UserDetails) => {
+                if (userDetails.roles.includes(Authorities.ADMIN)) {
+                    this.role = Authorities.ADMIN;
+                } else if (userDetails.roles.includes(Authorities.TRAINER)) {
+                    this.role = Authorities.TRAINER;
+                }
+            });
+
         this.trainerClient.getAll().subscribe(
             (list: Trainer[]) => {
                 this.trainerList = list;
@@ -92,6 +113,9 @@ export class TrainerListComponent implements OnInit {
 
                 for (let i = 0; i < this.trainerList.length; i++) {
                     const trainer: Trainer = this.trainerList[i];
+                    // load id into helper array
+                    this.trainerIdsToHtmlElem.push(trainer.id);
+
                     if (trainer.picture != null) {
                         this.imageClient
                             .getProfilePicture(trainer.picture)
@@ -164,6 +188,18 @@ export class TrainerListComponent implements OnInit {
                 }
             );
         });
+    }
+
+    isDeletionAllowed(index: number): boolean {
+        if (this.role === Authorities.TRAINER) {
+            return false;
+        }
+
+        if (this.sessionService.userId === this.trainerIdsToHtmlElem[index]) {
+            return false;
+        }
+
+        return true;
     }
     /**
      * This method can be used to extract the content of a file as binary data.
