@@ -73,7 +73,7 @@ export class RentComponent implements OnInit {
         this.loading = true;
         this.eventClient.postNewEvent(this.event).subscribe(
             (data: Event) => {
-                console.log(data);
+                
                 this.successMsg =
                     'Deine Reservierung wurde erfolgreich gespeichert';
                 this.errorMsg = '';
@@ -81,7 +81,7 @@ export class RentComponent implements OnInit {
                 this.resetFormular();
             },
             (error: Error) => {
-                console.log(error);
+                
                 this.errorMsg = error.message;
                 this.successMsg = '';
                 this.loading = false;

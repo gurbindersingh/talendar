@@ -70,7 +70,7 @@ export class HolidayComponent implements OnInit {
     ngOnInit() {}
 
     public postHoliday(form: NgForm): void {
-        console.log('Pass Form Data To Rest Client');
+        
         this.clearInfoMsg();
         this.holiday.id = null;
         this.trainer.id = this.sessionService.userId;
@@ -91,17 +91,17 @@ export class HolidayComponent implements OnInit {
             this.endTime
         );
         if (!this.toggleOptions) {
-            console.log(this.holiday);
+            
             this.holidayClient.postNewHoliday(this.holiday).subscribe(
                 (data: Holiday) => {
-                    console.log(data);
+                    
                     this.resetFormular();
                     this.successMsg =
                         'Der Urlaub wurde erfolgreich gespeichert';
                     this.errorMsg = '';
                 },
                 (error: Error) => {
-                    console.log(error);
+                    
                     this.errorMsg = error.message;
                     this.successMsg = '';
                 }
@@ -110,14 +110,14 @@ export class HolidayComponent implements OnInit {
             this.holidays.cronExpression = this.getCron();
             this.holidaysClient.postNewHolidays(this.holidays).subscribe(
                 (data: Holiday[]) => {
-                    console.log(data);
+                    
                     this.successMsg =
                         'Die Urlaube wurde erfolgreich gespeichert';
                     this.errorMsg = '';
                     this.resetFormular();
                 },
                 (error: Error) => {
-                    console.log(error);
+                    
                     this.errorMsg = error.message;
                     this.successMsg = '';
                 }

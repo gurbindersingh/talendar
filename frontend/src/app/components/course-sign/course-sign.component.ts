@@ -85,7 +85,7 @@ export class CourseSignComponent implements OnInit {
         this.times = [];
         this.eventClient.getEventById(id).subscribe(
             (data: Event) => {
-                console.log('Loaded event: ', data);
+                
                 this.event = data;
                 this.event.customerDtos = data.customerDtos;
                 this.event.roomUses = data.roomUses;
@@ -108,7 +108,7 @@ export class CourseSignComponent implements OnInit {
             }
         );
 
-        console.log('this.event: ', this.event);
+        
     }
 
     public updateCourseCustomers(): void {
@@ -126,7 +126,7 @@ export class CourseSignComponent implements OnInit {
         );
         this.eventClient.updateCustomer(this.event).subscribe(
             (data: Event) => {
-                console.log('Event without error. Data: ', data);
+                
                 if (
                     data.customerDtos.length === this.customerLengthBeforeUpdate
                 ) {
@@ -136,7 +136,7 @@ export class CourseSignComponent implements OnInit {
                     this.successMsg = '';
                 } else {
                     this.btnClicked = true;
-                    console.log('Successful: ', data);
+                    
                     this.successMsg = 'Sie sind jetzt angemeldet!';
                     this.errorMsg = '';
                 }
@@ -144,13 +144,13 @@ export class CourseSignComponent implements OnInit {
             (error: Error) => {
                 this.btnClicked = false;
                 this.loading = false;
-                console.log('Fehler ist:', error);
+                
                 this.successMsg = '';
                 this.errorMsg = error.message;
             }
         );
         this.getEventFromBackendById(this.id);
-        console.log('Event after all: ', this.event);
+        
     }
 
     public checkBoxClicked() {

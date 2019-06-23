@@ -217,7 +217,7 @@ export class CalendarComponent implements OnInit {
                     }
                 },
                 (error: Error) => {
-                    console.log(error.message);
+                    
                     this.authService.logout();
                     this.router.navigateByUrl('/login');
                 }
@@ -254,7 +254,7 @@ export class CalendarComponent implements OnInit {
     showDetails(event: Event, detailsModal: any) {
         console.warn(event);
 
-        console.log(event.pictures);
+        
 
         this.images = [];
         const promises: Promise<string>[] = [];
@@ -347,7 +347,6 @@ export class CalendarComponent implements OnInit {
      * logged in trainer/admin.
      */
     public changeView(): void {
-        console.log(this.isPersonalView);
         const userID = this.sessionService.userId;
         this.authService.getUserDetails().subscribe(
             (status: UserDetails) => {
@@ -415,7 +414,7 @@ export class CalendarComponent implements OnInit {
                 }
             },
             (error: Error) => {
-                console.log(error.message);
+                
                 this.authService.logout();
                 this.router.navigateByUrl('/login');
             }

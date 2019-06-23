@@ -563,32 +563,32 @@
         />
     </div>
     <div class="modal-footer">
-        <div *ngIf="numImg < binaryEncodedImages.length - 1">
-            <button
-                type="button"
-                class="btn btn-primary"
-                (click)="saveCropped(croppieModal); modal.close()"
-            >
-                Weiter
-            </button>
-        </div>
-        <div *ngIf="numImg == binaryEncodedImages.length - 1">
-            <button
-                type="button"
-                class="btn btn-primary"
-                (click)="saveCropped(croppieModal); modal.close()"
-            >
-                Speichern
-            </button>
-        </div>
         <div>
             <button
                 type="button"
-                class="btn btn-danger"
+                class="btn btn-light"
                 (click)="cancel(); modal.close()"
             >
                 Abbrechen
             </button>
         </div>
+        <div *ngIf="numImg < binaryEncodedImages.length - 1">
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    (click)="saveCropped(croppieModal); modal.close()"
+                >
+                    Weiter
+                </button>
+            </div>
+            <div *ngIf="numImg == binaryEncodedImages.length - 1">
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    (click)="saveCropped(croppieModal); modal.close()"
+                >
+                    Speichern
+                </button>
+            </div>
     </div>
 </ng-template>

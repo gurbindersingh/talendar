@@ -91,8 +91,6 @@ export class TrainerListComponent implements OnInit {
     binaryEncodedImages: any[] = [];
 
     ngOnInit() {
-        console.log('Init Trainer List');
-
         // pre init role of this user
         this.authenticationService
             .getUserDetails()
@@ -181,7 +179,7 @@ export class TrainerListComponent implements OnInit {
                 (elem) => elem.id !== trainer.id
             );
             this.updateListPage();
-            console.log('Trying to DELETE Trainer with id ' + trainer.id);
+
             this.trainerClient.deleteTrainer(trainer.id).subscribe(
                 () => {
                     this.ngOnInit();
