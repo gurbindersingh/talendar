@@ -7,14 +7,18 @@ import at.ac.tuwien.sepm.groupphase.backend.service.*;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
-import org.apache.tomcat.jni.Local;
+import at.ac.tuwien.sepm.groupphase.backend.service.impl.CustomerService;
+import at.ac.tuwien.sepm.groupphase.backend.service.impl.EventService;
+import at.ac.tuwien.sepm.groupphase.backend.service.impl.InfoMail;
+import at.ac.tuwien.sepm.groupphase.backend.service.impl.TrainerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
-
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -25,11 +29,22 @@ public class TestDataGenerator implements ApplicationRunner {
 
     private Logger LOGGER = LoggerFactory.getLogger(TestDataGenerator.class);
 
+    @Mock
+    private InfoMail infoMail;
+
+
     private FakeData faker;
-    private IEventService eventService;
+
+    @InjectMocks
+    private EventService eventService;
+
     private IHolidayService holidayService;
-    private ITrainerService trainerService;
-    private ICustomerService customerService;
+
+    @InjectMocks
+    private TrainerService trainerService;
+
+    @InjectMocks
+    private CustomerService customerService;
 
     @Autowired
     private EventRepository eventRepository;
@@ -38,14 +53,14 @@ public class TestDataGenerator implements ApplicationRunner {
     private int NO_TRAINERS = 10;
     private int NO_COURSES = 50;
     private int SIMULATED_DAYS = 100;
-    private int NO_RENTS = 10;
+    private int NO_RENTS    = 10;
     private int NO_BIRTHDAYS = 10;
     private int NO_CONSULTATION = 20;
 
 
 
     @Autowired
-    public TestDataGenerator(FakeData fakeData, IEventService eventService, IHolidayService holidayService, ITrainerService trainerService, ICustomerService customerService, ITagService tagService) {
+    public TestDataGenerator(FakeData fakeData, EventService eventService, IHolidayService holidayService, TrainerService trainerService, CustomerService customerService, ITagService tagService) {
         this.faker = fakeData;
         this.eventService = eventService;
         this.holidayService = holidayService;

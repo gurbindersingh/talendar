@@ -4,6 +4,8 @@ package at.ac.tuwien.sepm.groupphase.backend.tests.unit.service;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.User;
 import at.ac.tuwien.sepm.groupphase.backend.datagenerator.TestDataGenerator;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
+import at.ac.tuwien.sepm.groupphase.backend.service.impl.InfoMail;
+import at.ac.tuwien.sepm.groupphase.backend.service.impl.TrainerService;
 import at.ac.tuwien.sepm.groupphase.backend.testDataCreation.FakeData;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
@@ -14,6 +16,8 @@ import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidEnt
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -32,8 +36,12 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 public class TrainerServiceTest {
 
+    @Mock
+    private InfoMail infoMail;
+
     @Autowired
-    private ITrainerService trainerService;
+    @InjectMocks
+    private TrainerService trainerService;
     @Autowired
     private Validator validator;
 

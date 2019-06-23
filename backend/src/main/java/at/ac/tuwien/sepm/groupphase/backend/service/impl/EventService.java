@@ -48,15 +48,14 @@ public class EventService implements IEventService {
     private final TrainerRepository trainerRepository;
     private final HolidayRepository holidayRepository;
     private final InfoMail infoMail;
-    private final MailData mailData;
 
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
 
 
     @Autowired
     public EventService(EventRepository eventRepository, Validator validator,
                         RoomUseRepository roomUseRepository, TrainerRepository trainerRepository,
-                        HolidayRepository holidayRepository, InfoMail infoMail, MailData mailData
+                        HolidayRepository holidayRepository, InfoMail infoMail
     ) {
         this.eventRepository = eventRepository;
         this.validator = validator;
@@ -64,7 +63,6 @@ public class EventService implements IEventService {
         this.trainerRepository = trainerRepository;
         this.holidayRepository = holidayRepository;
         this.infoMail = infoMail;
-        this.mailData = mailData;
     }
 
 
@@ -122,7 +120,7 @@ public class EventService implements IEventService {
 
                     for(Customer c : event.getCustomers()
                     ) {
-                        sendCancelationMail(c.getEmail(), event, c);
+                        infoMail.sendCancelationMail(c.getEmail(), event, c);
                     }
                     LOGGER.info("Sending information mail to admin");
                     infoMail.sendAdminEventInfoMail(event, "Neuer Geburtstag", "newEvent");
@@ -241,7 +239,7 @@ public class EventService implements IEventService {
                     eventRepository.flush();
                     for(Customer c : event.getCustomers()
                     ) {
-                        sendCancelationMail(c.getEmail(), event, c);
+                        infoMail.sendCancelationMail(c.getEmail(), event, c);
                     }
                     LOGGER.info("Sending information mail to admin");
                     infoMail.sendAdminEventInfoMail(event, "Neue Raummiete", "newEvent");
@@ -273,7 +271,7 @@ public class EventService implements IEventService {
                     eventRepository.flush();
                     for(Customer c : event.getCustomers()
                     ) {
-                        sendCancelationMail(c.getEmail(), event, c);
+                        infoMail.sendCancelationMail(c.getEmail(), event, c);
                     }
                     LOGGER.info("Sending information mail to admin");
                     infoMail.sendAdminEventInfoMail(event, "Neuer Beratungstermin", "newEvent");
@@ -652,7 +650,7 @@ public class EventService implements IEventService {
                 // send a sign off email to customer
                 try {
                     LOGGER.info("Prepare Email for sign off");
-                    sendCancelationMail(customerToAddOrRemove.getEmail(), event,
+                    infoMail.sendCancelationMail(customerToAddOrRemove.getEmail(), event,
                                         customerToAddOrRemove
                     );   //create a sign off email and send it to customer
                     LOGGER.info("Email sent");
@@ -1043,181 +1041,4 @@ public class EventService implements IEventService {
         LOGGER.info("All roomuses are available");
     }
 
-
-    public void sendCancelationMail(String email, Event event, Customer customer) throws
-                                                                                  EmailException {
-        String to = email;
-        String from = mailData.getSenderMail();
-        String password = mailData.getSenderPassword();
-        String host = "smtp.gmail.com";
-        Properties props = System.getProperties();
-        props.put("mail.smtp.user", from);
-        props.put("mail.smtp.pwd", password);
-        props.put("mail.smtp.host", "smtp.gmail.com");
-        props.put("mail.smtp.port", "587");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.auth", "true");
-        Session session = Session.getDefaultInstance(props);
-
-        try {
-            MimeMessage mimeMessage = new MimeMessage(session);
-            mimeMessage.setFrom(new InternetAddress(from));
-            mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
-
-            switch(event.getEventType()) {
-                case Rent:
-                    mimeMessage.setSubject("Sie haben erfolgreich einen Raum bei uns gemietet");
-                    break;
-                case Course:
-                    mimeMessage.setSubject("Sie haben sich erfolgreich angemeldet");
-                    break;
-                case Consultation:
-                    mimeMessage.setSubject("Sie haben erfolgreich einen Beratungstermin erstellt");
-                    break;
-                default:
-                    mimeMessage.setSubject("Sie haben erfolgreich einen Geburtstag erstellt");
-                    break;
-            }
-            mimeMessage.setText(createCancelationMessage(event, customer));
-            Transport transport = session.getTransport("smtp");
-            transport.connect(host, 587, from, password);
-            transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
-            transport.close();
-        }
-        catch(MessagingException e) {
-            throw new EmailException(" " + e.getMessage());
-        }
-    }
-
-
-    private String createCancelationMessage(Event event, Customer customer) throws
-                                                                            MessagingException {
-
-        String url;
-        if(event.getEventType() == EventType.Course) {
-            url = "http://localhost:4200/event/cancel?id=" +
-                  event.getId() +
-                  "&emailId=" +
-                  customer.getEmailId();
-        } else {
-            url = "http://localhost:4200/event/cancel?id=" + event.getId();
-        }
-        URL urll = null;
-        try {
-            urll = new URL(url);
-        }
-        catch(MalformedURLException e) {
-            throw new MessagingException("Malformed Url exception: " + e.getMessage(), e);
-        }
-
-        String msg = "";
-
-        msg += "Hallo " + customer.getFirstName() + " " + customer.getLastName() + "!\n\n";
-        switch(event.getEventType()) {
-            case Rent:
-                RoomUse roomForRent = event.getRoomUses().get(0);
-                msg += "Hiermit bestätigen wir das Sie erfolgreich einen Raum gemietet haben.\n\n";
-                msg += "Raum " + translateEnumToGerman(roomForRent.getRoom()) + "\n";
-                msg += "Von " +
-                       roomForRent.getBegin()
-                                  .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) +
-                       " bis " +
-                       roomForRent.getEnd().format(DateTimeFormatter.ofPattern("HH:mm")) +
-                       "\n\n";
-                msg +=
-                    "\nFalls Sie dieses Event stornieren wollen, klicken Sie bitte einfach auf diesen link: \n";
-                break;
-            case Course:
-                msg += "Hiermit bestätigen wir Ihre Anmeldung zum \"" + event.getName() + "\"";
-                msg += "\nEnde der Abmeldefrist: ";
-                msg += event.getEndOfApplication().format(formatter) + "\n";
-                msg += "\nFalls Sie sich abmelden wollen, klicken Sie auf diesen Link: \n";
-                break;
-            case Consultation:
-                RoomUse roomForConsultation = event.getRoomUses().get(0);
-                msg +=
-                    "Hiermit bestätigen wir das Sie erfolgreich einen Beratungstermin erstellt haben.\n\n";
-                msg += "Raum " + translateEnumToGerman(roomForConsultation.getRoom()) + "\n";
-                msg += "Von " +
-                       roomForConsultation.getBegin()
-                                          .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) +
-                       " bis " +
-                       roomForConsultation.getEnd().format(DateTimeFormatter.ofPattern("HH:mm")) +
-                       "\n";
-                msg += "Trainer " +
-                       event.getTrainer().getFirstName() +
-                       " " +
-                       event.getTrainer().getLastName() +
-                       "\n";
-                msg +=
-                    "\nFalls Sie dieses Event stornieren wollen, klicken Sie bitte einfach auf diesen link: \n";
-                break;
-            default:
-                msg +=
-                    "Hiermit bestätigen wir das Sie erfolgreich einen Geburtstag bei uns erstellt haben.\n\n";
-                RoomUse roomForBirthDay = event.getRoomUses().get(0);
-                msg += "Art " + translateBirthDayTypeToGerman(event.getBirthdayType()) + "\n";
-                msg += "Raum " + translateEnumToGerman(roomForBirthDay.getRoom()) + "\n";
-                msg += "Von " +
-                       roomForBirthDay.getBegin()
-                                      .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) +
-                       " bis " +
-                       roomForBirthDay.getEnd().format(DateTimeFormatter.ofPattern("HH:mm")) +
-                       "\n";
-                msg += "Trainer " +
-                       event.getTrainer().getFirstName() +
-                       " " +
-                       event.getTrainer().getLastName() +
-                       "\n";
-                msg +=
-                    "\nFalls Sie dieses Event stornieren wollen, klicken Sie bitte einfach auf diesen link: \n";
-                break;
-        }
-
-        msg += urll;
-        msg += "\n\nMit freundlichen Grüßen,\nIhr Talenderteam";
-
-        return msg;
-    }
-
-
-    private static String translateEnumToGerman(Room room) {
-        switch(room) {
-            case GroundFloor:
-                return "Erdgeschoss";
-            case Green:
-                return "Grün";
-        }
-        return "Orange";
-    }
-
-
-    private static String translateBirthDayTypeToGerman(String birthdayType) {
-        switch(birthdayType) {
-            case "Rocket":
-                return "Raketen Geburtstag";
-            case "Photo":
-                return "Photo Geburtstag";
-            case "DryIce":
-                return "Trockeneis Geburtstag";
-            case "Painting":
-                return "Malen Geburtstag";
-        }
-        return "Superhelden Geburtstag";
-    }
-
-
-    private String translateEnumWithArtikel(EventType eventType) {
-        switch(eventType) {
-            case Birthday:
-                return "ein Geburtstag";
-            case Consultation:
-                return "einen Beratungstermin";
-            case Rent:
-                return "eine Mietung";
-            case Course:
-                return "einen Kurs";
-        }
-        return "";
-    }
 }

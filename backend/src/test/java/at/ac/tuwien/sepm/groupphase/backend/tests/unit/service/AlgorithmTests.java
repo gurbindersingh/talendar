@@ -8,6 +8,8 @@ import at.ac.tuwien.sepm.groupphase.backend.service.impl.InfoMail;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,14 +22,16 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 public class AlgorithmTests {
 
     private static Logger LOGGER = LoggerFactory.getLogger(AlgorithmTests.class);
+
+    @Mock
+    private InfoMail infoMail;
+
     @Autowired
+    @InjectMocks
     private AlgorithmService algorithmService;
 
     @Autowired
     private TestDataGenerator testDataGenerator;
-
-    @MockBean
-    private InfoMail infoMail;
 
 
     @Test
