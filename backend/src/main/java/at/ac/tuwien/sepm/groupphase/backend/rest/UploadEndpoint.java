@@ -13,6 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,7 +37,8 @@ public class UploadEndpoint {
 
     @PostMapping(value = "/image/trainer")
     @ResponseStatus(HttpStatus.CREATED)
-    public String uploadProfilePicture(@RequestBody MultipartFile file) throws BackendException {
+    public String uploadProfilePicture(@RequestBody MultipartFile file) throws ServiceException,
+                                                                               ValidationException {
         LOGGER.info("Incoming POST Request For Uploading A Profile Picture");
 
         try {
@@ -43,16 +46,16 @@ public class UploadEndpoint {
         }
         catch(ServiceException e) {
             LOGGER.error(e.getMessage(), e);
-            throw new BackendException("Das Profilbild konnte nicht gespeichert werden, bitte versuch es später erneut.", e);
+            throw new ServiceException("Das Profilbild konnte nicht gespeichert werden, bitte versuchen Sie es später erneut.", e);
         }
         catch(ValidationException e) {
             LOGGER.error(e.getMessage(),e);
-            throw new BackendException("Das Profilbild konnte nicht gespeichert werden: " + e.getMessage(), e);
+            throw new ValidationException("Das Profilbild konnte nicht gespeichert werden: " + e.getMessage(), e);
         }
     }
     @PostMapping(value = "/image/course")
     @ResponseStatus(HttpStatus.CREATED)
-    public String uploadCoursePictures(@RequestBody MultipartFile file) throws BackendException {
+    public String uploadCoursePictures(@RequestBody MultipartFile file) throws ServiceException, ValidationException {
         LOGGER.info("Incoming POST Request For Uploading A Course Picture");
 
 
@@ -61,16 +64,16 @@ public class UploadEndpoint {
         }
         catch(ServiceException e) {
             LOGGER.error(e.getMessage(), e);
-            throw new BackendException("Das Profilbild konnte nicht gespeichert werden, bitte versuch es später erneut.", e);
+            throw new ServiceException("Das Profilbild konnte nicht gespeichert werden, bitte versuch es später erneut.", e);
         }
         catch(ValidationException e) {
             LOGGER.error(e.getMessage(),e);
-            throw new BackendException("Das Profilbild konnte nicht gespeichert werden: " + e.getMessage(), e);
+            throw new ValidationException("Das Profilbild konnte nicht gespeichert werden: " + e.getMessage(), e);
         }
     }
 
     @GetMapping(value = "image/trainer", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public byte[] getProfilePicture(@RequestParam("name") String name) throws BackendException {
+    public byte[] getProfilePicture(@RequestParam("name") String name) throws ServiceException, IOException {
         LOGGER.info("Incoming GET Request For Retrieving Profile Picture");
 
         try {
@@ -79,20 +82,16 @@ public class UploadEndpoint {
         }
         catch(ServiceException e) {
             LOGGER.error(e.getMessage(), e);
-            throw new BackendException("Es konnte kein Profilbild geladen werden", e);
-        }
-        catch(FileNotFoundException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new BackendException("Es existiert kein Bild mit dem gegebenen Filenamen", e);
+            throw new ServiceException("Es konnte kein Profilbild geladen werden", e);
         }
         catch(IOException e) {
             LOGGER.error("error occured while reading from input stream: " + e.getMessage(), e);
-            throw new BackendException("Es konnte kein Profilbild geladen werden", e);
+            throw new IOException("Es konnte kein Profilbild geladen werden", e);
         }
     }
 
     @GetMapping(value = "image/course", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public byte[] getCoursePicture(@RequestParam("name") String name) throws BackendException {
+    public byte[] getCoursePicture(@RequestParam("name") String name) throws ServiceException, IOException {
         LOGGER.info("Incoming GET Request For Retrieving Course Picture");
 
         try {
@@ -101,15 +100,11 @@ public class UploadEndpoint {
         }
         catch(ServiceException e) {
             LOGGER.error(e.getMessage(), e);
-            throw new BackendException("Es konnte kein Profilbild geladen werden", e);
-        }
-        catch(FileNotFoundException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new BackendException("Es existiert kein Bild mit dem gegebenen Filenamen", e);
+            throw new ServiceException("Es konnte kein Profilbild geladen werden", e);
         }
         catch(IOException e) {
             LOGGER.error("error occured while reading from input stream: " + e.getMessage(), e);
-            throw new BackendException("Es konnte kein Profilbild geladen werden", e);
+            throw new IOException("Es konnte kein Profilbild geladen werden", e);
         }
     }
 }

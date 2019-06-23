@@ -1,12 +1,10 @@
 package at.ac.tuwien.sepm.groupphase.backend.testDataCreation;
 
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.enums.Room;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
+import at.ac.tuwien.sepm.groupphase.backend.rest.dto.TagDto;
 import at.ac.tuwien.sepm.groupphase.backend.testObjects.CustomerDto;
 import at.ac.tuwien.sepm.groupphase.backend.testObjects.EventDto;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.testObjects.TrainerDto;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import com.github.javafaker.Faker;
@@ -15,6 +13,7 @@ import org.apache.tomcat.jni.Local;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.*;
 
@@ -95,6 +94,46 @@ public class FakeData {
                                         .toInstant(), ZoneId.systemDefault());
     }
 
+    private String[] tagsCreator() {
+        String[] arr = {"Math", "Science", "Expirements", "Dance", "Painting", "Art", "Programming"};
+        return arr;
+    }
+
+
+    /**
+            Fake Entities And Dtos
+     */
+
+    public List<Tag> getFakedTags() {
+        List<Tag> tags = new LinkedList<>();
+        String[] names = tagsCreator();
+
+        for (String name: names) {
+            Tag tag = new Tag();
+            tag.setTag(name);
+            tags.add(tag);
+        }
+        return tags;
+    }
+
+    public Tag fakeRandomTagEntity() {
+        String[] names = tagsCreator();
+        int i = randomInt(0,tagsCreator().length);
+
+        Tag tag = new Tag();
+        tag.setTag(names[i]);
+        return tag;
+    }
+
+    public TagDto fakeRandomTagDto() {
+        String[] names = tagsCreator();
+        int i = randomInt(0,tagsCreator().length - 1);
+
+        TagDto tag = new TagDto();
+        tag.setTag(names[i]);
+        return tag;
+    }
+
 
     public TrainerDto fakeTrainerDto() {
         TrainerDto trainer = new TrainerDto();
@@ -166,7 +205,23 @@ public class FakeData {
         return Room.GroundFloor;
     }
 
+    public CustomerDto fakeCustomerForSignIn() {
+        CustomerDto karen = new CustomerDto();
+        karen.setId(null);
+        karen.setEmailId(1);
+        karen.setEmail(fakeEmail());
+        karen.setPhone(fakePhoneNumber());
+        karen.setFirstName(fakeFirstName());
+        karen.setLastName(fakeLastName());
+        karen.setChildName(fakeFirstName());
+        karen.setChildLastName(fakeLastName());
+        karen.setBirthOfChild(LocalDateTime.of(fakeAgeAsLocalDate(6,8), LocalTime.now()));
+        karen.setWantsEmail(false);
+        return karen;
+    }
 
+    // NOTE maybe you have to update these fakers, testDto had not been updated for a long time,
+    // and some properties have not been set in this method
     public CustomerDto fakeCustomer() {
         CustomerDto karen = new CustomerDto();
         karen.setId(fakeID());

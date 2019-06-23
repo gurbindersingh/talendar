@@ -12,7 +12,7 @@ export class TagComponent implements OnInit {
   public tag: string;
   private errorMsg: string;
   private successMsg: string;
-  private tagDto: Tag;
+  private tagDto: Tag = new Tag();
 
   constructor(private tagClient: TagClient, ) {
 
