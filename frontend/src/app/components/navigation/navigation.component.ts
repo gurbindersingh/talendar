@@ -39,7 +39,7 @@ export class NavigationComponent implements OnInit {
             restriction: Authorities.AUTHENTICATED,
         },
         {
-            name: 'Raum Mieten',
+            name: 'Raum mieten',
             path: 'rent',
             restriction: Authorities.NONE,
         },
