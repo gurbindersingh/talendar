@@ -48,16 +48,37 @@ public class TagEndpointTest {
 
 
     @Test
-    public void postValidTag_shoudlSucceed_WithSetIdAndStatus201() {
+    public void postValidTag_shouldSucceed_WithSetIdAndStatus201() {
         TagDto tag = fakeData.fakeRandomTagDto();
 
         HttpEntity<TagDto> request = new HttpEntity<>(tag);
         ResponseEntity<TagDto>
-            response = REST_TEMPLATE.postForEntity(URL.BASE + port + URL.TAGS, request, TagDto.class);
+            response =
+            REST_TEMPLATE.postForEntity(URL.BASE + port + URL.TAGS, request, TagDto.class);
 
         assertThat(response.getBody().getId(), notNullValue());
         assertThat(response.getStatusCode(), is(HttpStatus.CREATED));
     }
+
+
+    @Test
+    public void postSameTagTwice_shouldFail_exceptionIsThrowAndStatus400() {
+        TagDto tag = fakeData.fakeRandomTagDto();
+
+        HttpEntity<TagDto> request = new HttpEntity<>(tag);
+        ResponseEntity<TagDto>
+            response =
+            REST_TEMPLATE.postForEntity(URL.BASE + port + URL.TAGS, request, TagDto.class);
+
+        TagDto tagRepeat = new TagDto();
+        tagRepeat.setTag(tag.getTag());
+        HttpEntity<TagDto> requestRepeat = new HttpEntity<>(tagRepeat);
+        ResponseEntity<TagDto>
+            second_response =
+            REST_TEMPLATE.postForEntity(URL.BASE + port + URL.TAGS, requestRepeat, TagDto.class);
+        assertThat(second_response.getStatusCode(), is(HttpStatus.BAD_REQUEST));
+    }
+
 
     @Test
     public void postInvalidTag_blank_ExceptionIsThrown() {
@@ -66,10 +87,11 @@ public class TagEndpointTest {
 
         HttpEntity<TagDto> request = new HttpEntity<>(tag);
         ResponseEntity<TagDto>
-                response = REST_TEMPLATE.postForEntity(URL.BASE + port + URL.TAGS, request, TagDto.class);
+            response =
+            REST_TEMPLATE.postForEntity(URL.BASE + port + URL.TAGS, request, TagDto.class);
         assertThat(response.getStatusCode(), is(HttpStatus.BAD_REQUEST));
-
     }
+
 
     @Test
     public void deleteTag_succeeds_noSuchTagFoundAndStatusIs200() {
@@ -80,9 +102,15 @@ public class TagEndpointTest {
         REST_TEMPLATE.postForEntity(URL.BASE + port + URL.TAGS, request, TagDto.class);
 
 
-        ResponseEntity<?> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.TAGS, HttpMethod.DELETE, request, Void.class);
+        ResponseEntity<?> response =
+            REST_TEMPLATE.exchange(URL.BASE + port + URL.TAGS, HttpMethod.DELETE, request,
+                                   Void.class
+            );
 
-        ResponseEntity<List<TagDto>> remainingTagsResponse = REST_TEMPLATE.exchange(URL.BASE + port + URL.TAGS, HttpMethod.GET, null,   new ParameterizedTypeReference<List<TagDto>>() {});
+        ResponseEntity<List<TagDto>> remainingTagsResponse =
+            REST_TEMPLATE.exchange(URL.BASE + port + URL.TAGS, HttpMethod.GET, null,
+                                   new ParameterizedTypeReference<List<TagDto>>() {}
+            );
         List<TagDto> remainingTags = remainingTagsResponse.getBody();
 
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
@@ -99,11 +127,15 @@ public class TagEndpointTest {
     public void deleteInexistentTag_shouldNotFail() {
         TagDto tagDto = fakeData.fakeRandomTagDto();
         HttpEntity<TagDto> request = new HttpEntity<>(tagDto);
-        ResponseEntity<?> response = REST_TEMPLATE.exchange(URL.BASE + port + URL.TAGS, HttpMethod.DELETE, request, Void.class);
+        ResponseEntity<?> response =
+            REST_TEMPLATE.exchange(URL.BASE + port + URL.TAGS, HttpMethod.DELETE, request,
+                                   Void.class
+            );
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
         // currently version of method just assumes that system does not break, so we enforce it
         // here too
     }
+
 
     @Test
     public void fetchAllTags_shouldContainAllAndStatusIs200() {
@@ -115,24 +147,35 @@ public class TagEndpointTest {
         HttpEntity<TagDto> request2 = new HttpEntity<>(tag2);
         HttpEntity<TagDto> request3 = new HttpEntity<>(tag3);
 
-        ResponseEntity<TagDto> response1 = REST_TEMPLATE.postForEntity(URL.BASE + port + URL.TAGS, request1, TagDto.class);
-        ResponseEntity<TagDto> response2 = REST_TEMPLATE.postForEntity(URL.BASE + port + URL.TAGS, request2, TagDto.class);
-        ResponseEntity<TagDto> response3 = REST_TEMPLATE.postForEntity(URL.BASE + port + URL.TAGS, request3, TagDto.class);
+        ResponseEntity<TagDto> response1 =
+            REST_TEMPLATE.postForEntity(URL.BASE + port + URL.TAGS, request1, TagDto.class);
+        ResponseEntity<TagDto> response2 =
+            REST_TEMPLATE.postForEntity(URL.BASE + port + URL.TAGS, request2, TagDto.class);
+        ResponseEntity<TagDto> response3 =
+            REST_TEMPLATE.postForEntity(URL.BASE + port + URL.TAGS, request3, TagDto.class);
 
 
-        ResponseEntity<List<TagDto>> foundTagsResponse = REST_TEMPLATE.exchange(URL.BASE + port + URL.TAGS, HttpMethod.GET, null,   new ParameterizedTypeReference<List<TagDto>>() {});
+        ResponseEntity<List<TagDto>> foundTagsResponse =
+            REST_TEMPLATE.exchange(URL.BASE + port + URL.TAGS, HttpMethod.GET, null,
+                                   new ParameterizedTypeReference<List<TagDto>>() {}
+            );
         List<TagDto> foundTags = foundTagsResponse.getBody();
 
         /**
          * Check that in found list, each item (by ID) that was previously posted is included
          */
         assertThat(foundTags.size(), is(3));
-        assertThat(foundTags.stream().filter((TagDto tag) -> tag.getId().equals( response1.getBody().getId())).collect(
-            Collectors.toList()), not(empty()));
-        assertThat(foundTags.stream().filter((TagDto tag) -> tag.getId().equals(  response2.getBody().getId())).collect(
-            Collectors.toList()), not(empty()));
-        assertThat(foundTags.stream().filter((TagDto tag) -> tag.getId().equals(  response3.getBody().getId())).collect(
-            Collectors.toList()), not(empty()));
-
+        assertThat(foundTags.stream()
+                            .filter((TagDto tag) -> tag.getId().equals(response1.getBody().getId()))
+                            .collect(
+                                Collectors.toList()), not(empty()));
+        assertThat(foundTags.stream()
+                            .filter((TagDto tag) -> tag.getId().equals(response2.getBody().getId()))
+                            .collect(
+                                Collectors.toList()), not(empty()));
+        assertThat(foundTags.stream()
+                            .filter((TagDto tag) -> tag.getId().equals(response3.getBody().getId()))
+                            .collect(
+                                Collectors.toList()), not(empty()));
     }
 }
