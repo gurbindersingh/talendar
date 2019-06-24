@@ -1,43 +1,58 @@
-<h1 class="row justify-content-center">Tag eintragen</h1>
+<h1 class="row justify-content-center">Keyword eintragen</h1>
 <hr />
 
 <div class="container-fluid">
-  <div class="row">
-    <div class="col-lg-3"></div>
-    <div class="col-lg-6">
-      <form id="tagForm" #form="ngForm" (ngSubmit)="postTag(form)">
+    <div class="row">
+        <div class="col-lg-3"></div>
+        <div class="col-lg-6">
+            <form id="tagForm" #form="ngForm" (ngSubmit)="postTag(form)">
+                <div class="form-group">
+                    <label for="tagString">Neues Keyword: </label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="tagString"
+                        name="tagString"
+                        placeholder="Mathematik"
+                        required
+                        [(ngModel)]="tag"
+                        (keyup)="clearInfoMsg()"
+                    />
+                </div>
 
-        <div class="form-group">
-          <label for="tagString">Neuer Tag: </label>
-          <input type="text" class="form-control" id="tagString" name="tagString" placeholder="Mathematik" required
-            [(ngModel)]="tag" />
+                <div class="row" *ngIf="errorMsg">
+                    <div class="col-sm-12">
+                        <p class="alert alert-danger">
+                            {{ errorMsg }}
+                        </p>
+                    </div>
+                </div>
+                <div class="row" *ngIf="successMsg">
+                    <div class="col-sm-12">
+                        <p class="alert alert-success">
+                            {{ successMsg }}
+                        </p>
+                    </div>
+                </div>
+                <br />
+                <div class="form-row justify-content-center">
+                    <button
+                        type="button"
+                        (click)="goBack()"
+                        class="btn btn-light col-4 center ml-auto"
+                    >
+                        Abbrechen
+                    </button>
+                    <button
+                        [disabled]="!isComplete()"
+                        type="submit"
+                        class="btn btn-primary col-4 center mr-auto"
+                    >
+                        Keyword Erstellen
+                    </button>
+                </div>
+            </form>
         </div>
-
-        <div class="row" *ngIf="errorMsg">
-          <div class="col-sm-12">
-            <p class="alert alert-danger">
-              {{ errorMsg }}
-            </p>
-          </div>
-        </div>
-        <div class="row" *ngIf="successMsg">
-          <div class="col-sm-12">
-            <p class="alert alert-success">
-              {{ successMsg }}
-            </p>
-          </div>
-        </div>
-        <br />
-        <div class="form-row justify-content-center">
-          <button [disabled]="!isComplete()" type="submit" class="btn btn-primary col-4 center ml-auto">
-            Tag Erstellen
-          </button>
-          <button type="button" (click)="goBack()" class="btn btn-danger col-4 center mr-auto">
-            Abbrechen
-          </button>
-        </div>
-      </form>
+        <div class="col-lg-3"></div>
     </div>
-    <div class="col-lg-3"></div>
-  </div>
 </div>

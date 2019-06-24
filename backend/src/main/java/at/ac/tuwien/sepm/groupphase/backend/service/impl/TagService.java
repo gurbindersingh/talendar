@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TagService implements ITagService {
@@ -33,6 +34,13 @@ public class TagService implements ITagService {
     @Override
     public Tag save(Tag tag) throws ValidationException {
         LOGGER.info("Tag wird gespeichert");
+
+        Optional<Tag> searched = tagRepository.findByTag(tag.getTag());
+
+        if (searched.isPresent()) {
+            throw new ValidationException("Ein Keyword mit dem Titel '" + tag.getTag() + "' existiert bereits");
+        }
+
         try {
             validator.validateTag(tag);
         }catch(InvalidEntityException e){
