@@ -668,6 +668,10 @@ public class EventService implements IEventService {
                 throw new ServiceException("", null);
             }
 
+            if(now.isAfter(event.getEndOfApplication())){
+                throw new ValidationException("Ende der Abmeldefrist vorbei - Abmeldung fehlgeschlagen");
+            }
+
             Set<Customer> customerSet = new HashSet<>();
             boolean customerToRemoveFound = false;
 
