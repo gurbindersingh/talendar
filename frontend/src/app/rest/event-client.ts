@@ -4,10 +4,15 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Event } from '../models/event';
 import { Observable } from 'rxjs';
 import { EventType } from '../models/enum/eventType';
+import { Authorities } from '../models/enum/authorities';
+import { SessionStorageService } from '../services/session-storage.service';
 
 @Injectable()
 export class EventClient extends RestClient {
-    constructor(httpClient: HttpClient) {
+    constructor(
+        httpClient: HttpClient,
+        private sessionService: SessionStorageService
+    ) {
         super('events', httpClient);
     }
 
@@ -29,7 +34,6 @@ export class EventClient extends RestClient {
                 break;
         }
 
-        console.log(JSON.stringify(event));
         return super.post(
             (error: HttpErrorResponse) => {
                 console.log('HTTP POST Birthday Failed: ' + error.message);
@@ -39,27 +43,54 @@ export class EventClient extends RestClient {
         );
     }
 
-    public cancelEvent(id: number): Observable<Event> {
-        return super.delete((error: HttpErrorResponse) => {
+    public getAllEvents_adminView(): Observable<Event[]> {
+        return super.get((error: HttpErrorResponse) => {
             console.log(
-                'HTTP Delete To Cacnel Event With ID' +
-                    id +
-                    ' Failed: ' +
-                    error.message
+                'HTTP GET All Events (For Admin) Failed: ' + error.message
             );
-        }, '/' + id);
+        }, '/all/admin');
     }
 
-    public getAllEvents(): Observable<Event[]> {
+    public getAllEvents_trainerView(id: number): Observable<Event[]> {
         return super.get((error: HttpErrorResponse) => {
-            console.log('HTTP GET All Events Failed: ' + error.message);
-        }, '/all');
+            console.log(
+                'HTTP GET All Events (For trainer) Failed: ' + error.message
+            );
+        }, '/all/trainer/' + id);
     }
 
-    public getAllFutureCourses(): Observable<Event[]> {
+    public getAllEvents_clientView(): Observable<Event[]> {
         return super.get((error: HttpErrorResponse) => {
-            console.log('HTTP GET All Future Courses Failed ' + error.message);
-        }, '');
+            console.log(
+                'HTTP GET All Events (For Clients) Failed: ' + error.message
+            );
+        }, '/all/client');
+    }
+
+    public getAllFutureEvents(role: Authorities): Observable<Event[]> {
+        if (role.includes(Authorities.ADMIN)) {
+            return super.get((error: HttpErrorResponse) => {
+                console.log(
+                    'HTTP GET All Future Courses For Admin Failed ' +
+                        error.message
+                );
+            }, '/all/future/admin');
+        } else if (role.includes(Authorities.TRAINER)) {
+            const id = this.sessionService.userId;
+
+            return super.get((error: HttpErrorResponse) => {
+                console.log(
+                    'HTTP GET All Future Courses For Trainer Failed ' +
+                        error.message
+                );
+            }, '/all/future/trainer/' + id);
+        } else {
+            return super.get((error: HttpErrorResponse) => {
+                console.log(
+                    'HTTP GET All Future Courses Failed ' + error.message
+                );
+            }, '/all/future/client');
+        }
     }
 
     public getEventById(id: number): Observable<Event> {
@@ -98,5 +129,16 @@ export class EventClient extends RestClient {
             '/customers',
             event
         );
+    }
+
+    public cancelEvent(id: number): Observable<Event> {
+        return super.delete((error: HttpErrorResponse) => {
+            console.log(
+                'HTTP Delete To Cancel Event With ID' +
+                    id +
+                    ' Failed: ' +
+                    error.message
+            );
+        }, '/' + id);
     }
 }

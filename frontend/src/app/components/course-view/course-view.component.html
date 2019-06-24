@@ -1,56 +1,147 @@
 <header id="courseViewHeader">
-  <h1 class = "row justify-content-center">{{ title }}</h1> 
-
-      <button type="button" class="btn" [routerLink]="['/course']">
-        <i class="fas fa-plus-circle fa-3x"></i>
-    </button>
-  <hr />
+    <h1 class="row justify-content-center">{{ title }}</h1>
+    <hr />
 </header>
 
-
 <div *ngIf="eventList.length == 0">
-  <div class="row">
-      <div class="col-lg-12">
-          <p class="alert alert-info">
-              Aktuell sind noch keine Kurse vorhanden!
-          </p>
-      </div>
-  </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <p class="alert alert-info">
+                Aktuell sind noch keine Kurse vorhanden!
+            </p>
+        </div>
+    </div>
 </div>
 
-<div *ngFor="let event of eventList">
-  <div class="card border-dark mb-2 flex-row flex-wrap">
-      <div class="card-header bg-secondary" id="cardLeft">
-            Hier kommt ein Bild
+<!-- Search Bar -->
+<div class="row justify-content-center align-items-center">
+    <div *ngIf="role == 'ADMIN'" class="custom-control custom-switch pb-3 mr-3">
+        <input
+            name="toggler"
+            type="checkbox"
+            class="custom-control-input"
+            id="eventView"
+            [(ngModel)]="isPersonalView"
+            (input)="changeView()"
+        />
+        <label class="custom-control-label" for="eventView"
+            >Alle Events anzeigen</label
+        >
+    </div>
+    <div class="input-group w-auto mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1"
+                ><i class="fas fa-search"></i
+            ></span>
         </div>
-        <div class="card-block" id="cardMiddle">
-            <div class="card-body" id="cardBody">
-                <h4 class="card-title" id="cardHeader">
-                    {{ event.name }}
-                </h4>
-
-                <hr />
-                <p clas="card-text" id="cardContent">
-                    Max Teilnehmer: {{ event.maxParticipants }}<br />
-                    Anmeldefrist: {{ event.endOfApplication }} <br />
-                    Kostet: {{ event.price }}
-                </p>
-            </div>
+        <input
+            type="text"
+            class="form-control"
+            placeholder="{{ searchPlaceholder }}"
+            [(ngModel)]="filter"
+            (keyup)="filterList()"
+        />
+    </div>
+    <div ngbDropdown class="pb-3 mx-2">
+        <button
+            class="col-auto btn"
+            [class.btn-outline-primary]="
+                eventTypeSelection === undefined ||
+                eventTypeSelection.value === undefined
+            "
+            [class.btn-primary]="
+                eventTypeSelection !== undefined &&
+                eventTypeSelection.value !== undefined
+            "
+            id="eventtypeFilterBtn"
+            name="eventtypeFilter"
+            ngbDropdownToggle
+        >
+            {{
+                eventTypeSelection === undefined ||
+                eventTypeSelection.value === undefined
+                    ? 'Eventtyp auswählen'
+                    : eventTypeSelection.name
+            }}
+        </button>
+        <div ngbDropdownMenu>
+            <button
+                class="dropdown-item"
+                id="selectedEventtypeBtn"
+                name="selectedEventtypeFilter"
+                *ngFor="let type of eventTypes"
+                (click)="eventTypeSelection = type; filterList()"
+            >
+                {{ type.name }}
+            </button>
         </div>
-      <div class="card-footer flex-column" id="cardRight">
-          <div class="mb-4 mt-2">
-              <button type="button" class="btn" (click)="deleteCourse(event.id)" >
-                  <i class="fas fa-trash fa-3x"></i>
-              </button>
-          </div>
-          <div [routerLink]="['/course']" [queryParams]="{ id: event.id }">
-              <button type="button" class="btn">
-                  <i class="fas fa-pencil-alt fa-3x"></i>
-              </button>
-          </div>
-      </div>
-  </div>
+    </div>
 </div>
 
+<div class="d-flex flex-wrap">
+    <div
+        class="card shadow-sm m-2 flex-row py-1 flex-grow-1"
+        *ngFor="let event of eventListPage; let i = index"
+    >
+        <div class="card-body" id="cardBody">
+            <h4 class="card-title" id="cardHeader">
+                {{ eventListPage[i].name }}
+            </h4>
 
-<!-- Modal PopUp --> 
+            <p class="card-text" id="cardContent">
+                Max Teilnehmer: {{ eventListPage[i].maxParticipants }}<br />
+                Anmeldefrist: {{ eventListPage[i].endOfApplication }} <br />
+                Kostet: {{ eventListPage[i].price }}
+            </p>
+        </div>
+
+        <div
+            class="d-flex flex-column justify-content-around py-1 m-3 mr-4"
+            id="cardRight"
+        >
+            <!-- for more details admin can go to profile site of trainer (same infos, plus trainer related content like hosted events) -->
+
+            <button
+                *ngIf="event.eventType == 'Course'"
+                type="button"
+                class="btn btn-card mb-2"
+                ngbTooltip="Bearbeiten"
+                placement="left"
+                [routerLink]="['/course/add']"
+                [queryParams]="{ id: event.id }"
+            >
+                <i class="fas fa-pencil-alt button-icon"></i>
+            </button>
+
+            <button
+                *ngIf="role == 'ADMIN'"
+                type="button"
+                class="btn btn-danger"
+                (click)="deleteCourse(event.id)"
+                ngbTooltip="Löschen"
+                placement="left"
+            >
+                <i class="fas fa-trash button-icon"></i>
+            </button>
+        </div>
+    </div>
+    <div
+        class="card shadow-sm m-2 flex-row py-1 flex-grow-1"
+        *ngIf="eventListPage.length % 2 === 1 && eventListPage.length > 1"
+        style="opacity: 0"
+    ></div>
+</div>
+
+<ngb-pagination
+    class="d-flex justify-content-center mt-2"
+    [(page)]="currentPage"
+    [pageSize]="itemsPerPage"
+    [collectionSize]="filteredEventList.length"
+    (pageChange)="updateListPage()"
+    [maxSize]="5"
+    [rotate]="true"
+>
+    <ng-template ngbPaginationPrevious> Zurück </ng-template>
+    <ng-template ngbPaginationNext> Weiter </ng-template>
+</ngb-pagination>
+<!-- Modal PopUp -->

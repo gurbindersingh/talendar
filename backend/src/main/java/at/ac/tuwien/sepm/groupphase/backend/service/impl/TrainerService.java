@@ -1,76 +1,73 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.User;
-import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
-import at.ac.tuwien.sepm.groupphase.backend.persistence.EventRepository;
-import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
+import at.ac.tuwien.sepm.groupphase.backend.configuration.properties.StorageProperties;
+import at.ac.tuwien.sepm.groupphase.backend.configuration.properties.UserAccountConfigurationProperties;
+import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
-import at.ac.tuwien.sepm.groupphase.backend.service.IUserService;
-import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.AccountCreationException;
+import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.FileDeletionException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.Validator;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidEntityException;
-import org.aspectj.weaver.ast.Not;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.dao.DataAccessException;
-import org.springframework.data.repository.query.Param;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
+import java.io.FileNotFoundException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class TrainerService implements ITrainerService {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(TrainerService.class);
 
-    private final IUserService userService;
     private final TrainerRepository trainerRepository;
     private final EventService eventService;
+    private final ImageService imageService;
     private final Validator validator;
     private final InfoMail infoMail;
+
+    private final PasswordEncoder passwordEncoder;
+    private final UserAccountConfigurationProperties userAccountConfigurationProperties;
+    private final StorageProperties storageProperties;
 
 
     @Autowired
     public TrainerService(TrainerRepository trainerRepository, Validator validator,
-                          EventService eventService, IUserService userService, InfoMail infoMail
+                          EventService eventService, ImageService imageService, InfoMail infoMail, PasswordEncoder passwordEncoder,
+                          UserAccountConfigurationProperties userAccountConfigurationProperties, StorageProperties storageProperties
     ) {
         this.trainerRepository = trainerRepository;
-        this.userService = userService;
         this.eventService = eventService;
+        this.imageService = imageService;
         this.validator = validator;
         this.infoMail = infoMail;
+        this.passwordEncoder = passwordEncoder;
+        this.userAccountConfigurationProperties = userAccountConfigurationProperties;
+        this.storageProperties = storageProperties;
     }
+
 
     @Transactional
     @Override
-    public Trainer save (Trainer trainer, String password) throws ServiceException, ValidationException {
+    public Trainer save(Trainer trainer) throws ServiceException, ValidationException {
         LOGGER.info("Prepare save of new trainer: {}", trainer);
-        User account;
-        LocalDateTime timeOfCreation = LocalDateTime.now();
+        LocalDateTime timeOfCreation = LocalDateTime.now().minusSeconds(1);
 
         trainer.setCreated(timeOfCreation);
         trainer.setUpdated(timeOfCreation);
-
-        try {
-            TimeUnit.MILLISECONDS.sleep(1);
-        }
-        catch(InterruptedException e) {
-            throw new ServiceException("Internal Server error", e);
-        }
 
         try {
             validator.validateTrainer(trainer);
@@ -79,33 +76,19 @@ public class TrainerService implements ITrainerService {
             throw new ValidationException(e.getMessage(), e);
         }
 
+        trainer.setPassword(passwordEncoder.encode(trainer.getPassword()));
+
         try {
             trainer = trainerRepository.save(trainer);
             try {
                 infoMail.sendAdminTrainerInfoMail(trainer, "Neuer Trainer erstellt", "newTrainer");
-            } catch(EmailException e){
+            }
+            catch(EmailException e) {
                 LOGGER.error("Error trying to send new trainer info mail to admin");
             }
         }
         catch(DataAccessException e) { //catch specific exceptions
             throw new ServiceException("Error while performing a data access operation", e);
-        }
-
-        /**
-         * Now create the user account (needed for authentication)
-         */
-        account = new User();
-        account.setEmail(trainer.getEmail());
-        account.setPassword(password);
-        account.setDeleted(false);
-        account.setAdmin(false);
-        account.setTrainer(trainer);
-
-        try {
-            userService.createUser(account);
-        }
-        catch(AccountCreationException e) {
-            throw new ServiceException(e.getMessage(), e);
         }
 
         return trainer;
@@ -146,6 +129,17 @@ public class TrainerService implements ITrainerService {
                     "Trainer with id " + trainer.getId() + " does not exist. Update not possible");
             }
 
+            // if new Picture differs from existent, delete the old old picture
+            if (currentVersion.getPicture() != null && !currentVersion.getPicture().equals(trainer.getPicture())) {
+                try {
+                    imageService.delete(currentVersion.getPicture(), storageProperties.getProfileImgFolder());
+                }
+                catch(FileDeletionException e) {
+                    // not a critical error but should be logged
+                    LOGGER.warn(e.getMessage(), e);
+                }
+            }
+
             // merge the new values from trainer (as received from frontend) to the stored entity (which is managed by JPA)
             return mergeTrainers(currentVersion, trainer);
         }
@@ -179,15 +173,30 @@ public class TrainerService implements ITrainerService {
             currentVersion.setPhone("06641234567");
             currentVersion.setUpdated(timeOfUpdate);
 
-            if (!(currentVersion.getEvents() == null || currentVersion.getEvents().isEmpty())) {
+            if(!( currentVersion.getEvents() == null || currentVersion.getEvents().isEmpty() )) {
                 for(Event e : currentVersion.getEvents()) {
                     eventService.deleteEvent(e.getId());
                 }
             }
+
+            // clean up and remove image of this trainer
+            if (currentVersion.getPicture() != null) {
+                try {
+                    imageService.delete(currentVersion.getPicture(), storageProperties.getProfileImgFolder());
+                    currentVersion.setPicture(null);
+                }
+                catch(FileDeletionException e) {
+                    LOGGER.warn(e.getMessage(), e);
+                }
+            }
+
             trainerRepository.deleteThisTrainer(currentVersion.getId(), timeOfUpdate);
-            try{
-                infoMail.sendAdminTrainerInfoMail(currentVersion, "Trainer gelöscht", "deleteTrainer");
-            } catch(EmailException e){
+            try {
+                infoMail.sendAdminTrainerInfoMail(currentVersion, "Trainer gelöscht",
+                                                  "deleteTrainer"
+                );
+            }
+            catch(EmailException e) {
                 LOGGER.error("Error trying to send delete trainer info mail to admin");
             }
         }
@@ -224,7 +233,7 @@ public class TrainerService implements ITrainerService {
         LOGGER.info("Try to retrieve a list of all trainers");
 
         try {
-            return trainerRepository.findAll();
+            return trainerRepository.findByDeletedFalse();
         }
         catch(DataAccessException e) {
             throw new ServiceException("Error while performing a data access operation", e);
@@ -250,6 +259,10 @@ public class TrainerService implements ITrainerService {
         persisted.setEmail(newVersion.getEmail());
         persisted.setPhone(newVersion.getPhone());
         persisted.setUpdated(newVersion.getUpdated());
+        persisted.setPicture(newVersion.getPicture());
+        if (!persisted.getPassword().equals(newVersion.getPassword())) {
+            persisted.setPassword(passwordEncoder.encode(newVersion.getPassword()));
+        }
         return persisted;
     }
 }

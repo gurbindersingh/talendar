@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.security.entity;
 
+import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -15,16 +16,7 @@ import java.util.List;
 
 public class SecurityUserProfile implements UserDetails {
 
-    /**
-     * NOTE: why not use directly Trainer as wrapped entity?
-     * theoretically possible,  but a) we would expose a lot more details to spring security than
-     * needed, but most importantly b) if we want to add new types of accounts (lets say customers get an account)
-     * then we dont have to change a single LOC in all security related classes.
-     * We would simply create a User entity somewhere else (including the meta data that we want to have set)
-     * and everything would work the same way as before
-     */
-
-    // we wrap it
+    // actual instance of user is wrapped
     private User user;
 
     public SecurityUserProfile(User user) {
@@ -45,7 +37,7 @@ public class SecurityUserProfile implements UserDetails {
         if (user.isAdmin()) {
             authorities.add(new SimpleGrantedAuthority("ADMIN"));
         }
-        if (user.getTrainer() != null) {
+        if (user instanceof Trainer) {
             authorities.add(new SimpleGrantedAuthority("TRAINER"));
         }
 

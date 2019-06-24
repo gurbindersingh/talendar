@@ -29,4 +29,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Modifying
     @Query(value = "update Event e set e.deleted = true where e.id = :id")
     void deleteThisEvent(@Param("id")Long id);
+
+    List<Event> findByRoomUses_BeginGreaterThanEqualAndDeletedFalse(LocalDateTime time);
+
+    List<Event> findByDeletedFalseAndRoomUses_BeginGreaterThanEqual(LocalDateTime time);
 }

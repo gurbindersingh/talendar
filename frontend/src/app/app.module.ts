@@ -26,6 +26,7 @@ import { httpInterceptorProviders } from './http-interceptors';
 import { SessionStorageService } from './services/session-storage.service';
 import { SimpleHttpInterceptor } from './http-interceptors/simple-http-interceptor';
 import { TrainerClient } from './rest/trainer-client';
+import { TagClient } from './rest/tag-client';
 import { EventClient } from './rest/event-client';
 import { DateTimeParserService } from './services/date-time-parser.service';
 import { HolidayClient } from 'src/app/rest/holiday-client';
@@ -40,6 +41,10 @@ import { TrainerGuard } from './guards/trainer-guard';
 import { AuthenticatedGuard } from './guards/authenticated-guard';
 import { InfoComponent } from './components/info/info.component';
 import { InfoClient } from './rest/info-client';
+import { ImageClient } from './rest/image-client';
+import { SafeServerImagePipe } from './pipes/safe-server-image-pipe';
+import { TagComponent } from './components/tag/tag.component';
+import { CancelNewsletterComponent } from './components/cancel-newsletter/cancel-newsletter.component';
 
 @NgModule({
     declarations: [
@@ -50,6 +55,7 @@ import { InfoClient } from './rest/info-client';
         HolidayComponent,
         RentComponent,
         NavigationComponent,
+        CancelNewsletterComponent,
         TrainerComponent,
         ConsultationComponent,
         TrainerListComponent,
@@ -59,6 +65,9 @@ import { InfoClient } from './rest/info-client';
         NgbdModalConfirm,
         LoginComponent,
         InfoComponent,
+        SafeServerImagePipe,
+        TagComponent,
+        CancelNewsletterComponent,
     ],
     imports: [
         AppRoutingModule,
@@ -77,6 +86,7 @@ import { InfoClient } from './rest/info-client';
         SessionStorageService,
         SimpleHttpInterceptor,
         TrainerClient,
+        TagClient,
         EventClient,
         DateTimeParserService,
         HolidayClient,
@@ -86,8 +96,9 @@ import { InfoClient } from './rest/info-client';
         TrainerGuard,
         AuthenticatedGuard,
         InfoClient,
+        ImageClient,
     ],
     bootstrap: [AppComponent],
     entryComponents: [NgbdModalConfirm],
 })
-export class AppModule {}
+export class AppModule { }

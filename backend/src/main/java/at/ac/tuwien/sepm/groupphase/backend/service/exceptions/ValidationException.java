@@ -6,6 +6,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class ValidationException extends Exception {
 
+    public ValidationException(String info) {
+        super(info);
+    }
+
     public ValidationException(Throwable cause) {
         super(cause);
     }

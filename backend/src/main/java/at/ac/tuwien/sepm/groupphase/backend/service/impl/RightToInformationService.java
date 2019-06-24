@@ -9,10 +9,10 @@ import at.ac.tuwien.sepm.groupphase.backend.service.IRightToInformationService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.UserNotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.util.mapper.CustomerMapper;
-import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.text.xml.XMLUtil;
+import com.lowagie.text.*;
+import com.lowagie.text.Font;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -23,6 +23,7 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import java.awt.*;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -58,13 +59,12 @@ public class RightToInformationService implements IRightToInformationService {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         PdfWriter.getInstance(document, b);
         document.open();
-        Font listFont = FontFactory.getFont(FontFactory.COURIER, 14, BaseColor.BLACK);
+        Font listFont = FontFactory.getFont(FontFactory.COURIER, 14, Color.BLACK);
         Paragraph chunk;
         for(int i = 0; i < customers.size(); i++){
             CustomerDto customerDto = customerMapper.entityToCustomerDto(customers.get(i));
             chunk = new Paragraph("\nVorname: " + customerDto.getFirstName() + "\nNachname: " + customerDto.getLastName() +
                                   "\nTelefonnummer: " + customerDto.getPhone() + "\nEmail-Adresse: " + customerDto.getEmail() +
-                                  "\n Kind: " + customerDto.getChildName() + " " + customerDto.getChildLastName() +
                                   "\nHat teilgenommen/Wird teilnehmen an:\n\n\n");
 
             PdfPTable table = new PdfPTable(2);

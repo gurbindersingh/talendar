@@ -1,6 +1,5 @@
 package at.ac.tuwien.sepm.groupphase.backend.testObjects;
 
-import at.ac.tuwien.sepm.groupphase.backend.testObjects.TrainerDto;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -10,6 +9,8 @@ public class HolidayDto {
 
     private Long id;
     private TrainerDto trainer;
+    private String title;
+    private String description;
     private LocalDateTime holidayStart;
     private LocalDateTime holidayEnd;
 
@@ -19,11 +20,11 @@ public class HolidayDto {
     }
 
 
-    public HolidayDto(Long id, TrainerDto trainer, LocalDateTime holidayStart,
-                      LocalDateTime holidayEnd
-    ) {
+    public HolidayDto (Long id, TrainerDto trainer, String title, String description, LocalDateTime holidayStart, LocalDateTime holidayEnd) {
         this.id = id;
         this.trainer = trainer;
+        this.title = title;
+        this.description = description;
         this.holidayStart = holidayStart;
         this.holidayEnd = holidayEnd;
     }
@@ -46,6 +47,26 @@ public class HolidayDto {
 
     public void setTrainer(TrainerDto trainer) {
         this.trainer = trainer;
+    }
+
+
+    public String getTitle() {
+        return title;
+    }
+
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+
+    public String getDescription() {
+        return description;
+    }
+
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
 
@@ -76,6 +97,8 @@ public class HolidayDto {
         HolidayDto that = (HolidayDto) o;
         return Objects.equals(id, that.id) &&
                Objects.equals(trainer, that.trainer) &&
+               Objects.equals(title, that.title) &&
+               Objects.equals(description, that.description) &&
                Objects.equals(holidayStart, that.holidayStart) &&
                Objects.equals(holidayEnd, that.holidayEnd);
     }
@@ -83,7 +106,7 @@ public class HolidayDto {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, trainer, holidayStart, holidayEnd);
+        return Objects.hash(id, trainer, title, description, holidayStart, holidayEnd);
     }
 
 
@@ -91,7 +114,9 @@ public class HolidayDto {
     public String toString() {
         return "HolidayDto{" +
                "id=" + id +
-               ", trainerid=" + trainer +
+               ", trainer=" + trainer +
+               ", title='" + title + '\'' +
+               ", description='" + description + '\'' +
                ", holidayStart=" + holidayStart +
                ", holidayEnd=" + holidayEnd +
                '}';

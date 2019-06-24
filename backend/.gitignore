@@ -2,8 +2,14 @@
 ### Environment ###
 ###################
 
+### Image Folder ###
+resources/*
+
 ### PDF-Files ###
 *.pdf
+
+### txt-Files ###
+*.txt
 
 ### Log-Files ###
 log/

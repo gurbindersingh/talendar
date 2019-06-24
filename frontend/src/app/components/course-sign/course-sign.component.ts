@@ -20,15 +20,15 @@ import { NgForm } from '@angular/forms';
 })
 export class CourseSignComponent implements OnInit {
     private id: number;
-    private event: Event = new Event();
-    private customer: Customer = new Customer();
+    event: Event = new Event();
+    customer: Customer = new Customer();
     private customerLengthBeforeUpdate: number;
 
     canSignIn: boolean;
     wantsEmail = false;
 
-    private errorMsg: string;
-    private successMsg: string;
+    errorMsg: string;
+    successMsg: string;
 
     loading: boolean;
 
@@ -38,6 +38,10 @@ export class CourseSignComponent implements OnInit {
 
     dates: string[];
     times: string[];
+
+    currentPage: number;
+    itemsPerPage: number;
+    datesListPage: string[] = [];
 
     date: NgbDateStruct;
     time: NgbTimeStruct;
@@ -56,6 +60,8 @@ export class CourseSignComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.currentPage = 1;
+        this.itemsPerPage = 12;
         this.id = this.route.snapshot.queryParams.id;
         this.loading = false;
         this.event.customerDtos = []; // needed
@@ -63,12 +69,22 @@ export class CourseSignComponent implements OnInit {
         this.canSignIn = true;
     }
 
+    updateListPage(page?: number): void {
+        this.datesListPage = this.dates.slice(
+            (this.currentPage - 1) * this.itemsPerPage,
+            this.currentPage * this.itemsPerPage
+        );
+    }
+
+    public scroll(el: HTMLElement) {
+        el.scrollIntoView();
+    }
+
     public getEventFromBackendById(id: number): void {
         this.dates = [];
         this.times = [];
         this.eventClient.getEventById(id).subscribe(
             (data: Event) => {
-                console.log('Loaded event: ', data);
                 this.event = data;
                 this.event.customerDtos = data.customerDtos;
                 this.event.roomUses = data.roomUses;
@@ -82,6 +98,7 @@ export class CourseSignComponent implements OnInit {
                         roomUse.room
                     );
                 }
+                this.updateListPage();
             },
             (error: Error) => {
                 this.errorMsg =
@@ -89,8 +106,6 @@ export class CourseSignComponent implements OnInit {
                 this.canSignIn = false;
             }
         );
-
-        console.log('this.event: ', this.event);
     }
 
     public updateCourseCustomers(): void {
@@ -108,7 +123,6 @@ export class CourseSignComponent implements OnInit {
         );
         this.eventClient.updateCustomer(this.event).subscribe(
             (data: Event) => {
-                console.log('Event without error. Data: ', data);
                 if (
                     data.customerDtos.length === this.customerLengthBeforeUpdate
                 ) {
@@ -118,7 +132,7 @@ export class CourseSignComponent implements OnInit {
                     this.successMsg = '';
                 } else {
                     this.btnClicked = true;
-                    console.log('Successful: ', data);
+
                     this.successMsg = 'Sie sind jetzt angemeldet!';
                     this.errorMsg = '';
                 }
@@ -126,13 +140,12 @@ export class CourseSignComponent implements OnInit {
             (error: Error) => {
                 this.btnClicked = false;
                 this.loading = false;
-                console.log('Fehler ist:', error);
+
                 this.successMsg = '';
                 this.errorMsg = error.message;
             }
         );
         this.getEventFromBackendById(this.id);
-        console.log('Event after all: ', this.event);
     }
 
     public checkBoxClicked() {

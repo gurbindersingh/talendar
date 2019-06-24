@@ -56,10 +56,15 @@ public class EventDto {
     private String        description;
     private Integer       minAge;
     private Integer       maxAge;
+    private List<String>  pictures;
 
     /*
         These Variables are Rent Specific
      */
+
+
+    private boolean redacted;
+    private boolean hide;
 
 
     public EventDto () {
@@ -83,7 +88,10 @@ public class EventDto {
                      Integer maxParticipants,
                      String description,
                      Integer minAge,
-                     Integer maxAge
+                     Integer maxAge,
+                     List<String> pictures,
+                     boolean redacted,
+                     boolean hide
     ) {
         this.id = id;
         this.eventType = eventType;
@@ -102,6 +110,9 @@ public class EventDto {
         this.description = description;
         this.minAge = minAge;
         this.maxAge = maxAge;
+        this.pictures = pictures;
+        this.redacted = redacted;
+        this.hide = hide;
     }
 
 
@@ -275,6 +286,36 @@ public class EventDto {
     }
 
 
+    public List<String> getPictures() {
+        return pictures;
+    }
+
+
+    public void setPictures(List<String> pictures) {
+        this.pictures = pictures;
+    }
+
+
+    public boolean isRedacted() {
+        return redacted;
+    }
+
+
+    public void setRedacted(boolean redacted) {
+        this.redacted = redacted;
+    }
+
+
+    public boolean isHide() {
+        return hide;
+    }
+
+
+    public void setHide(boolean hide) {
+        this.hide = hide;
+    }
+
+
     @Override
     public boolean equals (Object o) {
         if(this == o) return true;
@@ -296,7 +337,11 @@ public class EventDto {
                Objects.equals(maxParticipants, eventDto.maxParticipants) &&
                Objects.equals(description, eventDto.description) &&
                Objects.equals(minAge, eventDto.minAge) &&
-               Objects.equals(maxAge, eventDto.maxAge);
+               Objects.equals(maxAge, eventDto.maxAge) &&
+               Objects.equals(pictures, eventDto.pictures) &&
+               Objects.equals(redacted, eventDto.redacted) &&
+               Objects.equals(hide, eventDto.hide);
+
     }
 
 
@@ -318,7 +363,10 @@ public class EventDto {
                             maxParticipants,
                             description,
                             minAge,
-                            maxAge
+                            maxAge,
+                            pictures,
+                            redacted,
+                            hide
         );
     }
 
@@ -343,6 +391,9 @@ public class EventDto {
                ", description='" + description + '\'' +
                ", minAge=" + minAge +
                ", maxAge=" + maxAge +
+               ", pictures=" + pictures +
+               ", redacted=" + redacted +
+               ", hide=" + hide +
                '}';
     }
 }

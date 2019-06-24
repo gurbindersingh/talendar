@@ -1,10 +1,9 @@
 package at.ac.tuwien.sepm.groupphase.backend.Entity;
 
-import at.ac.tuwien.sepm.groupphase.backend.enums.BirthdayType;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.hibernate.annotations.Generated;
-import org.hibernate.annotations.GenerationTime;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
@@ -68,6 +67,8 @@ public class Event {
     @Column
     private boolean deleted;
 
+    @Column
+    private String eventTags;
     /*
         These Variables are used by non Rent Types
      */
@@ -116,18 +117,43 @@ public class Event {
     @Column
     private Integer maxAge;
 
+    @Column
+    @ElementCollection
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private List<String> pictures;
+
+
 
     /*
         These Variables are Rent Specific
      */
 
+    /**
+     * TRANSIENT VALUES: NOT STORED IN DB, BUT MERELY META INFORMATION FOR INTERNAL PROCESSING
+     * AND FLAGS (IN THAT CASE) FOR THE FRONTEND.
+     * THIS PROPERTIES MAY ARE HANDLED OR IGNORED BY THE FRONTEND (ITS UP TO THE FRONTEND TO
+     * USE THIS META DATA AS HELP)
+     */
+
+    /*
+        This property signals to the frontend that the data for this entity had been removed
+        for privacy reasons. The frontend may display such events in an appropriate way.
+     */
+    @Transient
+    private boolean redacted;
+    /*
+       This property signals to the frontend that the data are existent but that this events may
+       are displayed in a non priority manner.
+     */
+    @Transient
+    private boolean hide;
 
     public Event () {
 
     }
 
 
-    public Event (@NotBlank String name, @NotNull List<RoomUse> roomUses, @Past @NotNull LocalDateTime created, @Past @NotNull LocalDateTime updated, EventType eventType, Set<Customer> customers, Trainer trainer, int headcount, int ageToBe, String birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipants, String description, Integer minAge, Integer maxAge, boolean deleted) {
+    public Event (@NotBlank String name, @NotNull List<RoomUse> roomUses, @Past @NotNull LocalDateTime created, @Past @NotNull LocalDateTime updated, EventType eventType, Set<Customer> customers, Trainer trainer, int headcount, int ageToBe, String birthdayType, LocalDateTime endOfApplication, Double price, Integer maxParticipants, String description, Integer minAge, Integer maxAge, List<String> pictures, boolean deleted, String eventTags) {
         this.name = name;
         this.roomUses = roomUses;
         this.created = created;
@@ -144,7 +170,19 @@ public class Event {
         this.description = description;
         this.minAge = minAge;
         this.maxAge = maxAge;
+        this.pictures = pictures;
         this.deleted = deleted;
+        this.eventTags = eventTags;
+    }
+
+
+    public String getEventTags() {
+        return eventTags;
+    }
+
+
+    public void setEventTags(String eventTags) {
+        this.eventTags = eventTags;
     }
 
 
@@ -318,6 +356,36 @@ public class Event {
     }
 
 
+    public List<String> getPictures() {
+        return pictures;
+    }
+
+
+    public void setPictures(List<String> pictures) {
+        this.pictures = pictures;
+    }
+
+
+    public boolean isRedacted() {
+        return redacted;
+    }
+
+
+    public void setRedacted(boolean redacted) {
+        this.redacted = redacted;
+    }
+
+
+    public boolean isHide() {
+        return hide;
+    }
+
+
+    public void setHide(boolean hide) {
+        this.hide = hide;
+    }
+
+
     public boolean isDeleted () {
         return deleted;
     }
@@ -349,7 +417,8 @@ public class Event {
                Objects.equals(maxParticipants, event.maxParticipants) &&
                Objects.equals(description, event.description) &&
                Objects.equals(minAge, event.minAge) &&
-               Objects.equals(maxAge, event.maxAge);
+               Objects.equals(maxAge, event.maxAge) &&
+               Objects.equals(pictures, event.pictures);
     }
 
 
@@ -357,7 +426,7 @@ public class Event {
     public int hashCode () {
         return Objects.hash(id, name, roomUses, created, updated, eventType, customers, trainer,
                             headcount, ageToBe, birthdayType, endOfApplication, price,
-                            maxParticipants, description, minAge, maxAge
+                            maxParticipants, description, minAge, maxAge, pictures
         );
     }
 
@@ -382,6 +451,31 @@ public class Event {
                ", description='" + description + '\'' +
                ", minAge=" + minAge +
                ", maxAge=" + maxAge +
+               ", pictures=" + pictures +
+               ", redacted=" + redacted +
+               ", hide=" + hide +
+               ", tags=" + eventTags +
+               '}';
+    }
+
+    public String toString2 () {
+        return "Event{" +
+               "id=" + id +
+               ", name='" + name + '\'' +
+               ", roomUses=" + roomUses +
+               ", created=" + created +
+               ", updated=" + updated +
+               ", eventType=" + eventType +
+               ", headcount=" + headcount +
+               ", ageToBe=" + ageToBe +
+               ", birthdayType=" + birthdayType +
+               ", endOfApplication=" + endOfApplication +
+               ", price=" + price +
+               ", maxParticipants=" + maxParticipants +
+               ", description='" + description + '\'' +
+               ", minAge=" + minAge +
+               ", maxAge=" + maxAge +
+               ", tags=" + eventTags +
                '}';
     }
 }

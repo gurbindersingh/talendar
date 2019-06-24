@@ -5,11 +5,7 @@
     <div class="row">
         <div class="col-lg-3"></div>
         <div class="container col-lg-6">
-            <form
-                id="birthdayForm"
-                #form="ngForm"
-                (ngSubmit)="postBirthday(form)"
-            >
+            <form id="birthdayForm" #birthdayForm>
                 <div class="form-group">
                     <label for="birthdayType">Art des Geburtstags:</label>
                     <select
@@ -156,14 +152,51 @@
                         required
                     />
                 </div>
-
-                <div class="form-row justify-content-end">
+                <br />
+                <div class="row" *ngIf="errorMsg">
+                    <div class="col-sm-12">
+                        <p class="alert alert-danger">
+                            {{ errorMsg }}
+                        </p>
+                    </div>
+                </div>
+                <div class="row" *ngIf="successMsg">
+                    <div class="col-sm-12">
+                        <p class="alert alert-success">
+                            {{ successMsg }}
+                        </p>
+                    </div>
+                </div>
+                <br />
+                <div class="row justify-content-end">
                     <button
-                        [disabled]="!isComplete()"
+                        class="btn btn-light mr-2"
+                        (click)="goBack()"
+                        *ngIf="!auth.isLoggedIn"
+                    >
+                        Abbrechen
+                    </button>
+                    <input
                         type="submit"
                         class="btn btn-primary"
+                        [disabled]="!isComplete()"
+                        id="birthdaySave"
+                        value="Geburtstag eintragen"
+                        (click)="postBirthday(birthdayForm)"
+                        *ngIf="!loading"
+                    />
+                    <button
+                        class="btn btn-primary"
+                        type="button"
+                        *ngIf="loading"
+                        disabled
                     >
-                        Geburtstag Buchen
+                        <span
+                            class="spinner-border spinner-border-sm"
+                            role="status"
+                            aria-hidden="true"
+                        ></span>
+                        Loading...
                     </button>
                 </div>
             </form>
@@ -171,3 +204,5 @@
         <div class="col-lg-3"></div>
     </div>
 </div>
+<br />
+<br />

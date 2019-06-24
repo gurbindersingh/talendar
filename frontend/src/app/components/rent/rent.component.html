@@ -83,11 +83,14 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <label class="col-lg-1" for="startTime" id="beginLabel"
-                    >Von</label
-                >
-                <div class="form-group col-lg-4" id="startTime_css">
+            <div class="row align-items-center">
+                <div class="col-auto d-flex align-items-center">
+                    <label
+                        class="mb-0 mr-2 pt-0"
+                        for="startTime"
+                        id="beginLabel"
+                        >Von</label
+                    >
                     <ngb-timepicker
                         [(ngModel)]="startTime"
                         id="tp-input-start"
@@ -97,8 +100,11 @@
                     >
                     </ngb-timepicker>
                 </div>
-                <label class="col-lg-1" for="endTime" id="endLabel">Bis</label>
-                <div class="form-group col-lg-4" id="endTime_css">
+                <div class="col-auto d-flex align-items-center">
+                    <label class="mb-0 mr-2 pt-0" for="endTime" id="endLabel"
+                        >Bis</label
+                    >
+
                     <ngb-timepicker
                         [(ngModel)]="endTime"
                         name="endTime"
@@ -113,7 +119,7 @@
                 <label class="col-lg-1">Raum</label>
             </div>
 
-            <div class="row" id="radioButtonRow">
+            <div class="row pl-3" id="radioButtonRow">
                 <div
                     class="custom-control custom-radio custom-control-inline col-lg-3"
                 >
@@ -159,7 +165,7 @@
                     >
                 </div>
             </div>
-
+            <br />
             <div class="row" *ngIf="errorMsg">
                 <div class="col-sm-12">
                     <p class="alert alert-danger">
@@ -181,17 +187,24 @@
                 </div>
             </div>
             <div class="row justify-content-end">
+                <button
+                    class="btn btn-light mr-2"
+                    (click)="goBack()"
+                    *ngIf="!auth.isLoggedIn"
+                >
+                    Abbrechen
+                </button>
                 <input
                     type="submit"
-                    class="btn btn-primary col-lg-3"
+                    class="btn btn-primary "
                     [disabled]="!isCompleted()"
                     id="meetingSave"
-                    value="Mieten"
+                    value="Raum mieten"
                     (click)="postMeeting(meetingForm)"
                     *ngIf="!loading"
                 />
                 <button
-                    class="btn btn-primary col-lg-3"
+                    class="btn btn-primary "
                     type="button"
                     *ngIf="loading"
                     disabled

@@ -13,6 +13,9 @@ import at.ac.tuwien.sepm.groupphase.backend.persistence.RoomUseRepository;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
 import at.ac.tuwien.sepm.groupphase.backend.service.IEventService;
 import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;
+import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
+import at.ac.tuwien.sepm.groupphase.backend.service.impl.EventService;
+import at.ac.tuwien.sepm.groupphase.backend.service.impl.InfoMail;
 import at.ac.tuwien.sepm.groupphase.backend.testDataCreation.FakeData;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
@@ -21,6 +24,9 @@ import org.apache.tomcat.jni.Local;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -43,13 +49,20 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 public class EventServiceTest {
 
+
+    @Mock
+    private InfoMail infoMail;
+
     @Autowired
-    private IEventService eventService;
+    @InjectMocks
+    private EventService eventService;
 
     @Autowired
     private Validator validator;
+
     @Autowired
     private static FakeData faker = new FakeData();
+
 
     @Autowired
     private ITrainerService trainerService;
@@ -74,13 +87,9 @@ public class EventServiceTest {
     private static Trainer trainer = faker.fakeNewTrainerEntity();
 
 
-    // the save method of trainers (which leads to creation of an account) needs an pw
-    // as it is not important for overall logic, just pass 'anything'
-    private final String DUMMY_PW = "PASSWORD";
-
-
     @BeforeEach
     public void init(){
+        MockitoAnnotations.initMocks(this);
         VALID_INCOMING_BIRTHDAY = faker.fakeNewBirthdayEntity();
         VALID_INCOMING_BIRTHDAY_B = faker.fakeNewBirthdayEntity();
         VALID_INCOMING_COURSE = faker.fakeNewCourseEntity();
@@ -101,7 +110,8 @@ public class EventServiceTest {
 
 
     @Test
-    public void updateCustomerInEvent() throws NotFoundException, ServiceException, ValidationException {
+    public void updateCustomerInEvent() throws NotFoundException, ServiceException, ValidationException,
+                                               EmailException {
 
         Event event = eventService.save(VALID_INCOMING_COURSE);
 
@@ -143,7 +153,7 @@ public class EventServiceTest {
 
 
     @Test
-    public void updateCustomerAndThenSignOff_inEvent() throws NotFoundException, ServiceException, ValidationException {
+    public void updateCustomerAndThenSignOff_inEvent() throws NotFoundException, ServiceException, ValidationException, EmailException {
 
         Event event = eventService.save(VALID_INCOMING_COURSE);
 
@@ -168,7 +178,7 @@ public class EventServiceTest {
 
 
     @Test
-    public void updateTwoCustomersAndThenSignOffTwo_InEvent() throws NotFoundException, ServiceException, ValidationException {
+    public void updateTwoCustomersAndThenSignOffTwo_InEvent() throws NotFoundException, ServiceException, ValidationException, EmailException {
 
         Event event = eventService.save(VALID_INCOMING_COURSE);
 
@@ -240,7 +250,7 @@ public class EventServiceTest {
     }
 
     @Test
-    public void updateEvent_changedName() throws NotFoundException, ServiceException, ValidationException {
+    public void updateEvent_changedName() throws NotFoundException, ServiceException, ValidationException, EmailException {
         String newName = "newNameGuaranteed";
 
         Event savedEvent = eventService.save(VALID_INCOMING_COURSE);
@@ -252,7 +262,7 @@ public class EventServiceTest {
     }
 
     @Test
-    public void updateEvent_changedPrice() throws NotFoundException, ServiceException, ValidationException {
+    public void updateEvent_changedPrice() throws NotFoundException, ServiceException, ValidationException, EmailException {
         Double newPrice = 6.2;
 
         Event savedEvent = eventService.save(VALID_INCOMING_COURSE);
@@ -264,7 +274,7 @@ public class EventServiceTest {
     }
 
     @Test
-    public void updateEvent_changedMaxParticipant() throws NotFoundException, ServiceException, ValidationException {
+    public void updateEvent_changedMaxParticipant() throws NotFoundException, ServiceException, ValidationException, EmailException {
         Integer newMaxParticipant = 5;
 
         Event savedEvent = eventService.save(VALID_INCOMING_COURSE);
@@ -277,7 +287,7 @@ public class EventServiceTest {
     }
 
     @Test
-    public void updateEvent_changedMinAgeAndMaxAge() throws NotFoundException, ServiceException, ValidationException {
+    public void updateEvent_changedMinAgeAndMaxAge() throws NotFoundException, ServiceException, ValidationException, EmailException {
         Integer newMinAge = VALID_INCOMING_COURSE.getMinAge()+1;
         Integer newMaxAge = VALID_INCOMING_COURSE.getMaxAge()+1;
 
@@ -432,7 +442,7 @@ public class EventServiceTest {
         for(int i = 0; i <= 100; i++){
             Trainer t = faker.fakeNewTrainerEntity();
             try {
-                trainerService.save(t, DUMMY_PW);
+                trainerService.save(t);
                 trainers.add(t);
             }catch(ValidationException e){
                 System.out.println("System Validation Error creating Test Data");
@@ -453,7 +463,7 @@ public class EventServiceTest {
         birthdayTypes.add("Painting");
         trainer.setBirthdayTypes(birthdayTypes);
         try {
-            trainerService.save(trainer, DUMMY_PW);
+            trainerService.save(trainer);
         }catch(ValidationException e){
             System.out.println("System Validation Error Creating Test Trainer");
         }catch(ServiceException e){

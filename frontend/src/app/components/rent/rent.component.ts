@@ -7,7 +7,7 @@ import { Room } from 'src/app/models/enum/room';
 import { EventType } from 'src/app/models/enum/eventType';
 import { EventClient } from 'src/app/rest/event-client';
 import { DateTimeParserService } from 'src/app/services/date-time-parser.service';
-
+import { AuthenticationService } from 'src/app/services/authentication.service';
 import { NgbDateStruct, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 import { ClickedDateService } from 'src/app/services/clicked-date.service';
 
@@ -18,13 +18,13 @@ import { ClickedDateService } from 'src/app/services/clicked-date.service';
 })
 export class RentComponent implements OnInit {
     private event: Event = new Event();
-    private customer: Customer = new Customer();
     private roomUse: RoomUse = new RoomUse();
 
     private dateTimeParser: DateTimeParserService;
 
-    private errorMsg: string;
-    private successMsg: string;
+    customer: Customer = new Customer();
+    errorMsg: string;
+    successMsg: string;
 
     greenRadioButton: RadioNodeList;
     loading = false;
@@ -41,7 +41,8 @@ export class RentComponent implements OnInit {
     constructor(
         private eventClient: EventClient,
         dateTimeParser: DateTimeParserService,
-        private clickedDateService: ClickedDateService
+        private clickedDateService: ClickedDateService,
+        public auth: AuthenticationService
     ) {
         const date = this.clickedDateService.getDate();
         const time = this.clickedDateService.getTime();
@@ -72,19 +73,25 @@ export class RentComponent implements OnInit {
         this.loading = true;
         this.eventClient.postNewEvent(this.event).subscribe(
             (data: Event) => {
-                console.log(data);
                 this.successMsg =
                     'Deine Reservierung wurde erfolgreich gespeichert';
                 this.errorMsg = '';
                 this.loading = false;
+                this.resetFormular();
             },
             (error: Error) => {
-                console.log(error);
                 this.errorMsg = error.message;
                 this.successMsg = '';
                 this.loading = false;
             }
         );
+    }
+
+    private resetFormular(): void {
+        this.customer.firstName = '';
+        this.customer.lastName = '';
+        this.customer.phone = '';
+        this.customer.email = '';
     }
 
     public greenSelected(): void {
@@ -97,6 +104,10 @@ export class RentComponent implements OnInit {
 
     public groundFloorSelected(): void {
         this.radioButtonSelected = 'Erdgeschoss';
+    }
+
+    public goBack(): void {
+        window.history.back();
     }
 
     public getSelectedRadioButtonRoom(): Room {

@@ -1,28 +1,49 @@
-#trainerListHeader {
+$card-height: 184px;
+
+#pageHeader {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     margin-bottom: 1.5rem;
 }
 
-#trainerListHeader h1 {
+#pageHeader h1 {
     flex-grow: 1;
 }
 
+.card {
+    flex-basis: 640px;
+}
 
-#cardBody {
+#cardLeft {
+    height: $card-height;
+    width: $card-height;
+
+    padding: 0;
+
+    #profilePicContainer {
+        width: 182px;
+        height: 182px;
+    }
+}
+
+#cardMiddle {
+    // width: calc(100% - $card-height - 95px);
+    flex-grow: 1;
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
 }
 
-#cardLeft {
-    width: 20%;
+.btn.btn-card {
+    background-color: hsl(0, 0, 95);
+    height: 47px;
+    width: 47px;
 }
 
-#cardMiddle {
-  width: calc(100% - 20% - 100px);
+.btn.btn-card:hover {
+    background-color: hsl(0, 0, 85);
 }
 
-#cardRight {
-    width: 100px;
+.button-icon {
+    font-size: 25px;
 }

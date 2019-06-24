@@ -1,22 +1,16 @@
-@import '../../../../node_modules/bootstrap/scss/functions';
-@import '../../../../node_modules/bootstrap/scss/variables';
-@import '../../../../node_modules/bootstrap/scss/mixins/breakpoints';
-
 #datePicker-dp-endOfApplication {
     padding-top: 6px;
 }
 
-#beginLabel {
-    padding-top: 7%;
+#allSelections {
+    margin-top: 0.5rem;
 }
 
-#endLabel {
-    padding-top: 7%;
-    padding-right: 5px;
+.selection {
+    display: flex;
+    justify-content: space-between;
 }
 
-@include media-breakpoint-down(md) {
-    #submit {
-        justify-content: flex-end;
-    }
+.fileName {
+    display: inline;
 }

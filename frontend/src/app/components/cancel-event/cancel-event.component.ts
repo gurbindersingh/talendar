@@ -18,11 +18,11 @@ export class CancelEventComponent implements OnInit {
 
     private customerToRemove: Customer;
 
-    private title: string;
-    private textBox: string;
-    private valid: boolean;
-    private successMsg: string;
-    private errorMsg: string;
+     title: string;
+     textBox: string;
+     valid: boolean;
+     successMsg: string;
+     errorMsg: string;
 
     private preCountOfCustomers: number;
 
@@ -43,27 +43,23 @@ export class CancelEventComponent implements OnInit {
             this.textBox = 'Sie hätten dieser Seite garnicht erreichen sollen';
             this.valid = false;
         } else {
-            console.log('Getting event with id ' + id);
             this.eventClient.getEventById(id).subscribe(
                 (data: Event) => {
-                    console.log('Got event with id ' + data.id);
                     this.event = data;
-
-                    // SIGN OFF COURSE
 
                     const eType = data.eventType as EventType;
 
                     if (eType === EventType.Course) {
+                        // SIGN OFF COURSE
                         this.btnText = 'Abmelden';
                         const emailId = Number(
                             this.route.snapshot.queryParams.emailId
                         );
-                        console.log(data.customerDtos);
 
                         this.signOff = true;
+                        let emailIdFound = false;
                         this.preCountOfCustomers = data.customerDtos.length;
                         for (const customer of data.customerDtos) {
-                            console.log(emailId + ' und ' + customer.emailId);
                             if (customer.emailId === emailId) {
                                 this.title =
                                     'Hallo ' +
@@ -72,12 +68,22 @@ export class CancelEventComponent implements OnInit {
                                     customer.lastName +
                                     '!';
                                 this.customerToRemove = customer;
+                                emailIdFound = true;
+                                break;
                             }
                         }
-                        this.textBox =
-                            'Wollen Sie sich wirklich von ' +
-                            data.name +
-                            ' abmelden?';
+                        if (!emailIdFound) {
+                            this.textBox =
+                                'Sie sind bereits abgemeldet vom Kurs';
+                            this.valid = false;
+                            this.title = '';
+                        } else {
+                            this.textBox =
+                                'Wollen Sie sich wirklich von ' +
+                                data.name +
+                                ' abmelden?';
+                            this.valid = true;
+                        }
                     } else {
                         this.btnText = 'Stornieren';
                         this.signOff = false;
@@ -89,16 +95,24 @@ export class CancelEventComponent implements OnInit {
                             '!';
                         this.textBox =
                             'Wollen Sie wirklich ' + data.name + ' stornieren?';
+                        this.valid = true;
                     }
-                    this.valid = true;
                 },
                 (error) => {
                     this.title = 'Fehler 404';
                     this.textBox = 'UPS, da ist was schief gelaufen';
                     this.valid = false;
-                    console.log(error);
                 }
             );
+        }
+        if (this.event === null || this.event === undefined) {
+            this.title = 'Fehler 404';
+            this.textBox = 'Dieser Ereignis existiert nicht in der Datenbank';
+            this.valid = false;
+        } else {
+            this.title = 'Hallo!';
+            this.textBox = 'Wollen sie wirklich stornieren?';
+            this.valid = true;
         }
     }
 
@@ -114,27 +128,29 @@ export class CancelEventComponent implements OnInit {
                         this.preCountOfCustomers - 1
                     ) {
                         this.successMsg = 'Sie wurden erfolgreich abgemeldet';
+                        this.errorMsg = '';
+                        this.valid = false;
                     } else {
-                        console.log(data);
-                        this.successMsg = 'Etwas ist schief gelaufen';
+                        this.errorMsg = 'Etwas ist schief gelaufen';
+                        this.successMsg = '';
                     }
                 },
                 (error: Error) => {
-                    console.log(error);
                     this.errorMsg = 'Etwas ist schief gelaufen';
+                    this.successMsg = '';
                 }
             );
-            this.valid = false;
         } else {
             this.eventClient.cancelEvent(id).subscribe(
                 () => {
                     this.successMsg = 'Ihr Event wurde erfolgreich storniert';
+                    this.errorMsg = '';
+                    this.valid = false;
                 },
                 (error: Error) => {
-                    console.log(error.message);
                     this.errorMsg =
-                        'Ihr Event konnte nicht storniert werden ' +
-                        error.message;
+                        'Ihr Event konnte nicht storniert werden. Versuchen Sie es später erneut';
+                    this.successMsg = '';
                 }
             );
         }

@@ -8,7 +8,7 @@
             <form
                 id="trainerForm"
                 #trainerForm
-                (submit)="postTrainer(trainerForm)"
+                (submit)="submitForm(trainerForm)"
                 (change)="clearInfoMsg()"
                 class="container-fluid"
             >
@@ -69,50 +69,38 @@
                     <div class="col-lg-6">
                         <div
                             class="custom-control custom-checkbox"
-                            *ngFor="let option of getBirthdayColumn1Keys()"
-                            (click)="
-                                birthdayOptionsColumn1[
-                                    option
-                                ].selected = !birthdayOptionsColumn1[option]
-                                    .selected
-                            "
+                            *ngFor="let option of birthdayOptionsColumn1"
+                            (click)="option.selected = !option.selected"
                         >
                             <input
                                 class="custom-control-input"
                                 type="checkbox"
                                 [name]="option"
-                                [(ngModel)]="
-                                    birthdayOptionsColumn1[option].selected
-                                "
+                                [(ngModel)]="option.selected"
+                                [ngModelOptions]="{ standalone: true }"
                                 value="{{ option.value }}"
                             />
                             <label class="custom-control-label" for="option">
-                                {{ option }} Geburtstag
+                                {{ option.label }} Geburtstag
                             </label>
                         </div>
                     </div>
                     <div class="col-lg-6">
                         <div
                             class="custom-control custom-checkbox"
-                            *ngFor="let option of getBirthdayColumn2Keys()"
-                            (click)="
-                                birthdayOptionsColumn2[
-                                    option
-                                ].selected = !birthdayOptionsColumn2[option]
-                                    .selected
-                            "
+                            *ngFor="let option of birthdayOptionsColumn2"
+                            (click)="option.selected = !option.selected"
                         >
                             <input
                                 class="custom-control-input"
                                 type="checkbox"
                                 [name]="option"
-                                [(ngModel)]="
-                                    birthdayOptionsColumn2[option].selected
-                                "
+                                [(ngModel)]="option.selected"
+                                [ngModelOptions]="{ standalone: true }"
                                 value="{{ option.value }}"
                             />
                             <label class="custom-control-label" for="option">
-                                {{ option }} Geburtstag
+                                {{ option.label }} Geburtstag
                             </label>
                         </div>
                     </div>
@@ -157,10 +145,10 @@
                             class="form-control"
                             name="password"
                             id="trainerPw"
-                            placeholder="Neues Passwort"
+                            placeholder="{{ pwPlaceholder }}"
                             minlength="8"
                             autocomplete="new-password"
-                            required
+                            [required]="isSaveMode"
                         />
                     </div>
 
@@ -174,22 +162,39 @@
                             class="form-control"
                             name="passwordRepeat"
                             id="trainerPwRepeat"
-                            placeholder="Passwort wiederholen"
+                            placeholder="{{ pwRepeatPlaceholder }}"
                             minlength="8"
                             autocomplete="new-password"
-                            required
+                            [required]="isSaveMode"
                         />
                     </div>
                 </div>
 
-                <div class="form-row" id="row5">
-                    <div class="col-6">
-                        Here goes a container for a profile picture if uploaded,
-                        else an icon
+                <div class="form-row align-items-center" id="row5">
+                    <div class="col-auto">
+                        <label class="custom-file-label" for="fileUpload">
+                            {{ imageName }}
+                        </label>
+                        <input
+                            type="file"
+                            class="custom-file-input"
+                            id="fileUpload"
+                            (change)="onFileSelected($event, croppieModal)"
+                            accept="image/*"
+                        />
                     </div>
+                </div>
 
-                    <div class="col-6">
-                        Here should be a clickable icon to upload a picture
+                <div class="">
+                    <div
+                        *ngIf="binaryEncodedCroppedImage != null"
+                        id="profilePicContainer"
+                    >
+                        <img
+                            [src]="binaryEncodedCroppedImage | safeServerImage"
+                            class="img-thumbnail"
+                            id="cropped-picture"
+                        />
                     </div>
                 </div>
 
@@ -208,7 +213,7 @@
                     </div>
                 </div>
 
-                <div class="form-row justify-content-end">
+                <div class="form-row justify-content-end" id="row6">
                     <div>
                         <button
                             type="reset"
@@ -234,3 +239,22 @@
         <div class="col-lg-3"></div>
     </div>
 </div>
+
+<ng-template #croppieModal let-modal>
+    <div class="modal-body">
+        <img
+            [src]="binaryEncodedImage | safeServerImage"
+            class="img-thumbnail"
+            id="profilePicture"
+        />
+    </div>
+    <div class="modal-footer">
+        <button
+            type="button"
+            class="btn btn-primary"
+            (click)="saveCropped(); modal.close()"
+        >
+            Speichern
+        </button>
+    </div>
+</ng-template>

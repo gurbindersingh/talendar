@@ -1,12 +1,10 @@
 package at.ac.tuwien.sepm.groupphase.backend.testDataCreation;
 
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Customer;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.*;
 import at.ac.tuwien.sepm.groupphase.backend.enums.Room;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.RoomUse;
+import at.ac.tuwien.sepm.groupphase.backend.rest.dto.TagDto;
 import at.ac.tuwien.sepm.groupphase.backend.testObjects.CustomerDto;
 import at.ac.tuwien.sepm.groupphase.backend.testObjects.EventDto;
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.testObjects.TrainerDto;
 import at.ac.tuwien.sepm.groupphase.backend.enums.EventType;
 import com.github.javafaker.Faker;
@@ -15,6 +13,7 @@ import org.apache.tomcat.jni.Local;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.*;
 
@@ -66,8 +65,8 @@ public class FakeData {
 
     public LocalDateTime fakeFutureTime() {
         return LocalDateTime.ofInstant(faker.date()
-                                            .between(Date.valueOf("2019-06-01"),
-                                                     Date.valueOf("2030-01-01")
+                                            .between(Date.valueOf(LocalDateTime.now().toLocalDate()),
+                                                     Date.valueOf(LocalDateTime.now().plusYears(3).toLocalDate())
                                             )
                                             .toInstant(), ZoneId.systemDefault());
     }
@@ -93,6 +92,46 @@ public class FakeData {
                                                  Date.valueOf(LocalDate.now().minusYears(min))
                                         )
                                         .toInstant(), ZoneId.systemDefault());
+    }
+
+    private String[] tagsCreator() {
+        String[] arr = {"Math", "Science", "Expirements", "Dance", "Painting", "Art", "Programming"};
+        return arr;
+    }
+
+
+    /**
+            Fake Entities And Dtos
+     */
+
+    public List<Tag> getFakedTags() {
+        List<Tag> tags = new LinkedList<>();
+        String[] names = tagsCreator();
+
+        for (String name: names) {
+            Tag tag = new Tag();
+            tag.setTag(name);
+            tags.add(tag);
+        }
+        return tags;
+    }
+
+    public Tag fakeRandomTagEntity() {
+        String[] names = tagsCreator();
+        int i = randomInt(0,tagsCreator().length);
+
+        Tag tag = new Tag();
+        tag.setTag(names[i]);
+        return tag;
+    }
+
+    public TagDto fakeRandomTagDto() {
+        String[] names = tagsCreator();
+        int i = randomInt(0,tagsCreator().length - 1);
+
+        TagDto tag = new TagDto();
+        tag.setTag(names[i]);
+        return tag;
     }
 
 
@@ -132,6 +171,7 @@ public class FakeData {
         List<String> birthdayTypes = new LinkedList<>();
         birthdayTypes.add("Rocket");
         trainer.setBirthdayTypes(birthdayTypes);
+        trainer.setPassword("password");
         trainer.setId(fakeID());
         trainer.setCreated(fakePastTimeAfter2000());
         boolean found = false;
@@ -165,7 +205,23 @@ public class FakeData {
         return Room.GroundFloor;
     }
 
+    public CustomerDto fakeCustomerForSignIn() {
+        CustomerDto karen = new CustomerDto();
+        karen.setId(null);
+        karen.setEmailId(1);
+        karen.setEmail(fakeEmail());
+        karen.setPhone(fakePhoneNumber());
+        karen.setFirstName(fakeFirstName());
+        karen.setLastName(fakeLastName());
+        karen.setChildName(fakeFirstName());
+        karen.setChildLastName(fakeLastName());
+        karen.setBirthOfChild(LocalDateTime.of(fakeAgeAsLocalDate(6,8), LocalTime.now()));
+        karen.setWantsEmail(false);
+        return karen;
+    }
 
+    // NOTE maybe you have to update these fakers, testDto had not been updated for a long time,
+    // and some properties have not been set in this method
     public CustomerDto fakeCustomer() {
         CustomerDto karen = new CustomerDto();
         karen.setId(fakeID());
@@ -232,6 +288,7 @@ public class FakeData {
         trainer.setPhone(fakePhoneNumber());
         trainer.setFirstName(fakeFirstName());
         trainer.setLastName(fakeLastName());
+        trainer.setPassword("password");
         trainer.setId(null);
         trainer.setCreated(null);
         trainer.setUpdated(null);
@@ -262,6 +319,7 @@ public class FakeData {
         EventDto bday = new EventDto();
         bday.setAgeToBe(fakeAge(5, 19));
         Set<CustomerDto> customers = new HashSet<>();
+
         customers.add(fakeCustomer());
         bday.setCustomerDtos(customers);
         bday.setHeadcount(fakeAge(5, 10));
@@ -329,6 +387,7 @@ public class FakeData {
 
     public Event fakeNewRent(){
         Event rent = new Event();
+        rent.setName("Miete");
         rent.setEventType(EventType.Rent);
         Set<Customer> customers = new HashSet<>();
         Customer customer = fakeNewCustomerEntity();
@@ -347,6 +406,7 @@ public class FakeData {
     public EventDto fakeRent() {
         EventDto rent = new EventDto();
 
+        rent.setName("Miete");
         rent.setEventType(EventType.Rent);
 
         Set<CustomerDto> customerDto = new HashSet<>();

@@ -1,6 +1,8 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.User;
+import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.HolidayRepository;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Holiday;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.LinkedList;
+import java.util.List;
 
 
 @Service
@@ -35,6 +38,38 @@ public class HolidayService implements IHolidayService {
         this.holidayRepository = holidayRepository;
         this.trainerRepository = trainerRepository;
         this.validate = validate;
+    }
+
+
+    @Override
+    public LinkedList<Holiday> getAllHolidaysByTrainerId(Long id) throws ServiceException,
+                                                                         NotFoundException {
+        LOGGER.info("Get all holidays by trainer id " + id);
+        if(!this.trainerRepository.existsById(id)){
+            InvalidEntityException e = new InvalidEntityException("Trainer existiert nicht!");
+            LOGGER.error("No trainer found when searching for all holidays by trainer id");
+            throw new NotFoundException(e.getMessage(), e);
+        }
+        LinkedList<Holiday> result = new LinkedList<>();
+        List<Holiday> db = holidayRepository.findByTrainer_Id(id);
+        for(int i = 0; i < db.size(); i++){
+            result.add(db.get(i));
+        }
+        LOGGER.info("" + result);
+        return result;
+    }
+
+
+    @Override
+    public LinkedList<Holiday> getAllHolidays() throws ServiceException, NotFoundException {
+
+        LinkedList<Holiday> result = new LinkedList<>();
+        List<Holiday> db = holidayRepository.findAll();
+        for(int i = 0; i < db.size(); i++){
+            result.add(db.get(i));
+        }
+        LOGGER.info("" + result);
+        return result;
     }
 
 
@@ -56,6 +91,7 @@ public class HolidayService implements IHolidayService {
         }
 
         try {
+            holiday.setTrainer(trainerRepository.getOne(holiday.getTrainer().getId()));
             return holidayRepository.save(holiday);
         } catch(Exception e) {
             throw new ServiceException(e);
@@ -97,7 +133,7 @@ public class HolidayService implements IHolidayService {
             LOGGER.error("attempt to save holidays with trainer that doesnt exist");
             throw new ValidationException(e.getMessage(), e);
         }
-        Trainer trainer = trainerRepository.getOne(holidaysDto.getTrainerid());
+        Trainer trainer = (Trainer)trainerRepository.getOne(holidaysDto.getTrainerid());
         LOGGER.info("Trainer is: " + trainer);
         try {
             //Create LinkedLists and split cronExpression
@@ -168,7 +204,8 @@ public class HolidayService implements IHolidayService {
 
 
             LOGGER.debug("Used Option: " + cronSplit[6]);
-            if(cronSplit[8]=="Nie"){
+            LOGGER.debug("Used Option: " + cronSplit[6]);
+            if(cronSplit[8].equals("Nie")){
                 endX = 1000;
             }
             if(toggle) {
@@ -215,7 +252,8 @@ public class HolidayService implements IHolidayService {
             //Create HolidayList out of Start and End lists + trainerId
             LOGGER.info("Trainerid is: " + holidaysDto.getTrainerid());
             for(int i = 0; i < startLocalDateTimes.size(); i++){
-                Holiday h = new Holiday(trainer, startLocalDateTimes.get(i), endLocalDateTimes.get(i));
+                Holiday h = new Holiday(trainer, holidaysDto.getTitle(), holidaysDto.getDescription(),
+                                        startLocalDateTimes.get(i), endLocalDateTimes.get(i));
                 resultList.add(h);
             }
 

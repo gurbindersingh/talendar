@@ -1,6 +1,10 @@
 import { RestClient } from './rest-client';
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import {
+    HttpClient,
+    HttpErrorResponse,
+    HttpHeaders,
+} from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthenticationRequest } from '../models/authentication-request';
 import { AuthenticationResponse } from '../models/authentication-response';
@@ -17,7 +21,7 @@ export class AuthenticationClient extends RestClient {
     ): Observable<AuthenticationResponse> {
         return this.post(
             (error: HttpErrorResponse) => {
-                console.log(error.message);
+                
             },
             '',
             authenticationData
@@ -26,7 +30,20 @@ export class AuthenticationClient extends RestClient {
 
     public userDetails(token: string): Observable<UserDetails> {
         return this.get((error: HttpErrorResponse) => {
-            console.log(error.message);
+            
         }, '/info');
+    }
+
+    public renewAuthentication(
+        header: HttpHeaders
+    ): Observable<AuthenticationResponse> {
+        return this.get(
+            (error: HttpErrorResponse) => {
+                
+            },
+            '',
+            null,
+            header
+        );
     }
 }

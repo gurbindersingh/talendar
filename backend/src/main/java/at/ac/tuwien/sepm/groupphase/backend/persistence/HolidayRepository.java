@@ -10,4 +10,5 @@ import java.util.List;
 public interface HolidayRepository extends JpaRepository<Holiday, Long> {
 
     List<Holiday> findByTrainer_Id(Long id);
+    List<Holiday> findAll();
 }

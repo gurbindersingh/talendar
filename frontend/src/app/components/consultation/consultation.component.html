@@ -115,35 +115,6 @@
                     </div>
                 </div>
 
-                <!-- Fifth row -->
-                <div class="row justify-content-md-center">
-                    <div class="form-group col-lg" id="datePicker-dp-end">
-                        <label>Bis</label>
-                        <div class="input-group">
-                            <input
-                                [readonly]="true"
-                                class="form-control"
-                                name="endDate"
-                                placeholder="YYYY-MM-DD"
-                                [(ngModel)]="endDate"
-                                ngbDatepicker
-                                (click)="dp2.toggle()"
-                                #dp2="ngbDatepicker"
-                                required
-                            />
-                        </div>
-                    </div>
-                    <div class="form-group col-lg">
-                        <ngb-timepicker
-                            readonlyInputs="true"
-                            [(ngModel)]="endTime"
-                            name="endTime"
-                            [minuteStep]="minuteStep"
-                        >
-                        </ngb-timepicker>
-                    </div>
-                </div>
-
                 <!-- Sixth row -->
                 <div class="row" id="consultationDropDown">
                     <div ngbDropdown class="col-lg">
@@ -152,6 +123,7 @@
                             id="roomButtonStart"
                             name="roomButton"
                             ngbDropdownToggle
+                            required
                         >
                             {{ roomString }}
                         </button>
@@ -213,6 +185,13 @@
                     style="padding-right: 15px"
                 >
                     <button
+                        class="btn btn-light mr-2"
+                        (click)="goBack()"
+                        *ngIf="!auth.isLoggedIn"
+                    >
+                        Abbrechen
+                    </button>
+                    <button
                         type="submit"
                         class="btn btn-primary"
                         [disabled]="!isCompleted()"
@@ -220,7 +199,7 @@
                         (click)="postConsultation(consultationForm)"
                         id="consultationSave"
                     >
-                        Beratungstermin anfordern
+                        Beratungstermin eintragen
                     </button>
                 </div>
             </form>

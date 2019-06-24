@@ -1,5 +1,6 @@
 <h1 class="row justify-content-center">{{ title }}</h1>
 <hr />
+
 <div class="row">
     <div class="col-lg-3"></div>
     <div class="col-lg-6">
@@ -7,8 +8,40 @@
             class="container-fluid"
             novalidate
             (ngSubmit)="postHoliday(holiday)"
+            (change)="clearInfoMsg()"
             #holidayForm
         >
+            <div class="row">
+                <div class="form-group col-lg-12">
+                    <label for="name">Urlaubsname</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        [(ngModel)]="holidayName"
+                        name="holidayname"
+                        id="holidayname"
+                        placeholder="Urlaubsname"
+                        required
+                    />
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-lg-12">
+                    <label for="holidayDescription">Beschreibung</label>
+                    <textarea
+                        type="text"
+                        class="form-control"
+                        rows="4"
+                        name="descriptionTextarea"
+                        [(ngModel)]="holidayDescription"
+                        id="holidayDescription"
+                        ng-trim="false"
+                        maxlength="1024"
+                        placeholder="Beschreibung/Detaillinformation"
+                    ></textarea>
+                </div>
+            </div>
+
             <div class="row">
                 <div class="col-lg-6" id="d6p1">
                     <label for="startdate" id="labelvon">Von</label>
@@ -95,92 +128,107 @@
             <br />
 
             <div *ngIf="toggleOptions">
-                <div class="row">
-                    <div class="col-lg-6">
+                <div class="row align-items-end">
+                    <div class="col-6">
                         <label for="repeatAt">Wiederhohlen</label>
                         <select
                             class="browser-default custom-select"
                             id="repeatAt"
                             name="repeatAt"
-                            [(ngModel)]="repeatModul"
+                            [(ngModel)]="selectedRepeatOption"
                         >
-                            <option *ngFor="let r of repeatEvery">{{
-                                r
-                            }}</option>
+                            <option
+                                *ngFor="let option of repeatOptions"
+                                [value]="option.label"
+                            >
+                                {{ option.label }}
+                            </option>
                         </select>
                     </div>
-                    <div class="col-lg-4"></div>
+                    <p
+                        class="mb-2 col-auto"
+                        *ngIf="selectedRepeatOption !== ''"
+                    >
+                        Alle
+                    </p>
+                    <input
+                        class="form-control col-2"
+                        type="number"
+                        name="repeatAfterX"
+                        id="repeatAfterX"
+                        [(ngModel)]="alleX"
+                        *ngIf="selectedRepeatOption !== ''"
+                    />
+                    <p
+                        class="mb-2 col-auto"
+                        *ngIf="selectedRepeatOption !== ''"
+                    >
+                        {{ selectedRepeatOption }}
+                    </p>
                 </div>
                 <br />
-                <div class="row" *ngIf="isRepeat()">
-                    <div class="col-lg-6">
-                        <div class="row">
-                            <div class="col-lg-2">
-                                <label for="repeatAfterX">Alle</label>
-                            </div>
-                            <div class="col-lg-4">
-                                <input
-                                    type="number"
-                                    name="repeatAfterX"
-                                    id="repeatAfterX"
-                                    [(ngModel)]="alleX"
-                                />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4">
-                        <p>Tage/Wochen/Monate wiederholen</p>
-                    </div>
-                </div>
+                <div
+                    class="row align-items-center"
+                    *ngIf="selectedRepeatOption !== ''"
+                ></div>
                 <br />
-                <div class="row">
-                    <div class="col-lg-6">
-                        <div class="row">
-                            <div class="col-lg-5" *ngIf="isRepeat()">
-                                <label for="stopAfter">Ended</label>
-                                <select
-                                    class="browser-default custom-select"
-                                    id="stopAfter"
-                                    name="stopAfter"
-                                    [(ngModel)]="terminateModul"
-                                >
-                                    <option *ngFor="let t of terminateAfter">
-                                        {{ t }}
-                                    </option>
-                                </select>
-                            </div>
-                            <div class="col-lg-1" *ngIf="isTerminate()">
-                                <input
-                                    type="number"
-                                    name="termAfter"
-                                    id="termAfter"
-                                    [(ngModel)]="endedX"
-                                />
-                            </div>
-                        </div>
+
+                <div
+                    class="row align-items-center"
+                    *ngIf="selectedRepeatOption !== ''"
+                >
+                    <p class="col-auto px-1 mb-0">
+                        Ended
+                    </p>
+
+                    <div class="col-3">
+                        <select
+                            class="browser-default custom-select"
+                            id="stopAfter"
+                            name="stopAfter"
+                            [(ngModel)]="terminateModul"
+                        >
+                            <option *ngFor="let option of terminateAfterOption">
+                                {{ option }}
+                            </option>
+                        </select>
                     </div>
-                    <div class="col-lg-4" *ngIf="isTerminate()" id="10p">
-                        <p>Wiederholungen</p>
+                    <div class="col-3" *ngIf="isTerminate()">
+                        <input
+                            class="form-control"
+                            type="number"
+                            name="termAfter"
+                            id="termAfter"
+                            [(ngModel)]="endedX"
+                        />
                     </div>
+
+                    <p class="col-auto px-1 mb-0" *ngIf="isTerminate()">
+                        Wiederholungen
+                    </p>
                 </div>
             </div>
             <br />
 
             <div class="row" *ngIf="errorMsg">
-                <div class="col-lg-6">
+                <div class="col-sm-12">
                     <p class="alert alert-danger">
                         {{ errorMsg }}
                     </p>
                 </div>
             </div>
             <div class="row" *ngIf="successMsg">
-                <div class="col-lg-6">
+                <div class="col-sm-12">
                     <p class="alert alert-success">
                         {{ successMsg }}
                     </p>
                 </div>
             </div>
-            <div class="row" style="padding:0 15px" id="submit">
+            <div
+                class="row justify-content-end"
+                style="padding:0 15px"
+                id="submit"
+            >
                 <div class="col-lg-6"></div>
                 <button
                     [disabled]="!isCompleted()"

@@ -17,6 +17,8 @@ export class LoginComponent implements OnInit {
     email: string;
     password: string;
 
+    errorMsg: string;
+
     ngOnInit() {}
 
     /**
@@ -27,11 +29,11 @@ export class LoginComponent implements OnInit {
     login(): void {
         this.authenticationService.login(this.email, this.password).subscribe(
             (data) => {
-                console.log('Login After Request Success: ' + data);
                 this.router.navigate(['/calendar']);
             },
             (error: Error) => {
-                console.log('Login After Request Failure: ' + error.message);
+                this.errorMsg =
+                    'Die verwendeten Anmeldedaten konnten keinem Konto zugeordnet werden';
             }
         );
     }

@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.service;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Holiday;
+import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.HolidaysDto;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ValidationException;
@@ -18,6 +19,26 @@ public interface IHolidayService {    /**
      * @throws ValidationException will be thrown if the given instance has invalid properties. The cause will be reported.
      */
     Holiday save (Holiday holiday) throws ServiceException, ValidationException;
+
+    /**
+     * This method will load the given instance of holiday.
+     *
+     * @param id is id of the trainer who's holidays are requested
+     * @return the list of found holidays
+     * @throws ServiceException will be thrown if any error occurs during data processing that leads to an unsuccessful operation
+     * @throws NotFoundException will be thrown if the given trainer id could not be found or no holidays could be found.
+     */
+    LinkedList<Holiday> getAllHolidaysByTrainerId (Long id) throws ServiceException,
+                                                                   NotFoundException;
+
+    /**
+     * This method will get all holidays
+     * @return the list of found holidays
+     * @throws ServiceException will be thrown if any error occurs during data processing that leads to an unsuccessful operation
+     * @throws NotFoundException will be thrown if no holidays could be found.
+     */
+    LinkedList<Holiday> getAllHolidays () throws ServiceException,
+                                                                   NotFoundException;
 
     /**
      * This method will save the given instance of holiday.

@@ -19,6 +19,8 @@ import { TrainerGuard } from './guards/trainer-guard';
 import { AuthenticatedGuard } from './guards/authenticated-guard';
 import { AdminGuard } from './guards/admin-guard';
 import { InfoComponent } from './components/info/info.component';
+import { TagComponent } from './components/tag/tag.component';
+import { CancelNewsletterComponent } from './components/cancel-newsletter/cancel-newsletter.component';
 
 const routes: Routes = [
     { path: 'calendar', component: CalendarComponent },
@@ -36,7 +38,7 @@ const routes: Routes = [
     {
         path: 'course/view',
         component: CourseViewComponent,
-        canActivate: [AdminGuard],
+        canActivate: [TrainerGuard],
     },
     { path: 'event/cancel', component: CancelEventComponent },
     {
@@ -51,6 +53,11 @@ const routes: Routes = [
         canActivate: [AdminGuard],
     },
     {
+        path: 'trainer/edit',
+        component: TrainerComponent,
+        canActivate: [AdminGuard],
+    },
+    {
         path: 'trainer/list',
         component: TrainerListComponent,
         canActivate: [AdminGuard],
@@ -61,6 +68,14 @@ const routes: Routes = [
         canActivate: [AdminGuard],
     },
     { path: 'login', component: LoginComponent },
+    {
+        path: 'tag',
+        component: TagComponent,
+    },
+    {
+        path: 'cancelsubscription',
+        component: CancelNewsletterComponent,
+    },
     {
         // This catch-all route should always be the LAST!
         path: '**',

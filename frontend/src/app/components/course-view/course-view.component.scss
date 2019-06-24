@@ -9,24 +9,29 @@
     flex-grow: 1;
 }
 
+.card {
+    flex-basis: 515px;
+}
 
 #cardBody {
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
 }
 
-#cardLeft {
-    width: 20%;
-}
-
-#cardMiddle {
-  width: calc(100% - 20% - 100px);
-}
-
-#cardRight {
-    width: 100px;
-}
-
-#overlay{
+#overlay {
     opacity: 0.5;
+}
+
+.btn.btn-card {
+    background-color: hsl(0, 0, 95);
+    height: 47px;
+    width: 47px;
+}
+
+.btn.btn-card:hover {
+    background-color: hsl(0, 0, 85);
+}
+
+.button-icon {
+    font-size: 25px;
 }

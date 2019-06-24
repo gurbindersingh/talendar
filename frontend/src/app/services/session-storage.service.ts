@@ -29,6 +29,29 @@ export class SessionStorageService {
         return this.isLoggedIn;
     }
 
+    get userId(): number {
+        const id = localStorage.getItem('id');
+        return Number.parseInt(id, 10);
+    }
+
+    get isOldToken(): boolean {
+        const currentToken = localStorage.getItem('currentToken');
+        const futureToken = localStorage.getItem('futureToken');
+
+        const parsedCurrent = this.getParsedJwtToken(currentToken);
+        const parsedFuture = this.getParsedJwtToken(futureToken);
+
+        if (Date.now() / 1000 > parsedFuture.exp) {
+            return false;
+        }
+
+        if (Date.now() / 1000 < parsedCurrent.exp) {
+            return false;
+        }
+
+        return true;
+    }
+
     get sessionToken(): string {
         // we have two tokens, future one extends expiration time of current one
         // but is not valid from beginning
@@ -55,13 +78,18 @@ export class SessionStorageService {
 
     setLoggedIn(loggedIn: any): void {
         if (loggedIn === false) {
-            this.isLoggedIn = false;
             localStorage.removeItem('currentToken');
             localStorage.removeItem('futureToken');
+            localStorage.removeItem('id');
+            this.isLoggedIn = false;
         } else {
-            this.isLoggedIn = true;
+            const parsed = this.getParsedJwtToken(loggedIn.currentToken);
+            const id = parsed.pid;
+
             localStorage.setItem('currentToken', loggedIn.currentToken);
             localStorage.setItem('futureToken', loggedIn.futureToken);
+            localStorage.setItem('id', id);
+            this.isLoggedIn = true;
         }
     }
 

@@ -11,8 +11,19 @@ application:
   account:
     admin:
       email: test@email.com
-      password: fortKnox
+      password: 4bad918bdcbfc93bc72f5c29f25f8b269a466c07e39ab5dea2cf13e685a113d21dbc915242a8174c3280a3e574a34a26b6622a3d91287789bf3985f04a9c1908
+      firstName: Jane
+      lastName: Doe
+      birthday: 1980-01-01
+      phone: 1234567
 
+storage:
+  location:
+    images:
+      base: /resources/img/
+      profile: profile/
+      course: course/
+      defaultImg: default
 
 spring:
   jpa:

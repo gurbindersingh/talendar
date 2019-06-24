@@ -1,12 +1,11 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest;
 
 import at.ac.tuwien.sepm.groupphase.backend.Entity.InformationOutput;
-import at.ac.tuwien.sepm.groupphase.backend.exceptions.BackendException;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
 import at.ac.tuwien.sepm.groupphase.backend.service.IRightToInformationService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.UserNotFoundException;
-import com.itextpdf.text.DocumentException;
+import com.lowagie.text.DocumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.xml.transform.TransformerConfigurationException;
 import java.io.FileNotFoundException;
 
-
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/v1/talendar/info")
 public class RightToInformationEndpoint {
@@ -33,7 +32,7 @@ public class RightToInformationEndpoint {
         this.rightToInformationService = rightToInformationService;
     }
 
-    @CrossOrigin(origins = "http://localhost:4200")
+
     @RequestMapping(method = RequestMethod.GET, value = "/{mail}")
     public ResponseEntity<byte[]> returnRightToInformationPdf(@PathVariable("mail") String mail) throws
                                                                                                  UserNotFoundException,

@@ -15,6 +15,9 @@ import {
     NgbDateStruct,
     NgbTimeStruct,
 } from '@ng-bootstrap/ng-bootstrap';
+import { ClickedDateService } from 'src/app/services/clicked-date.service';
+import { DateTimeParserService } from 'src/app/services/date-time-parser.service';
+import { AuthenticationService } from 'src/app/services/authentication.service';
 
 @Component({
     selector: 'app-consultation',
@@ -22,19 +25,21 @@ import {
     styleUrls: ['./consultation.component.scss'],
 })
 export class ConsultationComponent implements OnInit {
-    private event: Event = new Event();
-    private customer: Customer = new Customer();
     private roomUse: RoomUse = new RoomUse();
-    private trainers: Trainer[] = [];
     private trainer: Trainer = new Trainer();
+    private dateTimeParser: DateTimeParserService;
 
-    private errorMsg: string;
-    private successMsg: string;
+    event: Event = new Event();
+    customer: Customer = new Customer();
+    trainers: Trainer[] = [];
+
+    errorMsg: string;
+    successMsg: string;
 
     startDate: NgbDateStruct;
-    startTime: NgbTimeStruct = { hour: 13, minute: 30, second: 0 };
+    startTime: NgbTimeStruct;
     endDate: NgbDateStruct;
-    endTime: NgbTimeStruct = { hour: 14, minute: 30, second: 0 };
+    endTime: NgbTimeStruct;
 
     title = 'Beratungstermin eintragen';
     trainerString = 'Trainer auswählen';
@@ -45,11 +50,23 @@ export class ConsultationComponent implements OnInit {
     constructor(
         private trainerClient: TrainerClient,
         private eventClient: EventClient,
-        private parserFormatter: NgbDateParserFormatter
-    ) {}
+        dateTimeParser: DateTimeParserService,
+        private parserFormatter: NgbDateParserFormatter,
+        private clickedDateService: ClickedDateService,
+        public auth: AuthenticationService
+    ) {
+        this.dateTimeParser = dateTimeParser;
+        const date = this.clickedDateService.getDate();
+        const time = this.clickedDateService.getTime();
+
+        this.startTime = this.clickedDateService.getTime();
+        this.startDate = this.clickedDateService.getDate();
+
+        this.endDate = this.startDate;
+        this.endTime = { hour: this.startTime.hour + 1, minute: 0, second: 0 };
+    }
 
     ngOnInit() {
-        console.log('Init Trainer List');
         this.trainerClient.getAll().subscribe(
             (list: Trainer[]) => {
                 this.trainers = list;
@@ -61,8 +78,24 @@ export class ConsultationComponent implements OnInit {
     }
 
     public postConsultation(form: NgForm): void {
-        this.roomUse.begin = this.dateToString(this.startDate, this.startTime);
-        this.roomUse.end = this.dateToString(this.endDate, this.endTime);
+        if (this.roomString === 'Raum auswählen') {
+            this.errorMsg = 'Ein Raum muss ausgewählt werden';
+            return;
+        }
+        if (this.trainerString === 'Trainer auswählen') {
+            this.errorMsg = 'Ein/e Trainer/in muss ausgewählt werden';
+            return;
+        }
+        this.endDate = this.startDate;
+        this.endTime = { hour: this.startTime.hour + 1, minute: 0, second: 0 };
+        this.roomUse.begin = this.dateTimeParser.dateTimeToString(
+            this.startDate,
+            this.startTime
+        );
+        this.roomUse.end = this.dateTimeParser.dateTimeToString(
+            this.endDate,
+            this.endTime
+        );
         this.roomUse.room = this.roomSelected(this.roomString);
 
         this.event.customerDtos = [this.customer];
@@ -72,17 +105,19 @@ export class ConsultationComponent implements OnInit {
 
         this.eventClient.postNewEvent(this.event).subscribe(
             (data: Event) => {
-                console.log(data);
                 this.successMsg =
                     'Deine Reservierung wurde erfolgreich gespeichert';
             },
             (error) => {
-                console.log(error.message);
                 this.errorMsg =
                     'Deine Reservierung konnte nicht angelegt werden: ' +
                     error.message;
             }
         );
+    }
+
+    public goBack(): void {
+        window.history.back();
     }
 
     public changeSortOrderRoom(room: string): void {
@@ -138,7 +173,7 @@ export class ConsultationComponent implements OnInit {
         if (this.endTime === undefined) {
             return false;
         }
-        if (this.trainer === undefined) {
+        if (this.trainer === undefined || this.trainer === null) {
             return false;
         }
         return true;

@@ -43,7 +43,10 @@ export class ClickedDateService {
     public getTime() {
         let time: NgbTimeStruct = { hour: 13, minute: 0, second: 0 };
 
-        if (this.clickedDate !== undefined) {
+        if (
+            this.clickedDate !== undefined &&
+            this.clickedDate.getHours() !== 0
+        ) {
             time = {
                 hour: this.clickedDate.getHours(),
                 minute: this.clickedDate.getMinutes(),
