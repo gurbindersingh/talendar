@@ -521,7 +521,7 @@ public class Validator {
 
     public void validateTag(Tag tag) throws InvalidEntityException{
         if(tag.getTag() == null || tag.getTag().isBlank() || tag.getTag().equals("") || tag.getTag().isEmpty()){
-            throw new InvalidEntityException("Ein Tag kann nicht leer sein");
+            throw new InvalidEntityException("Ein Keyword kann nicht leer sein");
         }
     }
 
