@@ -120,8 +120,12 @@ export class CourseComponent implements OnInit {
                     this.tags = tagList;
                     for (let _i = 0; _i < this.tags.length; _i++) {
                         this.tagStrings.push(this.tags[_i].tag);
-                        
                     }
+
+                    this.tagStrings.sort((a: string, b: string) => {
+                        return a.localeCompare(b);
+                    })
+
                 },
                 (error) => {
                     
