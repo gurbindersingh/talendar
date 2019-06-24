@@ -203,12 +203,6 @@ public class EventEndpoint {
     }
 
 
-    @GetMapping
-    public List<EventDto> getAllFutureCourses() {
-        LOGGER.info("Incoming GET Request for all future Courses");
-        return eventMapper.entityListToEventDtoList(eventService.getAllFutureCourses());
-    }
-
     @GetMapping(value = "/all/future/admin")
     public List<EventDto> getAllFutureEventsForAdmin() throws ServiceException {
         LOGGER.info("Incoming GET Request for all future Courses Of Admin (All View)");
