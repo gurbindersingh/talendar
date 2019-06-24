@@ -162,31 +162,30 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <label class="col-lg-1" id="beginLabel" for="startTime"
+                <div class="row align-items-center">
+                    <label class="m-0 p-0 mr-2" id="beginLabel" for="startTime"
                         >Von</label
                     >
-                    <div class="form-group col-lg-4">
-                        <ngb-timepicker
-                            [(ngModel)]="startTime"
-                            name="startTime"
-                            [minuteStep]="minuteStep"
-                            readonlyInputs="true"
-                        >
-                        </ngb-timepicker>
-                    </div>
-                    <label class="col-lg-1" id="endLabel" for="endTime"
+
+                    <ngb-timepicker
+                        [(ngModel)]="startTime"
+                        name="startTime"
+                        [minuteStep]="minuteStep"
+                        readonlyInputs="true"
+                    >
+                    </ngb-timepicker>
+
+                    <label class="m-0 p-0 ml-5 mr-2" id="endLabel" for="endTime"
                         >Bis</label
                     >
-                    <div class="form-group col-lg-4">
-                        <ngb-timepicker
-                            [(ngModel)]="endTime"
-                            name="endTime"
-                            [minuteStep]="minuteStep"
-                            readonlyInputs="true"
-                        >
-                        </ngb-timepicker>
-                    </div>
+
+                    <ngb-timepicker
+                        [(ngModel)]="endTime"
+                        name="endTime"
+                        [minuteStep]="minuteStep"
+                        readonlyInputs="true"
+                    >
+                    </ngb-timepicker>
                 </div>
                 <div class="row">
                     <label class="col-lg-1">Raum</label>
@@ -523,7 +522,7 @@
             <div class="row justify-content-end">
                 <input
                     type="submit"
-                    class="btn btn-primary col-lg-3"
+                    class="btn btn-primary"
                     [disabled]="!isCompleted()"
                     id="courseSave"
                     [(value)]="btnText"
@@ -573,22 +572,22 @@
             </button>
         </div>
         <div *ngIf="numImg < binaryEncodedImages.length - 1">
-                <button
-                    type="button"
-                    class="btn btn-primary"
-                    (click)="saveCropped(croppieModal); modal.close()"
-                >
-                    Weiter
-                </button>
-            </div>
-            <div *ngIf="numImg == binaryEncodedImages.length - 1">
-                <button
-                    type="button"
-                    class="btn btn-primary"
-                    (click)="saveCropped(croppieModal); modal.close()"
-                >
-                    Speichern
-                </button>
-            </div>
+            <button
+                type="button"
+                class="btn btn-primary"
+                (click)="saveCropped(croppieModal); modal.close()"
+            >
+                Weiter
+            </button>
+        </div>
+        <div *ngIf="numImg == binaryEncodedImages.length - 1">
+            <button
+                type="button"
+                class="btn btn-primary"
+                (click)="saveCropped(croppieModal); modal.close()"
+            >
+                Speichern
+            </button>
+        </div>
     </div>
 </ng-template>

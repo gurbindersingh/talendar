@@ -75,7 +75,7 @@ export class TrainerListComponent implements OnInit {
     filteredTrainerList: Trainer[] = [];
     trainerListPage: Trainer[] = [];
     currentPage = 1;
-    itemsPerPage = 10;
+    itemsPerPage = 8;
 
     private trainerIdsToHtmlElem: number[] = [];
     private role: Authorities;

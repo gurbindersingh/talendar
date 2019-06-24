@@ -13,7 +13,7 @@
                         class="form-control"
                         id="tagString"
                         name="tagString"
-                        placeholder="Mathematik"
+                        placeholder="z.B. Mathematik"
                         required
                         [(ngModel)]="tag"
                         (keyup)="clearInfoMsg()"
@@ -35,18 +35,18 @@
                     </div>
                 </div>
                 <br />
-                <div class="form-row justify-content-center">
+                <div class="form-row justify-content-end">
                     <button
                         type="button"
                         (click)="goBack()"
-                        class="btn btn-light col-4 center ml-auto"
+                        class="btn btn-light mr-2"
                     >
                         Abbrechen
                     </button>
                     <button
                         [disabled]="!isComplete()"
                         type="submit"
-                        class="btn btn-primary col-4 center mr-auto"
+                        class="btn btn-primary"
                     >
                         Keyword Erstellen
                     </button>

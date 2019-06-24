@@ -10,8 +10,8 @@ import { Tag } from 'src/app/models/tag';
 })
 export class TagComponent implements OnInit {
     public tag: string;
-    private errorMsg: string;
-    private successMsg: string;
+    errorMsg: string;
+    successMsg: string;
     private tagDto: Tag = new Tag();
 
     constructor(private tagClient: TagClient) {}

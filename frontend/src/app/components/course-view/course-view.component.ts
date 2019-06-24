@@ -22,7 +22,7 @@ export class CourseViewComponent implements OnInit {
     filteredEventList: Event[] = [];
     eventListPage: Event[] = [];
     currentPage = 1;
-    itemsPerPage = 10;
+    itemsPerPage = 8;
     title = 'Kursansicht';
     searchPlaceholder = 'Nach einem Event suchen...';
     filter = '';
@@ -57,14 +57,12 @@ export class CourseViewComponent implements OnInit {
     }
 
     public deleteCourse(id: number): void {
-        
         this.filteredEventList = this.filteredEventList.filter(
             (event) => event.id !== id
         );
         this.updateListPage();
         this.eventClient.cancelEvent(id).subscribe(
             (result) => {
-                
                 this.ngOnInit();
             },
             (error) => console.log(error)
@@ -149,15 +147,11 @@ export class CourseViewComponent implements OnInit {
                 this.filteredEventList = this.eventList;
                 this.updateListPage();
             },
-            (error) => {
-                
-            }
+            (error) => {}
         );
     }
 
     ngOnInit() {
-        
-
         // pre init role of this user
         this.authenticationService
             .getUserDetails()
@@ -180,9 +174,7 @@ export class CourseViewComponent implements OnInit {
                             this.filteredEventList = this.eventList;
                             this.updateListPage();
                         },
-                        (error) => {
-                            
-                        }
+                        (error) => {}
                     );
             });
     }
