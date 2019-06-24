@@ -49,7 +49,7 @@ export class CourseViewComponent implements OnInit {
 
     private selectedEvent: Event;
 
-    private role: Authorities;
+    role: Authorities;
 
     openModal(event: Event, name: string) {
         this.selectedEvent = event;

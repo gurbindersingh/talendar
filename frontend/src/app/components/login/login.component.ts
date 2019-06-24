@@ -29,11 +29,9 @@ export class LoginComponent implements OnInit {
     login(): void {
         this.authenticationService.login(this.email, this.password).subscribe(
             (data) => {
-                
                 this.router.navigate(['/calendar']);
             },
             (error: Error) => {
-                
                 this.errorMsg =
                     'Die verwendeten Anmeldedaten konnten keinem Konto zugeordnet werden';
             }
