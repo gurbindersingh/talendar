@@ -199,7 +199,7 @@ public class SecurityConfiguration {
                 .antMatchers(HttpMethod.DELETE, "/**").hasRole("ADMIN")
                 // dsgvo information endpoint
                 .antMatchers(HttpMethod.GET, "/api/v1/talendar/info/**").hasRole("ADMIN")
-                // restricted view taht display any event only for admins
+                // restricted view that display any event only for admins
                 .antMatchers(HttpMethod.GET, "/api/v1/talendar/events/all/admin").hasAnyRole("ADMIN", "TRAINER")
                 .antMatchers(HttpMethod.GET, "/api/v1/talendar/events/all/trainer/**").hasRole("TRAINER")
                 .antMatchers(HttpMethod.GET, "/api/v1/talendar/events/all/future/admin").hasRole("ADMIN")
@@ -223,6 +223,10 @@ public class SecurityConfiguration {
                 .antMatchers(HttpMethod.POST, "/api/v1/talendar/holidays").hasRole("TRAINER")
                 .antMatchers(HttpMethod.PUT, "/api/v1/talendar/trainers").hasRole("ADMIN")
                 .antMatchers(HttpMethod.POST, "/api/v1/talendar/trainers").hasRole("ADMIN")
+
+                // explicitely allow cancelation for anyone, this endpoint is secured implicitely by the fact that ids have to be secure hashes
+                .antMatchers(HttpMethod.DELETE, "/api/v1/talendar/events/**").permitAll()
+
 
                 // explicitly allow SWAGGER (because this is really a sage haven)
                 .antMatchers(HttpMethod.GET,

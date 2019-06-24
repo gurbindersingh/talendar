@@ -34,7 +34,6 @@ export class EventClient extends RestClient {
                 break;
         }
 
-        
         return super.post(
             (error: HttpErrorResponse) => {
                 console.log('HTTP POST Birthday Failed: ' + error.message);
@@ -42,17 +41,6 @@ export class EventClient extends RestClient {
             eventSpecificEndpoint,
             event
         );
-    }
-
-    public cancelEvent(id: number): Observable<Event> {
-        return super.delete((error: HttpErrorResponse) => {
-            console.log(
-                'HTTP Delete To Cancel Event With ID' +
-                    id +
-                    ' Failed: ' +
-                    error.message
-            );
-        }, '/' + id);
     }
 
     public getAllEvents_adminView(): Observable<Event[]> {
@@ -141,5 +129,16 @@ export class EventClient extends RestClient {
             '/customers',
             event
         );
+    }
+
+    public cancelEvent(id: number): Observable<Event> {
+        return super.delete((error: HttpErrorResponse) => {
+            console.log(
+                'HTTP Delete To Cancel Event With ID' +
+                    id +
+                    ' Failed: ' +
+                    error.message
+            );
+        }, '/' + id);
     }
 }
