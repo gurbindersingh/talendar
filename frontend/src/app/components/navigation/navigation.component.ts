@@ -44,6 +44,11 @@ export class NavigationComponent implements OnInit {
             restriction: Authorities.NONE,
         },
         {
+            name: 'Keywords eintragen',
+            path: 'tag',
+            restriction: Authorities.ADMIN,
+        },
+        {
             name: 'Neuen Trainer anlegen',
             path: 'trainer/add',
             restriction: Authorities.ADMIN,
