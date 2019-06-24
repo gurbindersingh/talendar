@@ -118,15 +118,24 @@ public class TestDataGenerator implements ApplicationRunner {
 
         // create initial trainer set
         for (int i = 0; i < NO_TRAINERS; i++) {
-            Trainer trainer = faker.fakeNewTrainerEntity();
-            trainer.setPassword(password);
-            Trainer saved = trainerService.save(trainer);
+            try {
+                Trainer trainer = faker.fakeNewTrainerEntity();
+                trainer.setPassword(password);
+                Trainer saved = trainerService.save(trainer);
 
-            trainers.add(saved);
+                trainers.add(saved);
+            } catch(Exception e) {
+
+
+            }
         }
 
         for (Tag tag: faker.getFakedTags()) {
-            tagService.save(tag);
+            try {
+                tagService.save(tag);
+            } catch(Exception e) {
+                // its a simulation, some add courses will fail, but that is okay
+            }
         }
 
         for (int i = 0; i < NO_COURSES; i++) {
@@ -134,7 +143,7 @@ public class TestDataGenerator implements ApplicationRunner {
 
             try {
                 eventService.save(course);
-            } catch(ValidationException | ServiceException e) {
+            } catch(Exception e) {
                 // its a simulation, some add courses will fail, but that is okay
             }
         }
@@ -144,7 +153,7 @@ public class TestDataGenerator implements ApplicationRunner {
 
             try {
                 eventService.save(rent);
-            } catch(ValidationException | ServiceException e) {
+            } catch(Exception e) {
                 // its a simulation, some add courses will fail, but that is okay
             }
         }
@@ -154,7 +163,7 @@ public class TestDataGenerator implements ApplicationRunner {
 
             try {
                 eventService.save(birthday);
-            } catch(ValidationException | ServiceException e) {
+            } catch(Exception e) {
                 // its a simulation, some add courses will fail, but that is okay
             }
         }
@@ -164,7 +173,7 @@ public class TestDataGenerator implements ApplicationRunner {
 
             try {
                 eventService.save(consultation);
-            } catch(ValidationException | ServiceException e) {
+            } catch(Exception e) {
                 // its a simulation, some add courses will fail, but that is okay
             }
         }
