@@ -5,7 +5,7 @@
     <div class="col-lg-3"></div>
     <div class="col-lg-6">
         <form id="courseSignForm" #courseSignForm class="container-fluid">
-            <div class="card" *ngIf="canSignIn">
+            <div class="card shadow-sm" *ngIf="canSignIn">
                 <div class="card-body">
                     <div class="row">
                         <div id="labelCourseName" class="col-sm-3">
@@ -75,16 +75,13 @@
                         <div class="col-2"></div>
                     </div>
                     <div class="row">
-                        <div id="labelCourseName" class="col-lg-6">
-                            Termine:
-                        </div>
-                        <button
-                            mat-raised-button
+                        <div
+                            id="labelCourseName"
+                            class="btn btn-link"
                             (click)="scroll(datesSection)"
-                            class="col-lg-2 btn btn-light"
                         >
-                            Hier klicken
-                        </button>
+                            Alle Termine anzeigen
+                        </div>
                     </div>
                 </div>
             </div>
@@ -241,7 +238,7 @@
                     <div class="row justify-content-end" *ngIf="!btnClicked">
                         <input
                             type="submit"
-                            class="btn btn-primary col-lg-3"
+                            class="btn btn-primary"
                             [disabled]="!isCompleted()"
                             id="courseSignSave"
                             value="Anmelden"
@@ -249,7 +246,7 @@
                             *ngIf="!loading"
                         />
                         <button
-                            class="btn btn-primary col-lg-3"
+                            class="btn btn-primary"
                             type="button"
                             *ngIf="loading"
                             disabled
@@ -276,15 +273,11 @@
             <p #datesSection></p>
             <ng-template [ngIf]="canSignIn">
                 <h1>Termine</h1>
-                <hr />
-                <br />
                 <div
-                    class="flex-row flex-wrap"
+                    class="flex-row flex-wrap card shadow-sm rounded mb-1"
                     *ngFor="let date of datesListPage"
                 >
-                    <div class="col border-bottom">
-                        <p>{{ date }}</p>
-                    </div>
+                    <p class="m-2">{{ date }}</p>
                 </div>
                 <br />
                 <ngb-pagination
