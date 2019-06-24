@@ -63,6 +63,10 @@ public class EventDto {
      */
 
 
+    private boolean redacted;
+    private boolean hide;
+
+
     public EventDto () {
 
     }
@@ -85,7 +89,9 @@ public class EventDto {
                      String description,
                      Integer minAge,
                      Integer maxAge,
-                     List<String> pictures
+                     List<String> pictures,
+                     boolean redacted,
+                     boolean hide
     ) {
         this.id = id;
         this.eventType = eventType;
@@ -105,6 +111,8 @@ public class EventDto {
         this.minAge = minAge;
         this.maxAge = maxAge;
         this.pictures = pictures;
+        this.redacted = redacted;
+        this.hide = hide;
     }
 
 
@@ -288,6 +296,26 @@ public class EventDto {
     }
 
 
+    public boolean isRedacted() {
+        return redacted;
+    }
+
+
+    public void setRedacted(boolean redacted) {
+        this.redacted = redacted;
+    }
+
+
+    public boolean isHide() {
+        return hide;
+    }
+
+
+    public void setHide(boolean hide) {
+        this.hide = hide;
+    }
+
+
     @Override
     public boolean equals (Object o) {
         if(this == o) return true;
@@ -310,7 +338,9 @@ public class EventDto {
                Objects.equals(description, eventDto.description) &&
                Objects.equals(minAge, eventDto.minAge) &&
                Objects.equals(maxAge, eventDto.maxAge) &&
-               Objects.equals(pictures, eventDto.pictures);
+               Objects.equals(pictures, eventDto.pictures) &&
+               Objects.equals(redacted, eventDto.redacted) &&
+               Objects.equals(hide, eventDto.hide);
 
     }
 
@@ -334,7 +364,9 @@ public class EventDto {
                             description,
                             minAge,
                             maxAge,
-                            pictures
+                            pictures,
+                            redacted,
+                            hide
         );
     }
 
@@ -360,6 +392,8 @@ public class EventDto {
                ", minAge=" + minAge +
                ", maxAge=" + maxAge +
                ", pictures=" + pictures +
+               ", redacted=" + redacted +
+               ", hide=" + hide +
                '}';
     }
 }

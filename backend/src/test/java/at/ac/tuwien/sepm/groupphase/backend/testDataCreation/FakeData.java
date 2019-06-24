@@ -319,6 +319,7 @@ public class FakeData {
         EventDto bday = new EventDto();
         bday.setAgeToBe(fakeAge(5, 19));
         Set<CustomerDto> customers = new HashSet<>();
+
         customers.add(fakeCustomer());
         bday.setCustomerDtos(customers);
         bday.setHeadcount(fakeAge(5, 10));
@@ -386,6 +387,7 @@ public class FakeData {
 
     public Event fakeNewRent(){
         Event rent = new Event();
+        rent.setName("Miete");
         rent.setEventType(EventType.Rent);
         Set<Customer> customers = new HashSet<>();
         Customer customer = fakeNewCustomerEntity();
@@ -404,6 +406,7 @@ public class FakeData {
     public EventDto fakeRent() {
         EventDto rent = new EventDto();
 
+        rent.setName("Miete");
         rent.setEventType(EventType.Rent);
 
         Set<CustomerDto> customerDto = new HashSet<>();
