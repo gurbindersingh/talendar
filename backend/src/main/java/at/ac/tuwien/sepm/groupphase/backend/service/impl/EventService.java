@@ -739,6 +739,7 @@ public class EventService implements IEventService {
                 event.setName("Reserviert");
                 event.setTrainer(null);
                 event.setMaxAge(null);
+                event.setMinAge(null);
                 event.setPrice(null);
             }
         });
@@ -753,7 +754,6 @@ public class EventService implements IEventService {
             // give meta information that this event may is displayed different
             if(event.getEventType() == EventType.Rent || event.getTrainer().getId() != id) {
                 event.setHide(true);
-                event.setName("Reserviert");
             }
         });
         return events;
