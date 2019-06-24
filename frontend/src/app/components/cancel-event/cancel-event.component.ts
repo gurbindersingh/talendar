@@ -18,11 +18,11 @@ export class CancelEventComponent implements OnInit {
 
     private customerToRemove: Customer;
 
-    private title: string;
-    private textBox: string;
-    private valid: boolean;
-    private successMsg: string;
-    private errorMsg: string;
+     title: string;
+     textBox: string;
+     valid: boolean;
+     successMsg: string;
+     errorMsg: string;
 
     private preCountOfCustomers: number;
 

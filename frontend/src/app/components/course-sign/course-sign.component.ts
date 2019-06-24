@@ -20,15 +20,15 @@ import { NgForm } from '@angular/forms';
 })
 export class CourseSignComponent implements OnInit {
     private id: number;
-    private event: Event = new Event();
-    private customer: Customer = new Customer();
+    event: Event = new Event();
+    customer: Customer = new Customer();
     private customerLengthBeforeUpdate: number;
 
     canSignIn: boolean;
     wantsEmail = false;
 
-    private errorMsg: string;
-    private successMsg: string;
+    errorMsg: string;
+    successMsg: string;
 
     loading: boolean;
 
@@ -85,7 +85,6 @@ export class CourseSignComponent implements OnInit {
         this.times = [];
         this.eventClient.getEventById(id).subscribe(
             (data: Event) => {
-                
                 this.event = data;
                 this.event.customerDtos = data.customerDtos;
                 this.event.roomUses = data.roomUses;
@@ -107,8 +106,6 @@ export class CourseSignComponent implements OnInit {
                 this.canSignIn = false;
             }
         );
-
-        
     }
 
     public updateCourseCustomers(): void {
@@ -126,7 +123,6 @@ export class CourseSignComponent implements OnInit {
         );
         this.eventClient.updateCustomer(this.event).subscribe(
             (data: Event) => {
-                
                 if (
                     data.customerDtos.length === this.customerLengthBeforeUpdate
                 ) {
@@ -136,7 +132,7 @@ export class CourseSignComponent implements OnInit {
                     this.successMsg = '';
                 } else {
                     this.btnClicked = true;
-                    
+
                     this.successMsg = 'Sie sind jetzt angemeldet!';
                     this.errorMsg = '';
                 }
@@ -144,13 +140,12 @@ export class CourseSignComponent implements OnInit {
             (error: Error) => {
                 this.btnClicked = false;
                 this.loading = false;
-                
+
                 this.successMsg = '';
                 this.errorMsg = error.message;
             }
         );
         this.getEventFromBackendById(this.id);
-        
     }
 
     public checkBoxClicked() {

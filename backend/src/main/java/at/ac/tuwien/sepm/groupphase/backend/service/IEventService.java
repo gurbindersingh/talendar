@@ -10,10 +10,32 @@ import java.util.List;
 
 
 public interface IEventService {
+
+
+    /**
+     * @param event to save
+     * @return the saved event with id
+     * @throws ValidationException if event is invalid
+     * @throws ServiceException if internal error
+     * @throws EmailException if sending email caused error
+     * @throws NotFoundException if event is not found after saving which is impossible, but still to check
+     */
     Event save (Event event) throws ValidationException, ServiceException, EmailException, NotFoundException;
 
+    /**
+     * get all events from trainer with id
+     * @param trainerId to filter events
+     * @return list of all events of trainer with id
+     * @throws ValidationException if id is invalid
+     * @throws ServiceException if internal error
+     */
     List<Event> getAllEvents(Long trainerId) throws ValidationException, ServiceException;
 
+    /**
+     * get all events
+     * @return list of all events
+     * @throws ServiceException if internal error
+     */
     List<Event> getAllEvents() throws ServiceException;
 
     /**
@@ -32,8 +54,24 @@ public interface IEventService {
      * @return a complete list of all events that are hosted by a trainer with the given id.
      *         all other events remain too but are marked as hidden/subordinate.
      */
+
+    /***
+     * Get events of trainer with id and set rent and events not belonging to trainer to hidden
+     * @param id of trainer
+     * @param events of the trainer with id
+     * @return get all events of trainer with id
+     *
+     */
     List<Event> getTrainerView(List<Event> events, Long id);
 
+
+    /***
+     * Get all events of trainer with id
+     * @param id of trainer
+     * @param events  of the trainer with id
+     * @return get all events of trainer with id
+     *
+     */
     List<Event> filterTrainerEvents(List<Event> events, Long id);
 
     /**
@@ -47,15 +85,51 @@ public interface IEventService {
      */
     Event updateCustomers(Event event) throws ValidationException, NotFoundException, ServiceException;
 
+
+    /***
+     * delete event with id
+     * @param id of event to delete
+     *
+     */
     void deleteEvent(Long id);
 
+    /***
+     * cancel event with id
+     * @param id of event to cancel
+     * @throws ValidationException if event is invalid to cancel
+     *
+     */
     void cancelEvent(Long id) throws ValidationException;
 
+
+    /***
+     * get event by id
+     * @param id of event
+     * @return get all events of trainer with id
+     * @throws NotFoundException if event is not found
+     * @throws ServiceException if internal error
+     *
+     */
     Event getEventById(Long id) throws ServiceException, NotFoundException;;
 
+    /***
+     * @return all courses which are in future
+     */
     List<Event> getAllFutureCourses();
 
+    /***
+     * @return all events which are in future
+     * @throws ServiceException if internal error
+     */
     List<Event> getAllFutureEvents() throws ServiceException;
 
+
+    /***
+     * update event
+    * @return all events which are in future
+     * @throws ServiceException if internal error
+     * @throws ValidationException if event is invalid
+     * @throws NotFoundException if event is not found
+     */
     Event update(Event event) throws ValidationException, NotFoundException, ServiceException;
 }

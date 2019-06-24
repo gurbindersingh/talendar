@@ -25,15 +25,16 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
     styleUrls: ['./consultation.component.scss'],
 })
 export class ConsultationComponent implements OnInit {
-    private event: Event = new Event();
-    private customer: Customer = new Customer();
     private roomUse: RoomUse = new RoomUse();
-    private trainers: Trainer[] = [];
     private trainer: Trainer = new Trainer();
     private dateTimeParser: DateTimeParserService;
 
-    private errorMsg: string;
-    private successMsg: string;
+    event: Event = new Event();
+    customer: Customer = new Customer();
+    trainers: Trainer[] = [];
+
+    errorMsg: string;
+    successMsg: string;
 
     startDate: NgbDateStruct;
     startTime: NgbTimeStruct;

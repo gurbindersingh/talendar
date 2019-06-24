@@ -11,9 +11,23 @@ import java.util.List;
 @Component
 public interface ITagService {
 
+    /**
+     * save tag
+     * @param tag to save
+     * @return saved tag
+     * @throws ValidationException if tag is invalid
+     */
     Tag save(Tag tag) throws ValidationException;
 
+    /**
+     * get all tags in database
+     * @return list of all tags
+     */
     List<Tag> fetchAll();
 
+    /**
+     * detelete Tag
+     * @param tag to delete
+     */
     void delete(Tag tag);
 }

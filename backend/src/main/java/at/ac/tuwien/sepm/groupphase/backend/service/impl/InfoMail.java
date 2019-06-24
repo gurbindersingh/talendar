@@ -48,7 +48,6 @@ public class InfoMail {
     }
 
     public void sendAdminEventInfoMail(Event event, String subject, String type) throws EmailException {
-        //TODO: Edit adminadresse to be the actual adminadresse.
         String to = mailData.getAdminMail();
         String from = mailData.getSenderMail();
         String password = mailData.getSenderPassword();
@@ -68,6 +67,18 @@ public class InfoMail {
             transport.close();
         }catch(MessagingException e){
             throw new EmailException(" " + e.getMessage());
+        }
+        switch(event.getEventType()) {
+            case Birthday:
+                sendTrainerInfoMailBirthday(event);
+                break;
+            case Consultation:
+                sendTrainerInfoMailConsultation(event);
+                break;
+            case Course:
+                break;
+            case Rent:
+                break;
         }
     }
     public String adminEventText(Event event, String type) {
@@ -126,6 +137,57 @@ public class InfoMail {
         }
         return "Hallo!\n\nNeue Änderungen fanden im System statt die nicht identifiziert werden konnten!\nBitte " +
                "geben Sie ihrem Talenderteam bescheid!\n\nMit freundlichen Grüßen,\nIhr Talenderteam";
+    }
+
+    public void sendTrainerInfoMailBirthday (Event event) throws EmailException {
+        String to = event.getTrainer().getEmail();
+        String from = mailData.getSenderMail();
+        String password = mailData.getSenderPassword();
+        String host = "smtp.gmail.com";
+        Session session = Session.getDefaultInstance(createProps());
+        try{
+            MimeMessage mimeMessage = new MimeMessage(session);
+            mimeMessage.setFrom(new InternetAddress(from));
+            mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
+
+            mimeMessage.setSubject("Neuer Geburtstag eingetragen");
+            mimeMessage.setText("Hallo " + event.getTrainer().getFirstName() + " " + event.getTrainer().getLastName() + "!"
+                + "\n\nEs wurde ein neuer Geburtstag für dich eingetragen. Dieser finded am: " +
+                                event.getRoomUses().get(0).getBegin().format(formatter) + " statt." +
+                                "\nWir wünschen dabei Gutes gelingen.\n\nMit freundlichen Grüßen,\nIhr Talenderteam!");
+
+            Transport transport = session.getTransport("smtp");
+            transport.connect(host, 587, from, password);
+            transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
+            transport.close();
+        }catch(MessagingException e){
+            throw new EmailException(" " + e.getMessage());
+        }
+    }
+    public void sendTrainerInfoMailConsultation (Event event) throws EmailException {
+        String to = event.getTrainer().getEmail();
+        String from = mailData.getSenderMail();
+        String password = mailData.getSenderPassword();
+        String host = "smtp.gmail.com";
+        Session session = Session.getDefaultInstance(createProps());
+        try{
+            MimeMessage mimeMessage = new MimeMessage(session);
+            mimeMessage.setFrom(new InternetAddress(from));
+            mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(to));
+
+            mimeMessage.setSubject("Neuer Beratungstermin eingetragen");
+            mimeMessage.setText("Hallo " + event.getTrainer().getFirstName() + " " + event.getTrainer().getLastName() + "!"
+                                + "\n\nEs wurde ein neuer Beratungstermin für dich eingetragen. Dieser finded am: " +
+                                event.getRoomUses().get(0).getBegin().format(formatter) + " statt." +
+                                "\nWir wünschen dabei Gutes gelingen.\n\nMit freundlichen Grüßen,\nIhr Talenderteam!");
+
+            Transport transport = session.getTransport("smtp");
+            transport.connect(host, 587, from, password);
+            transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
+            transport.close();
+        }catch(MessagingException e){
+            throw new EmailException(" " + e.getMessage());
+        }
     }
 
     public void informCustomers(Event event) throws EmailException {

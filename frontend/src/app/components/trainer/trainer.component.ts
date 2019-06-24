@@ -52,6 +52,7 @@ export class TrainerComponent implements OnInit {
 
     private formData: FormData = null;
     private image: File;
+    imageName = 'Kein Bild ausgewählt';
 
     private croppie: Croppie;
 
@@ -265,6 +266,7 @@ export class TrainerComponent implements OnInit {
             return;
         }
         this.image = selected;
+        this.imageName = this.image.name.substring(0, 21) + '...';
 
         this.extractBinaryDataFromFile(this.image, false);
 

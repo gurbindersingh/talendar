@@ -171,39 +171,31 @@
                 </div>
 
                 <div class="form-row align-items-center" id="row5">
-                    <div class="col-lg-2"></div>
-
-                    <div class="col-4 mr-3">
-                        <label class="custom-file-label" for="fileUpload"
-                            >Foto</label
-                        >
+                    <div class="col-auto">
+                        <label class="custom-file-label" for="fileUpload">
+                            {{ imageName }}
+                        </label>
                         <input
                             type="file"
                             class="custom-file-input"
                             id="fileUpload"
                             (change)="onFileSelected($event, croppieModal)"
+                            accept="image/*"
                         />
                     </div>
+                </div>
 
-                    <div class="col-4">
-                        <div
-                            *ngIf="binaryEncodedCroppedImage != null"
-                            id="profilePicContainer"
-                        >
-                            <img
-                                [src]="
-                                    binaryEncodedCroppedImage | safeServerImage
-                                "
-                                class="img-thumbnail"
-                                id="cropped-picture"
-                            />
-                        </div>
-                        <div *ngIf="binaryEncodedCroppedImage == null">
-                            <i class="fas fa-user-alt fa-5x"></i>
-                        </div>
+                <div class="">
+                    <div
+                        *ngIf="binaryEncodedCroppedImage != null"
+                        id="profilePicContainer"
+                    >
+                        <img
+                            [src]="binaryEncodedCroppedImage | safeServerImage"
+                            class="img-thumbnail"
+                            id="cropped-picture"
+                        />
                     </div>
-
-                    <div class="col-lg-2"></div>
                 </div>
 
                 <div class="row" *ngIf="errorMsg">
