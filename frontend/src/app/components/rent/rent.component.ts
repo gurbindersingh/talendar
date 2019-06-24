@@ -18,13 +18,13 @@ import { ClickedDateService } from 'src/app/services/clicked-date.service';
 })
 export class RentComponent implements OnInit {
     private event: Event = new Event();
-    private customer: Customer = new Customer();
     private roomUse: RoomUse = new RoomUse();
 
     private dateTimeParser: DateTimeParserService;
 
-    private errorMsg: string;
-    private successMsg: string;
+    customer: Customer = new Customer();
+    errorMsg: string;
+    successMsg: string;
 
     greenRadioButton: RadioNodeList;
     loading = false;
@@ -73,7 +73,6 @@ export class RentComponent implements OnInit {
         this.loading = true;
         this.eventClient.postNewEvent(this.event).subscribe(
             (data: Event) => {
-                
                 this.successMsg =
                     'Deine Reservierung wurde erfolgreich gespeichert';
                 this.errorMsg = '';
@@ -81,7 +80,6 @@ export class RentComponent implements OnInit {
                 this.resetFormular();
             },
             (error: Error) => {
-                
                 this.errorMsg = error.message;
                 this.successMsg = '';
                 this.loading = false;
