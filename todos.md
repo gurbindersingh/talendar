@@ -6,7 +6,7 @@
   - Sollte wenn man nach Trainer filtered als reserved angezeigt und im default sicht garnicht angezeigt werden. Nur für zugehörigen User       sichtbar.
   
   
-### Grüne Raum darf nicht am we gebucht werden
+### Grüne Raum darf nicht am we gebucht werden (muss gekläred werden)
   - Selbst erklärend
   - Backend: Validierung und exception
   
