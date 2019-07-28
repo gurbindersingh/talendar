@@ -20,8 +20,8 @@
   
 ### Geburtstag price eintragen bei Arterstellung
   - Geburtstagstypen sollen eigene Preise haben. 
-  - Frontend: bei Geburtstag erstellen ein preis Feld dazugeben
-  - Backend: Preis dazu speicher in datenbank oder tabelle
+  - Frontend: Geburtstagtypen ubersicht einfuhren und bei geburtstag buchen Liste aus backend laden
+  - Backend: Geburtstag CRUD funktionalitat und validierung
   
 ### Beratungen Trainer variable
   - Trainer sollten den Preis ihre Beratungen selbst festlegen
