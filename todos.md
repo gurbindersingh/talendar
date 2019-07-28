@@ -40,7 +40,7 @@
 
 ## In Progress
 
--
+- Geburtstag price eintragen (Nikita)
 
 ## Testing
 
