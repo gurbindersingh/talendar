@@ -1,4 +1,4 @@
-# Talendar Scrum Board
+﻿# Talendar Scrum Board
 
 ## Tasks
 
@@ -41,6 +41,9 @@
 ## In Progress
 
 - Geburtstag price eintragen (Nikita)
+
+- Ganzes haus buchen (Michi)
+
 
 ## Testing
 
