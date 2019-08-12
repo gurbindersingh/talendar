@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { TrainerClient } from 'src/app/rest/trainer-client';
+import { TrainerClient, ImageClient } from 'src/app/rest';
 import { Trainer } from 'src/app/models/trainer';
 import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
@@ -11,7 +11,6 @@ import {
     NgbModal,
 } from '@ng-bootstrap/ng-bootstrap';
 
-import { ImageClient } from 'src/app/rest/image-client';
 import * as Croppie from 'croppie';
 
 interface IBDayOptions {

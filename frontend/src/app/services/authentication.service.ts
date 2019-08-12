@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AuthenticationClient } from '../rest/authentication-client';
+import { AuthenticationClient } from '../rest';
 import { SessionStorageService } from './session-storage.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';

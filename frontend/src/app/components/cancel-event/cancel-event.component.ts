@@ -1,12 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { EventClient } from 'src/app/rest/event-client';
+import { EventClient } from 'src/app/rest';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Event } from 'src/app/models/event';
 import { NgForm } from '@angular/forms';
 import { EventType } from 'src/app/models/enum/eventType';
 import { Customer } from 'src/app/models/customer';
-import { Room } from 'src/app/models/enum/room';
-import { ConditionalExpr } from '@angular/compiler';
 
 @Component({
     selector: 'app-cancel-event',
@@ -18,11 +16,11 @@ export class CancelEventComponent implements OnInit {
 
     private customerToRemove: Customer;
 
-     title: string;
-     textBox: string;
-     valid: boolean;
-     successMsg: string;
-     errorMsg: string;
+    title: string;
+    textBox: string;
+    valid: boolean;
+    successMsg: string;
+    errorMsg: string;
 
     private preCountOfCustomers: number;
 

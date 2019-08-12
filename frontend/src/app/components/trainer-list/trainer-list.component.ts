@@ -1,12 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { TrainerClient } from '../../rest/trainer-client';
-import { Trainer } from '../../models/trainer';
+import { TrainerClient, ImageClient } from 'src/app/rest';
+import { Trainer } from 'src/app/models/trainer';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ImageClient } from 'src/app/rest/image-client';
-import { AuthenticationService } from 'src/app/services/authentication.service';
+import { AuthenticationService, SessionStorageService } from 'src/app/services';
 import { UserDetails } from 'src/app/models/user-details';
 import { Authorities } from 'src/app/models/enum/authorities';
-import { SessionStorageService } from 'src/app/services/session-storage.service';
 
 @Component({
     selector: 'ngbd-modal-confirm',
