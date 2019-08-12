@@ -6,13 +6,14 @@ import {
     NgbTimeStruct,
 } from '@ng-bootstrap/ng-bootstrap';
 import { NgForm } from '@angular/forms';
-import { Trainer } from 'src/app/models/trainer';
-import { HolidayClient } from 'src/app/rest/holiday-client';
-import { HolidaysClient } from 'src/app/rest/holidays-client';
-import { DateTimeParserService } from 'src/app/services/date-time-parser.service';
-import { CronMakerService } from 'src/app/services/cronMaker.service';
-import { Holidays } from 'src/app/models/holidays';
-import { SessionStorageService } from 'src/app/services/session-storage.service';
+import { Trainer } from 'src/app/models';
+import { HolidayClient, HolidaysClient } from 'src/app/rest';
+import {
+    DateTimeParserService,
+    CronMakerService,
+    SessionStorageService,
+} from 'src/app/services';
+import { Holidays } from 'src/app/models';
 
 @Component({
     selector: 'app-holiday',
@@ -70,7 +71,6 @@ export class HolidayComponent implements OnInit {
     ngOnInit() {}
 
     public postHoliday(form: NgForm): void {
-        
         this.clearInfoMsg();
         this.holiday.id = null;
         this.trainer.id = this.sessionService.userId;
@@ -91,17 +91,14 @@ export class HolidayComponent implements OnInit {
             this.endTime
         );
         if (!this.toggleOptions) {
-            
             this.holidayClient.postNewHoliday(this.holiday).subscribe(
                 (data: Holiday) => {
-                    
                     this.resetFormular();
                     this.successMsg =
                         'Der Urlaub wurde erfolgreich gespeichert';
                     this.errorMsg = '';
                 },
                 (error: Error) => {
-                    
                     this.errorMsg = error.message;
                     this.successMsg = '';
                 }
@@ -110,21 +107,18 @@ export class HolidayComponent implements OnInit {
             this.holidays.cronExpression = this.getCron();
             this.holidaysClient.postNewHolidays(this.holidays).subscribe(
                 (data: Holiday[]) => {
-                    
                     this.successMsg =
                         'Die Urlaube wurde erfolgreich gespeichert';
                     this.errorMsg = '';
                     this.resetFormular();
                 },
                 (error: Error) => {
-                    
                     this.errorMsg = error.message;
                     this.successMsg = '';
                 }
             );
         }
     }
-
 
     private resetFormular(): void {
         this.holidayName = undefined;

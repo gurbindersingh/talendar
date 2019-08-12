@@ -7,25 +7,25 @@ import { CalendarDateFormatter, CalendarView } from 'angular-calendar';
 import { NgbModal, NgbCarouselConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { BREAKPOINTS } from 'src/app/utils/Breakpoints';
-import { ClickedDateService } from 'src/app/services/clicked-date.service';
 import { CustomDateFormatter } from './CustomDateFormatter';
-import { Event } from 'src/app/models/event';
-import { EventClient } from 'src/app/rest/event-client';
-import { EventImportService } from 'src/app/services/event-import.service';
-import { MetaEvent } from './MetaEvent';
-import { Trainer } from 'src/app/models/trainer';
-import { TrainerClient } from 'src/app/rest/trainer-client';
-import { AuthenticationService } from 'src/app/services/authentication.service';
-import { UserDetails } from 'src/app/models/user-details';
+import {
+    ClickedDateService,
+    EventImportService,
+    AuthenticationService,
+    SessionStorageService,
+    NotificationService,
+} from 'src/app/services';
+
+import { Event, Trainer, UserDetails, Holiday } from 'src/app/models';
 import { Authorities } from 'src/app/models/enum/authorities';
-import { SessionStorageService } from 'src/app/services/session-storage.service';
-import { promise } from 'protractor';
-import { ImageClient } from 'src/app/rest/image-client';
 import { Room } from 'src/app/models/enum/room';
-import { NotificationService } from 'src/app/services/notification.service';
-import { HolidayClient } from 'src/app/rest/holiday-client';
-import { Holiday } from 'src/app/models/holiday';
 import { EventType } from 'src/app/models/enum/eventType';
+import {
+    EventClient,
+    TrainerClient,
+    ImageClient,
+    HolidayClient,
+} from 'src/app/rest';
 
 /**
  * In order to display week days in German the locale data
@@ -217,7 +217,6 @@ export class CalendarComponent implements OnInit {
                     }
                 },
                 (error: Error) => {
-                    
                     this.authService.logout();
                     this.router.navigateByUrl('/login');
                 }
@@ -253,8 +252,6 @@ export class CalendarComponent implements OnInit {
 
     showDetails(event: Event, detailsModal: any) {
         console.warn(event);
-
-        
 
         this.images = [];
         const promises: Promise<string>[] = [];
@@ -414,7 +411,6 @@ export class CalendarComponent implements OnInit {
                 }
             },
             (error: Error) => {
-                
                 this.authService.logout();
                 this.router.navigateByUrl('/login');
             }

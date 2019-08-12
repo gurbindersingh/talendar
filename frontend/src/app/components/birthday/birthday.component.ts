@@ -1,20 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Event } from '../../models/event';
-import { EventClient } from '../../rest/event-client';
-import { RoomUse } from 'src/app/models/roomUse';
-import { Customer } from 'src/app/models/customer';
-import { EventType } from '../../models/enum/eventType';
-import { AuthenticationService } from 'src/app/services/authentication.service';
+import { EventClient } from 'src/app/rest';
+
+import { EventType } from 'src/app/models/enum/eventType';
+import { Event, RoomUse, Customer } from 'src/app/models';
+import { AuthenticationService } from 'src/app/services';
 import {
     NgbDateStruct,
     NgbTimeStruct,
     NgbDateParserFormatter,
 } from '@ng-bootstrap/ng-bootstrap';
-import { NgbDateParserFormatterImplementation } from 'src/app/services/parserformatter.service';
-import { NgbDateParserFormatterImplementationUser } from 'src/app/services/parserformatterUser.service';
-import { DateTimeParserService } from 'src/app/services/date-time-parser.service';
-import { ClickedDateService } from 'src/app/services/clicked-date.service';
+import {
+    DateParserFormatter,
+    DateParserFormatterUser,
+    ClickedDateService,
+} from 'src/app/services';
 
 @Component({
     selector: 'app-birthday',
@@ -23,7 +23,7 @@ import { ClickedDateService } from 'src/app/services/clicked-date.service';
     providers: [
         {
             provide: NgbDateParserFormatter,
-            useClass: NgbDateParserFormatterImplementationUser,
+            useClass: DateParserFormatterUser,
         },
     ],
 })
@@ -60,7 +60,7 @@ export class BirthdayComponent implements OnInit {
         day: this.date.getUTCDay(),
     };
     startTime: NgbTimeStruct = { hour: 13, minute: 30, second: 0 };
-    private parserFormatter = new NgbDateParserFormatterImplementation();
+    private parserFormatter = new DateParserFormatter();
 
     constructor(
         private eventClient: EventClient,
@@ -100,17 +100,15 @@ export class BirthdayComponent implements OnInit {
             this.customer.lastName +
             ' am ' +
             this.event.roomUses[0].begin;
-        
+
         this.eventClient.postNewEvent(this.event).subscribe(
             (data: Event) => {
-                
                 this.loading = false;
                 this.successMsg = 'Geburtstag wurde erfolgreich gebucht';
                 this.errorMsg = '';
                 this.clearFormular();
             },
             (error) => {
-                
                 this.loading = false;
                 this.errorMsg = '' + error.message;
                 this.successMsg = '';

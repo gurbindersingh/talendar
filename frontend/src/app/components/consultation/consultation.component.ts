@@ -6,18 +6,18 @@ import { NgForm } from '@angular/forms';
 import { Room } from 'src/app/models/enum/room';
 import { Trainer } from 'src/app/models/trainer';
 import { EventType } from 'src/app/models/enum/eventType';
-import { EventClient } from 'src/app/rest/event-client';
-import { TrainerClient } from 'src/app/rest/trainer-client';
-import { HttpResponse } from '@angular/common/http';
+import { EventClient, TrainerClient } from 'src/app/rest';
 
 import {
     NgbDateParserFormatter,
     NgbDateStruct,
     NgbTimeStruct,
 } from '@ng-bootstrap/ng-bootstrap';
-import { ClickedDateService } from 'src/app/services/clicked-date.service';
-import { DateTimeParserService } from 'src/app/services/date-time-parser.service';
-import { AuthenticationService } from 'src/app/services/authentication.service';
+import {
+    ClickedDateService,
+    DateTimeParserService,
+    AuthenticationService,
+} from 'src/app/services';
 
 @Component({
     selector: 'app-consultation',

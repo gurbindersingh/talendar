@@ -50,7 +50,7 @@
 
 -   Ganzes haus buchen (Michi)
 
--   Recaptcha beim anmelden
+-   Recaptcha beim anmelden (Guri)
 
 ## Testing
 

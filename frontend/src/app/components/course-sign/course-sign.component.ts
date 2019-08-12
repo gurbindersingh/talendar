@@ -6,11 +6,11 @@ import {
 } from '@ng-bootstrap/ng-bootstrap';
 import { RoomUse } from 'src/app/models/roomUse';
 import { Room } from 'src/app/models/enum/room';
-import { EventClient } from 'src/app/rest/event-client';
+import { EventClient } from 'src/app/rest';
 import { ActivatedRoute } from '@angular/router';
 import { Event } from 'src/app/models/event';
 import { Customer } from 'src/app/models/customer';
-import { DateTimeParserService } from 'src/app/services/date-time-parser.service';
+import { DateTimeParserService } from 'src/app/services';
 import { NgForm } from '@angular/forms';
 
 @Component({
