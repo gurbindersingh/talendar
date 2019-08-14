@@ -39,22 +39,15 @@
 -   Frontend: Ein Menü wo man Beratungszeiten bearbeiten kann im trainer + beratung filter dieser Zeiten anzeigen
 -   Backend: Über alle schichten ein Beratungszeiten CRUD objekt implementieren und die Methoden fürs Frontend
 
-### Captcha fürs anmelden
-
--   Mit google Recaptcha
--   Frontend: Implement google Recaptcha
-
 ## In Progress
 
 -   Geburtstag price eintragen (Nikita)
 
 -   Ganzes haus buchen (Michi)
 
--   Recaptcha beim anmelden (Guri)
-
 ## Testing
 
--
+-   Recaptcha beim anmelden (Guri)
 
 ## Done
 
