@@ -152,7 +152,11 @@
                         required
                     />
                 </div>
-                <br />
+                <div class="row">
+                    <div class="col-auto mt-4">
+                        <app-recaptcha></app-recaptcha>
+                    </div>
+                </div>
                 <div class="row" *ngIf="errorMsg">
                     <div class="col-sm-12">
                         <p class="alert alert-danger">
@@ -167,7 +171,6 @@
                         </p>
                     </div>
                 </div>
-                <br />
                 <div class="row justify-content-end">
                     <button
                         class="btn btn-light mr-2"
@@ -204,5 +207,3 @@
         <div class="col-lg-3"></div>
     </div>
 </div>
-<br />
-<br />
