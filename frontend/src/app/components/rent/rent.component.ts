@@ -59,6 +59,11 @@ export class RentComponent implements OnInit {
     ngOnInit() {}
 
     public postMeeting(form: NgForm): void {
+        if (window.grecaptcha.getResponse().length < 1) {
+            this.errorMsg = 'Bitte schließen Sie das reCaptcha ab.';
+            return;
+        }
+
         this.roomUse.begin = this.dateTimeParser.dateTimeToString(
             this.startDate,
             this.startTime

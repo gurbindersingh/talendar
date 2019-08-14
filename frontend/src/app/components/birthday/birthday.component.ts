@@ -81,6 +81,10 @@ export class BirthdayComponent implements OnInit {
     }
 
     postBirthday(form: NgForm) {
+        if (window.grecaptcha.getResponse().length < 1) {
+            this.errorMsg = 'Bitte schließen Sie das reCaptcha ab.';
+            return;
+        }
         this.room.begin = this.dateToString(this.startDate, this.startTime);
         this.startTime.hour = this.getEndDate(this.startTime);
         this.room.end = this.dateToString(this.startDate, this.startTime);
