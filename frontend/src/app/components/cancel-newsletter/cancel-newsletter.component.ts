@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CustomerClient } from '../../rest/customer-client';
+import { CustomerClient } from 'src/app/rest';
 import { ActivatedRoute } from '@angular/router';
 import { NgForm } from '@angular/forms';
 

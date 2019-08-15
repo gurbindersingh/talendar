@@ -21,7 +21,7 @@ function toInteger(value: any): number {
 }
 
 @Injectable()
-export class NgbDateParserFormatterImplementation extends NgbDateParserFormatter {
+export class DateParserFormatter extends NgbDateParserFormatter {
     parse(value: string): NgbDateStruct {
         if (value) {
             const dateParts = value.trim().split('/');

@@ -1,23 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { Event } from 'src/app/models/event';
 import { NgForm } from '@angular/forms';
-import { EventClient } from 'src/app/rest/event-client';
-import { DateTimeParserService } from 'src/app/services/date-time-parser.service';
+import {
+    DateTimeParserService,
+    CronMakerService,
+    SessionStorageService,
+} from 'src/app/services';
+
+import { Event, RoomUse, Trainer, Tag } from 'src/app/models';
 import { Room } from 'src/app/models/enum/room';
 import { EventType } from 'src/app/models/enum/eventType';
 import { NgbDateStruct, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
-import { RoomUse } from 'src/app/models/roomUse';
-import { Trainer } from 'src/app/models/trainer';
 import { ActivatedRoute } from '@angular/router';
-import { CronMakerService } from 'src/app/services/cronMaker.service';
-import { SessionStorageService } from 'src/app/services/session-storage.service';
-import { Tag } from 'src/app/models/tag';
-import { TagClient } from 'src/app/rest/tag-client';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as Croppie from 'croppie';
-import { ImageClient } from 'src/app/rest/image-client';
-import { Observable } from 'rxjs';
-import { threadId } from 'worker_threads';
+import { EventClient, TagClient, ImageClient } from 'src/app/rest';
 
 @Component({
     selector: 'app-course',
@@ -124,12 +120,9 @@ export class CourseComponent implements OnInit {
 
                     this.tagStrings.sort((a: string, b: string) => {
                         return a.localeCompare(b);
-                    })
-
+                    });
                 },
-                (error) => {
-                    
-                }
+                (error) => {}
             );
         } else {
             this.title = 'Kurs bearbeiten';
@@ -138,7 +131,6 @@ export class CourseComponent implements OnInit {
             this.isCreate = false;
             this.eventClient.getEventById(id).subscribe(
                 (data: Event) => {
-                    
                     this.event = data;
                 },
                 (error: Error) => {
@@ -153,9 +145,7 @@ export class CourseComponent implements OnInit {
                         this.tagStrings.push(this.tags[_i].tag);
                     }
                 },
-                (error) => {
-                    
-                }
+                (error) => {}
             );
         }
     }
@@ -222,7 +212,6 @@ export class CourseComponent implements OnInit {
         if (this.promises.length === 0) {
             this.postData(form);
         } else {
-            
             Promise.all(this.promises).then(
                 (data: string[]) => {
                     this.event.pictures = data;
@@ -298,7 +287,6 @@ export class CourseComponent implements OnInit {
                 this.numImg++;
             })
             .catch((error) => {
-                
                 this.errorMsg =
                     'Das Bild konnte leider nicht gespeichert werden. ' +
                     'Bitte versuchen Sie es erneut.';
@@ -444,7 +432,6 @@ export class CourseComponent implements OnInit {
 
             this.eventClient.postNewEvent(this.event).subscribe(
                 (data: Event) => {
-                    
                     this.successMsg =
                         'Deine Reservierung wurde erfolgreich gespeichert';
                     this.resetFormular();
@@ -452,7 +439,6 @@ export class CourseComponent implements OnInit {
                     this.loading = false;
                 },
                 (error: Error) => {
-                    
                     this.errorMsg = error.message;
                     this.successMsg = '';
                     this.loading = false;
@@ -462,13 +448,11 @@ export class CourseComponent implements OnInit {
             // TODO
             this.eventClient.update(this.event).subscribe(
                 (data: Event) => {
-                    
                     this.successMsg = 'Der Kurs wurde erfolgreich aktualisiert';
                     this.errorMsg = '';
                     this.loading = false;
                 },
                 (error: Error) => {
-                    
                     this.errorMsg =
                         'Der Kurs konnte nicht erfolgreich aktualisiert werden: ' +
                         error.message;

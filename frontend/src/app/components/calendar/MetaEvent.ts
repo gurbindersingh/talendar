@@ -1,5 +1,5 @@
 import { CalendarEvent } from 'calendar-utils';
-import { Event } from '../../models/event';
+import { Event } from 'src/app/models/event';
 
 export class MetaEvent implements CalendarEvent {
     id?: string | number;

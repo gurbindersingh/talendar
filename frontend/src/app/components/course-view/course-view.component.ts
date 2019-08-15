@@ -1,9 +1,9 @@
 import { Component, OnInit, EventEmitter } from '@angular/core';
-import { EventClient } from '../../rest/event-client';
-import { Event } from '../../models/event';
+import { EventClient } from 'src/app/rest';
+import { Event } from 'src/app/models/event';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Authorities } from 'src/app/models/enum/authorities';
-import { AuthenticationService } from 'src/app/services/authentication.service';
+import { AuthenticationService } from 'src/app/services';
 import { UserDetails } from 'src/app/models/user-details';
 
 @Component({

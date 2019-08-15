@@ -2,9 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { BREAKPOINTS } from 'src/app/utils/Breakpoints';
 import { Router } from '@angular/router';
 import { UserDetails } from 'src/app/models/user-details';
-import { AuthenticationService } from 'src/app/services/authentication.service';
+import { AuthenticationService, NotificationService } from 'src/app/services';
 import { Authorities } from 'src/app/models/enum/authorities';
-import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
     selector: 'app-navigation',

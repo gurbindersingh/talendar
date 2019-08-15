@@ -1,4 +1,6 @@
-<h1 class="row justify-content-center">{{ title }}</h1>
+<h1 class="row justify-content-center">
+    Beratungstermin {{ auth.isLoggedIn ? 'eintragen' : 'buchen' }}
+</h1>
 <hr />
 <div class="container-fluid">
     <div class="row">
@@ -117,7 +119,7 @@
 
                 <!-- Sixth row -->
                 <div class="row" id="consultationDropDown">
-                    <div ngbDropdown class="col-lg">
+                    <div ngbDropdown class="col-lg mb-3">
                         <button
                             class="btn btn-outline-primary"
                             id="roomButtonStart"
@@ -125,7 +127,7 @@
                             ngbDropdownToggle
                             required
                         >
-                            {{ roomString }}
+                            {{ selectedRoom }}
                         </button>
                         <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
                             <button
@@ -140,14 +142,14 @@
                         </div>
                     </div>
 
-                    <div ngbDropdown class="col-lg" id="consultationDropDown">
+                    <div ngbDropdown class="col-lg " id="consultationDropDown">
                         <button
                             class="btn btn-outline-primary"
                             id="trainerButtonStart"
                             name="trainerButton"
                             ngbDropdownToggle
                         >
-                            {{ trainerString }}
+                            {{ selectedTrainer }}
                         </button>
                         <div ngbDropdownMenu aria-labelledby="dropdownBasic2">
                             <button
@@ -163,23 +165,26 @@
                     </div>
                 </div>
 
-                <div class="row" *ngIf="errorMsg">
-                    <div class="col-sm-12">
-                        <p class="alert alert-danger">
-                            {{ errorMsg }}
-                        </p>
-                    </div>
-                </div>
-                <div class="row" *ngIf="successMsg">
-                    <div class="col-sm-12">
-                        <p class="alert alert-success">
-                            {{ successMsg }}
-                        </p>
-                    </div>
-                </div>
-                <br />
-
                 <!-- Seventh row -->
+                <div class="row mb-4">
+                    <div class="col-auto mt-4">
+                        <app-recaptcha></app-recaptcha>
+                    </div>
+
+                    <div
+                        class="col-md mt-4 alert alert-success d-flex flex-column align-items-center justify-content-center"
+                        *ngIf="successMsg"
+                    >
+                        <span>{{ successMsg }}</span>
+                    </div>
+
+                    <div
+                        class="col-md mt-4 mb-0 alert alert-danger d-flex flex-column align-items-center justify-content-center"
+                        *ngIf="errorMsg"
+                    >
+                        <span>{{ errorMsg }}</span>
+                    </div>
+                </div>
                 <div
                     class="row justify-content-end"
                     style="padding-right: 15px"
@@ -199,7 +204,7 @@
                         (click)="postConsultation(consultationForm)"
                         id="consultationSave"
                     >
-                        Beratungstermin eintragen
+                        {{ auth.isLoggedIn ? 'Eintragen' : 'Buchen' }}
                     </button>
                 </div>
             </form>
