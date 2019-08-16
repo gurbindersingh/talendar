@@ -43,11 +43,11 @@
 
 -   Geburtstag price eintragen (Nikita)
 
--   Ganzes haus buchen (Michi)
-
 ## Testing
 
 -   Recaptcha beim anmelden (Guri)
+
+-   Ganzes haus buchen (Michi)
 
 ## Done
 
