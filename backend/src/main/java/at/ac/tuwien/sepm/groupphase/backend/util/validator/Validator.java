@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.util.validator;
 
 
+import at.ac.tuwien.sepm.groupphase.backend.enums.Room;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.CancelationException;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidFileException;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidFilePathException;
@@ -92,9 +93,22 @@ public class Validator {
             }
 
             try {
-                for(RoomUse r : event.getRoomUses()
-                ) {
-                    validateRoomUse(r);
+                if(event.getRoomUses().get(0).getRoom().equals(Room.All)){
+                    for(RoomUse r : event.getRoomUses()
+                    ) {
+                        r.setRoom(Room.Green);
+                        validateRoomUse(r);
+                        r.setRoom(Room.Orange);
+                        validateRoomUse(r);
+                        r.setRoom(Room.GroundFloor);
+                        validateRoomUse(r);
+                    }
+
+                } else {
+                    for(RoomUse r : event.getRoomUses()
+                    ) {
+                        validateRoomUse(r);
+                    }
                 }
             }
             catch(InvalidEntityException e) {
