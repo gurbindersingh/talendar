@@ -119,9 +119,9 @@
                 <label class="col-lg-1">Raum</label>
             </div>
 
-            <div class="row pl-3" id="radioButtonRow">
+            <div class="row pl-4" id="radioButtonRow">
                 <div
-                    class="custom-control custom-radio custom-control-inline col-lg-3"
+                    class="custom-control custom-radio custom-control-inline col-lg-2"
                 >
                     <input
                         type="radio"
@@ -135,7 +135,7 @@
                     >
                 </div>
                 <div
-                    class="custom-control custom-radio custom-control-inline col-lg-3"
+                    class="custom-control custom-radio custom-control-inline col-lg-2"
                 >
                     <input
                         type="radio"
@@ -149,7 +149,7 @@
                     >
                 </div>
                 <div
-                    class="custom-control custom-radio custom-control-inline col-lg-3"
+                    class="custom-control custom-radio custom-control-inline col-lg-2"
                 >
                     <input
                         type="radio"
@@ -162,6 +162,20 @@
                         class="custom-control-label"
                         for="groundFloorRadioButton"
                         >Erdgeschoss</label
+                    >
+                </div>
+                <div
+                    class="custom-control custom-radio custom-control-inline col-lg-3"
+                >
+                    <input
+                        type="radio"
+                        id="AllRadioButton"
+                        name="customRadioInline1"
+                        class="custom-control-input"
+                        (click)="AllSelected()"
+                    />
+                    <label class="custom-control-label" for="AllRadioButton"
+                        >Das ganze Haus</label
                     >
                 </div>
             </div>
