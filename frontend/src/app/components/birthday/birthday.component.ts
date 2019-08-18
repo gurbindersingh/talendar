@@ -81,7 +81,7 @@ export class BirthdayComponent implements OnInit {
     }
 
     postBirthday(form: NgForm) {
-        if (window.grecaptcha.getResponse().length < 1) {
+        if (!this.auth.isLoggedIn && window.grecaptcha.getResponse().length < 1) {
             this.errorMsg = 'Bitte schließen Sie das reCaptcha ab.';
             return;
         }

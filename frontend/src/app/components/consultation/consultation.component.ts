@@ -8,16 +8,8 @@ import { Trainer } from 'src/app/models/trainer';
 import { EventType } from 'src/app/models/enum/eventType';
 import { EventClient, TrainerClient } from 'src/app/rest';
 
-import {
-    NgbDateParserFormatter,
-    NgbDateStruct,
-    NgbTimeStruct,
-} from '@ng-bootstrap/ng-bootstrap';
-import {
-    ClickedDateService,
-    DateTimeParserService,
-    AuthenticationService,
-} from 'src/app/services';
+import { NgbDateParserFormatter, NgbDateStruct, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
+import { ClickedDateService, DateTimeParserService, AuthenticationService } from 'src/app/services';
 
 @Component({
     selector: 'app-consultation',
@@ -85,21 +77,15 @@ export class ConsultationComponent implements OnInit {
             this.errorMsg = 'Bitte wählen Sie eine/n Trainer/in aus';
             return;
         }
-        if (window.grecaptcha.getResponse().length < 1) {
+        if (!this.auth.isLoggedIn && window.grecaptcha.getResponse().length < 1) {
             this.errorMsg = 'Bitte schließen Sie das reCaptcha ab.';
             return;
         }
 
         this.endDate = this.startDate;
         this.endTime = { hour: this.startTime.hour + 1, minute: 0, second: 0 };
-        this.roomUse.begin = this.dateTimeParser.dateTimeToString(
-            this.startDate,
-            this.startTime
-        );
-        this.roomUse.end = this.dateTimeParser.dateTimeToString(
-            this.endDate,
-            this.endTime
-        );
+        this.roomUse.begin = this.dateTimeParser.dateTimeToString(this.startDate, this.startTime);
+        this.roomUse.end = this.dateTimeParser.dateTimeToString(this.endDate, this.endTime);
         this.roomUse.room = this.roomSelected(this.selectedRoom);
 
         this.event.customerDtos = [this.customer];
@@ -109,13 +95,10 @@ export class ConsultationComponent implements OnInit {
 
         this.eventClient.postNewEvent(this.event).subscribe(
             (data: Event) => {
-                this.successMsg =
-                    'Deine Reservierung wurde erfolgreich gespeichert';
+                this.successMsg = 'Deine Reservierung wurde erfolgreich gespeichert';
             },
             (error) => {
-                this.errorMsg =
-                    'Deine Reservierung konnte nicht angelegt werden: ' +
-                    error.message;
+                this.errorMsg = 'Deine Reservierung konnte nicht angelegt werden: ' + error.message;
             }
         );
     }
@@ -147,16 +130,10 @@ export class ConsultationComponent implements OnInit {
     }
 
     public isCompleted(): boolean {
-        if (
-            this.customer.firstName === undefined ||
-            this.customer.firstName === ''
-        ) {
+        if (this.customer.firstName === undefined || this.customer.firstName === '') {
             return false;
         }
-        if (
-            this.customer.lastName === undefined ||
-            this.customer.lastName === ''
-        ) {
+        if (this.customer.lastName === undefined || this.customer.lastName === '') {
             return false;
         }
         if (this.customer.email === undefined || this.customer.email === '') {
@@ -200,14 +177,7 @@ export class ConsultationComponent implements OnInit {
             hours = '0' + hours;
         }
 
-        return (
-            this.parserFormatter.format(date) +
-            'T' +
-            hours +
-            ':' +
-            minutes +
-            ':00'
-        );
+        return this.parserFormatter.format(date) + 'T' + hours + ':' + minutes + ':00';
     }
 
     public clearInfoMsg(): void {

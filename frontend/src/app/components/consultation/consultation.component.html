@@ -59,9 +59,7 @@
                 <!-- Third row -->
                 <div class="row">
                     <div class="form-group col-lg">
-                        <label for="consultationPhoneNumber"
-                            >Telefonnummer</label
-                        >
+                        <label for="consultationPhoneNumber">Telefonnummer</label>
                         <input
                             type="text"
                             class="form-control"
@@ -167,7 +165,7 @@
 
                 <!-- Seventh row -->
                 <div class="row mb-4">
-                    <div class="col-auto mt-4">
+                    <div class="col-auto mt-4" *ngIf="!auth.isLoggedIn">
                         <app-recaptcha></app-recaptcha>
                     </div>
 
@@ -185,15 +183,8 @@
                         <span>{{ errorMsg }}</span>
                     </div>
                 </div>
-                <div
-                    class="row justify-content-end"
-                    style="padding-right: 15px"
-                >
-                    <button
-                        class="btn btn-light mr-2"
-                        (click)="goBack()"
-                        *ngIf="!auth.isLoggedIn"
-                    >
+                <div class="row justify-content-end" style="padding-right: 15px">
+                    <button class="btn btn-light mr-2" (click)="goBack()" *ngIf="!auth.isLoggedIn">
                         Abbrechen
                     </button>
                     <button

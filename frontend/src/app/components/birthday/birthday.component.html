@@ -17,18 +17,14 @@
                     >
                         <option value="DryIce"> Trockeneis Geburtstag</option>
                         <option value="Rocket"> Raketen Geburtstag</option>
-                        <option value="Superhero">
-                            Superhelden Geburtstag</option
-                        >
+                        <option value="Superhero"> Superhelden Geburtstag</option>
                         <option value="Photo"> Photo Geburtstag</option>
                         <option value="Painting"> Malen Geburtstag</option>
                     </select>
                 </div>
                 <div class="row align-items-center">
                     <div class="form-group col-sm">
-                        <label for="birthdayHeadcount"
-                            >Wie viele Kinder kommen?</label
-                        >
+                        <label for="birthdayHeadcount">Wie viele Kinder kommen?</label>
                         <select
                             class="form-control"
                             name="headcount"
@@ -36,17 +32,13 @@
                             [(ngModel)]="event.headcount"
                             required
                         >
-                            <option
-                                *ngFor="let number of ageList"
-                                [value]="number"
-                                >{{ number }}</option
-                            >
+                            <option *ngFor="let number of ageList" [value]="number">{{
+                                number
+                            }}</option>
                         </select>
                     </div>
                     <div class="form-group col-sm">
-                        <label for="birthdayAgeToBe"
-                            >Alter des Geburtstagskindes?</label
-                        >
+                        <label for="birthdayAgeToBe">Alter des Geburtstagskindes?</label>
                         <select
                             class="form-control"
                             name="ageToBe"
@@ -54,19 +46,15 @@
                             [(ngModel)]="event.ageToBe"
                             requried
                         >
-                            <option
-                                *ngFor="let number of ageListb"
-                                [value]="number"
-                                >{{ number }}</option
-                            >
+                            <option *ngFor="let number of ageListb" [value]="number">{{
+                                number
+                            }}</option>
                         </select>
                     </div>
                 </div>
                 <div class="row align-items-center" id="preCustomerRow">
                     <div class="form-group col-md-6">
-                        <label for="birthdayRoom"
-                            >Welches Zimmer wollen Sie verwenden?</label
-                        >
+                        <label for="birthdayRoom">Welches Zimmer wollen Sie verwenden?</label>
                         <select
                             class="form-control"
                             name="room"
@@ -152,31 +140,29 @@
                         required
                     />
                 </div>
-                <div class="row">
-                    <div class="col-auto mt-4">
+
+                <div class="row mb-4">
+                    <div class="col-auto mt-4" *ngIf="!auth.isLoggedIn">
                         <app-recaptcha></app-recaptcha>
                     </div>
-                </div>
-                <div class="row" *ngIf="errorMsg">
-                    <div class="col-sm-12">
-                        <p class="alert alert-danger">
-                            {{ errorMsg }}
-                        </p>
-                    </div>
-                </div>
-                <div class="row" *ngIf="successMsg">
-                    <div class="col-sm-12">
-                        <p class="alert alert-success">
-                            {{ successMsg }}
-                        </p>
-                    </div>
-                </div>
-                <div class="row justify-content-end">
-                    <button
-                        class="btn btn-light mr-2"
-                        (click)="goBack()"
-                        *ngIf="!auth.isLoggedIn"
+
+                    <div
+                        class="col-md mt-4 alert alert-success d-flex flex-column align-items-center justify-content-center"
+                        *ngIf="successMsg"
                     >
+                        <span>{{ successMsg }}</span>
+                    </div>
+
+                    <div
+                        class="col-md mt-4 mb-0 alert alert-danger d-flex flex-column align-items-center justify-content-center"
+                        *ngIf="errorMsg"
+                    >
+                        <span>{{ errorMsg }}</span>
+                    </div>
+                </div>
+
+                <div class="row justify-content-end">
+                    <button class="btn btn-light mr-2" (click)="goBack()" *ngIf="!auth.isLoggedIn">
                         Abbrechen
                     </button>
                     <input
@@ -188,12 +174,7 @@
                         (click)="postBirthday(birthdayForm)"
                         *ngIf="!loading"
                     />
-                    <button
-                        class="btn btn-primary"
-                        type="button"
-                        *ngIf="loading"
-                        disabled
-                    >
+                    <button class="btn btn-primary" type="button" *ngIf="loading" disabled>
                         <span
                             class="spinner-border spinner-border-sm"
                             role="status"
