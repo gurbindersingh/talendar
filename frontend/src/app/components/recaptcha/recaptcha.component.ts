@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit } from '@angular/core';
 
 @Component({
     selector: 'app-recaptcha',
@@ -6,12 +6,19 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
     styleUrls: ['./recaptcha.component.scss'],
 })
 export class RecaptchaComponent implements OnInit, OnDestroy {
-    form: HTMLFormElement;
     script: HTMLScriptElement;
 
     constructor() {}
 
-    ngOnInit() {}
+    ngOnInit(): void {
+        try {
+            window.grecaptcha.render('g-recaptcha', {
+                sitekey: '6Lc2QrAUAAAAAG4JI4emazC6AAXfcMKuDC25n2ze',
+            });
+        } catch (error) {
+            console.log('Page reloaded');
+        }
+    }
 
     ngOnDestroy(): void {}
 }

@@ -59,7 +59,7 @@ export class RentComponent implements OnInit {
     ngOnInit() {}
 
     public postMeeting(form: NgForm): void {
-        if (window.grecaptcha.getResponse().length < 1) {
+        if (!this.auth.isLoggedIn && window.grecaptcha.getResponse().length < 1) {
             this.errorMsg = 'Bitte schließen Sie das reCaptcha ab.';
             return;
         }
