@@ -1,10 +1,10 @@
 interface IRecaptchaRenderParams {
     sitekey: string;
-    theme: string;
-    tabindex: number;
-    callback: (...args: any[]) => any;
-    'expired-callback': (...args: any[]) => any;
-    'error-callback': (...args: any[]) => any;
+    theme?: string;
+    tabindex?: number;
+    callback?: (...args: any[]) => any;
+    'expired-callback'?: (...args: any[]) => any;
+    'error-callback'?: (...args: any[]) => any;
 }
 
 // Adds grecaptcha to 'window' object
