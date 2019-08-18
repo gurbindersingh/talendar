@@ -113,6 +113,10 @@ export class RentComponent implements OnInit {
         this.radioButtonSelected = 'Erdgeschoss';
     }
 
+    public AllSelected(): void {
+        this.radioButtonSelected = 'Haus';
+    }
+
     public goBack(): void {
         window.history.back();
     }
@@ -124,7 +128,10 @@ export class RentComponent implements OnInit {
         if (this.radioButtonSelected === 'Orange') {
             return Room.Orange;
         }
-        return Room.GroundFloor;
+        if (this.radioButtonSelected === 'Erdgeschoss') {
+            return Room.GroundFloor;
+        }
+        return Room.All;
     }
 
     public isCompleted(): boolean {
