@@ -13,6 +13,7 @@ import {
     LoginComponent,
     TrainerComponent,
     TrainerListComponent,
+
 } from './components';
 import { CourseSignComponent } from './components/course-sign/course-sign.component';
 import { TrainerGuard } from './guards/trainer-guard';
@@ -21,10 +22,14 @@ import { AdminGuard } from './guards/admin-guard';
 import { InfoComponent } from './components/info/info.component';
 import { TagComponent } from './components/tag/tag.component';
 import { CancelNewsletterComponent } from './components/cancel-newsletter/cancel-newsletter.component';
+import { CreateBirthdayTypeComponent } from './components/create-birthday-type/create-birthday-type.component';
+import { BirthdayTypeViewComponent } from './components/birthday-type-view/birthday-type-view.component';
 
 const routes: Routes = [
     { path: 'calendar', component: CalendarComponent },
     { path: 'birthday/book', component: BirthdayComponent },
+    { path: 'birthdayType/create', component: CreateBirthdayTypeComponent },
+    { path: 'birthdayType/view', component: BirthdayTypeViewComponent },
     {
         path: 'consultation/add',
         component: ConsultationComponent,
@@ -87,4 +92,4 @@ const routes: Routes = [
     imports: [RouterModule.forRoot(routes)],
     exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

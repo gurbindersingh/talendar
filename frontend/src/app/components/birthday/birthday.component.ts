@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Event } from '../../models/event';
+import { Event as TalendarEvent } from '../../models/event';
 import { EventClient } from '../../rest/event-client';
 import { RoomUse } from 'src/app/models/roomUse';
 import { Customer } from 'src/app/models/customer';
@@ -15,6 +15,8 @@ import { NgbDateParserFormatterImplementation } from 'src/app/services/parserfor
 import { NgbDateParserFormatterImplementationUser } from 'src/app/services/parserformatterUser.service';
 import { DateTimeParserService } from 'src/app/services/date-time-parser.service';
 import { ClickedDateService } from 'src/app/services/clicked-date.service';
+import { Birthday } from 'src/app/models/birthday';
+import { BirthdayClient } from 'src/app/rest/birthday-client';
 
 @Component({
     selector: 'app-birthday',
@@ -46,11 +48,13 @@ export class BirthdayComponent implements OnInit {
         19,
     ];
     public ageListb: number[] = [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
-    event: Event = new Event();
+    event: TalendarEvent = new TalendarEvent();
     room: RoomUse = new RoomUse();
     customer: Customer = new Customer();
     private date: Date = new Date();
-
+    birthdayTypes: Birthday[] = [];
+    birthdayNames: string[] = [];
+    selectedBirthdayType: Birthday;
     loading: boolean;
     errorMsg: string;
     successMsg: string;
@@ -65,23 +69,40 @@ export class BirthdayComponent implements OnInit {
     constructor(
         private eventClient: EventClient,
         private clickedDateService: ClickedDateService,
-        public auth: AuthenticationService
+        public auth: AuthenticationService,
+        private birthdayTypeClient: BirthdayClient
     ) {
         const date = this.clickedDateService.getDate();
         const time = this.clickedDateService.getTime();
 
         this.startTime = this.clickedDateService.getTime();
         this.startDate = this.clickedDateService.getDate();
+
     }
 
     ngOnInit() {
         this.loading = false;
         this.successMsg = '';
         this.errorMsg = '';
+        this.birthdayTypeClient.getAllBirthdayTypes().subscribe(
+            (birthdayTypeList: Birthday[]) => {
+                this.birthdayTypes = birthdayTypeList;
+                for (let i in this.birthdayTypes) {
+                    this.birthdayNames[i] = this.birthdayTypes[i].name;
+                }
+                this.birthdayTypes.sort((a: Birthday, b: Birthday) => {
+                    return a.name.localeCompare(b.name);
+                })
+            },
+            (error) => {
+
+            }
+        );
     }
 
     postBirthday(form: NgForm) {
         this.room.begin = this.dateToString(this.startDate, this.startTime);
+        console.log(this.room.begin);
         this.startTime.hour = this.getEndDate(this.startTime);
         this.room.end = this.dateToString(this.startDate, this.startTime);
         this.event.eventType = EventType.Birthday;
@@ -92,6 +113,7 @@ export class BirthdayComponent implements OnInit {
         this.event.roomUses = roomUses;
         this.event.customerDtos = customers;
         this.loading = true;
+        this.event.birthdayType = this.selectedBirthdayType.name;
         this.event.name =
             this.event.birthdayType +
             ' Geburtstag für ' +
@@ -100,17 +122,17 @@ export class BirthdayComponent implements OnInit {
             this.customer.lastName +
             ' am ' +
             this.event.roomUses[0].begin;
-        
+
         this.eventClient.postNewEvent(this.event).subscribe(
-            (data: Event) => {
-                
+            (data: TalendarEvent) => {
+
                 this.loading = false;
                 this.successMsg = 'Geburtstag wurde erfolgreich gebucht';
                 this.errorMsg = '';
                 this.clearFormular();
             },
             (error) => {
-                
+
                 this.loading = false;
                 this.errorMsg = '' + error.message;
                 this.successMsg = '';
@@ -127,7 +149,7 @@ export class BirthdayComponent implements OnInit {
     }
 
     public isComplete(): boolean {
-        if (this.event.birthdayType === '') {
+        if (this.selectedBirthdayType === undefined) {
             return false;
         }
         if (this.event.headcount == null) {
@@ -160,6 +182,12 @@ export class BirthdayComponent implements OnInit {
         return true;
     }
 
+    private isSelected(): boolean {
+        if (this.selectedBirthdayType === undefined) {
+            return false;
+        }
+        return true;
+    }
     private clearFormular(): void {
         this.customer.firstName = '';
         this.customer.lastName = '';
@@ -177,6 +205,10 @@ export class BirthdayComponent implements OnInit {
         let isChangedHour = false;
         let isChangedMinute = false;
 
+        if (time.minute === 0) {
+            stringMinute = '00';
+            isChangedMinute = true;
+        }
         if (time.minute === 1) {
             stringMinute = '01';
             isChangedMinute = true;
@@ -212,6 +244,10 @@ export class BirthdayComponent implements OnInit {
         if (time.minute === 9) {
             stringMinute = '09';
             isChangedMinute = true;
+        }
+        if (time.hour === 0) {
+            stringHour = '00';
+            isChangedHour = true;
         }
         if (time.hour === 1) {
             stringHour = '01';
@@ -249,7 +285,9 @@ export class BirthdayComponent implements OnInit {
             stringHour = '09';
             isChangedHour = true;
         }
+
         if (isChangedHour && isChangedMinute) {
+
             return (
                 this.parserFormatter.format(date) +
                 'T' +
@@ -277,7 +315,7 @@ export class BirthdayComponent implements OnInit {
                 'T' +
                 time.hour +
                 ':' +
-                time.minute +
+                stringMinute +
                 ':00'
             );
         }
@@ -290,5 +328,16 @@ export class BirthdayComponent implements OnInit {
             time.minute +
             ':00'
         );
+    }
+    private displayPrice(): number {
+        if (this.selectedBirthdayType != undefined) {
+            return this.selectedBirthdayType.price;
+        }
+        return 0;
+    }
+    private updatePrice(ev: Event): void {
+        const value: string = (<HTMLSelectElement>ev.srcElement).value;
+        this.selectedBirthdayType = this.birthdayTypes.find((bt: Birthday) => bt.name === value);
+        console.log(this.selectedBirthdayType.name);
     }
 }

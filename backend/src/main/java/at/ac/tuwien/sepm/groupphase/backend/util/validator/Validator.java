@@ -200,7 +200,7 @@ public class Validator {
         // Validator for Rent
         if(event.getEventType() == EventType.Rent) {
 
-            if(event.getCustomers().size() != 1) {
+            if(event.getCustomers() == null || event.getCustomers().size() != 1) {
                 throw new InvalidEntityException("");
             }
             try {
@@ -523,6 +523,16 @@ public class Validator {
         if(tag.getTag() == null || tag.getTag().isBlank() || tag.getTag().equals("") || tag.getTag().isEmpty()){
             throw new InvalidEntityException("Ein Keyword kann nicht leer sein");
         }
+    }
+
+    public void validateBirthdayType(BirthdayType birthdayType) throws InvalidEntityException{
+        if(birthdayType.getName() == null || birthdayType.getName().isBlank() || birthdayType.getName().equals("") || birthdayType.getName().isEmpty()){
+            throw new InvalidEntityException("Eine Geburtstagstyp braucht einen Namen");
+        }
+        if(birthdayType.getPrice() == 0){
+            throw new InvalidEntityException("Ein Geburtstagstyp braucht einen Preis");
+        }
+
     }
 
     public boolean validAlgoCustomer(AlgoCustomer algoCustomer){

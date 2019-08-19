@@ -45,6 +45,9 @@ import { ImageClient } from './rest/image-client';
 import { SafeServerImagePipe } from './pipes/safe-server-image-pipe';
 import { TagComponent } from './components/tag/tag.component';
 import { CancelNewsletterComponent } from './components/cancel-newsletter/cancel-newsletter.component';
+import { CreateBirthdayTypeComponent } from './components/create-birthday-type/create-birthday-type.component';
+import { BirthdayClient } from './rest/birthday-client';
+import { BirthdayTypeViewComponent } from './components/birthday-type-view/birthday-type-view.component';
 
 @NgModule({
     declarations: [
@@ -68,6 +71,8 @@ import { CancelNewsletterComponent } from './components/cancel-newsletter/cancel
         SafeServerImagePipe,
         TagComponent,
         CancelNewsletterComponent,
+        CreateBirthdayTypeComponent,
+        BirthdayTypeViewComponent,
     ],
     imports: [
         AppRoutingModule,
@@ -97,6 +102,8 @@ import { CancelNewsletterComponent } from './components/cancel-newsletter/cancel
         AuthenticatedGuard,
         InfoClient,
         ImageClient,
+        BirthdayClient
+
     ],
     bootstrap: [AppComponent],
     entryComponents: [NgbdModalConfirm],

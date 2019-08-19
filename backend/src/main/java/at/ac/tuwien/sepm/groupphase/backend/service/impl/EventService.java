@@ -10,6 +10,7 @@ import at.ac.tuwien.sepm.groupphase.backend.persistence.EventRepository;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.HolidayRepository;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.RoomUseRepository;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
+import at.ac.tuwien.sepm.groupphase.backend.service.IBirthdayTypeService;
 import at.ac.tuwien.sepm.groupphase.backend.service.IEventService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.CancelationException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
@@ -48,6 +49,7 @@ public class EventService implements IEventService {
     private final TrainerRepository trainerRepository;
     private final HolidayRepository holidayRepository;
     private final InfoMail infoMail;
+    private final IBirthdayTypeService birthdayTypeService;
 
 
 
@@ -55,7 +57,8 @@ public class EventService implements IEventService {
     @Autowired
     public EventService(EventRepository eventRepository, Validator validator,
                         RoomUseRepository roomUseRepository, TrainerRepository trainerRepository,
-                        HolidayRepository holidayRepository, InfoMail infoMail
+                        HolidayRepository holidayRepository, InfoMail infoMail,
+                        IBirthdayTypeService birthdayTypeService
     ) {
         this.eventRepository = eventRepository;
         this.validator = validator;
@@ -63,6 +66,7 @@ public class EventService implements IEventService {
         this.trainerRepository = trainerRepository;
         this.holidayRepository = holidayRepository;
         this.infoMail = infoMail;
+        this.birthdayTypeService = birthdayTypeService;
     }
 
 
@@ -96,15 +100,12 @@ public class EventService implements IEventService {
             case Birthday:
                 try {
                     validator.validateEvent(event);
-
-
+                    event.setPrice(birthdayTypeService.getPrice(event.getBirthdayType()));
                     event = synchRoomUses(event);
                     event = synchCustomers(event);
                     event.setTrainer(
                         findTrainerForBirthday(event.getRoomUses(), event.getBirthdayType()));
                     validator.validateTrainer(event.getTrainer());
-
-
                     try {
                         isAvailable(event.getRoomUses());
                     }
