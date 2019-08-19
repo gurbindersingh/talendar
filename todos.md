@@ -41,13 +41,14 @@
 
 ## In Progress
 
--   Geburtstag price eintragen (Nikita)
 
 ## Testing
 
 -   Recaptcha beim anmelden (Guri)
 
 -   Ganzes haus buchen (Michi)
+
+-   Geburtstag price eintragen (Nikita)
 
 ## Done
 
