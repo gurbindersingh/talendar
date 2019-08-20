@@ -25,7 +25,7 @@ import { BirthdayClient } from 'src/app/rest/birthday-client';
     providers: [
         {
             provide: NgbDateParserFormatter,
-            useClass: NgbDateParserFormatterImplementationUser,
+            useClass: DateParserFormatterUser,
         },
     ],
 })
@@ -64,7 +64,7 @@ export class BirthdayComponent implements OnInit {
         day: this.date.getUTCDay(),
     };
     startTime: NgbTimeStruct = { hour: 13, minute: 30, second: 0 };
-    private parserFormatter = new NgbDateParserFormatterImplementation();
+    private parserFormatter = new DateParserFormatter();
 
     constructor(
         private eventClient: EventClient,
@@ -101,6 +101,10 @@ export class BirthdayComponent implements OnInit {
     }
 
     postBirthday(form: NgForm) {
+        if (!this.auth.isLoggedIn && window.grecaptcha.getResponse().length < 1) {
+            this.errorMsg = 'Bitte schließen Sie das reCaptcha ab.';
+            return;
+        }
         this.room.begin = this.dateToString(this.startDate, this.startTime);
         console.log(this.room.begin);
         this.startTime.hour = this.getEndDate(this.startTime);
@@ -132,7 +136,6 @@ export class BirthdayComponent implements OnInit {
                 this.clearFormular();
             },
             (error) => {
-
                 this.loading = false;
                 this.errorMsg = '' + error.message;
                 this.successMsg = '';

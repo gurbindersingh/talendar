@@ -1,11 +1,6 @@
-import {
-    HttpClient,
-    HttpErrorResponse,
-    HttpParams,
-    HttpHeaders,
-} from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
-import { environment } from '../../environments/environment';
+import { environment } from 'src/environments/environment';
 import { Observable } from 'rxjs';
 import { share } from 'rxjs/operators';
 import { catchError } from 'rxjs/operators';

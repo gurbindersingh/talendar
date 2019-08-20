@@ -4,12 +4,7 @@
 <div class="row">
     <div class="col-lg-3"></div>
     <div class="col-lg-6">
-        <form
-            id="meetingForm"
-            #meetingForm
-            (change)="clearInfoMsg()"
-            class="container-fluid"
-        >
+        <form id="meetingForm" #meetingForm (change)="clearInfoMsg()" class="container-fluid">
             <div class="row">
                 <div class="form-group col-lg-6">
                     <label for="meetingFirstName">Vorname</label>
@@ -63,7 +58,7 @@
                     />
                 </div>
             </div>
-            <br />
+
             <div class="row">
                 <div class="form-group col-lg-6" id="datePicker-dp-start">
                     <label for="dp">Findet statt am</label>
@@ -85,12 +80,7 @@
             </div>
             <div class="row align-items-center">
                 <div class="col-auto d-flex align-items-center">
-                    <label
-                        class="mb-0 mr-2 pt-0"
-                        for="startTime"
-                        id="beginLabel"
-                        >Von</label
-                    >
+                    <label class="mb-0 mr-2 pt-0" for="startTime" id="beginLabel">Von</label>
                     <ngb-timepicker
                         [(ngModel)]="startTime"
                         id="tp-input-start"
@@ -101,9 +91,7 @@
                     </ngb-timepicker>
                 </div>
                 <div class="col-auto d-flex align-items-center">
-                    <label class="mb-0 mr-2 pt-0" for="endTime" id="endLabel"
-                        >Bis</label
-                    >
+                    <label class="mb-0 mr-2 pt-0" for="endTime" id="endLabel">Bis</label>
 
                     <ngb-timepicker
                         [(ngModel)]="endTime"
@@ -119,10 +107,8 @@
                 <label class="col-lg-1">Raum</label>
             </div>
 
-            <div class="row pl-3" id="radioButtonRow">
-                <div
-                    class="custom-control custom-radio custom-control-inline col-lg-3"
-                >
+            <div class="row pl-4" id="radioButtonRow">
+                <div class="custom-control custom-radio custom-control-inline col-lg-2">
                     <input
                         type="radio"
                         id="greenRadioButton"
@@ -130,13 +116,9 @@
                         class="custom-control-input"
                         (click)="greenSelected()"
                     />
-                    <label class="custom-control-label" for="greenRadioButton"
-                        >Grün</label
-                    >
+                    <label class="custom-control-label" for="greenRadioButton">Grün</label>
                 </div>
-                <div
-                    class="custom-control custom-radio custom-control-inline col-lg-3"
-                >
+                <div class="custom-control custom-radio custom-control-inline col-lg-2">
                     <input
                         type="radio"
                         id="orangeRadioButton"
@@ -144,13 +126,9 @@
                         class="custom-control-input"
                         (click)="orangeSelected()"
                     />
-                    <label class="custom-control-label" for="orangeRadioButton"
-                        >Orange</label
-                    >
+                    <label class="custom-control-label" for="orangeRadioButton">Orange</label>
                 </div>
-                <div
-                    class="custom-control custom-radio custom-control-inline col-lg-3"
-                >
+                <div class="custom-control custom-radio custom-control-inline col-lg-2">
                     <input
                         type="radio"
                         id="groundFloorRadioButton"
@@ -158,40 +136,49 @@
                         class="custom-control-input"
                         (click)="groundFloorSelected()"
                     />
-                    <label
-                        class="custom-control-label"
-                        for="groundFloorRadioButton"
+                    <label class="custom-control-label" for="groundFloorRadioButton"
                         >Erdgeschoss</label
                     >
                 </div>
-            </div>
-            <br />
-            <div class="row" *ngIf="errorMsg">
-                <div class="col-sm-12">
-                    <p class="alert alert-danger">
-                        {{ errorMsg }}
-                    </p>
+                <div class="custom-control custom-radio custom-control-inline col-lg-3">
+                    <input
+                        type="radio"
+                        id="AllRadioButton"
+                        name="customRadioInline1"
+                        class="custom-control-input"
+                        (click)="AllSelected()"
+                    />
+                    <label class="custom-control-label" for="AllRadioButton">Das ganze Haus</label>
                 </div>
             </div>
-            <div class="row" *ngIf="successMsg">
-                <div class="col-sm-12">
-                    <p class="alert alert-success">
-                        {{ successMsg }}
-                    </p>
+
+            <div class="row mb-4">
+                <div class="col-auto mt-4" *ngIf="!auth.isLoggedIn">
+                    <app-recaptcha></app-recaptcha>
+                </div>
+
+                <div
+                    class="col-md mt-4 alert alert-success d-flex flex-column align-items-center justify-content-center"
+                    *ngIf="successMsg"
+                >
+                    <span>{{ successMsg }}</span>
+                </div>
+
+                <div
+                    class="col-md mt-4 mb-0 alert alert-danger d-flex flex-column align-items-center justify-content-center"
+                    *ngIf="errorMsg"
+                >
+                    <span>{{ errorMsg }}</span>
                 </div>
             </div>
-            <br />
+
             <div class="row justify-content-end">
                 <div class="col-lg-3">
                     <label id="meetingPrice" class="form-group"> </label>
                 </div>
             </div>
             <div class="row justify-content-end">
-                <button
-                    class="btn btn-light mr-2"
-                    (click)="goBack()"
-                    *ngIf="!auth.isLoggedIn"
-                >
+                <button class="btn btn-light mr-2" (click)="goBack()" *ngIf="!auth.isLoggedIn">
                     Abbrechen
                 </button>
                 <input
@@ -203,12 +190,7 @@
                     (click)="postMeeting(meetingForm)"
                     *ngIf="!loading"
                 />
-                <button
-                    class="btn btn-primary "
-                    type="button"
-                    *ngIf="loading"
-                    disabled
-                >
+                <button class="btn btn-primary " type="button" *ngIf="loading" disabled>
                     <span
                         class="spinner-border spinner-border-sm"
                         role="status"
@@ -222,4 +204,3 @@
 
     <div class="col-lg-3"></div>
 </div>
-<br />

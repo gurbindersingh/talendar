@@ -6,18 +6,10 @@ import { NgForm } from '@angular/forms';
 import { Room } from 'src/app/models/enum/room';
 import { Trainer } from 'src/app/models/trainer';
 import { EventType } from 'src/app/models/enum/eventType';
-import { EventClient } from 'src/app/rest/event-client';
-import { TrainerClient } from 'src/app/rest/trainer-client';
-import { HttpResponse } from '@angular/common/http';
+import { EventClient, TrainerClient } from 'src/app/rest';
 
-import {
-    NgbDateParserFormatter,
-    NgbDateStruct,
-    NgbTimeStruct,
-} from '@ng-bootstrap/ng-bootstrap';
-import { ClickedDateService } from 'src/app/services/clicked-date.service';
-import { DateTimeParserService } from 'src/app/services/date-time-parser.service';
-import { AuthenticationService } from 'src/app/services/authentication.service';
+import { NgbDateParserFormatter, NgbDateStruct, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
+import { ClickedDateService, DateTimeParserService, AuthenticationService } from 'src/app/services';
 
 @Component({
     selector: 'app-consultation',
@@ -41,9 +33,8 @@ export class ConsultationComponent implements OnInit {
     endDate: NgbDateStruct;
     endTime: NgbTimeStruct;
 
-    title = 'Beratungstermin eintragen';
-    trainerString = 'Trainer auswählen';
-    roomString = 'Raum auswählen';
+    selectedTrainer = 'Trainer auswählen';
+    selectedRoom = 'Raum auswählen';
     rooms: string[] = ['Grün', 'Orange', 'Erdgeschoss'];
     minuteStep = 15;
 
@@ -78,25 +69,24 @@ export class ConsultationComponent implements OnInit {
     }
 
     public postConsultation(form: NgForm): void {
-        if (this.roomString === 'Raum auswählen') {
-            this.errorMsg = 'Ein Raum muss ausgewählt werden';
+        if (this.selectedRoom === 'Raum auswählen') {
+            this.errorMsg = 'Bitte wählen Sie einen Raum aus';
             return;
         }
-        if (this.trainerString === 'Trainer auswählen') {
-            this.errorMsg = 'Ein/e Trainer/in muss ausgewählt werden';
+        if (this.selectedTrainer === 'Trainer auswählen') {
+            this.errorMsg = 'Bitte wählen Sie eine/n Trainer/in aus';
             return;
         }
+        if (!this.auth.isLoggedIn && window.grecaptcha.getResponse().length < 1) {
+            this.errorMsg = 'Bitte schließen Sie das reCaptcha ab.';
+            return;
+        }
+
         this.endDate = this.startDate;
         this.endTime = { hour: this.startTime.hour + 1, minute: 0, second: 0 };
-        this.roomUse.begin = this.dateTimeParser.dateTimeToString(
-            this.startDate,
-            this.startTime
-        );
-        this.roomUse.end = this.dateTimeParser.dateTimeToString(
-            this.endDate,
-            this.endTime
-        );
-        this.roomUse.room = this.roomSelected(this.roomString);
+        this.roomUse.begin = this.dateTimeParser.dateTimeToString(this.startDate, this.startTime);
+        this.roomUse.end = this.dateTimeParser.dateTimeToString(this.endDate, this.endTime);
+        this.roomUse.room = this.roomSelected(this.selectedRoom);
 
         this.event.customerDtos = [this.customer];
         this.event.roomUses = [this.roomUse];
@@ -105,13 +95,10 @@ export class ConsultationComponent implements OnInit {
 
         this.eventClient.postNewEvent(this.event).subscribe(
             (data: Event) => {
-                this.successMsg =
-                    'Deine Reservierung wurde erfolgreich gespeichert';
+                this.successMsg = 'Deine Reservierung wurde erfolgreich gespeichert';
             },
             (error) => {
-                this.errorMsg =
-                    'Deine Reservierung konnte nicht angelegt werden: ' +
-                    error.message;
+                this.errorMsg = 'Deine Reservierung konnte nicht angelegt werden: ' + error.message;
             }
         );
     }
@@ -121,38 +108,32 @@ export class ConsultationComponent implements OnInit {
     }
 
     public changeSortOrderRoom(room: string): void {
-        this.roomString = room;
+        this.selectedRoom = room;
     }
 
     public changeSortOrderTrainer(trainer: Trainer): void {
-        this.trainerString = trainer.firstName + ' ' + trainer.lastName;
+        this.selectedTrainer = trainer.firstName + ' ' + trainer.lastName;
         this.trainer = trainer;
     }
 
     private roomSelected(trainer: string): Room {
-        if (this.roomString === 'Grün') {
+        if (this.selectedRoom === 'Grün') {
             return Room.Green;
         }
-        if (this.roomString === 'Orange') {
+        if (this.selectedRoom === 'Orange') {
             return Room.Orange;
         }
-        if (this.roomString === 'Erdgeschoss') {
+        if (this.selectedRoom === 'Erdgeschoss') {
             return Room.GroundFloor;
         }
         return undefined;
     }
 
     public isCompleted(): boolean {
-        if (
-            this.customer.firstName === undefined ||
-            this.customer.firstName === ''
-        ) {
+        if (this.customer.firstName === undefined || this.customer.firstName === '') {
             return false;
         }
-        if (
-            this.customer.lastName === undefined ||
-            this.customer.lastName === ''
-        ) {
+        if (this.customer.lastName === undefined || this.customer.lastName === '') {
             return false;
         }
         if (this.customer.email === undefined || this.customer.email === '') {
@@ -176,101 +157,27 @@ export class ConsultationComponent implements OnInit {
         if (this.trainer === undefined || this.trainer === null) {
             return false;
         }
+        if (this.selectedRoom === 'Raum auswählen') {
+            return false;
+        }
+        if (this.selectedTrainer === 'Trainer auswählen') {
+            return false;
+        }
         return true;
     }
 
     private dateToString(date: NgbDateStruct, time: NgbTimeStruct) {
-        let stringMinute = '';
-        let stringHour = '';
-        let isChangedHour = false;
-        let isChangedMinute = false;
+        let minutes = time.minute.toString();
+        let hours = time.hour.toString();
 
-        if (time.minute === 0) {
-            stringMinute = '00';
-            isChangedMinute = true;
+        if (time.minute < 10) {
+            minutes = '0' + minutes;
         }
-        if (time.hour === 0) {
-            stringHour = '00';
-            isChangedHour = true;
-        }
-        if (time.hour === 1) {
-            stringHour = '01';
-            isChangedHour = true;
-        }
-        if (time.hour === 2) {
-            stringHour = '02';
-            isChangedHour = true;
-        }
-        if (time.hour === 3) {
-            stringHour = '03';
-            isChangedHour = true;
-        }
-        if (time.hour === 4) {
-            stringHour = '04';
-            isChangedHour = true;
-        }
-        if (time.hour === 5) {
-            stringHour = '05';
-            isChangedHour = true;
-        }
-        if (time.hour === 6) {
-            stringHour = '06';
-            isChangedHour = true;
-        }
-        if (time.hour === 7) {
-            stringHour = '07';
-            isChangedHour = true;
-        }
-        if (time.hour === 8) {
-            stringHour = '08';
-            isChangedHour = true;
-        }
-        if (time.hour === 9) {
-            stringHour = '09';
-            isChangedHour = true;
+        if (time.hour < 10) {
+            hours = '0' + hours;
         }
 
-        if (isChangedHour && isChangedMinute) {
-            return (
-                this.parserFormatter.format(date) +
-                'T' +
-                stringHour +
-                ':' +
-                stringMinute +
-                ':00'
-            );
-        }
-
-        if (isChangedHour) {
-            return (
-                this.parserFormatter.format(date) +
-                'T' +
-                stringHour +
-                ':' +
-                time.minute +
-                ':00'
-            );
-        }
-
-        if (isChangedMinute) {
-            return (
-                this.parserFormatter.format(date) +
-                'T' +
-                time.hour +
-                ':' +
-                time.minute +
-                ':00'
-            );
-        }
-
-        return (
-            this.parserFormatter.format(date) +
-            'T' +
-            time.hour +
-            ':' +
-            time.minute +
-            ':00'
-        );
+        return this.parserFormatter.format(date) + 'T' + hours + ':' + minutes + ':00';
     }
 
     public clearInfoMsg(): void {

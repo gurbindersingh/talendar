@@ -8,34 +8,34 @@ import { NgModule } from '@angular/core';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
 import { AppComponent } from './app.component';
 import {
-    CalendarComponent,
     BirthdayComponent,
-    CourseComponent,
-    HolidayComponent,
-    RentComponent,
-    NavigationComponent,
-    TrainerComponent,
+    CalendarComponent,
+    CancelEventComponent,
+    CancelNewsletterComponent,
     ConsultationComponent,
-    TrainerListComponent,
+    CourseComponent,
+    CourseSignComponent,
+    CourseViewComponent,
+    HolidayComponent,
+    InfoComponent,
+    LoginComponent,
+    NavigationComponent,
     NgbdModalConfirm,
+    RecaptchaComponent,
+    RentComponent,
+    TagComponent,
+    TrainerComponent,
+    TrainerListComponent,
 } from 'src/app/components';
 
+import { SafeServerImagePipe } from './pipes/safe-server-image-pipe';
 import { httpInterceptorProviders } from './http-interceptors';
-import { SessionStorageService } from './services/session-storage.service';
+import { SessionStorageService } from './services';
 import { SimpleHttpInterceptor } from './http-interceptors/simple-http-interceptor';
-import { TrainerClient } from './rest/trainer-client';
-import { TagClient } from './rest/tag-client';
-import { EventClient } from './rest/event-client';
-import { DateTimeParserService } from './services/date-time-parser.service';
-import { HolidayClient } from 'src/app/rest/holiday-client';
-import { CancelEventComponent } from './components/cancel-event/cancel-event.component';
-import { CourseViewComponent } from './components/course-view/course-view.component';
-import { CourseSignComponent } from './components/course-sign/course-sign.component';
-import { LoginComponent } from './components/login/login.component';
-import { HolidaysClient } from 'src/app/rest/holidays-client';
-import { AuthenticationClient } from './rest/authentication-client';
+import { DateTimeParserService } from './services';
 import { AdminGuard } from './guards/admin-guard';
 import { TrainerGuard } from './guards/trainer-guard';
 import { AuthenticatedGuard } from './guards/authenticated-guard';
@@ -71,6 +71,7 @@ import { BirthdayTypeViewComponent } from './components/birthday-type-view/birth
         SafeServerImagePipe,
         TagComponent,
         CancelNewsletterComponent,
+        RecaptchaComponent,
         CreateBirthdayTypeComponent,
         BirthdayTypeViewComponent,
     ],
@@ -108,4 +109,4 @@ import { BirthdayTypeViewComponent } from './components/birthday-type-view/birth
     bootstrap: [AppComponent],
     entryComponents: [NgbdModalConfirm],
 })
-export class AppModule { }
+export class AppModule {}

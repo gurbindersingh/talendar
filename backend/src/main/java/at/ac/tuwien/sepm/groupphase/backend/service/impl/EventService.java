@@ -236,14 +236,17 @@ public class EventService implements IEventService {
                             e
                         );
                     }
+
                     event = eventRepository.save(event);
                     eventRepository.flush();
+
                     for(Customer c : event.getCustomers()
                     ) {
                         infoMail.sendCancelationMail(c.getEmail(), event, c);
                     }
                     LOGGER.info("Sending information mail to admin");
                     infoMail.sendAdminEventInfoMail(event, "Neue Raummiete", "newEvent");
+                    event.getRoomUses().get(0).setRoom(Room.All);
                     return event;
                 }
                 catch(InvalidEntityException e) {
@@ -1021,7 +1024,27 @@ public class EventService implements IEventService {
                             db.getBegin() +
                             " vs to insert begin: " +
                             x.getBegin());
-                if(x.getRoom() == db.getRoom()) {
+                if(x.getRoom().equals(Room.All)){
+                    if(x.getBegin().isAfter(db.getBegin()) &&
+                       x.getBegin().isBefore(db.getEnd()) ||
+                       x.getEnd().isBefore(db.getEnd()) &&
+                       x.getEnd().isAfter(db.getBegin()) ||
+                       x.getBegin().isBefore(db.getBegin()) &&
+                       x.getEnd().isAfter(db.getEnd()) ||
+                       x.getEnd().isEqual(db.getEnd()) && x.getBegin().isEqual(db.getBegin()) ||
+                       x.getEnd().isEqual(db.getEnd()) ||
+                       x.getBegin().isEqual(db.getBegin())) {
+                    throw new TimeNotAvailableException(
+                        "Von " +
+                        x.getBegin() +
+                        " bis " +
+                        x.getEnd() +
+                        " ist der Raum " +
+                        x.getRoom() +
+                        " belegt");
+                    }
+                }
+                if(x.getRoom() == db.getRoom() || db.getRoom() == Room.All) {
                     if(x.getBegin().isAfter(db.getBegin()) &&
                        x.getBegin().isBefore(db.getEnd()) ||
                        x.getEnd().isBefore(db.getEnd()) &&
