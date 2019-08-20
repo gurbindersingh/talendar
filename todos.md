@@ -15,12 +15,6 @@
 
 -   Wird als Beratungstermin angezeigt. Kein Titel oder zusätzliche Informationen.
 
-### Beratungen Trainer variable
-
--   Trainer sollten den Preis ihre Beratungen selbst festlegen
--   Frontend: eine Übersict oder gut plaziertes Feld dafür
--   Backend: Bei Trainer eine Variable die Ihren Preis angibt und eine möglichkeit dies zu bearbeiten
-
 ### Trainer dürfen Beratungszeiten angeben
 
 -   Wie Urlaube, Trainer haben nur gewisse Zeiten wo sie beratungen haben sollten
@@ -28,6 +22,12 @@
 -   Backend: Über alle schichten ein Beratungszeiten CRUD objekt implementieren und die Methoden fürs Frontend
 
 ## In Progress
+ 
+### Beratungen Trainer variable(Nikita)
+
+-   Trainer sollten den Preis ihre Beratungen selbst festlegen
+-   Frontend: eine Übersict oder gut plaziertes Feld dafür
+-   Backend: Bei Trainer eine Variable die Ihren Preis angibt und eine möglichkeit dies zu bearbeiten
 
 
 ## Testing
