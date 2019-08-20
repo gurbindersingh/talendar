@@ -6,9 +6,9 @@
 
 -   Sollte wenn man nach Trainer filtered als reserved angezeigt und im default sicht garnicht angezeigt werden. Nur für zugehörigen User sichtbar.
 
-### Grüne Raum darf nicht am we gebucht werden (muss gekläred werden)
+### Grüne Raum darf nicht am we gebucht werden
 
--   Selbst erklärend
+-   Am Wochende soll der Obergeschoss gemeinsam gebucht werden(moglicherweise unter Orangenenraum gekennzeichnet)
 -   Backend: Validierung und exception
 
 ### Admin kann nicht beratungen sehen
