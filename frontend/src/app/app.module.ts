@@ -31,7 +31,6 @@ import {
     TrainerListComponent,
 } from 'src/app/components';
 
-import { SafeServerImagePipe } from './pipes/safe-server-image-pipe';
 import { httpInterceptorProviders } from './http-interceptors';
 import { SessionStorageService } from './services';
 import { SimpleHttpInterceptor } from './http-interceptors/simple-http-interceptor';
@@ -39,15 +38,20 @@ import { DateTimeParserService } from './services';
 import { AdminGuard } from './guards/admin-guard';
 import { TrainerGuard } from './guards/trainer-guard';
 import { AuthenticatedGuard } from './guards/authenticated-guard';
-import { InfoComponent } from './components/info/info.component';
 import { InfoClient } from './rest/info-client';
 import { ImageClient } from './rest/image-client';
 import { SafeServerImagePipe } from './pipes/safe-server-image-pipe';
-import { TagComponent } from './components/tag/tag.component';
-import { CancelNewsletterComponent } from './components/cancel-newsletter/cancel-newsletter.component';
 import { CreateBirthdayTypeComponent } from './components/create-birthday-type/create-birthday-type.component';
 import { BirthdayClient } from './rest/birthday-client';
 import { BirthdayTypeViewComponent } from './components/birthday-type-view/birthday-type-view.component';
+import {
+    TrainerClient,
+    TagClient,
+    EventClient,
+    HolidayClient,
+    HolidaysClient,
+    AuthenticationClient,
+} from './rest';
 
 @NgModule({
     declarations: [
@@ -109,4 +113,4 @@ import { BirthdayTypeViewComponent } from './components/birthday-type-view/birth
     bootstrap: [AppComponent],
     entryComponents: [NgbdModalConfirm],
 })
-export class AppModule {}
+export class AppModule { }

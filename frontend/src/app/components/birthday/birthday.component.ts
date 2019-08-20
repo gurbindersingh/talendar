@@ -11,8 +11,8 @@ import {
     NgbTimeStruct,
     NgbDateParserFormatter,
 } from '@ng-bootstrap/ng-bootstrap';
-import { NgbDateParserFormatterImplementation } from 'src/app/services/parserformatter.service';
-import { NgbDateParserFormatterImplementationUser } from 'src/app/services/parserformatterUser.service';
+import { DateParserFormatter } from 'src/app/services/parserformatter.service';
+import { DateParserFormatterUser } from 'src/app/services/parserformatterUser.service';
 import { DateTimeParserService } from 'src/app/services/date-time-parser.service';
 import { ClickedDateService } from 'src/app/services/clicked-date.service';
 import { Birthday } from 'src/app/models/birthday';
