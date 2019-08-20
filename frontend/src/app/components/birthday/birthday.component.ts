@@ -126,7 +126,7 @@ export class BirthdayComponent implements OnInit {
             this.customer.lastName +
             ' am ' +
             this.event.roomUses[0].begin;
-
+        this.event.price = this.displayPrice();
         this.eventClient.postNewEvent(this.event).subscribe(
             (data: TalendarEvent) => {
 
