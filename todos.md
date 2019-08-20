@@ -11,21 +11,9 @@
 -   Selbst erklärend
 -   Backend: Validierung und exception
 
-### Ganzes haus buchen
-
--   Sollte bei private Mietungen die Option geben den ganzes Haus zu buchen
--   Frontend: Extra select Feld bei Mietungen
--   Backend: Alle räume Buchen wenn das felt selected wird. Preis anpassen
-
 ### Admin kann nicht beratungen sehen
 
 -   Wird als Beratungstermin angezeigt. Kein Titel oder zusätzliche Informationen.
-
-### Geburtstag price eintragen bei Arterstellung
-
--   Geburtstagstypen sollen eigene Preise haben.
--   Frontend: Geburtstagtypen ubersicht einfuhren und bei geburtstag buchen Liste aus backend laden
--   Backend: Geburtstag CRUD funktionalitat und validierung
 
 ### Beratungen Trainer variable
 
@@ -46,9 +34,18 @@
 
 -   Recaptcha beim anmelden (Guri)
 
--   Ganzes haus buchen (Michi)
 
--   Geburtstag price eintragen (Nikita)
+### Ganzes haus buchen(Michi)
+
+-   Sollte bei private Mietungen die Option geben den ganzes Haus zu buchen
+-   Frontend: Extra select Feld bei Mietungen
+-   Backend: Alle räume Buchen wenn das felt selected wird. Preis anpassen
+
+### Geburtstag price eintragen bei Arterstellung(Nikita)
+
+-   Geburtstagstypen sollen eigene Preise haben.
+-   Frontend: Geburtstagtypen ubersicht einfuhren und bei geburtstag buchen Liste aus backend laden
+-   Backend: Geburtstag CRUD funktionalitat und validierung
 
 ## Done
 
