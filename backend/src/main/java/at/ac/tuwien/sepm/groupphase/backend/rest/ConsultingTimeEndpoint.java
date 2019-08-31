@@ -1,12 +1,14 @@
 package at.ac.tuwien.sepm.groupphase.backend.rest;
 
-import at.ac.tuwien.sepm.groupphase.backend.Entity.Holiday;
+import at.ac.tuwien.sepm.groupphase.backend.Entity.ConsultingTime;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.BackendException;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.rest.dto.ConsultingTimeDto;
 import at.ac.tuwien.sepm.groupphase.backend.rest.dto.HolidayDto;
-import at.ac.tuwien.sepm.groupphase.backend.rest.dto.HolidaysDto;
+import at.ac.tuwien.sepm.groupphase.backend.service.IConsultingTimeService;
 import at.ac.tuwien.sepm.groupphase.backend.service.IHolidayService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.ServiceException;
+import at.ac.tuwien.sepm.groupphase.backend.util.mapper.ConsultingTimeMapper;
 import at.ac.tuwien.sepm.groupphase.backend.util.mapper.HolidayMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,29 +27,29 @@ import java.util.LinkedList;
  */
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequestMapping("/api/v1/talendar/holiday")
-public class HolidayEndpoint {
+@RequestMapping("/api/v1/talendar/consultingTime")
+public class ConsultingTimeEndpoint {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HolidayEndpoint.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConsultingTimeEndpoint.class);
 
-    private final IHolidayService holidayService;
-    private final HolidayMapper mapper;
+    private final IConsultingTimeService consultingTimeService;
+    private final ConsultingTimeMapper mapper;
 
     @Autowired
-    public HolidayEndpoint(IHolidayService holidayService, HolidayMapper mapper) {
-        this.holidayService = holidayService;
+    public ConsultingTimeEndpoint(IConsultingTimeService consultingTimeService, ConsultingTimeMapper mapper) {
+        this.consultingTimeService = consultingTimeService;
         this.mapper = mapper;
     }
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public HolidayDto createNewHoliday(@RequestBody HolidayDto holidayDto) throws Exception {
-        LOGGER.info("Incoming POST holiday Request");
-        LOGGER.info("DTO is {}", holidayDto);
-        LOGGER.info("Entity is {}", mapper.dtoToHolidayEntity(holidayDto));
+    public ConsultingTimeDto createNewConsultingTime(@RequestBody ConsultingTimeDto consultingTimeDto) throws Exception {
+        LOGGER.info("Incoming POST consultingTime Request");
+        LOGGER.info("DTO is {}", consultingTimeDto);
+        LOGGER.info("Entity is {}", mapper.dtoToConsultingTimeEntity(consultingTimeDto));
 
         try {
-            return mapper.entityToHolidayDto(holidayService.save(mapper.dtoToHolidayEntity(holidayDto)));
+            return mapper.entityToConsultingTimeDto(consultingTimeService.save(mapper.dtoToConsultingTimeEntity(consultingTimeDto)));
         }
         catch(Exception e) {
             LOGGER.error("POST Request Could Not Be Served Successfully - : {}", e.getMessage(), e);
@@ -57,12 +59,12 @@ public class HolidayEndpoint {
 
 
     @RequestMapping(method = RequestMethod.GET, value = "/{id}")
-    public LinkedList<HolidayDto> getAllHolidaysByTrainerId(@PathVariable("id") Long id) throws
+    public LinkedList<ConsultingTimeDto> getAllConsultingTimesByTrainerId(@PathVariable("id") Long id) throws
                                                                                BackendException {
-        LOGGER.info("Incoming Request for all holidays by trainerid: {}", id);
+        LOGGER.info("Incoming Request for all consulting Times by trainerid: {}", id);
 
         try {
-            return mapper.entityListToHolidayDtoList(holidayService.getAllHolidaysByTrainerId(id));
+            return mapper.entityListToConsultingTimeDtoList(consultingTimeService.getAllConsultingTimesByTrainerId(id));
         }
         catch(ServiceException e) {
             LOGGER.error("GET Request unsuccessful: " + e.getMessage(), e);
@@ -70,17 +72,17 @@ public class HolidayEndpoint {
         }
         catch(NotFoundException e) {
             LOGGER.error("GET Request unsuccessful: " + e.getMessage(), e);
-            throw new BackendException("Gesuchte Urlauube existieren nicht", e);
+            throw new BackendException("Gesuchte Beratungszeiten existieren nicht", e);
         }
     }
 
 
     @RequestMapping(method = RequestMethod.GET)
-    public LinkedList<HolidayDto> getAllHolidays() throws BackendException {
-        LOGGER.info("Incoming Request To Retrieve List Of All Holidays");
+    public LinkedList<ConsultingTimeDto> getAllConsultingTimes() throws BackendException {
+        LOGGER.info("Incoming Request To Retrieve List Of All Consulting times");
 
         try {
-            return mapper.entityListToHolidayDtoList(holidayService.getAllHolidays());
+            return mapper.entityListToConsultingTimeDtoList(consultingTimeService.getAllConsultingTimes());
         }
         catch(ServiceException e) {
             LOGGER.error("GET Request unsuccessful: " + e.getMessage(), e);
@@ -88,7 +90,7 @@ public class HolidayEndpoint {
         }
         catch(NotFoundException e) {
             LOGGER.error("Couldnt find any holidays" + e.getMessage());
-            throw new BackendException("Es konnten keine Urlaube gefunden werden!", e);
+            throw new BackendException("Es konnten keine Beratungszeiten gefunden werden!", e);
         }
     }
 
