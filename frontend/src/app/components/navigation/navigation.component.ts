@@ -139,7 +139,7 @@ export class NavigationComponent implements OnInit {
                     // }
                 },
                 (error: Error) => {
-                    console.log(error.message);
+                    
                 }
             );
         } else {

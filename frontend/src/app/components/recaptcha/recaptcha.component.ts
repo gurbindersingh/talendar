@@ -16,7 +16,7 @@ export class RecaptchaComponent implements OnInit, OnDestroy {
                 sitekey: '6Lc2QrAUAAAAAG4JI4emazC6AAXfcMKuDC25n2ze',
             });
         } catch (error) {
-            console.log('Page reloaded');
+            
         }
     }
 

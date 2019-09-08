@@ -12,7 +12,7 @@ export class HolidayClient extends RestClient {
     public postNewHoliday(holiday: Holiday): Observable<Holiday> {
         return super.post(
             (error: HttpErrorResponse) => {
-                console.log('HTTP POST Holiday Failed: ' + error.message);
+                
             },
             '',
             holiday
