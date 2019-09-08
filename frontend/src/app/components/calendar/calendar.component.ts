@@ -174,15 +174,15 @@ export class CalendarComponent implements OnInit {
                         // admin start with 'all view' per default
                         this.isPersonalView = false;
 
+                        const userID: number = this.sessionService.userId;
                         this.eventClient
-                            .getAllEvents_adminView()
+                            .getAllEvents_adminView(userID)
                             .subscribe((event: Event[]) => {
                                 this.allEvents = this.eventImport.mapEventsToCalendar(
                                     event
                                 );
-                                const userID = this.sessionService.userId;
                                 this.holidayClient
-                                    .getAllHolidays_adminView()
+                                    .getAllHolidays_adminView(userID)
                                     .subscribe((holiday: Holiday[]) => {
                                         this.allEvents = this.eventImport.mapAndAddHolidaysToEventsById(
                                             this.allEvents,
@@ -251,8 +251,6 @@ export class CalendarComponent implements OnInit {
     }
 
     showDetails(event: Event, detailsModal: any) {
-        console.warn(event);
-
         this.images = [];
         const promises: Promise<string>[] = [];
 
@@ -296,7 +294,6 @@ export class CalendarComponent implements OnInit {
     }
 
     dateClicked(date: Date, newEventModal: any) {
-        console.warn(date);
         // if (date.valueOf() >= Date.now()) {
         this.dateService.setDateTime(date);
         this.modalService.open(newEventModal, { size: 'sm' });
@@ -353,16 +350,16 @@ export class CalendarComponent implements OnInit {
                 ) {
                     if (!this.isPersonalView) {
                         if (status.roles.includes(Authorities.ADMIN)) {
-                            console.log('FUCK HERE IAM');
                             this.eventClient
-                                .getAllEvents_adminView()
+                                .getAllEvents_adminView(userID)
                                 .subscribe((event: Event[]) => {
                                     this.allEvents = this.eventImport.mapEventsToCalendar(
                                         event
                                     );
                                     this.holidayClient
-                                        .getAllHolidays_adminView()
+                                        .getAllHolidays_adminView(userID)
                                         .subscribe((holiday: Holiday[]) => {
+                                            // tslint:disable-next-line
                                             this.allEvents = this.eventImport.mapAndAddHolidaysToEventsById(
                                                 this.allEvents,
                                                 holiday,
@@ -372,9 +369,8 @@ export class CalendarComponent implements OnInit {
                                         });
                                 });
                         } else {
-                            console.log('FUCK HERE IAMtrainer');
                             this.eventClient
-                                .getAllEvents_adminView()
+                                .getAllEvents_adminView(userID)
                                 .subscribe((data: Event[]) => {
                                     this.allEvents = this.eventImport.mapEventsToCalendar(
                                         data
@@ -382,6 +378,7 @@ export class CalendarComponent implements OnInit {
                                     this.holidayClient
                                         .getAllHolidays_trainerView(userID)
                                         .subscribe((holiday: Holiday[]) => {
+                                            // tslint:disable-next-line
                                             this.allEvents = this.eventImport.mapAndAddHolidaysToEvents(
                                                 this.allEvents,
                                                 holiday

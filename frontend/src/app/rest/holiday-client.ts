@@ -27,11 +27,11 @@ export class HolidayClient extends RestClient {
         }, '/' + id);
     }
 
-    public getAllHolidays_adminView(): Observable<Holiday[]> {
+    public getAllHolidays_adminView(id: number): Observable<Holiday[]> {
         return super.get((error: HttpErrorResponse) => {
             console.log(
                 'HTTP GET All Holidays (For trainer) Failed: ' + error.message
             );
-        });
+        }, '/' + id);
     }
 }
