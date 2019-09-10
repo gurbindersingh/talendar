@@ -75,12 +75,12 @@ public class HolidayEndpoint {
     }
 
 
-    @RequestMapping(method = RequestMethod.GET)
-    public LinkedList<HolidayDto> getAllHolidays() throws BackendException {
+    @GetMapping(value = "/all/{id}")
+    public LinkedList<HolidayDto> getAllHolidays(@PathVariable("id") Long id) throws BackendException {
         LOGGER.info("Incoming Request To Retrieve List Of All Trainers");
 
         try {
-            return mapper.entityListToHolidayDtoList(holidayService.getAllHolidays());
+            return mapper.entityListToHolidayDtoList(holidayService.getAllHolidays(id));
         }
         catch(ServiceException e) {
             LOGGER.error("GET Request unsuccessful: " + e.getMessage(), e);

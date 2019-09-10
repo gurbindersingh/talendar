@@ -44,23 +44,14 @@ export class EventImportService {
     ): Event[] {
         for (const holiday of holidays) {
             const event = new Event();
-            if (holiday.trainer.id === id) {
-                event.title =
-                    holiday.title +
-                    ' ' +
-                    holiday.trainer.firstName +
-                    ' ' +
-                    holiday.trainer.lastName;
+            if (holiday.trainer && holiday.trainer.id === id) {
+                event.title = holiday.title;
+                event.name = holiday.title;
                 event.description = holiday.description;
                 event.color = Colors.Holiday;
-                event.name = holiday.title;
             } else {
-                event.title =
-                    holiday.trainer.firstName + ' ' + holiday.trainer.lastName;
-                event.description =
-                    holiday.trainer.firstName + ' ' + holiday.trainer.lastName;
-                event.name =
-                    holiday.trainer.firstName + ' ' + holiday.trainer.lastName;
+                event.title = holiday.title;
+                event.name = holiday.title;
                 event.color = Colors.HolidaySecondary;
             }
             event.start = new Date(holiday.holidayStart);

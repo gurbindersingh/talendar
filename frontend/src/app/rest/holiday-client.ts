@@ -10,13 +10,7 @@ export class HolidayClient extends RestClient {
         super('holiday', httpClient);
     }
     public postNewHoliday(holiday: Holiday): Observable<Holiday> {
-        return super.post(
-            (error: HttpErrorResponse) => {
-                
-            },
-            '',
-            holiday
-        );
+        return super.post((error: HttpErrorResponse) => {}, '', holiday);
     }
 
     public getAllHolidays_trainerView(id: number): Observable<Holiday[]> {
@@ -32,6 +26,6 @@ export class HolidayClient extends RestClient {
             console.log(
                 'HTTP GET All Holidays (For trainer) Failed: ' + error.message
             );
-        }, '/' + id);
+        }, '/all/' + id);
     }
 }
