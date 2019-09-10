@@ -723,7 +723,20 @@ public class EventService implements IEventService {
         LOGGER.info("Try to retrieve list of all events");
 
         try {
-            return this.eventRepository.findAll();
+            List<Event> events = this.eventRepository.findAll();
+            for(Event event : events) {
+                Trainer trainer = event.getTrainer();
+                if(trainer != null) {
+                    trainer.setPassword(null);
+                    trainer.setPhone(null);
+                    trainer.setEmail(null);
+                    trainer.setBirthday(null);
+                    trainer.setCreated(null);
+                    trainer.setDeleted(false);
+
+                }
+            }
+            return events;
         }
         catch(DataAccessException e) {
             throw new ServiceException(
@@ -749,6 +762,11 @@ public class EventService implements IEventService {
                 event.setMinAge(null);
                 event.setPrice(null);
             }
+            Trainer trainer = event.getTrainer();
+            if(trainer != null) {
+                trainer.setAdmin(false);
+                trainer.setId(null);
+            }
         });
         return events;
     }
@@ -756,14 +774,15 @@ public class EventService implements IEventService {
 
     @Override
     public List<Event> getTrainerView(List<Event> events, Long id) {
+        List<Event> trainerEvents = new ArrayList<>();
         events.forEach((Event event) -> {
             // any rent (not hosted by any trainer) and any event that is not hosted by the given
             // give meta information that this event may is displayed different
-            if(event.getEventType() == EventType.Rent || !event.getTrainer().getId().equals(id)) {
-                event.setHide(true);
+            if(event.getTrainer() != null && event.getTrainer().getId() == id) {
+                trainerEvents.add(event);
             }
         });
-        return events;
+        return trainerEvents;
     }
 
 
@@ -772,20 +791,27 @@ public class EventService implements IEventService {
         for(Event event : events) {
             if(event.getEventType() == EventType.Consultation &&
                !event.getTrainer().getId().equals(id)) {
-                // event.setRedacted(true);
-                event.setId(-1l);
-                // event.setEventType(null);
-                event.setBirthdayType(null);
-                event.setCustomers(null);
-                event.setDescription("");
-                event.setName("Beratungstermin von " + event.getTrainer().getFirstName());
-                event.setTrainer(null);
-                event.setMaxAge(null);
-                event.setMinAge(null);
-                event.setPrice(null);
+                this.redactConsulation(event);
             }
         }
         return events;
+    }
+
+
+    private Event redactConsulation(Event consultaion) {
+        consultaion.setName("Beratungstermin von " + consultaion.getTrainer().getFirstName());
+        // event.setRedacted(true);
+        consultaion.setId(-1l);
+        // event.setEventType(null);
+        consultaion.setBirthdayType(null);
+        consultaion.setCustomers(null);
+        consultaion.setDescription("");
+        consultaion.setTrainer(null);
+        consultaion.setMaxAge(null);
+        consultaion.setMinAge(null);
+        consultaion.setPrice(null);
+
+        return consultaion;
     }
 
 
