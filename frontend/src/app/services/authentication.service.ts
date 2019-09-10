@@ -33,8 +33,6 @@ export class AuthenticationService {
     }
 
     login(email: string, password: string): Observable<void> {
-        console.warn(new SHA3(512).update(password).digest('hex'));
-
         return this.authenticationClient
             .authenticate({
                 email,

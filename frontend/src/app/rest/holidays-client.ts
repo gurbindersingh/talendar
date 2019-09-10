@@ -14,7 +14,7 @@ export class HolidaysClient extends RestClient {
     public postNewHolidays(holidays: Holidays): Observable<Holiday[]> {
         return super.post(
             (error: HttpErrorResponse) => {
-                console.log('HTTP POST Holiday Failed: ' + error.message);
+                
             },
             '',
             holidays
