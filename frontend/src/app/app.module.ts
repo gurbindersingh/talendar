@@ -33,7 +33,6 @@ import {
 
 import { ConsultationTimeComponent } from 'src/app/components/consultation-time/consultation-time.component';
 
-import { SafeServerImagePipe } from './pipes/safe-server-image-pipe';
 import { httpInterceptorProviders } from './http-interceptors';
 import { SessionStorageService } from './services';
 import { SimpleHttpInterceptor } from './http-interceptors/simple-http-interceptor';

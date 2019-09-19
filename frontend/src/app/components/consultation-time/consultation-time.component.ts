@@ -24,7 +24,7 @@ import {
     styleUrls: ['./consultation-time.component.scss'],
 })
 export class ConsultationTimeComponent implements OnInit {
-    title = 'Neue Zeit für Beratungen eintragen';
+    title = 'Beratungs Settings';
     toggleOptions = false;
 
     repeatOptions = [
@@ -54,6 +54,10 @@ export class ConsultationTimeComponent implements OnInit {
     endDate: NgbDateStruct;
     endTime: NgbTimeStruct;
 
+    //for price change
+    errorMsg2: string;
+    successMsg2: string;
+
     constructor(
         private consultationTimeClient: ConsultationTimeClient,
         private consultationTimesClient: ConsultationTimesClient,
@@ -71,7 +75,7 @@ export class ConsultationTimeComponent implements OnInit {
         this.endedX = 1;
     }
 
-    ngOnInit() {}
+    ngOnInit() { }
 
     public postConsultationTime(form: NgForm): void {
         this.clearInfoMsg();
@@ -191,5 +195,9 @@ export class ConsultationTimeComponent implements OnInit {
             this.terminateModul,
             this.endedX
         );
+    }
+
+    public updatePrice(): void {
+
     }
 }
