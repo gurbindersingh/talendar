@@ -31,6 +31,9 @@ import {
     TrainerListComponent,
 } from 'src/app/components';
 
+import { ConsultationTimeComponent } from 'src/app/components/consultation-time/consultation-time.component';
+
+import { SafeServerImagePipe } from './pipes/safe-server-image-pipe';
 import { httpInterceptorProviders } from './http-interceptors';
 import { SessionStorageService } from './services';
 import { SimpleHttpInterceptor } from './http-interceptors/simple-http-interceptor';
@@ -52,6 +55,8 @@ import {
     HolidaysClient,
     AuthenticationClient,
 } from './rest';
+import { ConsultationTimeClient } from './rest/consultationTime-client';
+import { ConsultationTimesClient } from './rest/consultationTimes-client';
 
 @NgModule({
     declarations: [
@@ -65,6 +70,7 @@ import {
         CancelNewsletterComponent,
         TrainerComponent,
         ConsultationComponent,
+        ConsultationTimeComponent,
         TrainerListComponent,
         CancelEventComponent,
         CourseViewComponent,
@@ -101,6 +107,8 @@ import {
         DateTimeParserService,
         HolidayClient,
         HolidaysClient,
+        ConsultationTimeClient,
+        ConsultationTimesClient,
         AuthenticationClient,
         AdminGuard,
         TrainerGuard,

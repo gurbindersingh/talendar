@@ -23,6 +23,11 @@ export class NavigationComponent implements OnInit {
             restriction: Authorities.TRAINER,
         },
         {
+            name: 'Beratungszeit eintragen',
+            path: 'consultationtime/add',
+            restriction: Authorities.TRAINER,
+        },
+        {
             name: 'Beratung eintragen',
             path: 'consultation/add',
             restriction: Authorities.NONE,

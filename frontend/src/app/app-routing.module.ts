@@ -21,6 +21,7 @@ import { AuthenticatedGuard } from './guards/authenticated-guard';
 import { AdminGuard } from './guards/admin-guard';
 import { InfoComponent } from './components/info/info.component';
 import { TagComponent } from './components/tag/tag.component';
+import { ConsultationTimeComponent } from './components/consultation-time/consultation-time.component';
 import { CancelNewsletterComponent } from './components/cancel-newsletter/cancel-newsletter.component';
 import { CreateBirthdayTypeComponent } from './components/create-birthday-type/create-birthday-type.component';
 import { BirthdayTypeViewComponent } from './components/birthday-type-view/birthday-type-view.component';
@@ -49,6 +50,11 @@ const routes: Routes = [
     {
         path: 'holiday/add',
         component: HolidayComponent,
+        canActivate: [TrainerGuard],
+    },
+    {
+        path: 'consultationtime/add',
+        component: ConsultationTimeComponent,
         canActivate: [TrainerGuard],
     },
     { path: 'rent', component: RentComponent },
