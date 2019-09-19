@@ -418,6 +418,23 @@ public class Validator {
         }
     }
 
+    public void validateConsultingTime(ConsultingTime consultingTime) throws InvalidEntityException {
+        if(consultingTime.getTrainer() == null) {
+            throw new InvalidEntityException("Trainer ist eventuell nicht eingeloggt");
+        }
+        if(consultingTime.getId() != null) {
+            throw new InvalidEntityException("Frontend hat eine ID mit geschickt");
+        }
+        if(consultingTime.getTrainer().getId() == null) {
+            throw new InvalidEntityException("Trainer ist eventuell nicht eingeloggt");
+        }
+        if(consultingTime.getConsultingTimeStart().isAfter(consultingTime.getConsultingTimeEnd())) {
+            throw new InvalidEntityException("Das Von-Datum findet später als das Bis-Datum statt");
+        }
+        if(consultingTime.getConsultingTimeStart().isBefore(LocalDateTime.now())) {
+            throw new InvalidEntityException("Das Von-Datum findet in der Vergangenheit statt");
+        }
+    }
 
     public void validateCancelation(Event event) throws CancelationException {
         switch(event.getEventType()) {

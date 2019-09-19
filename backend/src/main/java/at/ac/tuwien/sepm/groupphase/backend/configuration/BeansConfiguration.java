@@ -56,6 +56,13 @@ public class BeansConfiguration {
         return tagMapper;
     }
 
+    @Bean
+    public ConsultingTimeMapper createConsultingTimeMapper(){
+        ConsultingTimeMapper consultingTimeMapper = ConsultingTimeMapper.INSTANCE;
+        return consultingTimeMapper;
+    }
+
+
     /***
      *  Encoder used for spring security related process'
      */

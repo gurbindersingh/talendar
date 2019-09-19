@@ -29,6 +29,9 @@ public class Trainer extends User {
     @OneToMany(mappedBy = "trainer",
                cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     private List<Holiday> holidays;
+    @OneToMany(mappedBy = "trainer",
+               cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    private List<ConsultingTime> consultingTimes;
     // the location where the profile picture of this trainer is stored
     private String picture;
 
@@ -49,6 +52,7 @@ public class Trainer extends User {
                    @NotBlank String password,
                    List<Event> events,
                    List<Holiday> holidays,
+                   List<ConsultingTime> consultingTimes,
                    String picture,
                    @NotNull List<String> birthdayTypes,
                    @NotNull @Past LocalDateTime created,
@@ -124,6 +128,16 @@ public class Trainer extends User {
     }
 
 
+    public List<ConsultingTime> getConsultingTimes() {
+        return consultingTimes;
+    }
+
+
+    public void setConsultingTimes(
+        List<ConsultingTime> consultingTimes
+    ) {
+        this.consultingTimes = consultingTimes;
+    }
 
 
     @Override
@@ -137,6 +151,7 @@ public class Trainer extends User {
                Objects.equals(events, trainer.events) &&
                Objects.equals(birthdayTypes, trainer.birthdayTypes) &&
                Objects.equals(holidays, trainer.holidays) &&
+               Objects.equals(consultingTimes, trainer.consultingTimes) &&
                picture.equals(trainer.picture);
     }
 
@@ -144,7 +159,7 @@ public class Trainer extends User {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), id, phone, events, birthdayTypes,
-                            holidays, picture
+                            holidays, consultingTimes, picture
         );
     }
 
@@ -157,6 +172,7 @@ public class Trainer extends User {
                ", events=" + events +
                ", birthdayTypes=" + birthdayTypes +
                ", holidays=" + holidays +
+               ", consultingTimes" + consultingTimes +
                ", picture=" + picture +
                ", firstname=" + getFirstName() +
                ", lastname=" + getLastName() +
