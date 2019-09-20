@@ -47,32 +47,50 @@ public class EventEndpoint {
 
     @RequestMapping(value = "/course", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public EventDto createNewCourse(@RequestBody EventDto eventDto) throws ValidationException, ServiceException, EmailException, NotFoundException {
+    public EventDto createNewCourse(@RequestBody EventDto eventDto) throws ValidationException,
+                                                                           ServiceException,
+                                                                           EmailException,
+                                                                           NotFoundException {
         return postEvent(eventDto);
     }
+
 
     @RequestMapping(value = "/birthday", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public EventDto createNewBirthday(@RequestBody EventDto eventDto) throws ValidationException, ServiceException, EmailException, NotFoundException{
+    public EventDto createNewBirthday(@RequestBody EventDto eventDto) throws ValidationException,
+                                                                             ServiceException,
+                                                                             EmailException,
+                                                                             NotFoundException {
         return postEvent(eventDto);
     }
+
 
     @RequestMapping(value = "/consultation", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public EventDto createNewConsultation(@RequestBody EventDto eventDto) throws ValidationException, ServiceException, EmailException, NotFoundException{
+    public EventDto createNewConsultation(@RequestBody EventDto eventDto) throws
+                                                                          ValidationException,
+                                                                          ServiceException,
+                                                                          EmailException,
+                                                                          NotFoundException {
         return postEvent(eventDto);
     }
 
-    @RequestMapping(value = "/rent" ,method = RequestMethod.POST)
+
+    @RequestMapping(value = "/rent", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    public EventDto createNewRent(@RequestBody EventDto eventDto) throws ValidationException, ServiceException, EmailException, NotFoundException {
+    public EventDto createNewRent(@RequestBody EventDto eventDto) throws ValidationException,
+                                                                         ServiceException,
+                                                                         EmailException,
+                                                                         NotFoundException {
         return postEvent(eventDto);
     }
 
 
     @RequestMapping(method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    public EventDto updateEvent(@RequestBody EventDto eventDto) throws ValidationException, ServiceException, NotFoundException {
+    public EventDto updateEvent(@RequestBody EventDto eventDto) throws ValidationException,
+                                                                       ServiceException,
+                                                                       NotFoundException {
         LOGGER.info("Incoming PUT Request for an Event with type: " + eventDto.toString());
         try {
             return eventMapper.entityToEventDto(
@@ -95,7 +113,9 @@ public class EventEndpoint {
 
     @RequestMapping(value = "/customers", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    public EventDto updateEventCustomers(@RequestBody EventDto eventDto) throws ValidationException, ServiceException, NotFoundException {
+    public EventDto updateEventCustomers(@RequestBody EventDto eventDto) throws ValidationException,
+                                                                                ServiceException,
+                                                                                NotFoundException {
         LOGGER.info("Incoming PUT Request (update customers) for an Event with type: " +
                     eventDto.toString());
         try {
@@ -122,7 +142,8 @@ public class EventEndpoint {
         LOGGER.info("Incoming DELETE Request for an Event with id " + id);
         try {
             eventService.cancelEvent(id);
-        }catch(ValidationException e){
+        }
+        catch(ValidationException e) {
             throw new ValidationException(e.getMessage(), e);
         }
     }
@@ -130,7 +151,8 @@ public class EventEndpoint {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public EventDto getEventById(@PathVariable("id") Long id) throws NotFoundException, ServiceException {
+    public EventDto getEventById(@PathVariable("id") Long id) throws NotFoundException,
+                                                                     ServiceException {
         LOGGER.info("Incoming GET Request for an Event with id " + id);
         try {
             return eventMapper.entityToEventDto(eventService.getEventById(id));
@@ -144,16 +166,19 @@ public class EventEndpoint {
     }
 
 
-    @GetMapping(value = "/all/admin")
-    public List<EventDto> getAllEventsForAdmin() throws ServiceException {
+    @GetMapping(value = "/all/admin/{id}")
+    public List<EventDto> getAllEventsForAdmin(@PathVariable("id") Long id) throws
+                                                                            ServiceException {
         LOGGER.info("Incoming GET Request to retrieve all events");
 
         try {
-            return this.eventService.getAllEvents()
-                                    .stream()
-                                    .map(eventMapper::entityToEventDto)
-                                    .collect(
-                                        Collectors.toList());
+            List<Event> events = this.eventService.getAllEvents();
+            events = this.eventService.getAdminView(events, id);
+            return events
+                .stream()
+                .map(eventMapper::entityToEventDto)
+                .collect(
+                    Collectors.toList());
         }
         catch(ServiceException e) {
             LOGGER.error(e.getMessage(), e);
@@ -162,17 +187,19 @@ public class EventEndpoint {
         }
     }
 
+
     @GetMapping(value = "/all/trainer/{id}")
-    public List<EventDto> getAllEventsForTrainer(@PathVariable("id") Long id) throws ServiceException {
+    public List<EventDto> getAllEventsForTrainer(@PathVariable("id") Long id) throws
+                                                                              ServiceException {
         LOGGER.info("Incoming GET Request to retrieve all events");
 
         try {
             List<Event> events = this.eventService.getAllEvents();
             events = this.eventService.getTrainerView(events, id);
-            return events           .stream()
-                                    .map(eventMapper::entityToEventDto)
-                                    .collect(
-                                        Collectors.toList());
+            return events.stream()
+                         .map(eventMapper::entityToEventDto)
+                         .collect(
+                             Collectors.toList());
         }
         catch(ServiceException e) {
             LOGGER.error(e.getMessage(), e);
@@ -190,10 +217,10 @@ public class EventEndpoint {
             List<Event> events = this.eventService.getAllEvents();
             events = this.eventService.getClientView(events);
             return events
-                                    .stream()
-                                    .map(eventMapper::entityToEventDto)
-                                    .collect(
-                                        Collectors.toList());
+                .stream()
+                .map(eventMapper::entityToEventDto)
+                .collect(
+                    Collectors.toList());
         }
         catch(ServiceException e) {
             LOGGER.error(e.getMessage(), e);
@@ -203,28 +230,35 @@ public class EventEndpoint {
     }
 
 
-    @GetMapping(value = "/all/future/admin")
-    public List<EventDto> getAllFutureEventsForAdmin() throws ServiceException {
+    // @GetMapping(value = "/all/future/admin/{id}")
+    public List<EventDto> getAllFutureEventsForAdmin(@PathVariable("id") Long id) throws
+                                                                                  ServiceException {
         LOGGER.info("Incoming GET Request for all future Courses Of Admin (All View)");
 
         try {
-            return eventService.getAllFutureEvents().stream().map(eventMapper::entityToEventDto).collect(
-                Collectors.toList());
-        } catch(ServiceException e) {
+            List<Event> events = eventService.getAllFutureEvents();
+            events = eventService.filterTrainerEvents(events, id);
+            // return events.stream().map(eventMapper::entityToEventDto).collect(Collectors.toList());
+            return null;
+        }
+        catch(ServiceException e) {
             LOGGER.error(e.getMessage(), e);
             throw new ServiceException("Es konnten keine zukünftigen Events geladen werden.", e);
         }
     }
 
+
     @GetMapping(value = "/all/future/trainer/{id}")
-    public List<EventDto> getAllFutureEventsForTrainer(@PathVariable("id") Long id) throws ServiceException{
+    public List<EventDto> getAllFutureEventsForTrainer(@PathVariable("id") Long id) throws
+                                                                                    ServiceException {
         LOGGER.info("Incoming GET Request for all future Courses For Trainer");
 
         try {
             List<Event> events = eventService.getAllFutureEvents();
             events = eventService.filterTrainerEvents(events, id);
             return events.stream().map(eventMapper::entityToEventDto).collect(Collectors.toList());
-        } catch(ServiceException e) {
+        }
+        catch(ServiceException e) {
             LOGGER.error(e.getMessage(), e);
             throw new ServiceException("Es konnten keine zukünftigen Events geladen werden.", e);
         }
@@ -232,15 +266,15 @@ public class EventEndpoint {
 
 
     /**
-     *  A simple wrapper for the post of a event.
-     *  This code hat been 1:1 part of the former 'createNewEvent' method, but we had
-     *  to split this abstract method into several distinct REST endpoints in order to distinguish
-     *  between posting of different kinds of events.
+     * A simple wrapper for the post of a event.
+     * This code hat been 1:1 part of the former 'createNewEvent' method, but we had
+     * to split this abstract method into several distinct REST endpoints in order to distinguish
+     * between posting of different kinds of events.
      *
-     *  To avoid code repetition, the actual logic (which is always the same) had been extracted!
+     * To avoid code repetition, the actual logic (which is always the same) had been extracted!
      */
-    private EventDto postEvent(EventDto eventDto)  throws ValidationException, ServiceException,
-                                                          EmailException, NotFoundException {
+    private EventDto postEvent(EventDto eventDto) throws ValidationException, ServiceException,
+                                                         EmailException, NotFoundException {
         LOGGER.info("Incoming POST Request for an Event with type: " + eventDto.toString());
         try {
             return eventMapper.entityToEventDto(
@@ -255,5 +289,4 @@ public class EventEndpoint {
             throw new ServiceException(e.getMessage(), e);
         }
     }
-
 }

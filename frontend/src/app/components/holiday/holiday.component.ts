@@ -70,7 +70,7 @@ export class HolidayComponent implements OnInit {
 
     ngOnInit() {}
 
-    public postHoliday(form: NgForm): void {
+    public postHoliday(): void {
         this.clearInfoMsg();
         this.holiday.id = null;
         this.trainer.id = this.sessionService.userId;

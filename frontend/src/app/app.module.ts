@@ -32,7 +32,7 @@ import {
 } from 'src/app/components';
 
 import { ConsultationTimeComponent } from 'src/app/components/consultation-time/consultation-time.component';
-
+import { SafeServerImagePipe } from 'src/app/pipes/safe-server-image-pipe';
 import { httpInterceptorProviders } from './http-interceptors';
 import { SessionStorageService } from './services';
 import { SimpleHttpInterceptor } from './http-interceptors/simple-http-interceptor';
@@ -112,4 +112,4 @@ import { ConsultationTimesClient } from './rest/consultationTimes-client';
     bootstrap: [AppComponent],
     entryComponents: [NgbdModalConfirm],
 })
-export class AppModule {}
+export class AppModule { }

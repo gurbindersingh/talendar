@@ -11,12 +11,15 @@ import {
     NgbTimeStruct,
 } from '@ng-bootstrap/ng-bootstrap';
 import { NgForm } from '@angular/forms';
-import { Trainer } from 'src/app/models';
+import { Trainer, UserDetails } from 'src/app/models';
 import {
     DateTimeParserService,
     CronMakerService,
     SessionStorageService,
+    AuthenticationService,
 } from 'src/app/services';
+import { TrainerClient } from 'src/app/rest';
+import { userInfo } from 'os';
 
 @Component({
     selector: 'app-consultation-time',
@@ -57,13 +60,17 @@ export class ConsultationTimeComponent implements OnInit {
     //for price change
     errorMsg2: string;
     successMsg2: string;
-
+    consultationPrice: number;
+    loggedTrainerEmail: string;
+    loggedTrainer: Trainer;
     constructor(
         private consultationTimeClient: ConsultationTimeClient,
         private consultationTimesClient: ConsultationTimesClient,
         dateTimeParser: DateTimeParserService,
         cronMaker: CronMakerService,
-        private sessionService: SessionStorageService
+        private sessionService: SessionStorageService,
+        private trainerClient: TrainerClient,
+        private authentificationService: AuthenticationService
     ) {
         this.cronMaker = cronMaker;
         this.dateTimeParser = dateTimeParser;
@@ -198,6 +205,41 @@ export class ConsultationTimeComponent implements OnInit {
     }
 
     public updatePrice(): void {
+        this.authentificationService.getUserDetails().subscribe(
+            (data: UserDetails) => {
+                this.loggedTrainerEmail = data.email;
+                this.errorMsg2 = "";
+            },
+            (error: Error) => {
+                this.errorMsg2 = "Ein problem ist aufgetreten beim eingeloggeden User herausfinden";
+                this.successMsg2 = "";
+            }
+        );
+        this.trainerClient.getAll().subscribe(
+            (data: Trainer[]) => {
+                data.forEach(element => {
+                    if (element.email === this.loggedTrainerEmail) {
+                        this.loggedTrainer = element;
+                    }
+                });
+            }
+        );
+        this.loggedTrainer.consultationPrice = this.consultationPrice;
+        this.trainerClient.update(this.loggedTrainer, this.loggedTrainer.password).subscribe(
+            (data: Trainer) => {
+                this.successMsg2 = "Erfolgreich Beratungspreis aktualisiert";
+                this.errorMsg2 = "";
+                this.resetPriceForm();
+            },
+            (error: Error) => {
+                this.errorMsg2 = error.message;
+                this.successMsg2 = "";
+            }
+        )
 
+    }
+
+    public resetPriceForm(): void {
+        this.consultationPrice = undefined;
     }
 }

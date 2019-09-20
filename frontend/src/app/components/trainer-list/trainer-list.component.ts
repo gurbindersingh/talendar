@@ -184,7 +184,7 @@ export class TrainerListComponent implements OnInit {
                     this.binaryEncodedImages[index] = null;
                 },
                 (error) => {
-                    console.log(error);
+                    
                 }
             );
         });

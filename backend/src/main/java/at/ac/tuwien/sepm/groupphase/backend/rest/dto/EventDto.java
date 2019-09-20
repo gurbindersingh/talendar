@@ -21,14 +21,9 @@ public class EventDto {
     private String name;
     @JsonIgnoreProperties("event")
     private List<RoomUse> roomUses = new LinkedList<>();
-    private LocalDateTime created;
-    private LocalDateTime updated;
     @JsonIgnoreProperties("eventDtos")
     private List<CustomerDto> customerDtos = new LinkedList<>();
     private String eventTags;
-    private boolean deleted;
-
-
     /*
         These Variables are used by non Rent Types
      */
@@ -88,15 +83,13 @@ public class EventDto {
                     LocalDateTime created, LocalDateTime updated, List<CustomerDto> customerDtos,
                     Trainer trainer, int headcount, int ageToBe, String birthdayType,
                     LocalDateTime endOfApplication, Double price, Integer maxParticipants,
-                    String description, Integer minAge, Integer maxAge, List<String> pictures, String eventTags,
-                    boolean deleted
+                    String description, Integer minAge, Integer maxAge, List<String> pictures,
+                    String eventTags
     ) {
         this.id = id;
         this.eventType = eventType;
         this.name = name;
         this.roomUses = roomUses;
-        this.created = created;
-        this.updated = updated;
         this.customerDtos = customerDtos;
         this.trainer = trainer;
         this.headcount = headcount;
@@ -110,7 +103,6 @@ public class EventDto {
         this.maxAge = maxAge;
         this.pictures = pictures;
         this.eventTags = eventTags;
-        this.deleted = deleted;
     }
 
 
@@ -161,26 +153,6 @@ public class EventDto {
 
     public void setRoomUses(List<RoomUse> roomUses) {
         this.roomUses = roomUses;
-    }
-
-
-    public LocalDateTime getCreated() {
-        return created;
-    }
-
-
-    public void setCreated(LocalDateTime created) {
-        this.created = created;
-    }
-
-
-    public LocalDateTime getUpdated() {
-        return updated;
-    }
-
-
-    public void setUpdated(LocalDateTime updated) {
-        this.updated = updated;
     }
 
 
@@ -324,16 +296,6 @@ public class EventDto {
     }
 
 
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
-    }
-
-
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;
@@ -345,8 +307,6 @@ public class EventDto {
                eventType == eventDto.eventType &&
                Objects.equals(name, eventDto.name) &&
                Objects.equals(roomUses, eventDto.roomUses) &&
-               Objects.equals(created, eventDto.created) &&
-               Objects.equals(updated, eventDto.updated) &&
                Objects.equals(customerDtos, eventDto.customerDtos) &&
                Objects.equals(trainer, eventDto.trainer) &&
                birthdayType == eventDto.birthdayType &&
@@ -363,7 +323,7 @@ public class EventDto {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, eventType, name, roomUses, created, updated, customerDtos, trainer,
+        return Objects.hash(id, eventType, name, roomUses, customerDtos, trainer,
                             headcount, ageToBe, birthdayType, endOfApplication, price,
                             maxParticipants, description, minAge, maxAge, pictures, eventTags
         );
@@ -377,8 +337,6 @@ public class EventDto {
                ", eventType=" + eventType +
                ", name='" + name + '\'' +
                ", roomUses=" + roomUses +
-               ", created=" + created +
-               ", updated=" + updated +
                ", customers=" + customerDtos +
                ", trainer=" + trainer +
                ", headcount=" + headcount +

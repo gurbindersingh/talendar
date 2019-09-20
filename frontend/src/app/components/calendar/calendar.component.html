@@ -368,8 +368,8 @@
         <h4 ngbAutofocus>{{ clickedEvent.title }}</h4>
     </div>
     <div class="modal-body justify-content-center">
-        <p>{{ clickedEvent.description }}</p>
-        <p>
+        <p *ngIf="clickedEvent.description">{{ clickedEvent.description }}</p>
+        <p *ngIf="clickedEvent.trainer">
             <b> Abgehalten von: </b>
             {{
                 clickedEvent.trainer.firstName +
@@ -377,7 +377,7 @@
                     clickedEvent.trainer.lastName
             }}
         </p>
-        <p>
+        <p *ngIf="eventLocation">
             <b>Veranstaltungsort:</b>
             {{ eventLocation }}
         </p>

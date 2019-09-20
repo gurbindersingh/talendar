@@ -36,19 +36,19 @@ export class EventClient extends RestClient {
 
         return super.post(
             (error: HttpErrorResponse) => {
-                console.log('HTTP POST Birthday Failed: ' + error.message);
+                
             },
             eventSpecificEndpoint,
             event
         );
     }
 
-    public getAllEvents_adminView(): Observable<Event[]> {
+    public getAllEvents_adminView(userId: number): Observable<Event[]> {
         return super.get((error: HttpErrorResponse) => {
             console.log(
                 'HTTP GET All Events (For Admin) Failed: ' + error.message
             );
-        }, '/all/admin');
+        }, '/all/admin/' + userId);
     }
 
     public getAllEvents_trainerView(id: number): Observable<Event[]> {

@@ -50,8 +50,6 @@ public class EventService implements IEventService {
     private final InfoMail infoMail;
 
 
-
-
     @Autowired
     public EventService(EventRepository eventRepository, Validator validator,
                         RoomUseRepository roomUseRepository, TrainerRepository trainerRepository,
@@ -67,7 +65,8 @@ public class EventService implements IEventService {
 
 
     @Override
-    public Event save(Event event) throws ValidationException, ServiceException, EmailException, NotFoundException {
+    public Event save(Event event) throws ValidationException, ServiceException, EmailException,
+                                          NotFoundException {
         LOGGER.info("Prepare to save new Event");
         LocalDateTime now = LocalDateTime.now();
         event.setCreated(now);
@@ -654,7 +653,7 @@ public class EventService implements IEventService {
                 try {
                     LOGGER.info("Prepare Email for sign off");
                     infoMail.sendCancelationMail(customerToAddOrRemove.getEmail(), event,
-                                        customerToAddOrRemove
+                                                 customerToAddOrRemove
                     );   //create a sign off email and send it to customer
                     LOGGER.info("Email sent");
                 }
@@ -671,8 +670,9 @@ public class EventService implements IEventService {
                 throw new ServiceException("", null);
             }
 
-            if(now.isAfter(event.getEndOfApplication())){
-                throw new ValidationException("Ende der Abmeldefrist vorbei - Abmeldung fehlgeschlagen");
+            if(now.isAfter(event.getEndOfApplication())) {
+                throw new ValidationException(
+                    "Ende der Abmeldefrist vorbei - Abmeldung fehlgeschlagen");
             }
 
             Set<Customer> customerSet = new HashSet<>();
@@ -723,7 +723,20 @@ public class EventService implements IEventService {
         LOGGER.info("Try to retrieve list of all events");
 
         try {
-            return this.eventRepository.findAll();
+            List<Event> events = this.eventRepository.findAll();
+            for(Event event : events) {
+                Trainer trainer = event.getTrainer();
+                if(trainer != null) {
+                    trainer.setPassword(null);
+                    trainer.setPhone(null);
+                    trainer.setEmail(null);
+                    trainer.setBirthday(null);
+                    trainer.setCreated(null);
+                    trainer.setDeleted(false);
+
+                }
+            }
+            return events;
         }
         catch(DataAccessException e) {
             throw new ServiceException(
@@ -749,6 +762,11 @@ public class EventService implements IEventService {
                 event.setMinAge(null);
                 event.setPrice(null);
             }
+            Trainer trainer = event.getTrainer();
+            if(trainer != null) {
+                trainer.setAdmin(false);
+                trainer.setId(null);
+            }
         });
         return events;
     }
@@ -756,14 +774,44 @@ public class EventService implements IEventService {
 
     @Override
     public List<Event> getTrainerView(List<Event> events, Long id) {
+        List<Event> trainerEvents = new ArrayList<>();
         events.forEach((Event event) -> {
             // any rent (not hosted by any trainer) and any event that is not hosted by the given
             // give meta information that this event may is displayed different
-            if(event.getEventType() == EventType.Rent || event.getTrainer().getId() != id) {
-                event.setHide(true);
+            if(event.getTrainer() != null && event.getTrainer().getId() == id) {
+                trainerEvents.add(event);
             }
         });
+        return trainerEvents;
+    }
+
+
+    @Override
+    public List<Event> getAdminView(List<Event> events, Long id) {
+        for(Event event : events) {
+            if(event.getEventType() == EventType.Consultation &&
+               !event.getTrainer().getId().equals(id)) {
+                this.redactConsulation(event);
+            }
+        }
         return events;
+    }
+
+
+    private Event redactConsulation(Event consultaion) {
+        consultaion.setName("Beratungstermin von " + consultaion.getTrainer().getFirstName());
+        // event.setRedacted(true);
+        consultaion.setId(-1l);
+        // event.setEventType(null);
+        consultaion.setBirthdayType(null);
+        consultaion.setCustomers(null);
+        consultaion.setDescription("");
+        consultaion.setTrainer(null);
+        consultaion.setMaxAge(null);
+        consultaion.setMinAge(null);
+        consultaion.setPrice(null);
+
+        return consultaion;
     }
 
 
@@ -771,13 +819,12 @@ public class EventService implements IEventService {
     public List<Event> filterTrainerEvents(List<Event> events, Long id
     ) {
         return events.stream().filter((Event event) -> {
-            if (event.getEventType() == EventType.Rent) {
+            if(event.getEventType() == EventType.Rent) {
                 return false;
             }
-            if (!event.getTrainer().getId().equals(id)) {
+            if(!event.getTrainer().getId().equals(id)) {
                 return false;
             }
-
             return true;
         }).collect(Collectors.toList());
     }
@@ -876,8 +923,10 @@ public class EventService implements IEventService {
         List<Event> events;
 
         try {
-            events = eventRepository.findByDeletedFalseAndRoomUses_BeginGreaterThanEqual(LocalDateTime.now());
-        } catch(DataAccessException e) {
+            events = eventRepository.findByDeletedFalseAndRoomUses_BeginGreaterThanEqual(
+                LocalDateTime.now());
+        }
+        catch(DataAccessException e) {
             throw new ServiceException("Error while performing a get all data access operation", e);
         }
 
@@ -1023,7 +1072,7 @@ public class EventService implements IEventService {
                             db.getBegin() +
                             " vs to insert begin: " +
                             x.getBegin());
-                if(x.getRoom().equals(Room.All)){
+                if(x.getRoom().equals(Room.All)) {
                     if(x.getBegin().isAfter(db.getBegin()) &&
                        x.getBegin().isBefore(db.getEnd()) ||
                        x.getEnd().isBefore(db.getEnd()) &&
@@ -1033,14 +1082,14 @@ public class EventService implements IEventService {
                        x.getEnd().isEqual(db.getEnd()) && x.getBegin().isEqual(db.getBegin()) ||
                        x.getEnd().isEqual(db.getEnd()) ||
                        x.getBegin().isEqual(db.getBegin())) {
-                    throw new TimeNotAvailableException(
-                        "Von " +
-                        x.getBegin() +
-                        " bis " +
-                        x.getEnd() +
-                        " ist der Raum " +
-                        x.getRoom() +
-                        " belegt");
+                        throw new TimeNotAvailableException(
+                            "Von " +
+                            x.getBegin() +
+                            " bis " +
+                            x.getEnd() +
+                            " ist der Raum " +
+                            x.getRoom() +
+                            " belegt");
                     }
                 }
                 if(x.getRoom() == db.getRoom() || db.getRoom() == Room.All) {
@@ -1067,5 +1116,4 @@ public class EventService implements IEventService {
         }
         LOGGER.info("All roomuses are available");
     }
-
 }

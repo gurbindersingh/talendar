@@ -15,7 +15,7 @@ export class TrainerClient extends RestClient {
         trainer.password = new SHA3(512).update(trainer.password).digest('hex');
         return super.post(
             (error: HttpErrorResponse) => {
-                console.log('HTTP POST Trainer Failed: ' + error.message);
+                
             },
             '',
             trainer
@@ -24,12 +24,12 @@ export class TrainerClient extends RestClient {
 
     public getAll(): Observable<Trainer[]> {
         return super.get((error: HttpErrorResponse) => {
-            console.log('HTTP GET All Trainer Failed: ' + error.message);
+            
         }, '');
     }
 
     public getById(id: number): Observable<Trainer> {
-        console.log(id);
+        
         return super.get((error: HttpErrorResponse) => {
             console.log(
                 'HTTP GET Trainer With ID ' + id + ' Failed: ' + error.message
@@ -67,7 +67,7 @@ export class TrainerClient extends RestClient {
 
     public deleteTrainer(id: number): Observable<Trainer> {
         return super.delete((error: HttpErrorResponse) => {
-            console.log('HTTP DELETE Trainer Failed: ' + error.message);
+            
         }, '/' + id);
     }
 }

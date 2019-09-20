@@ -29,6 +29,7 @@ public class TrainerDto {
     private LocalDateTime updated;
     private String password;
     private Boolean deleted;
+    private Double consultationPrice;
 
 
     public TrainerDto() {
@@ -49,7 +50,8 @@ public class TrainerDto {
                        String picture,
                        String password,
                        LocalDateTime created,
-                       LocalDateTime updated
+                       LocalDateTime updated,
+                       double consultationPrice
     ) {
         this.id = id;
         this.firstName = firstName;
@@ -66,6 +68,7 @@ public class TrainerDto {
         this.created = created;
         this.updated = updated;
         this.deleted = false;
+        this.consultationPrice = consultationPrice;
     }
 
 

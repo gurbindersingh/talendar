@@ -63,9 +63,12 @@ export class ConsultationComponent implements OnInit {
                 this.trainers = list;
             },
             (error) => {
-                console.log(error);
+
             }
         );
+        this.trainers = this.trainers.filter(function (trainer) {
+            return trainer.consultationPrice != 0 && trainer.consultationPrice != undefined;
+        })
     }
 
     public postConsultation(form: NgForm): void {
@@ -92,6 +95,7 @@ export class ConsultationComponent implements OnInit {
         this.event.roomUses = [this.roomUse];
         this.event.eventType = EventType.Consultation;
         this.event.trainer = this.trainer;
+        this.event.price = this.trainer.consultationPrice;
 
         this.eventClient.postNewEvent(this.event).subscribe(
             (data: Event) => {
@@ -183,5 +187,13 @@ export class ConsultationComponent implements OnInit {
     public clearInfoMsg(): void {
         this.errorMsg = undefined;
         this.successMsg = undefined;
+    }
+
+    public calcPrice(): number {
+        if (this.selectedTrainer === 'Trainer auswählen') {
+            return 0;
+        } else {
+            return this.trainer.consultationPrice;
+        }
     }
 }

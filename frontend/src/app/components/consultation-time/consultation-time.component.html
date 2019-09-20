@@ -154,9 +154,50 @@
 <hr />
 
 <div class="row">
-    <div class="col-lg-3">
+    <div class="col-lg-3"></div>
+    <div class="col-lg-6">
         <form class="container-fluid" novalidate (ngSubmit)="updatePrice()" (change)="clearInfoMsg()" #changePriceForm>
-
+            <div class="row">
+                <div class="col-lg-6">
+                    <h5>Jetzt verlangen Sie:</h5>
+                </div>
+                <div class="col-lg-6">
+                    <h5> {{ currentPrice }}</h5>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-lg-6">
+                    <label>Preis pro Stunde eintragen:</label>
+                </div>
+                <div class="col-lg-6">
+                    <input type="number" class="form-control" [(ngModel)]="consultationPrice" name="consultationPrice"
+                        id="consultationPrice" placeholder="preis" required />
+                </div>
+            </div>
+            <br />
+            <div class="row" *ngIf="errorMsg2">
+                <div class="col-sm-12">
+                    <p class="alert alert-danger">
+                        {{ errorMsg2 }}
+                    </p>
+                </div>
+            </div>
+            <div class="row" *ngIf="successMsg2">
+                <div class="col-sm-12">
+                    <p class="alert alert-success">
+                        {{ successMsg2 }}
+                    </p>
+                </div>
+            </div>
+            <div class="row justify-content-end" style="padding:0 15px" id="submit">
+                <div class="col-lg-6"></div>
+                <button [disabled]="!isCompletedPrice()" class="btn btn-primary" type="submit"
+                    style="margin-left:15px;">
+                    Beratungspreis Eintragen
+                </button>
+            </div>
         </form>
     </div>
+    <div class="col-lg-3"></div>
 </div>

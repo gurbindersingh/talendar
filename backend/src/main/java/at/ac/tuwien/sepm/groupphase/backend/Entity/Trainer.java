@@ -34,6 +34,7 @@ public class Trainer extends User {
     private List<ConsultingTime> consultingTimes;
     // the location where the profile picture of this trainer is stored
     private String picture;
+    private Double consultationPrice;
 
 
 
@@ -54,6 +55,7 @@ public class Trainer extends User {
                    List<Holiday> holidays,
                    List<ConsultingTime> consultingTimes,
                    String picture,
+                   double consultationPrice,
                    @NotNull List<String> birthdayTypes,
                    @NotNull @Past LocalDateTime created,
                    @NotNull @Past LocalDateTime updated
@@ -65,6 +67,16 @@ public class Trainer extends User {
         this.holidays = holidays;
         this.picture = picture;
         this.birthdayTypes = birthdayTypes;
+        this.consultationPrice = consultationPrice;
+    }
+
+    public double getConultationPrice() {
+        return consultationPrice;
+    }
+
+
+    public void setConultationPrice(double consultationPrice) {
+        this.consultationPrice = consultationPrice;
     }
 
 
