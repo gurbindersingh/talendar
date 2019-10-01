@@ -19,7 +19,6 @@ import {
     AuthenticationService,
 } from 'src/app/services';
 import { TrainerClient } from 'src/app/rest';
-import { userInfo } from 'os';
 
 @Component({
     selector: 'app-consultation-time',
@@ -63,6 +62,7 @@ export class ConsultationTimeComponent implements OnInit {
     consultationPrice: number;
     loggedTrainerEmail: string;
     loggedTrainer: Trainer;
+    currentPrice: number;
     constructor(
         private consultationTimeClient: ConsultationTimeClient,
         private consultationTimesClient: ConsultationTimesClient,
@@ -80,6 +80,16 @@ export class ConsultationTimeComponent implements OnInit {
         this.terminateModul = this.terminateAfterOption[0];
         this.alleX = 1;
         this.endedX = 1;
+        this.trainerClient.getById(this.sessionService.userId).subscribe(
+            (trainer: Trainer) => {
+                this.loggedTrainer = trainer;
+                this.currentPrice = this.loggedTrainer.consultationPrice;
+            },
+            (error: Error) => {
+                this.errorMsg = error.message;
+            }
+        );
+
     }
 
     ngOnInit() { }
@@ -205,25 +215,6 @@ export class ConsultationTimeComponent implements OnInit {
     }
 
     public updatePrice(): void {
-        this.authentificationService.getUserDetails().subscribe(
-            (data: UserDetails) => {
-                this.loggedTrainerEmail = data.email;
-                this.errorMsg2 = "";
-            },
-            (error: Error) => {
-                this.errorMsg2 = "Ein problem ist aufgetreten beim eingeloggeden User herausfinden";
-                this.successMsg2 = "";
-            }
-        );
-        this.trainerClient.getAll().subscribe(
-            (data: Trainer[]) => {
-                data.forEach(element => {
-                    if (element.email === this.loggedTrainerEmail) {
-                        this.loggedTrainer = element;
-                    }
-                });
-            }
-        );
         this.loggedTrainer.consultationPrice = this.consultationPrice;
         this.trainerClient.update(this.loggedTrainer, this.loggedTrainer.password).subscribe(
             (data: Trainer) => {

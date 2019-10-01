@@ -10,6 +10,7 @@ import at.ac.tuwien.sepm.groupphase.backend.persistence.EventRepository;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.HolidayRepository;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.RoomUseRepository;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
+import at.ac.tuwien.sepm.groupphase.backend.service.IConsultingTimeService;
 import at.ac.tuwien.sepm.groupphase.backend.service.IEventService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.CancelationException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
@@ -31,6 +32,7 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import javax.validation.Valid;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDateTime;
@@ -48,12 +50,13 @@ public class EventService implements IEventService {
     private final TrainerRepository trainerRepository;
     private final HolidayRepository holidayRepository;
     private final InfoMail infoMail;
-
+    private final IConsultingTimeService consultingTimeService;
 
     @Autowired
     public EventService(EventRepository eventRepository, Validator validator,
                         RoomUseRepository roomUseRepository, TrainerRepository trainerRepository,
-                        HolidayRepository holidayRepository, InfoMail infoMail
+                        HolidayRepository holidayRepository, InfoMail infoMail,
+                        ConsultingTimeService consultingTimeService
     ) {
         this.eventRepository = eventRepository;
         this.validator = validator;
@@ -61,6 +64,7 @@ public class EventService implements IEventService {
         this.trainerRepository = trainerRepository;
         this.holidayRepository = holidayRepository;
         this.infoMail = infoMail;
+        this.consultingTimeService = consultingTimeService;
     }
 
 
@@ -262,12 +266,18 @@ public class EventService implements IEventService {
                     trainerAvailable(event.getTrainer(), event.getRoomUses());
                     try {
                         isAvailable(event.getRoomUses());
+                        isInConsultationTime(event.getRoomUses(), event.getTrainer());
                     }
                     catch(TimeNotAvailableException e) {
                         throw new ValidationException(
                             e.getMessage(),
                             e
                         );
+                    }
+                    catch(NotFoundException e){
+                        throw new ValidationException("Wir haben den zugewiesenen Trainer nicht finden können");
+                    }catch(ServiceException e){
+                        throw new ValidationException("Etwas ist mit der Bearbeitung schiefgelaufen");
                     }
                     event = eventRepository.save(event);
                     eventRepository.flush();
@@ -297,6 +307,25 @@ public class EventService implements IEventService {
         }
 
         return event;
+    }
+
+    private void isInConsultationTime(List<RoomUse> roomUses, Trainer trainer) throws NotFoundException, ServiceException, TimeNotAvailableException{
+        List<ConsultingTime> consultingTimes = consultingTimeService.getAllConsultingTimesByTrainerId(trainer.getId());
+        for(RoomUse ru: roomUses){
+            boolean found = false;
+            for(ConsultingTime ct: consultingTimes){
+                if((((ct.getConsultingTimeStart().isBefore(ru.getBegin()) || ct.getConsultingTimeStart().isEqual(ru.getBegin()))
+                        && ct.getConsultingTimeStart().getYear() == ru.getBegin().getYear()
+                        && ct.getConsultingTimeStart().getDayOfYear() == ru.getBegin().getDayOfYear())
+                    && ((ct.getConsultingTimeEnd().isAfter(ru.getEnd()) || ct.getConsultingTimeEnd().isEqual(ru.getEnd()))
+                        && ct.getConsultingTimeEnd().getYear() == ru.getEnd().getYear()
+                        && ct.getConsultingTimeEnd().getDayOfYear() == ru.getEnd().getDayOfYear())
+                    )){
+                    found = true;
+                }
+            }
+            if(!found) throw new TimeNotAvailableException("Der Trainer ist zu dieser Zeiten nicht für Beratungen verfügbar ");
+        }
     }
 
 

@@ -79,7 +79,6 @@ public class Trainer extends User {
         this.consultationPrice = consultationPrice;
     }
 
-
     public Long getId() {
         return id;
     }
