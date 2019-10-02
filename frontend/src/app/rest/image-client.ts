@@ -61,7 +61,7 @@ export class ImageClient extends RestClient {
     public getCoursePicture(fileName: string): Observable<any> {
         return super.get(
             (error: HttpErrorResponse) => {
-                console.log('HTTP GET Course Picture Failed: ' + error.message);
+                
             },
             '/image/course',
             { name: fileName },

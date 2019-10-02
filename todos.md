@@ -2,28 +2,26 @@
 
 ## Tasks
 
-### Trainer und Admin können nicht Titel/Beschreibung von andere Urlauben sehen
-
--   Sollte wenn man nach Trainer filtered als reserved angezeigt und im default sicht garnicht angezeigt werden. Nur für zugehörigen User sichtbar.
-
 ### Grüne Raum darf nicht am we gebucht werden
 
 -   Am Wochende soll der Obergeschoss gemeinsam gebucht werden(moglicherweise unter Orangenenraum gekennzeichnet)
 -   Backend: Validierung und exception
 
+## In Progress
+
+### Trainer und Admin können nicht Titel/Beschreibung von andere Urlauben sehen
+
+-   Sollte wenn man nach Trainer filtered als reserved angezeigt und im default sicht garnicht angezeigt werden. Nur für zugehörigen User sichtbar.
+
 ### Admin kann nicht beratungen sehen
 
 -   Wird als Beratungstermin angezeigt. Kein Titel oder zusätzliche Informationen.
 
-
-## In Progress
- 
 ### Beratungen Trainer variable(Nikita)
 
 -   Trainer sollten den Preis ihre Beratungen selbst festlegen
 -   Frontend: eine Übersict oder gut plaziertes Feld dafür
 -   Backend: Bei Trainer eine Variable die Ihren Preis angibt und eine möglichkeit dies zu bearbeiten
-
 
 ### Trainer dürfen Beratungszeiten angeben(Michi)
 
@@ -31,11 +29,9 @@
 -   Frontend: Ein Menü wo man Beratungszeiten bearbeiten kann im trainer + beratung filter dieser Zeiten anzeigen
 -   Backend: Über alle schichten ein Beratungszeiten CRUD objekt implementieren und die Methoden fürs Frontend
 
-
 ## Testing
 
 -   Recaptcha beim anmelden (Guri)
-
 
 ### Ganzes haus buchen(Michi)
 

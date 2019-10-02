@@ -63,7 +63,7 @@ export class ConsultationComponent implements OnInit {
                 this.trainers = list;
             },
             (error) => {
-                console.log(error);
+                
             }
         );
     }

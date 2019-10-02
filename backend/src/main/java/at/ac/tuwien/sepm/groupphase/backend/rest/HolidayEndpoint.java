@@ -80,7 +80,7 @@ public class HolidayEndpoint {
         LOGGER.info("Incoming Request To Retrieve List Of All Holidays");
 
         try {
-            return mapper.entityListToHolidayDtoList(holidayService.getAllHolidays());
+            return mapper.entityListToHolidayDtoList(holidayService.getAllHolidays(id));
         }
         catch(ServiceException e) {
             LOGGER.error("GET Request unsuccessful: " + e.getMessage(), e);
