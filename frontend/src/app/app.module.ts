@@ -31,7 +31,8 @@ import {
     TrainerListComponent,
 } from 'src/app/components';
 
-import { SafeServerImagePipe } from './pipes/safe-server-image-pipe';
+import { ConsultationTimeComponent } from 'src/app/components/consultation-time/consultation-time.component';
+import { SafeServerImagePipe } from 'src/app/pipes/safe-server-image-pipe';
 import { httpInterceptorProviders } from './http-interceptors';
 import { SessionStorageService } from './services';
 import { SimpleHttpInterceptor } from './http-interceptors/simple-http-interceptor';
@@ -39,6 +40,11 @@ import { DateTimeParserService } from './services';
 import { AdminGuard } from './guards/admin-guard';
 import { TrainerGuard } from './guards/trainer-guard';
 import { AuthenticatedGuard } from './guards/authenticated-guard';
+import { InfoClient } from './rest/info-client';
+import { ImageClient } from './rest/image-client';
+import { CreateBirthdayTypeComponent } from './components/create-birthday-type/create-birthday-type.component';
+import { BirthdayClient } from './rest/birthday-client';
+import { BirthdayTypeViewComponent } from './components/birthday-type-view/birthday-type-view.component';
 import {
     TrainerClient,
     TagClient,
@@ -46,9 +52,9 @@ import {
     HolidayClient,
     HolidaysClient,
     AuthenticationClient,
-    InfoClient,
-    ImageClient,
 } from './rest';
+import { ConsultationTimeClient } from './rest/consultationTime-client';
+import { ConsultationTimesClient } from './rest/consultationTimes-client';
 
 @NgModule({
     declarations: [
@@ -62,6 +68,7 @@ import {
         CancelNewsletterComponent,
         TrainerComponent,
         ConsultationComponent,
+        ConsultationTimeComponent,
         TrainerListComponent,
         CancelEventComponent,
         CourseViewComponent,
@@ -73,6 +80,8 @@ import {
         TagComponent,
         CancelNewsletterComponent,
         RecaptchaComponent,
+        CreateBirthdayTypeComponent,
+        BirthdayTypeViewComponent,
     ],
     imports: [
         AppRoutingModule,
@@ -96,14 +105,18 @@ import {
         DateTimeParserService,
         HolidayClient,
         HolidaysClient,
+        ConsultationTimeClient,
+        ConsultationTimesClient,
         AuthenticationClient,
         AdminGuard,
         TrainerGuard,
         AuthenticatedGuard,
         InfoClient,
         ImageClient,
+        BirthdayClient
+
     ],
     bootstrap: [AppComponent],
     entryComponents: [NgbdModalConfirm],
 })
-export class AppModule {}
+export class AppModule { }

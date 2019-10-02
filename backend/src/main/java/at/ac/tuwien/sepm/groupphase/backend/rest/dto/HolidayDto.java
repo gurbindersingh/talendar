@@ -11,25 +11,26 @@ public class HolidayDto {
 
 
     private Long id;
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "holidays", "events"})
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "holidays", "events", "consultingTimes"})
     private Trainer trainer;
     private String title;
     private String description;
     private LocalDateTime holidayStart;
     private LocalDateTime holidayEnd;
-
+    private Long groupId;
     public HolidayDto () {
 
     }
 
 
-    public HolidayDto (Long id, Trainer trainer, String title, String description, LocalDateTime holidayStart, LocalDateTime holidayEnd) {
+    public HolidayDto (Long id, Trainer trainer, String title, String description, LocalDateTime holidayStart, LocalDateTime holidayEnd, Long groupId) {
         this.id = id;
         this.trainer = trainer;
         this.title = title;
         this.description = description;
         this.holidayStart = holidayStart;
         this.holidayEnd = holidayEnd;
+        this.groupId = groupId;
     }
 
 
@@ -122,6 +123,7 @@ public class HolidayDto {
                ", description='" + description + '\'' +
                ", holidayStart=" + holidayStart +
                ", holidayEnd=" + holidayEnd +
+               ", groupId=" + groupId +
                '}';
     }
 }

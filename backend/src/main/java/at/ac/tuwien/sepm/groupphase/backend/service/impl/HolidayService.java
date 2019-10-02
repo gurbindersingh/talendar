@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -62,21 +63,20 @@ public class HolidayService implements IHolidayService {
         return result;
     }
 
+    @Override
+    public void deleteBzGroupId(Long groupId){
+        holidayRepository.deleteByGroupId(groupId);
+    }
+
 
     @Override
-    public LinkedList<Holiday> getAllHolidays(Long id) throws ServiceException, NotFoundException {
+    public LinkedList<Holiday> getAllHolidays() throws ServiceException, NotFoundException {
         List<Holiday> holidays = holidayRepository.findAll();
         LOGGER.info("" + holidays);
 
         LinkedList<Holiday> result = new LinkedList<>();
         for(int i = 0; i < holidays.size(); i++) {
             Holiday holiday = holidays.get(i);
-            if(id != holiday.getTrainer().getId()) {
-                holiday.setTitle(holiday.getTrainer().getFirstName() + " abwesend");
-                holiday.setTrainer(null);
-            } else {
-                holiday.getTrainer().setPassword("");
-            }
             result.add(holiday);
         }
         return result;
@@ -89,6 +89,7 @@ public class HolidayService implements IHolidayService {
 
         try {
             validate.validateHoliday(holiday);
+            holiday.setGroupID(Instant.now().toEpochMilli());
             if(!this.trainerRepository.existsById(holiday.getTrainer().getId())) {
                 InvalidEntityException e = new InvalidEntityException("Trainer existiert nicht!");
                 LOGGER.error("attempt to save holiday with trainer that doesnt exist");
@@ -108,7 +109,6 @@ public class HolidayService implements IHolidayService {
             throw new ServiceException(e);
         }
     }
-
 
     public LinkedList<Holiday> saveHolidays(HolidaysDto holidaysDto) throws ServiceException,
                                                                             ValidationException {
@@ -149,6 +149,7 @@ public class HolidayService implements IHolidayService {
             LOGGER.error("attempt to save holidays with trainer that doesnt exist");
             throw new ValidationException(e.getMessage(), e);
         }
+        Instant now = Instant.now();
         Trainer trainer = (Trainer) trainerRepository.getOne(holidaysDto.getTrainerid());
         LOGGER.info("Trainer is: " + trainer);
         try {
@@ -270,7 +271,7 @@ public class HolidayService implements IHolidayService {
             for(int i = 0; i < startLocalDateTimes.size(); i++) {
                 Holiday h =
                     new Holiday(trainer, holidaysDto.getTitle(), holidaysDto.getDescription(),
-                                startLocalDateTimes.get(i), endLocalDateTimes.get(i)
+                                startLocalDateTimes.get(i), endLocalDateTimes.get(i), now.toEpochMilli()
                     );
                 resultList.add(h);
             }

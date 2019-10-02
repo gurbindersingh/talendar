@@ -23,6 +23,11 @@ export class NavigationComponent implements OnInit {
             restriction: Authorities.TRAINER,
         },
         {
+            name: 'Beratungszeit eintragen',
+            path: 'consultationtime/add',
+            restriction: Authorities.TRAINER,
+        },
+        {
             name: 'Beratung eintragen',
             path: 'consultation/add',
             restriction: Authorities.NONE,
@@ -62,6 +67,11 @@ export class NavigationComponent implements OnInit {
             path: 'course/view',
             restriction: Authorities.TRAINER,
         },
+        {
+            name: 'Geburtstagstypen anzeigen',
+            path: 'birthdayType/view',
+            restriction: Authorities.ADMIN,
+        },
     ];
 
     loginLink = {
@@ -90,7 +100,7 @@ export class NavigationComponent implements OnInit {
         public authenticationService: AuthenticationService,
         private notificationService: NotificationService,
         private router: Router
-    ) {}
+    ) { }
 
     ngOnInit() {
         this.updateNavigation();

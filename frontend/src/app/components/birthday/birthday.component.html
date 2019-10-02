@@ -8,30 +8,18 @@
             <form id="birthdayForm" #birthdayForm>
                 <div class="form-group">
                     <label for="birthdayType">Art des Geburtstags:</label>
-                    <select
-                        class="form-control"
-                        name="birthdays"
-                        id="birthdayType"
-                        [(ngModel)]="event.birthdayType"
-                        required
-                    >
-                        <option value="DryIce"> Trockeneis Geburtstag</option>
-                        <option value="Rocket"> Raketen Geburtstag</option>
-                        <option value="Superhero"> Superhelden Geburtstag</option>
-                        <option value="Photo"> Photo Geburtstag</option>
-                        <option value="Painting"> Malen Geburtstag</option>
+                    <select class="form-control" name="birthdays" id="birthdayType" #bdayType
+                        (change)="updatePrice($event)" required>
+                        <option *ngFor="let birthday of birthdayNames" [value]="birthday">
+                            {{ birthday }}
+                        </option>
                     </select>
                 </div>
                 <div class="row align-items-center">
                     <div class="form-group col-sm">
                         <label for="birthdayHeadcount">Wie viele Kinder kommen?</label>
-                        <select
-                            class="form-control"
-                            name="headcount"
-                            id="birthdayHeadcount"
-                            [(ngModel)]="event.headcount"
-                            required
-                        >
+                        <select class="form-control" name="headcount" id="birthdayHeadcount"
+                            [(ngModel)]="event.headcount" required>
                             <option *ngFor="let number of ageList" [value]="number">{{
                                 number
                             }}</option>
@@ -39,13 +27,8 @@
                     </div>
                     <div class="form-group col-sm">
                         <label for="birthdayAgeToBe">Alter des Geburtstagskindes?</label>
-                        <select
-                            class="form-control"
-                            name="ageToBe"
-                            id="birthdayAgeToBe"
-                            [(ngModel)]="event.ageToBe"
-                            requried
-                        >
+                        <select class="form-control" name="ageToBe" id="birthdayAgeToBe" [(ngModel)]="event.ageToBe"
+                            requried>
                             <option *ngFor="let number of ageListb" [value]="number">{{
                                 number
                             }}</option>
@@ -55,90 +38,43 @@
                 <div class="row align-items-center" id="preCustomerRow">
                     <div class="form-group col-md-6">
                         <label for="birthdayRoom">Welches Zimmer wollen Sie verwenden?</label>
-                        <select
-                            class="form-control"
-                            name="room"
-                            id="birthdayRoom"
-                            [(ngModel)]="room.room"
-                            required
-                        >
+                        <select class="form-control" name="room" id="birthdayRoom" [(ngModel)]="room.room" required>
                             <option value="GroundFloor">Erdgeschoss</option>
                             <option value="Orange">Orangene Raum</option>
                         </select>
                     </div>
                     <div class="form-group col-md-3">
                         <label>Feier findet statt am:</label>
-                        <input
-                            [readonly]="true"
-                            class="form-control"
-                            id="startDateTime"
-                            placeholder="YYYY-MM-DD"
-                            ngbDatepicker
-                            (click)="varname.toggle()"
-                            #varname="ngbDatepicker"
-                            [(ngModel)]="startDate"
-                            name="startDate"
-                        />
+                        <input [readonly]="true" class="form-control" id="startDateTime" placeholder="YYYY-MM-DD"
+                            ngbDatepicker (click)="varname.toggle()" #varname="ngbDatepicker" [(ngModel)]="startDate"
+                            name="startDate" />
                     </div>
                     <div class="col-md-3" id="startTimeBox">
-                        <ngb-timepicker
-                            readonlyInputs="true"
-                            id="startTime"
-                            [minuteStep]="15"
-                            [(ngModel)]="startTime"
-                            name="startTime"
-                        ></ngb-timepicker>
+                        <ngb-timepicker readonlyInputs="true" id="startTime" [minuteStep]="15" [(ngModel)]="startTime"
+                            name="startTime"></ngb-timepicker>
                     </div>
                 </div>
                 <h2>Kundendaten</h2>
                 <hr />
                 <div class="form-group">
                     <label for="customerFirstName">Vorname</label>
-                    <input
-                        type="text"
-                        class="form-control"
-                        id="customerFirstName"
-                        name="firstName"
-                        placeholder="Marie"
-                        required
-                        [(ngModel)]="customer.firstName"
-                    />
+                    <input type="text" class="form-control" id="customerFirstName" name="firstName" placeholder="Marie"
+                        required [(ngModel)]="customer.firstName" />
                 </div>
                 <div class="form-group">
                     <label for="customerLastName">Nachname</label>
-                    <input
-                        type="text"
-                        class="form-control"
-                        id="customerLastName"
-                        name="LastName"
-                        placeholder="Steiner"
-                        required
-                        [(ngModel)]="customer.lastName"
-                    />
+                    <input type="text" class="form-control" id="customerLastName" name="LastName" placeholder="Steiner"
+                        required [(ngModel)]="customer.lastName" />
                 </div>
                 <div class="form-group">
                     <label for="customerEmail">Email</label>
-                    <input
-                        type="email"
-                        class="form-control"
-                        name="email"
-                        id="customerEmail"
-                        placeholder="marie.steiner@dorf.at"
-                        [(ngModel)]="customer.email"
-                        required
-                    />
+                    <input type="email" class="form-control" name="email" id="customerEmail"
+                        placeholder="marie.steiner@dorf.at" [(ngModel)]="customer.email" required />
                 </div>
                 <div class="form-group">
                     <label for="customerPhone">Telefonnummer</label>
-                    <input
-                        type="tel"
-                        class="form-control"
-                        name="telephoneNumber"
-                        id="customerPhone"
-                        placeholder="(0123) 456 78 90"
-                        [(ngModel)]="customer.phone"
-                        required
-                    />
+                    <input type="tel" class="form-control" name="telephoneNumber" id="customerPhone"
+                        placeholder="(0123) 456 78 90" [(ngModel)]="customer.phone" required />
                 </div>
 
                 <div class="row mb-4">
@@ -146,42 +82,31 @@
                         <app-recaptcha></app-recaptcha>
                     </div>
 
-                    <div
-                        class="col-md mt-4 alert alert-success d-flex flex-column align-items-center justify-content-center"
-                        *ngIf="successMsg"
-                    >
+                    <div class="col-md mt-4 alert alert-success d-flex flex-column align-items-center justify-content-center"
+                        *ngIf="successMsg">
                         <span>{{ successMsg }}</span>
                     </div>
 
-                    <div
-                        class="col-md mt-4 mb-0 alert alert-danger d-flex flex-column align-items-center justify-content-center"
-                        *ngIf="errorMsg"
-                    >
+                    <div class="col-md mt-4 mb-0 alert alert-danger d-flex flex-column align-items-center justify-content-center"
+                        *ngIf="errorMsg">
                         <span>{{ errorMsg }}</span>
                     </div>
                 </div>
 
                 <div class="row justify-content-end">
+                    <div class="mr-2">
+                        <h3>Preis: {{ displayPrice() }}€</h3>
+                    </div>
                     <button class="btn btn-light mr-2" (click)="goBack()" *ngIf="!auth.isLoggedIn">
                         Abbrechen
                     </button>
-                    <input
-                        type="submit"
-                        class="btn btn-primary"
-                        [disabled]="!isComplete()"
-                        id="birthdaySave"
-                        value="Geburtstag eintragen"
-                        (click)="postBirthday(birthdayForm)"
-                        *ngIf="!loading"
-                    />
+                    <input type="submit" class="btn btn-primary" [disabled]="!isComplete()" id="birthdaySave"
+                        value="Geburtstag eintragen" (click)="postBirthday(birthdayForm)" *ngIf="!loading" />
                     <button class="btn btn-primary" type="button" *ngIf="loading" disabled>
-                        <span
-                            class="spinner-border spinner-border-sm"
-                            role="status"
-                            aria-hidden="true"
-                        ></span>
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                         Loading...
                     </button>
+
                 </div>
             </form>
         </div>

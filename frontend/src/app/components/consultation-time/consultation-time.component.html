@@ -1,0 +1,203 @@
+<h1 class="row justify-content-center">{{ title }}</h1>
+<hr />
+
+<h3 class="row justify-content-center"> Beratungs Zeit hinzufügen </h3>
+<hr />
+
+<div class="row">
+    <div class="col-lg-3"></div>
+    <div class="col-lg-6">
+        <form class="container-fluid" novalidate (ngSubmit)="postConsultationTime(consultationTime)"
+            (change)="clearInfoMsg()" #consultationTimeForm>
+            <div class="row">
+                <div class="form-group col-lg-12">
+                    <label for="name">Titel der Beratungszeit</label>
+                    <input type="text" class="form-control" [(ngModel)]="consultationTimeName"
+                        name="consultationTimename" id="consultationTimename" placeholder="Name/Titel der Beratungszeit"
+                        required />
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-lg-12">
+                    <label for="consultationTimeDescription">Beschreibung</label>
+                    <textarea type="text" class="form-control" rows="4" name="descriptionTextarea"
+                        [(ngModel)]="consultationTimeDescription" id="consultationTimeDescription" ng-trim="false"
+                        maxlength="1024" placeholder="Beschreibung/Detaillinformation"></textarea>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-6" id="d6p1">
+                    <label for="startdate" id="labelvon">Von</label>
+                    <div class="input-group">
+                        <input class="form-control" id="startdate" ngbDatepicker #dstart="ngbDatepicker"
+                            (click)="dstart.toggle()" placeholder="YYYY-MM-DD" name="consultationTimeStartDate"
+                            [(ngModel)]="startDate" required readonly />
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="input-group">
+                        <ngb-timepicker id="starttime" class="time" [minuteStep]="15" readonlyInputs="true"
+                            name="consultationTimeStartTime" [(ngModel)]="startTime">
+                        </ngb-timepicker>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6" id="d6p2">
+                    <label for="enddate" id="labelbis">Bis</label>
+                    <div class="input-group">
+                        <input class="form-control" id="enddate" ngbDatepicker #dend="ngbDatepicker"
+                            (click)="dend.toggle()" placeholder="YYYY-MM-DD" name="consultationTimeEndStart"
+                            [(ngModel)]="endDate" required readonly />
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="input-group">
+                        <ngb-timepicker name="endtimepicker" class="time" id="endtime" [minuteStep]="15"
+                            readonlyInputs="true" name="consultationTimeEndTime" [(ngModel)]="endTime">
+                        </ngb-timepicker>
+                    </div>
+                </div>
+            </div>
+
+            <br />
+
+            <div class="row">
+                <div class="col-lg">
+                    <div class="custom-control custom-switch">
+                        <input name="toggler" type="checkbox" class="custom-control-input" id="options"
+                            [(ngModel)]="toggleOptions" (input)="togg()" />
+                        <label class="custom-control-label" for="options">Wiederkehrende Beratungszeit</label>
+                    </div>
+                </div>
+            </div>
+            <br />
+
+            <div *ngIf="toggleOptions">
+                <div class="row align-items-end">
+                    <div class="col-6">
+                        <label for="repeatAt">Wiederhohlen</label>
+                        <select class="browser-default custom-select" id="repeatAt" name="repeatAt"
+                            [(ngModel)]="selectedRepeatOption">
+                            <option *ngFor="let option of repeatOptions" [value]="option.label">
+                                {{ option.label }}
+                            </option>
+                        </select>
+                    </div>
+                    <p class="mb-2 col-auto" *ngIf="selectedRepeatOption !== ''">
+                        Alle
+                    </p>
+                    <input class="form-control col-2" type="number" name="repeatAfterX" id="repeatAfterX"
+                        [(ngModel)]="alleX" *ngIf="selectedRepeatOption !== ''" />
+                    <p class="mb-2 col-auto" *ngIf="selectedRepeatOption !== ''">
+                        {{ selectedRepeatOption }}
+                    </p>
+                </div>
+                <br />
+                <div class="row align-items-center" *ngIf="selectedRepeatOption !== ''"></div>
+                <br />
+
+                <div class="row align-items-center" *ngIf="selectedRepeatOption !== ''">
+                    <p class="col-auto px-1 mb-0">
+                        Ended
+                    </p>
+
+                    <div class="col-3">
+                        <select class="browser-default custom-select" id="stopAfter" name="stopAfter"
+                            [(ngModel)]="terminateModul">
+                            <option *ngFor="let option of terminateAfterOption">
+                                {{ option }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-3" *ngIf="isTerminate()">
+                        <input class="form-control" type="number" name="termAfter" id="termAfter"
+                            [(ngModel)]="endedX" />
+                    </div>
+
+                    <p class="col-auto px-1 mb-0" *ngIf="isTerminate()">
+                        Wiederholungen
+                    </p>
+                </div>
+            </div>
+            <br />
+
+            <div class="row" *ngIf="errorMsg">
+                <div class="col-sm-12">
+                    <p class="alert alert-danger">
+                        {{ errorMsg }}
+                    </p>
+                </div>
+            </div>
+            <div class="row" *ngIf="successMsg">
+                <div class="col-sm-12">
+                    <p class="alert alert-success">
+                        {{ successMsg }}
+                    </p>
+                </div>
+            </div>
+            <div class="row justify-content-end" style="padding:0 15px" id="submit">
+                <div class="col-lg-6"></div>
+                <button [disabled]="!isCompleted()" class="btn btn-primary" type="submit" style="margin-left:15px;">
+                    Beratungszeit eintragen
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="col-lg-3"></div>
+</div>
+
+<hr />
+<h3 class="row justify-content-center">Beratungspreis Anpassen</h3>
+<hr />
+
+<div class="row">
+    <div class="col-lg-3"></div>
+    <div class="col-lg-6">
+        <form class="container-fluid" novalidate (ngSubmit)="updatePrice()" (change)="clearInfoMsg()" #changePriceForm>
+            <div class="row">
+                <div class="col-lg-6">
+                    <h5>Jetzt verlangen Sie:</h5>
+                </div>
+                <div class="col-lg-6">
+                    <h5> {{ currentPrice }}</h5>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-lg-6">
+                    <label>Preis pro Stunde eintragen:</label>
+                </div>
+                <div class="col-lg-6">
+                    <input type="number" class="form-control" [(ngModel)]="consultationPrice" name="consultationPrice"
+                        id="consultationPrice" placeholder="preis" required />
+                </div>
+            </div>
+            <br />
+            <div class="row" *ngIf="errorMsg2">
+                <div class="col-sm-12">
+                    <p class="alert alert-danger">
+                        {{ errorMsg2 }}
+                    </p>
+                </div>
+            </div>
+            <div class="row" *ngIf="successMsg2">
+                <div class="col-sm-12">
+                    <p class="alert alert-success">
+                        {{ successMsg2 }}
+                    </p>
+                </div>
+            </div>
+            <div class="row justify-content-end" style="padding:0 15px" id="submit">
+                <div class="col-lg-6"></div>
+                <button [disabled]="!isCompletedPrice()" class="btn btn-primary" type="submit"
+                    style="margin-left:15px;">
+                    Beratungspreis Eintragen
+                </button>
+            </div>
+        </form>
+    </div>
+    <div class="col-lg-3"></div>
+</div>

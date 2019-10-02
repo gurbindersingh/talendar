@@ -21,12 +21,15 @@ public class TrainerDto {
     private List<String> birthdayTypes;
     @JsonIgnoreProperties({ "hibernateLazyInitializer", "trainer" })
     private List<HolidayDto> holidays;
+    @JsonIgnoreProperties({ "hibernateLazyInitializer", "trainer" })
+    private List<ConsultingTimeDto> consultingTimes;
     // a path to the place where this picture is stored on this server
     private String picture;
     private LocalDateTime created;
     private LocalDateTime updated;
     private String password;
     private Boolean deleted;
+    private Double consultationPrice;
 
 
     public TrainerDto() {
@@ -43,10 +46,12 @@ public class TrainerDto {
                        List<EventDto> events,
                        List<String> birthdayTypes,
                        List<HolidayDto> holidays,
+                       List<ConsultingTimeDto> consultingTimes,
                        String picture,
                        String password,
                        LocalDateTime created,
-                       LocalDateTime updated
+                       LocalDateTime updated,
+                       Double consultationPrice
     ) {
         this.id = id;
         this.firstName = firstName;
@@ -57,11 +62,13 @@ public class TrainerDto {
         this.events = events;
         this.birthdayTypes = birthdayTypes;
         this.holidays = holidays;
+        this.consultingTimes = consultingTimes;
         this.picture = picture;
         this.password = password;
         this.created = created;
         this.updated = updated;
         this.deleted = false;
+        this.consultationPrice = consultationPrice;
     }
 
 
@@ -205,6 +212,28 @@ public class TrainerDto {
     }
 
 
+    public List<ConsultingTimeDto> getConsultingTimes() {
+        return consultingTimes;
+    }
+
+
+    public void setConsultingTimes(
+        List<ConsultingTimeDto> consultingTimes
+    ) {
+        this.consultingTimes = consultingTimes;
+    }
+
+
+    public Double getConsultationPrice() {
+        return consultationPrice;
+    }
+
+
+    public void setConsultationPrice(Double consultationPrice) {
+        this.consultationPrice = consultationPrice;
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if(this == o) return true;
@@ -219,6 +248,7 @@ public class TrainerDto {
                Objects.equals(events, that.events) &&
                Objects.equals(birthdayTypes, that.birthdayTypes) &&
                Objects.equals(holidays, that.holidays) &&
+               Objects.equals(consultingTimes, that.consultingTimes) &&
                Objects.equals(picture, that.picture) &&
                Objects.equals(password, that.password) &&
                Objects.equals(created, that.created) &&
@@ -238,6 +268,7 @@ public class TrainerDto {
                             events,
                             birthdayTypes,
                             holidays,
+                            consultingTimes,
                             picture,
                             password,
                             created,
@@ -259,6 +290,7 @@ public class TrainerDto {
                ", events=" + events +
                ", birthdayTypes=" + birthdayTypes +
                ", holidays=" + holidays +
+               ", consultingTimes" + consultingTimes +
                ", picture=" + picture +
                // currently password is not displayed!
                ", created=" + created +

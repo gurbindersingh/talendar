@@ -44,7 +44,7 @@ public interface IHolidayService {
      * @throws ServiceException  will be thrown if any error occurs during data processing that leads to an unsuccessful operation
      * @throws NotFoundException will be thrown if no holidays could be found.
      */
-    LinkedList<Holiday> getAllHolidays(Long id) throws ServiceException,
+    LinkedList<Holiday> getAllHolidays() throws ServiceException,
                                                        NotFoundException;
 
     /**
@@ -73,4 +73,6 @@ public interface IHolidayService {
     LinkedList<Holiday> cronExpressionToHolidaysList(HolidaysDto holidaysDto) throws
                                                                               ServiceException,
                                                                               ValidationException;
+
+    void deleteBzGroupId(Long groupId);
 }

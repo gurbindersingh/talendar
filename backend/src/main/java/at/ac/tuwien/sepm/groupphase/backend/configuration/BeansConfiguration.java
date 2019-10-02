@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.configuration;
 
+import at.ac.tuwien.sepm.groupphase.backend.Entity.BirthdayType;
 import at.ac.tuwien.sepm.groupphase.backend.util.mapper.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -56,6 +57,18 @@ public class BeansConfiguration {
         return tagMapper;
     }
 
+    @Bean
+    public ConsultingTimeMapper createConsultingTimeMapper() {
+        ConsultingTimeMapper consultingTimeMapper = ConsultingTimeMapper.INSTANCE;
+        return consultingTimeMapper;
+    }
+
+    @Bean
+    public BirthdayTypeMapper createBirthdayTypeMapper(){
+        BirthdayTypeMapper birthdayTypeMapper = BirthdayTypeMapper.INSTANCE;
+        return birthdayTypeMapper;
+    }
+    
     /***
      *  Encoder used for spring security related process'
      */

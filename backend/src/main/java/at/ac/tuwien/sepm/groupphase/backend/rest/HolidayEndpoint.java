@@ -75,12 +75,12 @@ public class HolidayEndpoint {
     }
 
 
-    @GetMapping(value = "/all/{id}")
-    public LinkedList<HolidayDto> getAllHolidays(@PathVariable("id") Long id) throws BackendException {
-        LOGGER.info("Incoming Request To Retrieve List Of All Trainers");
+    @RequestMapping(method = RequestMethod.GET)
+    public LinkedList<HolidayDto> getAllHolidays() throws BackendException {
+        LOGGER.info("Incoming Request To Retrieve List Of All Holidays");
 
         try {
-            return mapper.entityListToHolidayDtoList(holidayService.getAllHolidays(id));
+            return mapper.entityListToHolidayDtoList(holidayService.getAllHolidays());
         }
         catch(ServiceException e) {
             LOGGER.error("GET Request unsuccessful: " + e.getMessage(), e);
@@ -89,6 +89,16 @@ public class HolidayEndpoint {
         catch(NotFoundException e) {
             LOGGER.error("Couldnt find any holidays" + e.getMessage());
             throw new BackendException("Es konnten keine Urlaube gefunden werden!", e);
+        }
+    }
+
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{groupId}")
+    public void deleteByGroupId(@PathVariable("groupId") Long groupId) throws BackendException{
+        try{
+            holidayService.deleteBzGroupId(groupId);
+        }catch(Exception e){
+            LOGGER.error("DELETE Request unsecsessful");
+            throw new BackendException("Diese gruppe konnte niche gelöscht werden", e);
         }
     }
 

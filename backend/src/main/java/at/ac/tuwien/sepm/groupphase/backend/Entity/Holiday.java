@@ -12,6 +12,8 @@ public class Holiday {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long groupId;
+
     @NotNull
     @ManyToOne
     private Trainer trainer;
@@ -31,12 +33,23 @@ public class Holiday {
     public Holiday(){}
 
 
-    public Holiday (@NotNull Trainer trainer, @NotNull String title, String description, @NotNull LocalDateTime holidayStart, @NotNull LocalDateTime holidayEnd) {
+    public Holiday (@NotNull Trainer trainer, @NotNull String title, String description, @NotNull LocalDateTime holidayStart, @NotNull LocalDateTime holidayEnd, Long groupID) {
         this.trainer = trainer;
         this.title = title;
         this.description = description;
         this.holidayStart = holidayStart;
         this.holidayEnd = holidayEnd;
+        this.groupId = groupID;
+    }
+
+
+    public Long getGroupID() {
+        return groupId;
+    }
+
+
+    public void setGroupID(Long groupID) {
+        this.groupId = groupID;
     }
 
 
@@ -131,6 +144,7 @@ public class Holiday {
                ", description='" + description + '\'' +
                ", holidayStart=" + holidayStart +
                ", holidayEnd=" + holidayEnd +
+               ", groupId=" + groupId +
                '}';
     }
 }
