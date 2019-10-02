@@ -37,7 +37,7 @@
                 </div>
                 <div class="col-lg-4">
                     <div class="input-group">
-                        <ngb-timepicker id="starttime" [minuteStep]="15" readonlyInputs="true"
+                        <ngb-timepicker id="starttime" class="time" [minuteStep]="15" readonlyInputs="true"
                             name="consultationTimeStartTime" [(ngModel)]="startTime">
                         </ngb-timepicker>
                     </div>
@@ -54,8 +54,8 @@
                 </div>
                 <div class="col-lg-4">
                     <div class="input-group">
-                        <ngb-timepicker name="endtimepicker" id="endtime" [minuteStep]="15" readonlyInputs="true"
-                            name="consultationTimeEndTime" [(ngModel)]="endTime">
+                        <ngb-timepicker name="endtimepicker" class="time" id="endtime" [minuteStep]="15"
+                            readonlyInputs="true" name="consultationTimeEndTime" [(ngModel)]="endTime">
                         </ngb-timepicker>
                     </div>
                 </div>

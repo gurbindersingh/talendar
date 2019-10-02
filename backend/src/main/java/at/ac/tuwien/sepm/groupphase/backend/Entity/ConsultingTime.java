@@ -28,15 +28,28 @@ public class ConsultingTime {
     @Future
     private LocalDateTime consultingTimeEnd;
 
+    private Long groupId;
+
     public ConsultingTime(){}
 
 
-    public ConsultingTime(@NotNull Trainer trainer, @NotNull String title, String description, @NotNull LocalDateTime consultingTimeStart, @NotNull LocalDateTime consultingTimeEnd) {
+    public ConsultingTime(@NotNull Trainer trainer, @NotNull String title, String description, @NotNull LocalDateTime consultingTimeStart, @NotNull LocalDateTime consultingTimeEnd, Long groupId) {
         this.trainer = trainer;
         this.title = title;
         this.description = description;
         this.consultingTimeStart = consultingTimeStart;
         this.consultingTimeEnd = consultingTimeEnd;
+        this.groupId = groupId;
+    }
+
+
+    public Long getGroupId() {
+        return groupId;
+    }
+
+
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
     }
 
 

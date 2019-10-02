@@ -55,7 +55,7 @@ public class Trainer extends User {
                    List<Holiday> holidays,
                    List<ConsultingTime> consultingTimes,
                    String picture,
-                   double consultationPrice,
+                   Double consultationPrice,
                    @NotNull List<String> birthdayTypes,
                    @NotNull @Past LocalDateTime created,
                    @NotNull @Past LocalDateTime updated
@@ -70,12 +70,12 @@ public class Trainer extends User {
         this.consultationPrice = consultationPrice;
     }
 
-    public double getConultationPrice() {
+    public Double getConsultationPrice() {
         return consultationPrice;
     }
 
 
-    public void setConultationPrice(double consultationPrice) {
+    public void setConsultationPrice(Double consultationPrice) {
         this.consultationPrice = consultationPrice;
     }
 
@@ -149,7 +149,6 @@ public class Trainer extends User {
     ) {
         this.consultingTimes = consultingTimes;
     }
-
 
     @Override
     public boolean equals(Object o) {

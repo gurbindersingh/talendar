@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -77,6 +78,7 @@ public class ConsultingTimeService implements IConsultingTimeService {
 
         try {
             validate.validateConsultingTime(consultingTime);
+            consultingTime.setGroupId(Instant.now().toEpochMilli());
             if(!this.trainerRepository.existsById(consultingTime.getTrainer().getId())){
                 InvalidEntityException e = new InvalidEntityException("Trainer existiert nicht!");
                 LOGGER.error("attempt to save consultingTime with trainer that doesnt exist");
@@ -96,6 +98,10 @@ public class ConsultingTimeService implements IConsultingTimeService {
         }
     }
 
+    @Override
+    public void deleteByGroupId(Long id){
+        consultingTimeRepository.deleteByGroupId(id);
+    }
     @Override
     public LinkedList<ConsultingTime> saveConsultingTimes(
         ConsultingTimesDto consultingTimesDto) throws ServiceException, ValidationException {
@@ -252,9 +258,10 @@ public class ConsultingTimeService implements IConsultingTimeService {
 
             //Create ConsultingTimeList out of Start and End lists + trainerId
             LOGGER.info("Trainerid is: " + consultingTimesDto.getTrainerid());
+            Instant now = Instant.now();
             for(int i = 0; i < startLocalDateTimes.size(); i++){
                 ConsultingTime c = new ConsultingTime(trainer, consultingTimesDto.getTitle(), consultingTimesDto.getDescription(),
-                                        startLocalDateTimes.get(i), endLocalDateTimes.get(i));
+                                        startLocalDateTimes.get(i), endLocalDateTimes.get(i), now.toEpochMilli() );
                 resultList.add(c);
             }
 

@@ -11,12 +11,13 @@ public class ConsultingTimeDto {
 
 
     private Long id;
-    @JsonIgnoreProperties({"hibernateLazyInitializer", "consultingTimes", "events"})
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "consultingTimes", "events", "holidays"})
     private Trainer trainer;
     private String title;
     private String description;
     private LocalDateTime consultingTimeStart;
     private LocalDateTime consultingTimeEnd;
+    private Long groupId;
 
     public ConsultingTimeDto() {
 
@@ -25,7 +26,7 @@ public class ConsultingTimeDto {
 
     public ConsultingTimeDto(Long id, Trainer trainer, String title, String description,
                              LocalDateTime consultingTimeStart,
-                             LocalDateTime consultingTimeEnd
+                             LocalDateTime consultingTimeEnd, Long groupId
     ) {
         this.id = id;
         this.trainer = trainer;
@@ -33,13 +34,21 @@ public class ConsultingTimeDto {
         this.description = description;
         this.consultingTimeStart = consultingTimeStart;
         this.consultingTimeEnd = consultingTimeEnd;
+        this.groupId = groupId;
     }
 
+
+    public Long getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
+    }
 
     public Long getId() {
         return id;
     }
-
 
     public void setId(Long id) {
         this.id = id;

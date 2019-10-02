@@ -51,7 +51,7 @@ public class TrainerDto {
                        String password,
                        LocalDateTime created,
                        LocalDateTime updated,
-                       double consultationPrice
+                       Double consultationPrice
     ) {
         this.id = id;
         this.firstName = firstName;
@@ -221,6 +221,16 @@ public class TrainerDto {
         List<ConsultingTimeDto> consultingTimes
     ) {
         this.consultingTimes = consultingTimes;
+    }
+
+
+    public Double getConsultationPrice() {
+        return consultationPrice;
+    }
+
+
+    public void setConsultationPrice(Double consultationPrice) {
+        this.consultationPrice = consultationPrice;
     }
 
 

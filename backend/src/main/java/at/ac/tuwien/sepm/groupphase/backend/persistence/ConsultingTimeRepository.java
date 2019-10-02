@@ -11,4 +11,5 @@ public interface ConsultingTimeRepository extends JpaRepository<ConsultingTime, 
 
     List<ConsultingTime> findByTrainer_Id(Long id);
     List<ConsultingTime> findAll();
+    void deleteByGroupId(Long groupId);
 }

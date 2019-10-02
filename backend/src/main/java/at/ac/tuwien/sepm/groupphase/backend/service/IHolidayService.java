@@ -73,4 +73,6 @@ public interface IHolidayService {
     LinkedList<Holiday> cronExpressionToHolidaysList(HolidaysDto holidaysDto) throws
                                                                               ServiceException,
                                                                               ValidationException;
+
+    void deleteBzGroupId(Long groupId);
 }

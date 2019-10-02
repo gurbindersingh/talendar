@@ -92,4 +92,14 @@ public class HolidayEndpoint {
         }
     }
 
+    @RequestMapping(method = RequestMethod.DELETE, value = "/{groupId}")
+    public void deleteByGroupId(@PathVariable("groupId") Long groupId) throws BackendException{
+        try{
+            holidayService.deleteBzGroupId(groupId);
+        }catch(Exception e){
+            LOGGER.error("DELETE Request unsecsessful");
+            throw new BackendException("Diese gruppe konnte niche gelöscht werden", e);
+        }
+    }
+
 }

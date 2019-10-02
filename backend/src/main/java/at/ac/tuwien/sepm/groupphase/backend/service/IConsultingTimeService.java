@@ -62,4 +62,7 @@ public interface IConsultingTimeService {    /**
      */
     LinkedList<ConsultingTime> cronExpressionToConsultingTimesList(ConsultingTimesDto consultingTimesDto) throws ServiceException, ValidationException;
 
+    void deleteByGroupId(Long id);
+
+
 }

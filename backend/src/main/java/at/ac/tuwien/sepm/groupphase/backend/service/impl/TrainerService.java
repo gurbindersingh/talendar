@@ -77,7 +77,7 @@ public class TrainerService implements ITrainerService {
         }
 
         trainer.setPassword(passwordEncoder.encode(trainer.getPassword()));
-        trainer.setConultationPrice(0);
+        trainer.setConsultationPrice(0.0);
         try {
             trainer = trainerRepository.save(trainer);
             try {
