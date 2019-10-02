@@ -42,7 +42,6 @@ import { TrainerGuard } from './guards/trainer-guard';
 import { AuthenticatedGuard } from './guards/authenticated-guard';
 import { InfoClient } from './rest/info-client';
 import { ImageClient } from './rest/image-client';
-import { SafeServerImagePipe } from './pipes/safe-server-image-pipe';
 import { CreateBirthdayTypeComponent } from './components/create-birthday-type/create-birthday-type.component';
 import { BirthdayClient } from './rest/birthday-client';
 import { BirthdayTypeViewComponent } from './components/birthday-type-view/birthday-type-view.component';

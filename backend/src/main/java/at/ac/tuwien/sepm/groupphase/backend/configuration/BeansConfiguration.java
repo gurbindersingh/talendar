@@ -61,6 +61,9 @@ public class BeansConfiguration {
     public ConsultingTimeMapper createConsultingTimeMapper() {
         ConsultingTimeMapper consultingTimeMapper = ConsultingTimeMapper.INSTANCE;
         return consultingTimeMapper;
+    }
+
+    @Bean
     public BirthdayTypeMapper createBirthdayTypeMapper(){
         BirthdayTypeMapper birthdayTypeMapper = BirthdayTypeMapper.INSTANCE;
         return birthdayTypeMapper;

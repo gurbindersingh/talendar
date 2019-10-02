@@ -59,7 +59,7 @@ public class EventService implements IEventService {
     public EventService(EventRepository eventRepository, Validator validator,
                         RoomUseRepository roomUseRepository, TrainerRepository trainerRepository,
                         HolidayRepository holidayRepository, InfoMail infoMail,
-                        IBirthdayTypeService birthdayTypeService
+                        IBirthdayTypeService birthdayTypeService,
                         ConsultingTimeService consultingTimeService
     ) {
         this.eventRepository = eventRepository;
