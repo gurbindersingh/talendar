@@ -10,6 +10,7 @@ import at.ac.tuwien.sepm.groupphase.backend.persistence.EventRepository;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.HolidayRepository;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.RoomUseRepository;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
+import at.ac.tuwien.sepm.groupphase.backend.service.IBirthdayTypeService;
 import at.ac.tuwien.sepm.groupphase.backend.service.IConsultingTimeService;
 import at.ac.tuwien.sepm.groupphase.backend.service.IEventService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.CancelationException;
@@ -51,11 +52,14 @@ public class EventService implements IEventService {
     private final HolidayRepository holidayRepository;
     private final InfoMail infoMail;
     private final IConsultingTimeService consultingTimeService;
+    private final IBirthdayTypeService birthdayTypeService;
+
 
     @Autowired
     public EventService(EventRepository eventRepository, Validator validator,
                         RoomUseRepository roomUseRepository, TrainerRepository trainerRepository,
                         HolidayRepository holidayRepository, InfoMail infoMail,
+                        IBirthdayTypeService birthdayTypeService
                         ConsultingTimeService consultingTimeService
     ) {
         this.eventRepository = eventRepository;
@@ -65,6 +69,7 @@ public class EventService implements IEventService {
         this.holidayRepository = holidayRepository;
         this.infoMail = infoMail;
         this.consultingTimeService = consultingTimeService;
+        this.birthdayTypeService = birthdayTypeService;
     }
 
 
@@ -99,15 +104,12 @@ public class EventService implements IEventService {
             case Birthday:
                 try {
                     validator.validateEvent(event);
-
-
+                    event.setPrice(birthdayTypeService.getPrice(event.getBirthdayType()));
                     event = synchRoomUses(event);
                     event = synchCustomers(event);
                     event.setTrainer(
                         findTrainerForBirthday(event.getRoomUses(), event.getBirthdayType()));
                     validator.validateTrainer(event.getTrainer());
-
-
                     try {
                         isAvailable(event.getRoomUses());
                     }

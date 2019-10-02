@@ -1,11 +1,14 @@
 package at.ac.tuwien.sepm.groupphase.backend.service.impl;
 
+import at.ac.tuwien.sepm.groupphase.backend.Entity.BirthdayType;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Event;
 import at.ac.tuwien.sepm.groupphase.backend.Entity.Trainer;
 import at.ac.tuwien.sepm.groupphase.backend.configuration.properties.StorageProperties;
 import at.ac.tuwien.sepm.groupphase.backend.configuration.properties.UserAccountConfigurationProperties;
 import at.ac.tuwien.sepm.groupphase.backend.exceptions.NotFoundException;
+import at.ac.tuwien.sepm.groupphase.backend.persistence.BirthdayTypeRepository;
 import at.ac.tuwien.sepm.groupphase.backend.persistence.TrainerRepository;
+import at.ac.tuwien.sepm.groupphase.backend.service.IBirthdayTypeService;
 import at.ac.tuwien.sepm.groupphase.backend.service.ITrainerService;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.EmailException;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.FileDeletionException;
@@ -42,13 +45,17 @@ public class TrainerService implements ITrainerService {
     private final PasswordEncoder passwordEncoder;
     private final UserAccountConfigurationProperties userAccountConfigurationProperties;
     private final StorageProperties storageProperties;
+    private final IBirthdayTypeService birthdayTypeService;
+
 
 
     @Autowired
     public TrainerService(TrainerRepository trainerRepository, Validator validator,
                           EventService eventService, ImageService imageService, InfoMail infoMail, PasswordEncoder passwordEncoder,
-                          UserAccountConfigurationProperties userAccountConfigurationProperties, StorageProperties storageProperties
+                          UserAccountConfigurationProperties userAccountConfigurationProperties, StorageProperties storageProperties,
+                          IBirthdayTypeService birthdayTypeService
     ) {
+        this.birthdayTypeService = birthdayTypeService;
         this.trainerRepository = trainerRepository;
         this.eventService = eventService;
         this.imageService = imageService;
@@ -59,7 +66,6 @@ public class TrainerService implements ITrainerService {
         this.storageProperties = storageProperties;
     }
 
-
     @Transactional
     @Override
     public Trainer save(Trainer trainer) throws ServiceException, ValidationException {
@@ -68,9 +74,11 @@ public class TrainerService implements ITrainerService {
 
         trainer.setCreated(timeOfCreation);
         trainer.setUpdated(timeOfCreation);
-
         try {
             validator.validateTrainer(trainer);
+            for(String birthdayType: trainer.getBirthdayTypes()){
+                birthdayTypeService.checkExists(birthdayType);
+            }
         }
         catch(InvalidEntityException e) {
             throw new ValidationException(e.getMessage(), e);
@@ -110,6 +118,9 @@ public class TrainerService implements ITrainerService {
 
         try {
             validator.validateTrainer(trainer);
+            for(String birthdayType: trainer.getBirthdayTypes()){
+                birthdayTypeService.checkExists(birthdayType);
+            }
         }
         catch(InvalidEntityException e) {
             throw new ValidationException(e.getMessage(), e);

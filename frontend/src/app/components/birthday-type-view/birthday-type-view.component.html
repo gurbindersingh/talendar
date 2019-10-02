@@ -1,0 +1,42 @@
+<header id="pageHeader">
+  <h1 class="row justify-content-center">{{ title }} <button type="button" class="btn"
+      [routerLink]="['/birthdayType/create']" ngbTooltip="Neuen Geburtstag Erstellen" placement="right">
+      <i class="fas fa-plus-square fa-3x button-icon"></i>
+    </button></h1>
+  <hr />
+</header>
+
+<div *ngIf="birthdayTypes.length == 0">
+  <div class="row">
+    <div class="col-lg-12">
+      <p class="alert alert-info">
+        Aktuell sind noch keine Geburtstage vorhanden!
+      </p>
+
+    </div>
+  </div>
+</div>
+
+<div class="d-flex flex-wrap">
+  <table width="100%">
+    <thead>
+      <tr>
+        <th scope="col">Geburtstagsname</th>
+        <th scope="col">Preis</th>
+        <th scope="col">Funktionen</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let birthday of birthdayTypes">
+        <td> {{ birthday.name }}</td>
+        <td> {{ birthday.price }}</td>
+        <td>
+          <button type="button" class="btn btn-danger" (click)="delete(birthday)" ngbTooltip="Löschen"
+            placement="right">
+            <i class="fas fa-trash button-icon"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

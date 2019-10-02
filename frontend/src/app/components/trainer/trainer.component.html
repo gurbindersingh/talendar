@@ -68,38 +68,24 @@
 
                 <div class="form-row">
                     <div class="col-lg-6">
-                        <div
-                            class="custom-control custom-checkbox"
-                            *ngFor="let option of birthdayOptionsColumn1"
-                            (click)="option.selected = !option.selected"
-                        >
-                            <input
-                                class="custom-control-input"
-                                type="checkbox"
-                                [name]="option"
-                                [(ngModel)]="option.selected"
-                                [ngModelOptions]="{ standalone: true }"
-                                value="{{ option.value }}"
-                            />
+                        <div class="custom-control custom-checkbox"
+                            *ngFor="let option of allBirthdayOptions | slice:0:halfArray"
+                            (click)="option.selected = !option.selected">
+                            <input class="custom-control-input" type="checkbox" [name]="option"
+                                [(ngModel)]="option.selected" [ngModelOptions]="{ standalone: true }"
+                                value="{{ option.value }}" />
                             <label class="custom-control-label" for="option">
                                 {{ option.label }} Geburtstag
                             </label>
                         </div>
                     </div>
                     <div class="col-lg-6">
-                        <div
-                            class="custom-control custom-checkbox"
-                            *ngFor="let option of birthdayOptionsColumn2"
-                            (click)="option.selected = !option.selected"
-                        >
-                            <input
-                                class="custom-control-input"
-                                type="checkbox"
-                                [name]="option"
-                                [(ngModel)]="option.selected"
-                                [ngModelOptions]="{ standalone: true }"
-                                value="{{ option.value }}"
-                            />
+                        <div class="custom-control custom-checkbox"
+                            *ngFor="let option of allBirthdayOptions | slice:halfArray"
+                            (click)="option.selected = !option.selected">
+                            <input class="custom-control-input" type="checkbox" [name]="option"
+                                [(ngModel)]="option.selected" [ngModelOptions]="{ standalone: true }"
+                                value="{{ option.value }}" />
                             <label class="custom-control-label" for="option">
                                 {{ option.label }} Geburtstag
                             </label>

@@ -67,6 +67,11 @@ export class NavigationComponent implements OnInit {
             path: 'course/view',
             restriction: Authorities.TRAINER,
         },
+        {
+            name: 'Geburtstagstypen anzeigen',
+            path: 'birthdayType/view',
+            restriction: Authorities.ADMIN,
+        },
     ];
 
     loginLink = {
@@ -95,7 +100,7 @@ export class NavigationComponent implements OnInit {
         public authenticationService: AuthenticationService,
         private notificationService: NotificationService,
         private router: Router
-    ) {}
+    ) { }
 
     ngOnInit() {
         this.updateNavigation();

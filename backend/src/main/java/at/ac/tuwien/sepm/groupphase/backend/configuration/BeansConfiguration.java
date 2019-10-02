@@ -1,5 +1,6 @@
 package at.ac.tuwien.sepm.groupphase.backend.configuration;
 
+import at.ac.tuwien.sepm.groupphase.backend.Entity.BirthdayType;
 import at.ac.tuwien.sepm.groupphase.backend.util.mapper.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -60,6 +61,9 @@ public class BeansConfiguration {
     public ConsultingTimeMapper createConsultingTimeMapper() {
         ConsultingTimeMapper consultingTimeMapper = ConsultingTimeMapper.INSTANCE;
         return consultingTimeMapper;
+    public BirthdayTypeMapper createBirthdayTypeMapper(){
+        BirthdayTypeMapper birthdayTypeMapper = BirthdayTypeMapper.INSTANCE;
+        return birthdayTypeMapper;
     }
     
     /***
