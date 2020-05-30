@@ -1,4 +1,4 @@
-# Kursverwaltungssoftware für Talentegarten.at
+# Kursverwaltungssoftware - SEPM PR 2019
 
 ## Preparations
 
