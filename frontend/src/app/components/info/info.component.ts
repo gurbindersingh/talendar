@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { InfoClient } from 'src/app/rest/info-client';
+import { InfoClient } from 'src/app/rest';
 
 @Component({
     selector: 'app-info',

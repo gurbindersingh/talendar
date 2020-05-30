@@ -15,4 +15,5 @@ export class Trainer {
     public updated: Date;
     public events: Event;
     public deleted: boolean;
+    public consultationPrice: number;
 }

@@ -14,7 +14,7 @@ export class TagClient extends RestClient {
     public postTag(tag: Tag): Observable<Tag> {
         return super.post(
             (error: HttpErrorResponse) => {
-                console.log('HTTP POST Tag Failed: ' + error.message);
+                
             },
             '',
             tag
@@ -23,13 +23,13 @@ export class TagClient extends RestClient {
 
     public getAll(): Observable<Tag[]> {
         return super.get((error: HttpErrorResponse) => {
-            console.log('HTTP GET All Tags Failed: ' + error.message);
+            
         }, '');
     }
 
     public deleteTag(tag: Tag): Observable<Tag> {
         return super.delete((error: HttpErrorResponse) => {
-            console.log('HTTP DELETE Tag Failed: ' + error.message);
+            
         }, '/' + tag.id);
     }
 

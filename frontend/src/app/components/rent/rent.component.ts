@@ -5,11 +5,13 @@ import { RoomUse } from 'src/app/models/roomUse';
 import { NgForm } from '@angular/forms';
 import { Room } from 'src/app/models/enum/room';
 import { EventType } from 'src/app/models/enum/eventType';
-import { EventClient } from 'src/app/rest/event-client';
-import { DateTimeParserService } from 'src/app/services/date-time-parser.service';
-import { AuthenticationService } from 'src/app/services/authentication.service';
+import { EventClient } from 'src/app/rest';
+import {
+    DateTimeParserService,
+    AuthenticationService,
+    ClickedDateService,
+} from 'src/app/services';
 import { NgbDateStruct, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
-import { ClickedDateService } from 'src/app/services/clicked-date.service';
 
 @Component({
     selector: 'app-meeting',
@@ -57,6 +59,11 @@ export class RentComponent implements OnInit {
     ngOnInit() {}
 
     public postMeeting(form: NgForm): void {
+        if (!this.auth.isLoggedIn && window.grecaptcha.getResponse().length < 1) {
+            this.errorMsg = 'Bitte schließen Sie das reCaptcha ab.';
+            return;
+        }
+
         this.roomUse.begin = this.dateTimeParser.dateTimeToString(
             this.startDate,
             this.startTime
@@ -106,6 +113,10 @@ export class RentComponent implements OnInit {
         this.radioButtonSelected = 'Erdgeschoss';
     }
 
+    public AllSelected(): void {
+        this.radioButtonSelected = 'Haus';
+    }
+
     public goBack(): void {
         window.history.back();
     }
@@ -117,7 +128,10 @@ export class RentComponent implements OnInit {
         if (this.radioButtonSelected === 'Orange') {
             return Room.Orange;
         }
-        return Room.GroundFloor;
+        if (this.radioButtonSelected === 'Erdgeschoss') {
+            return Room.GroundFloor;
+        }
+        return Room.All;
     }
 
     public isCompleted(): boolean {

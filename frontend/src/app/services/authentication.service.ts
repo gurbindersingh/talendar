@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AuthenticationClient } from '../rest/authentication-client';
+import { AuthenticationClient } from '../rest';
 import { SessionStorageService } from './session-storage.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -26,7 +26,6 @@ export class AuthenticationService {
         if (this.sessionStorageService.loggedIn === false) {
             return null;
         } else {
-            
             return this.authenticationClient.userDetails(
                 this.sessionStorageService.sessionToken
             );
@@ -34,8 +33,6 @@ export class AuthenticationService {
     }
 
     login(email: string, password: string): Observable<void> {
-        console.warn(new SHA3(512).update(password).digest('hex'));
-
         return this.authenticationClient
             .authenticate({
                 email,

@@ -2,9 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { BREAKPOINTS } from 'src/app/utils/Breakpoints';
 import { Router } from '@angular/router';
 import { UserDetails } from 'src/app/models/user-details';
-import { AuthenticationService } from 'src/app/services/authentication.service';
+import { AuthenticationService, NotificationService } from 'src/app/services';
 import { Authorities } from 'src/app/models/enum/authorities';
-import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
     selector: 'app-navigation',
@@ -21,6 +20,11 @@ export class NavigationComponent implements OnInit {
         {
             name: 'Urlaub eintragen',
             path: 'holiday/add',
+            restriction: Authorities.TRAINER,
+        },
+        {
+            name: 'Beratungszeit eintragen',
+            path: 'consultationtime/add',
             restriction: Authorities.TRAINER,
         },
         {
@@ -63,6 +67,11 @@ export class NavigationComponent implements OnInit {
             path: 'course/view',
             restriction: Authorities.TRAINER,
         },
+        {
+            name: 'Geburtstagstypen anzeigen',
+            path: 'birthdayType/view',
+            restriction: Authorities.ADMIN,
+        },
     ];
 
     loginLink = {
@@ -91,7 +100,7 @@ export class NavigationComponent implements OnInit {
         public authenticationService: AuthenticationService,
         private notificationService: NotificationService,
         private router: Router
-    ) {}
+    ) { }
 
     ngOnInit() {
         this.updateNavigation();
@@ -140,7 +149,7 @@ export class NavigationComponent implements OnInit {
                     // }
                 },
                 (error: Error) => {
-                    console.log(error.message);
+                    
                 }
             );
         } else {

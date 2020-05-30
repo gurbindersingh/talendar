@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { TagClient } from 'src/app/rest/tag-client';
+import { TagClient } from 'src/app/rest';
 import { NgForm } from '@angular/forms';
 import { Tag } from 'src/app/models/tag';
 

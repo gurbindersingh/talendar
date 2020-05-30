@@ -1,6 +1,7 @@
 package at.ac.tuwien.sepm.groupphase.backend.util.validator;
 
 
+import at.ac.tuwien.sepm.groupphase.backend.enums.Room;
 import at.ac.tuwien.sepm.groupphase.backend.service.exceptions.CancelationException;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidFileException;
 import at.ac.tuwien.sepm.groupphase.backend.util.validator.exceptions.InvalidFilePathException;
@@ -92,9 +93,22 @@ public class Validator {
             }
 
             try {
-                for(RoomUse r : event.getRoomUses()
-                ) {
-                    validateRoomUse(r);
+                if(event.getRoomUses().get(0).getRoom().equals(Room.All)){
+                    for(RoomUse r : event.getRoomUses()
+                    ) {
+                        r.setRoom(Room.Green);
+                        validateRoomUse(r);
+                        r.setRoom(Room.Orange);
+                        validateRoomUse(r);
+                        r.setRoom(Room.GroundFloor);
+                        validateRoomUse(r);
+                    }
+
+                } else {
+                    for(RoomUse r : event.getRoomUses()
+                    ) {
+                        validateRoomUse(r);
+                    }
                 }
             }
             catch(InvalidEntityException e) {
@@ -200,7 +214,7 @@ public class Validator {
         // Validator for Rent
         if(event.getEventType() == EventType.Rent) {
 
-            if(event.getCustomers().size() != 1) {
+            if(event.getCustomers() == null || event.getCustomers().size() != 1) {
                 throw new InvalidEntityException("");
             }
             try {
@@ -404,6 +418,23 @@ public class Validator {
         }
     }
 
+    public void validateConsultingTime(ConsultingTime consultingTime) throws InvalidEntityException {
+        if(consultingTime.getTrainer() == null) {
+            throw new InvalidEntityException("Trainer ist eventuell nicht eingeloggt");
+        }
+        if(consultingTime.getId() != null) {
+            throw new InvalidEntityException("Frontend hat eine ID mit geschickt");
+        }
+        if(consultingTime.getTrainer().getId() == null) {
+            throw new InvalidEntityException("Trainer ist eventuell nicht eingeloggt");
+        }
+        if(consultingTime.getConsultingTimeStart().isAfter(consultingTime.getConsultingTimeEnd())) {
+            throw new InvalidEntityException("Das Von-Datum findet später als das Bis-Datum statt");
+        }
+        if(consultingTime.getConsultingTimeStart().isBefore(LocalDateTime.now())) {
+            throw new InvalidEntityException("Das Von-Datum findet in der Vergangenheit statt");
+        }
+    }
 
     public void validateCancelation(Event event) throws CancelationException {
         switch(event.getEventType()) {
@@ -523,6 +554,16 @@ public class Validator {
         if(tag.getTag() == null || tag.getTag().isBlank() || tag.getTag().equals("") || tag.getTag().isEmpty()){
             throw new InvalidEntityException("Ein Keyword kann nicht leer sein");
         }
+    }
+
+    public void validateBirthdayType(BirthdayType birthdayType) throws InvalidEntityException{
+        if(birthdayType.getName() == null || birthdayType.getName().isBlank() || birthdayType.getName().equals("") || birthdayType.getName().isEmpty()){
+            throw new InvalidEntityException("Eine Geburtstagstyp braucht einen Namen");
+        }
+        if(birthdayType.getPrice() == 0){
+            throw new InvalidEntityException("Ein Geburtstagstyp braucht einen Preis");
+        }
+
     }
 
     public boolean validAlgoCustomer(AlgoCustomer algoCustomer){

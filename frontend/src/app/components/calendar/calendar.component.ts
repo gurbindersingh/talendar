@@ -7,25 +7,25 @@ import { CalendarDateFormatter, CalendarView } from 'angular-calendar';
 import { NgbModal, NgbCarouselConfig } from '@ng-bootstrap/ng-bootstrap';
 
 import { BREAKPOINTS } from 'src/app/utils/Breakpoints';
-import { ClickedDateService } from 'src/app/services/clicked-date.service';
 import { CustomDateFormatter } from './CustomDateFormatter';
-import { Event } from 'src/app/models/event';
-import { EventClient } from 'src/app/rest/event-client';
-import { EventImportService } from 'src/app/services/event-import.service';
-import { MetaEvent } from './MetaEvent';
-import { Trainer } from 'src/app/models/trainer';
-import { TrainerClient } from 'src/app/rest/trainer-client';
-import { AuthenticationService } from 'src/app/services/authentication.service';
-import { UserDetails } from 'src/app/models/user-details';
+import {
+    ClickedDateService,
+    EventImportService,
+    AuthenticationService,
+    SessionStorageService,
+    NotificationService,
+} from 'src/app/services';
+
+import { Event, Trainer, UserDetails, Holiday } from 'src/app/models';
 import { Authorities } from 'src/app/models/enum/authorities';
-import { SessionStorageService } from 'src/app/services/session-storage.service';
-import { promise } from 'protractor';
-import { ImageClient } from 'src/app/rest/image-client';
 import { Room } from 'src/app/models/enum/room';
-import { NotificationService } from 'src/app/services/notification.service';
-import { HolidayClient } from 'src/app/rest/holiday-client';
-import { Holiday } from 'src/app/models/holiday';
 import { EventType } from 'src/app/models/enum/eventType';
+import {
+    EventClient,
+    TrainerClient,
+    ImageClient,
+    HolidayClient,
+} from 'src/app/rest';
 
 /**
  * In order to display week days in German the locale data
@@ -167,68 +167,33 @@ export class CalendarComponent implements OnInit {
                 });
         } else {
             // if logged in, check role of user and show appropriate details (== extended view)
+            const userID: number = this.sessionService.userId;
             this.authService.getUserDetails().subscribe(
                 (auth: UserDetails) => {
                     if (auth.roles.includes(Authorities.ADMIN)) {
                         this.userStatus = Authorities.AUTHENTICATED;
                         // admin start with 'all view' per default
                         this.isPersonalView = false;
-
-                        this.eventClient
-                            .getAllEvents_adminView()
-                            .subscribe((event: Event[]) => {
-                                this.allEvents = this.eventImport.mapEventsToCalendar(
-                                    event
-                                );
-                                const userID = this.sessionService.userId;
-                                this.holidayClient
-                                    .getAllHolidays_adminView()
-                                    .subscribe((holiday: Holiday[]) => {
-                                        this.allEvents = this.eventImport.mapAndAddHolidaysToEventsById(
-                                            this.allEvents,
-                                            holiday,
-                                            userID
-                                        );
-                                        this.filteredEvents = this.allEvents;
-                                    });
-                            });
+                        this.getEventsAndHolidaysForAdmin(userID);
                     } else if (auth.roles.includes(Authorities.TRAINER)) {
                         this.userStatus = Authorities.AUTHENTICATED;
                         // trainer start with 'personal events view' per default
                         this.isPersonalView = true;
-                        const userID = this.sessionService.userId;
-
-                        this.eventClient
-                            .getAllEvents_trainerView(userID)
-                            .subscribe((event: Event[]) => {
-                                this.allEvents = this.eventImport.mapEventsToCalendar(
-                                    event
-                                );
-                                this.holidayClient
-                                    .getAllHolidays_trainerView(userID)
-                                    .subscribe((holiday: Holiday[]) => {
-                                        this.allEvents = this.eventImport.mapAndAddHolidaysToEvents(
-                                            this.allEvents,
-                                            holiday
-                                        );
-                                        this.filteredEvents = this.allEvents;
-                                    });
-                            });
+                        this.getEventsAndHolidaysForTrainer(userID);
                     }
                 },
                 (error: Error) => {
-                    
                     this.authService.logout();
                     this.router.navigateByUrl('/login');
                 }
             );
         }
         /*         this.eventClient.getAllEvents().subscribe((data: Event[]) => {
-            this.allEvents = this.eventImport.mapEventsToCalendar(data);
-            this.filteredEvents = this.allEvents;
-        });
+this.allEvents = this.eventImport.mapEventsToCalendar(data);
+this.filteredEvents = this.allEvents;
+});
 
- */     this.trainerClient
+*/      this.trainerClient
             .getAll()
             .subscribe((data: Trainer[]) => {
                 this.trainers = data;
@@ -252,10 +217,6 @@ export class CalendarComponent implements OnInit {
     }
 
     showDetails(event: Event, detailsModal: any) {
-        console.warn(event);
-
-        
-
         this.images = [];
         const promises: Promise<string>[] = [];
 
@@ -281,25 +242,25 @@ export class CalendarComponent implements OnInit {
             return;
         }
 
-        const room = event.roomUses[0].room;
-        if (room.includes(Room.Green)) {
-            this.eventLocation = 'Grüner Raum';
-        }
-        if (room.includes(Room.Orange)) {
-            this.eventLocation = 'Oranger Raum';
-        }
-        if (room.includes(Room.GroundFloor)) {
-            this.eventLocation = 'Erdgeschoss';
-        }
-
-        if (event.eventType !== 'Rent') {
-            this.clickedEvent = event;
-            this.modalService.open(detailsModal, { size: 'lg' });
+        if (event.roomUses) {
+            const room: Room = event.roomUses[0].room;
+            if (room === Room.Green) {
+                this.eventLocation = 'Grüner Raum';
+            } else if (room === Room.Orange) {
+                this.eventLocation = 'Oranger Raum';
+            } else if (room === Room.GroundFloor) {
+                this.eventLocation = 'Erdgeschoss';
+            }
+            if (event.eventType !== 'Rent') {
+                this.clickedEvent = event;
+                this.modalService.open(detailsModal, { size: 'lg' });
+            }
+        } else {
+            this.eventLocation = '-';
         }
     }
 
     dateClicked(date: Date, newEventModal: any) {
-        console.warn(date);
         // if (date.valueOf() >= Date.now()) {
         this.dateService.setDateTime(date);
         this.modalService.open(newEventModal, { size: 'sm' });
@@ -348,6 +309,7 @@ export class CalendarComponent implements OnInit {
      */
     public changeView(): void {
         const userID = this.sessionService.userId;
+
         this.authService.getUserDetails().subscribe(
             (status: UserDetails) => {
                 if (
@@ -356,28 +318,10 @@ export class CalendarComponent implements OnInit {
                 ) {
                     if (!this.isPersonalView) {
                         if (status.roles.includes(Authorities.ADMIN)) {
-                            console.log('FUCK HERE IAM');
-                            this.eventClient
-                                .getAllEvents_adminView()
-                                .subscribe((event: Event[]) => {
-                                    this.allEvents = this.eventImport.mapEventsToCalendar(
-                                        event
-                                    );
-                                    this.holidayClient
-                                        .getAllHolidays_adminView()
-                                        .subscribe((holiday: Holiday[]) => {
-                                            this.allEvents = this.eventImport.mapAndAddHolidaysToEventsById(
-                                                this.allEvents,
-                                                holiday,
-                                                userID
-                                            );
-                                            this.filteredEvents = this.allEvents;
-                                        });
-                                });
+                            this.getEventsAndHolidaysForAdmin(userID);
                         } else {
-                            console.log('FUCK HERE IAMtrainer');
                             this.eventClient
-                                .getAllEvents_adminView()
+                                .getAllEvents_adminView(userID)
                                 .subscribe((data: Event[]) => {
                                     this.allEvents = this.eventImport.mapEventsToCalendar(
                                         data
@@ -385,6 +329,7 @@ export class CalendarComponent implements OnInit {
                                     this.holidayClient
                                         .getAllHolidays_trainerView(userID)
                                         .subscribe((holiday: Holiday[]) => {
+                                            // tslint:disable-next-line
                                             this.allEvents = this.eventImport.mapAndAddHolidaysToEvents(
                                                 this.allEvents,
                                                 holiday
@@ -394,27 +339,11 @@ export class CalendarComponent implements OnInit {
                                 });
                         }
                     } else {
-                        this.eventClient
-                            .getAllEvents_trainerView(userID)
-                            .subscribe((data: Event[]) => {
-                                this.allEvents = this.eventImport.mapEventsToCalendar(
-                                    data
-                                );
-                                this.holidayClient
-                                    .getAllHolidays_trainerView(userID)
-                                    .subscribe((holiday: Holiday[]) => {
-                                        this.allEvents = this.eventImport.mapAndAddHolidaysToEvents(
-                                            this.allEvents,
-                                            holiday
-                                        );
-                                        this.filteredEvents = this.allEvents;
-                                    });
-                            });
+                        this.getEventsAndHolidaysForTrainer(userID);
                     }
                 }
             },
             (error: Error) => {
-                
                 this.authService.logout();
                 this.router.navigateByUrl('/login');
             }
@@ -528,6 +457,41 @@ export class CalendarComponent implements OnInit {
 
             return true;
         });
+    }
+
+    private getEventsAndHolidaysForAdmin(userID: number): void {
+        this.eventClient
+            .getAllEvents_adminView(userID)
+            .subscribe((event: Event[]) => {
+                this.allEvents = this.eventImport.mapEventsToCalendar(event);
+                this.holidayClient
+                    .getAllHolidays_adminView(userID)
+                    .subscribe((holiday: Holiday[]) => {
+                        this.allEvents = this.eventImport.mapAndAddHolidaysToEventsById(
+                            this.allEvents,
+                            holiday,
+                            userID
+                        );
+                        this.filteredEvents = this.allEvents;
+                    });
+            });
+    }
+
+    private getEventsAndHolidaysForTrainer(userID: number): void {
+        this.eventClient
+            .getAllEvents_trainerView(userID)
+            .subscribe((event: Event[]) => {
+                this.allEvents = this.eventImport.mapEventsToCalendar(event);
+                this.holidayClient
+                    .getAllHolidays_trainerView(userID)
+                    .subscribe((holiday: Holiday[]) => {
+                        this.allEvents = this.eventImport.mapAndAddHolidaysToEvents(
+                            this.allEvents,
+                            holiday
+                        );
+                        this.filteredEvents = this.allEvents;
+                    });
+            });
     }
 
     /**

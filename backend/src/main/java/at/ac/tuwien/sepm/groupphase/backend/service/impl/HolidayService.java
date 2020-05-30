@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,8 +34,11 @@ public class HolidayService implements IHolidayService {
     private final TrainerRepository trainerRepository;
     private final Validator validate;
 
+
     @Autowired
-    public HolidayService (HolidayRepository holidayRepository, TrainerRepository trainerRepository, Validator validate) {
+    public HolidayService(HolidayRepository holidayRepository, TrainerRepository trainerRepository,
+                          Validator validate
+    ) {
         this.holidayRepository = holidayRepository;
         this.trainerRepository = trainerRepository;
         this.validate = validate;
@@ -45,41 +49,48 @@ public class HolidayService implements IHolidayService {
     public LinkedList<Holiday> getAllHolidaysByTrainerId(Long id) throws ServiceException,
                                                                          NotFoundException {
         LOGGER.info("Get all holidays by trainer id " + id);
-        if(!this.trainerRepository.existsById(id)){
+        if(!this.trainerRepository.existsById(id)) {
             InvalidEntityException e = new InvalidEntityException("Trainer existiert nicht!");
             LOGGER.error("No trainer found when searching for all holidays by trainer id");
             throw new NotFoundException(e.getMessage(), e);
         }
         LinkedList<Holiday> result = new LinkedList<>();
         List<Holiday> db = holidayRepository.findByTrainer_Id(id);
-        for(int i = 0; i < db.size(); i++){
+        for(int i = 0; i < db.size(); i++) {
             result.add(db.get(i));
         }
         LOGGER.info("" + result);
         return result;
+    }
+
+    @Override
+    public void deleteBzGroupId(Long groupId){
+        holidayRepository.deleteByGroupId(groupId);
     }
 
 
     @Override
     public LinkedList<Holiday> getAllHolidays() throws ServiceException, NotFoundException {
+        List<Holiday> holidays = holidayRepository.findAll();
+        LOGGER.info("" + holidays);
 
         LinkedList<Holiday> result = new LinkedList<>();
-        List<Holiday> db = holidayRepository.findAll();
-        for(int i = 0; i < db.size(); i++){
-            result.add(db.get(i));
+        for(int i = 0; i < holidays.size(); i++) {
+            Holiday holiday = holidays.get(i);
+            result.add(holiday);
         }
-        LOGGER.info("" + result);
         return result;
     }
 
 
     @Override
-    public Holiday save (Holiday holiday) throws ServiceException, ValidationException {
+    public Holiday save(Holiday holiday) throws ServiceException, ValidationException {
         LOGGER.info("Prepare save of new holiday: {}", holiday);
 
         try {
             validate.validateHoliday(holiday);
-            if(!this.trainerRepository.existsById(holiday.getTrainer().getId())){
+            holiday.setGroupID(Instant.now().toEpochMilli());
+            if(!this.trainerRepository.existsById(holiday.getTrainer().getId())) {
                 InvalidEntityException e = new InvalidEntityException("Trainer existiert nicht!");
                 LOGGER.error("attempt to save holiday with trainer that doesnt exist");
                 throw new ValidationException(e.getMessage(), e);
@@ -93,17 +104,19 @@ public class HolidayService implements IHolidayService {
         try {
             holiday.setTrainer(trainerRepository.getOne(holiday.getTrainer().getId()));
             return holidayRepository.save(holiday);
-        } catch(Exception e) {
+        }
+        catch(Exception e) {
             throw new ServiceException(e);
         }
     }
 
-    public LinkedList<Holiday> saveHolidays (HolidaysDto holidaysDto) throws ServiceException, ValidationException {
+    public LinkedList<Holiday> saveHolidays(HolidaysDto holidaysDto) throws ServiceException,
+                                                                            ValidationException {
         LOGGER.info("Prepare save of new holidays: {}", holidaysDto);
         LinkedList<Holiday> holidays = cronExpressionToHolidaysList(holidaysDto);
         LinkedList<Holiday> resultList = new LinkedList<>();
 
-        for(int i = 0; i < holidays.size(); i++){
+        for(int i = 0; i < holidays.size(); i++) {
 
             try {
                 validate.validateHoliday(holidays.get(i));
@@ -115,8 +128,8 @@ public class HolidayService implements IHolidayService {
             try {
                 LOGGER.info("Prepare save of new holidays {}", holidays.get(i));
                 resultList.add(holidayRepository.save(holidays.get(i)));
-
-            } catch(Exception e) {
+            }
+            catch(Exception e) {
                 throw new ServiceException(e);
             }
         }
@@ -124,16 +137,20 @@ public class HolidayService implements IHolidayService {
         return resultList;
     }
 
+
     //2019-05-30T13:30:00
     // toggle=5 repeatAt(O1-O4 for the 4 options) repeatX endAt endX
-    public LinkedList<Holiday> cronExpressionToHolidaysList (HolidaysDto holidaysDto) throws ServiceException, ValidationException{
+    public LinkedList<Holiday> cronExpressionToHolidaysList(HolidaysDto holidaysDto) throws
+                                                                                     ServiceException,
+                                                                                     ValidationException {
         LOGGER.info("Cron expression will be resolved now!");
-        if(!this.trainerRepository.existsById(holidaysDto.getTrainerid())){
+        if(!this.trainerRepository.existsById(holidaysDto.getTrainerid())) {
             InvalidEntityException e = new InvalidEntityException("Trainer existiert nicht!");
             LOGGER.error("attempt to save holidays with trainer that doesnt exist");
             throw new ValidationException(e.getMessage(), e);
         }
-        Trainer trainer = (Trainer)trainerRepository.getOne(holidaysDto.getTrainerid());
+        Instant now = Instant.now();
+        Trainer trainer = (Trainer) trainerRepository.getOne(holidaysDto.getTrainerid());
         LOGGER.info("Trainer is: " + trainer);
         try {
             //Create LinkedLists and split cronExpression
@@ -143,51 +160,49 @@ public class HolidayService implements IHolidayService {
             String[] cronSplit = holidaysDto.getCronExpression().split(" ");
 
 
-
-
             //Turn CronExpression Into a StartDateTime and EndDatetime and add to the correct list
-            String startMonth = (cronSplit[3].split("/"))[0];
-            if(startMonth.length()<2){
+            String startMonth = ( cronSplit[3].split("/") )[0];
+            if(startMonth.length() < 2) {
                 startMonth = "0" + startMonth;
             }
-            String endMonth = (cronSplit[3].split("/"))[1];
-            if(endMonth.length()<2){
+            String endMonth = ( cronSplit[3].split("/") )[1];
+            if(endMonth.length() < 2) {
                 endMonth = "0" + endMonth;
             }
-            String startDay = (cronSplit[2].split("/"))[0];
-            if(startDay.length()<2){
+            String startDay = ( cronSplit[2].split("/") )[0];
+            if(startDay.length() < 2) {
                 startDay = "0" + startDay;
             }
-            String endDay = (cronSplit[2].split("/"))[1];
-            if(endDay.length()<2){
+            String endDay = ( cronSplit[2].split("/") )[1];
+            if(endDay.length() < 2) {
                 endDay = "0" + endDay;
             }
-            String startMinute = (cronSplit[0].split("/"))[0];
-            if(startMinute.length()<2){
+            String startMinute = ( cronSplit[0].split("/") )[0];
+            if(startMinute.length() < 2) {
                 startMinute = "0" + startMinute;
             }
-            String endMinute = (cronSplit[0].split("/"))[1];
-            if(endMinute.length()<2){
+            String endMinute = ( cronSplit[0].split("/") )[1];
+            if(endMinute.length() < 2) {
                 endMinute = "0" + endMinute;
             }
-            String startHour = (cronSplit[1].split("/"))[0];
-            if(startHour.length()<2){
+            String startHour = ( cronSplit[1].split("/") )[0];
+            if(startHour.length() < 2) {
                 startHour = "0" + startHour;
             }
-            String endHour = (cronSplit[1].split("/"))[1];
-            if(endHour.length()<2){
+            String endHour = ( cronSplit[1].split("/") )[1];
+            if(endHour.length() < 2) {
                 endHour = "0" + endHour;
             }
 
 
             String startTime = "T" + startHour + ":" + startMinute + ":00";
-            String endTime = "T" + endHour + ":" +  endMinute + ":00";
+            String endTime = "T" + endHour + ":" + endMinute + ":00";
 
-            String startDate = (cronSplit[4].split("/"))[0] + "-" + startMonth + "-" + startDay;
-            String endDate = (cronSplit[4].split("/"))[1] + "-" + endMonth + "-" + endDay;
+            String startDate = ( cronSplit[4].split("/") )[0] + "-" + startMonth + "-" + startDay;
+            String endDate = ( cronSplit[4].split("/") )[1] + "-" + endMonth + "-" + endDay;
 
-            startLocalDateTimes.add(LocalDateTime.parse(startDate+startTime));
-            endLocalDateTimes.add(LocalDateTime.parse(endDate+endTime));
+            startLocalDateTimes.add(LocalDateTime.parse(startDate + startTime));
+            endLocalDateTimes.add(LocalDateTime.parse(endDate + endTime));
 
 
             LOGGER.info("startLocalDateTimes:" + startLocalDateTimes);
@@ -202,10 +217,9 @@ public class HolidayService implements IHolidayService {
             LocalDateTime endLast = endLocalDateTimes.getLast();
 
 
-
             LOGGER.debug("Used Option: " + cronSplit[6]);
             LOGGER.debug("Used Option: " + cronSplit[6]);
-            if(cronSplit[8].equals("Nie")){
+            if(cronSplit[8].equals("Nie")) {
                 endX = 1000;
             }
             if(toggle) {
@@ -215,7 +229,8 @@ public class HolidayService implements IHolidayService {
                     if(cronSplit[6].equals("O1")) {
                         i = 1000;
                     } else if(cronSplit[6].equals("O2")) {
-                        if(startLast.plusDays(repeatX).isAfter(startLocalDateTimes.getFirst().plusYears(2))) {
+                        if(startLast.plusDays(repeatX)
+                                    .isAfter(startLocalDateTimes.getFirst().plusYears(2))) {
                             i = 1000;
                         } else {
                             startLast = startLast.plusDays(repeatX);
@@ -224,7 +239,8 @@ public class HolidayService implements IHolidayService {
                             endLocalDateTimes.add(endLast);
                         }
                     } else if(cronSplit[6].equals("O3")) {
-                        if(startLast.plusDays(repeatX).isAfter(startLocalDateTimes.getFirst().plusYears(2))) {
+                        if(startLast.plusDays(repeatX)
+                                    .isAfter(startLocalDateTimes.getFirst().plusYears(2))) {
                             i = 1000;
                         } else {
                             startLast = startLast.plusWeeks(repeatX);
@@ -234,7 +250,8 @@ public class HolidayService implements IHolidayService {
                         }
                     } else {
 
-                        if(startLast.plusDays(repeatX).isAfter(startLocalDateTimes.getFirst().plusYears(2))) {
+                        if(startLast.plusDays(repeatX)
+                                    .isAfter(startLocalDateTimes.getFirst().plusYears(2))) {
                             i = 1000;
                         } else {
                             startLast = startLast.plusMonths(repeatX);
@@ -251,14 +268,17 @@ public class HolidayService implements IHolidayService {
 
             //Create HolidayList out of Start and End lists + trainerId
             LOGGER.info("Trainerid is: " + holidaysDto.getTrainerid());
-            for(int i = 0; i < startLocalDateTimes.size(); i++){
-                Holiday h = new Holiday(trainer, holidaysDto.getTitle(), holidaysDto.getDescription(),
-                                        startLocalDateTimes.get(i), endLocalDateTimes.get(i));
+            for(int i = 0; i < startLocalDateTimes.size(); i++) {
+                Holiday h =
+                    new Holiday(trainer, holidaysDto.getTitle(), holidaysDto.getDescription(),
+                                startLocalDateTimes.get(i), endLocalDateTimes.get(i), now.toEpochMilli()
+                    );
                 resultList.add(h);
             }
 
             return resultList;
-        } catch(Exception e) {
+        }
+        catch(Exception e) {
             throw new ServiceException(e);
         }
     }
